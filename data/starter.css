@@ -2,6 +2,11 @@ body {
   padding-top: 10px;
 }
 
+.form-connect {
+  max-width: 330px;
+  margin: 0 auto;
+}
+
 h1 {
  text-align: center;
  margin-top: 10px;
@@ -14,9 +19,4 @@ label {
     font-weight: 500;
     line-height: 1.1;
     color: inherit;
-}
-
-.form-connect {
-  max-width: 330px;
-  margin: 0 auto;
 }
