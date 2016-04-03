@@ -4,6 +4,8 @@ body {
 
 h1 {
  text-align: center;
+ margin-top: 10px;
+ margin-bottom: 10px;
 }
 
 label {
@@ -14,7 +16,7 @@ label {
     color: inherit;
 }
 
-.starter-template {
+.form-connect {
   max-width: 330px;
   margin: 0 auto;
 }
