@@ -20,3 +20,7 @@ label {
     line-height: 1.1;
     color: inherit;
 }
+
+input[type="text"],input[type="password"] {
+    -webkit-appearance:none;  /* Remove default shadow */
+}

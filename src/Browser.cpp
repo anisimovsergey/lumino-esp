@@ -39,11 +39,12 @@ bool handleFileRead(String path){
 
   String pathWithGz = path + ".gz";
   if(SPIFFS.exists(pathWithGz) || SPIFFS.exists(path)){
+
+    String contentType = getContentType(path);
     if(SPIFFS.exists(pathWithGz))
-      path += pathWithGz;
+      path = pathWithGz;
 
     File file = SPIFFS.open(path, "r");
-    String contentType = getContentType(path);
     server.streamFile(file, contentType);
     file.close();
     return true;
@@ -68,7 +69,7 @@ void setup(void){
     delay(500);
     DBG_OUTPUT_PORT.print(".");
   }
-  
+
   DBG_OUTPUT_PORT.println("");
   DBG_OUTPUT_PORT.print("Connected! IP address: ");
   DBG_OUTPUT_PORT.println(WiFi.localIP());
