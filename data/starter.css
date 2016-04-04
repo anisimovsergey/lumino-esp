@@ -1,0 +1,26 @@
+body {
+  padding-top: 10px;
+}
+
+.form-connect {
+  max-width: 330px;
+  margin: 0 auto;
+}
+
+h1 {
+ text-align: center;
+ margin-top: 10px;
+ margin-bottom: 10px;
+}
+
+label {
+    font-size: 18px;
+    font-family: inherit;
+    font-weight: 500;
+    line-height: 1.1;
+    color: inherit;
+}
+
+input[type="text"],input[type="password"] {
+    -webkit-appearance:none;  /* Remove default shadow */
+}

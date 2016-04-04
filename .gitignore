@@ -16,3 +16,12 @@ npm-debug.log
 
 # Documentation folder
 docs
+
+# Platform.io environment
+.pioenvs
+
+# Clang
+.clang_complete
+
+# GCC
+.gcc-flags.json
