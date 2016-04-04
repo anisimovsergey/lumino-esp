@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://gitlab.com/Sergey_A/moikot/issues"
   },
-  "homepage": "https://gitlab.com/Sergey_A/moikot#README"
+  "homepage": "https://gitlab.com/Sergey_A/moikot#README",
+  "dependencies": {
+    "bootstrap": "^3.3.6"
+  }
 }
