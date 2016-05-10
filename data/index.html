@@ -2,53 +2,25 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title>Moikot</title>
-
-    <link href="bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="starter.css">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Moikot</title>
+  <link href="css/main.css" rel="stylesheet">
 </head>
 
 <body>
-    <div class="container">
-        <form class="form form-connect" role="form">
-            <h1 class="form-connect-heading">Connect to WiFi</h2>
-            <br/>
-            <div class="form-group">
-                <label for="name">Name</label>
-                <input id="name" class="form-control" type="text">
-            </div>
-            <div class="form-group">
-              <label for="network">Wifi network</label>
-              <div class="input-group">
-                <input id="network" type="text" class="form-control">
-                <div class="input-group-btn">
-                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                   <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu dropdown-menu-right">
-                   <li><a href="#">BTWifi-with-FON</a></li>
-                   <li><a href="#">BTWifi-X</a></li>
-                   <li><a href="#">Virginmedia9996303</a></li>
-                   <li><a href="#">ESP12801280</a></li>
-                </ul>
-                 </div>
-               </div>
-            </div>
-            <div class="form-group">
-              <label for="password">Wifi password</label>
-              <input id="password" class="form-control" type="password">
-            </div>
-            <br/>
-            <div class="form-group">
-               <button class="btn btn-lg btn-primary btn-block" type="submit">Connect</button>
-            </div>
-        </form>
-    </div>
-
-    <script src="bootstrap-native.min.js"></script>
+  <!-- place the custom tag anywhere inside the body -->
+  <connect></connect>
+  <!-- include the tag -->
+  <script type="riot/tag" src="tags/connect.tag"></script>
+  <!-- include riot.js -->
+  <script src="js/riot+compiler.min.js"></script>
+  <!-- bootstrap native -->
+  <script src="js/bootstrap-native.js"></script>
+  <!-- REST polyfill -->
+  <script src="js/fetch.js"></script>
+  <!-- mount the tag -->
+  <script>riot.mount('connect')</script>
 </body>
 </html>

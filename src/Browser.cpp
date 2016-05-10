@@ -35,7 +35,7 @@ bool handleFileRead(String path){
   DBG_OUTPUT_PORT.println("handleFileRead: " + path);
 
   if(path.endsWith("/"))
-    path += "index.htm";
+    path += "index.html";
 
   String pathWithGz = path + ".gz";
   if(SPIFFS.exists(pathWithGz) || SPIFFS.exists(path)){
@@ -50,6 +50,23 @@ bool handleFileRead(String path){
     return true;
   }
   return false;
+}
+
+
+String getEncryptionType(int thisType) {
+  // read the encryption type and print out the name:
+  switch (thisType) {
+    case ENC_TYPE_WEP:
+      return "WEP";
+    case ENC_TYPE_TKIP:
+      return "WPA";
+    case ENC_TYPE_CCMP:
+      return "WPA2";
+    case ENC_TYPE_NONE:
+      return "None";
+    case ENC_TYPE_AUTO:
+      return "Auto";
+  }
 }
 
 void setup(void){
@@ -76,8 +93,7 @@ void setup(void){
 
   MDNS.begin(host);
   DBG_OUTPUT_PORT.print("Open http://");
-  DBG_OUTPUT_PORT.print(host);
-  DBG_OUTPUT_PORT.println(".local/edit to see the file browser");
+  DBG_OUTPUT_PORT.println(host);
 
   //SERVER INIT
   //called when the url is not defined here
@@ -87,12 +103,30 @@ void setup(void){
   });
 
   //get heap status, analog input value and all GPIO statuses in one json call
-  server.on("/all", HTTP_GET, [](){
-    String json = "{";
-    json += "\"heap\":"+String(ESP.getFreeHeap());
-    json += ", \"analog\":"+String(analogRead(A0));
-    json += ", \"gpio\":"+String((uint32_t)(((GPI | GPO) & 0xFFFF) | ((GP16I & 0x01) << 16)));
-    json += "}";
+  server.on("/wifi_networks", HTTP_GET, [](){
+    DBG_OUTPUT_PORT.println("** Scan Networks **");
+    int numSsid = WiFi.scanNetworks();
+    if (numSsid == -1) {
+      DBG_OUTPUT_PORT.println("Couldn't get a wifi connection");
+      return;
+    }
+
+    // print the list of networks seen:
+    Serial.print("number of available networks:");
+    Serial.println(numSsid);
+
+    String json = "[";
+    // print the network number and name for each network found:
+    for (int thisNet = 0; thisNet < numSsid; thisNet++) {
+      json += "{";
+      json += "\"ssid\": \"" + WiFi.SSID(thisNet) + "\",";
+      json += "\"rssi\": " + String(WiFi.RSSI(thisNet)) + ",";
+      json += "\"encryption\": \"" + getEncryptionType(WiFi.encryptionType(thisNet)) + "\"";
+      json += "}";
+      if (thisNet < numSsid - 1)
+        json += ",";
+    }
+    json += "]";
     server.send(200, "text/json", json);
     json = String();
   });
