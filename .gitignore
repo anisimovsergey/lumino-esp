@@ -1,3 +1,27 @@
+# Vim swap files
+*.sw*
+
+# Mac temp files
+.DS_Store
+
+# Windows temp files
+Thumbs.db
+Desktop.ini
+
+# Node modules
+node_modules
+
+# Npm log file
+npm-debug.log
+
+# Documentation folder
+docs
+
+# Platform.io environment
 .pioenvs
+
+# Clang
 .clang_complete
+
+# GCC
 .gcc-flags.json
