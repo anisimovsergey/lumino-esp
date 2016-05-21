@@ -128,7 +128,7 @@
               wifi_password: that.name.password,
               connected: !that.settings.connected
             }
-            fetch('/api/settings', {
+            fetch('/settings', {
                 method: 'PUT',
                 headers: {
                     'Accept': 'application/json',

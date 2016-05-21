@@ -2,13 +2,13 @@
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
-#include <ESP8266mDNS.h>
 #include <FS.h>
+#include <ArduinoJson.h>
 
-#define DBG_OUTPUT_PORT Serial
+#define MAX_CONNECTION_WAIT 10
 
-const char* ssid = "BTHub4-NC8S";
-const char* password = "d5e89ca8cf";
+String network_ssid = "BTHub4-NC8S";
+String network_pswd = "d5e89ca8cf";
 const char* host = "esp8266fs";
 
 ESP8266WebServer server(80);
@@ -32,8 +32,6 @@ String getContentType(String filename){
 
 bool handleFileRead(String path){
 
-  DBG_OUTPUT_PORT.println("handleFileRead: " + path);
-
   if(path.endsWith("/"))
     path += "index.html";
 
@@ -52,9 +50,7 @@ bool handleFileRead(String path){
   return false;
 }
 
-
 String getEncryptionType(int thisType) {
-  // read the encryption type and print out the name:
   switch (thisType) {
     case ENC_TYPE_WEP:
       return "WEP";
@@ -69,69 +65,129 @@ String getEncryptionType(int thisType) {
   }
 }
 
+void onGetWiFiNetworks() {
+  int networksCount = WiFi.scanNetworks();
+  if (networksCount == -1) {
+    String json = "{";
+    json += "\"type\": \"error\",";
+    json += "\"status\": \"500\",";
+    json += "\"code\": \"UnableToScanWiFiNetwors\",";
+    json += "\"title\": \"Unable to scan WiFi networks.\",";
+    json += "}";
+    server.send(500, "text/json", json);
+  } else {
+    String json = "[";
+    for (int networkNum = 0; networkNum < networksCount; networkNum++) {
+      json += "{";
+      json += "\"ssid\": \"" + WiFi.SSID(networkNum) + "\",";
+      json += "\"rssi\": " + String(WiFi.RSSI(networkNum)) + ",";
+      json += "\"encryption\": \"" + getEncryptionType(WiFi.encryptionType(networkNum)) + "\"";
+      json += "}";
+      if (networkNum < networksCount - 1)
+        json += ",";
+    }
+    json += "]";
+    server.send(200, "text/json", json);
+  }
+}
+
+String getSettingsJson() {
+  const int BUFFER_SIZE = JSON_OBJECT_SIZE(5);
+  StaticJsonBuffer<BUFFER_SIZE> jsonBuffer;
+
+  JsonObject& root = jsonBuffer.createObject();
+  root["name"] = host;
+  root["wifi_network"] = WiFi.SSID();
+  root["wifi_password"] = "";
+  root["connected"] = WiFi.status() == WL_CONNECTED;
+
+  String json;
+  root.printTo(json);
+  return json;
+}
+
+void onGetSettings() {
+  server.send(200, "text/json", getSettingsJson());
+}
+
+bool disconnectFromFiFi() {
+  if (WiFi.status() != WL_DISCONNECTED) {
+    WiFi.disconnect();
+    int i = 0;
+    while ((WiFi.status() == WL_DISCONNECTED) && i < MAX_CONNECTION_WAIT) {
+      delay(1000);
+      i++;
+    }
+  }
+}
+
+bool connectToWiFi() {
+  if (String(WiFi.SSID()) != network_ssid) {
+    disconnectFromFiFi();
+    WiFi.begin(network_ssid.c_str(), network_pswd.c_str());
+    int i = 0;
+    while ((WiFi.status() != WL_CONNECTED) && i < MAX_CONNECTION_WAIT) {
+      delay(1000);
+      i++;
+    }
+  }
+}
+
+void onPutSettings() {
+
+  const size_t BUFFER_SIZE = JSON_OBJECT_SIZE(5);
+  StaticJsonBuffer<BUFFER_SIZE> jsonBuffer;
+
+  String request = server.arg("plain");
+  JsonObject& root = jsonBuffer.parseObject(request);
+
+  if (!root.success()) {
+    String json = "{";
+    json += "\"type\": \"error\",";
+    json += "\"status\": \"500\",";
+    json += "\"code\": \"UnableToParseJson\",";
+    json += "\"title\": \"Unable to parse JSON.\",";
+    json += "\"data\": " + request;
+    json += "}";
+    server.send(500, "text/json", json);
+    return;
+  }
+
+  if (root["connected"]) {
+    network_ssid = (const char*)root["wifi_network"];
+    network_pswd = (const char*)root["wifi_password"];
+  }
+
+  if (WiFi.status() == WL_CONNECTED)
+    disconnectFromFiFi();
+  else {
+    connectToWiFi();
+  }
+
+  server.send(202, "text/json", getSettingsJson());
+}
+
 void setup(void){
-  DBG_OUTPUT_PORT.begin(115200);
-  DBG_OUTPUT_PORT.print("\n");
-  DBG_OUTPUT_PORT.setDebugOutput(true);
-  DBG_OUTPUT_PORT.println("Reading files...");
   SPIFFS.begin();
 
-  //WIFI INIT
-  DBG_OUTPUT_PORT.printf("Connecting to %s\n", ssid);
-  if (String(WiFi.SSID()) != String(ssid)) {
-    WiFi.begin(ssid, password);
-  }
+  WiFi.mode(WIFI_STA);
+  WiFi.hostname(host);
 
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    DBG_OUTPUT_PORT.print(".");
-  }
+  connectToWiFi();
 
-  DBG_OUTPUT_PORT.println("");
-  DBG_OUTPUT_PORT.print("Connected! IP address: ");
-  DBG_OUTPUT_PORT.println(WiFi.localIP());
+  WiFi.softAP(host);
+  //WiFi.softAPdisconnect();
 
-  MDNS.begin(host);
-  DBG_OUTPUT_PORT.print("Open http://");
-  DBG_OUTPUT_PORT.println(host);
-
-  //SERVER INIT
-  //called when the url is not defined here
   server.onNotFound([](){
     if(!handleFileRead(server.uri()))
       server.send(404, "text/plain", "FileNotFound");
   });
 
-  //get heap status, analog input value and all GPIO statuses in one json call
-  server.on("/wifi_networks", HTTP_GET, [](){
-    DBG_OUTPUT_PORT.println("** Scan Networks **");
-    int numSsid = WiFi.scanNetworks();
-    if (numSsid == -1) {
-      DBG_OUTPUT_PORT.println("Couldn't get a wifi connection");
-      return;
-    }
+  server.on("/wifi_networks", HTTP_GET, []() { onGetWiFiNetworks(); });
+  server.on("/settings", HTTP_GET, []() { onGetSettings(); });
+  server.on("/settings", HTTP_PUT, []() { onPutSettings(); });
 
-    // print the list of networks seen:
-    Serial.print("number of available networks:");
-    Serial.println(numSsid);
-
-    String json = "[";
-    // print the network number and name for each network found:
-    for (int thisNet = 0; thisNet < numSsid; thisNet++) {
-      json += "{";
-      json += "\"ssid\": \"" + WiFi.SSID(thisNet) + "\",";
-      json += "\"rssi\": " + String(WiFi.RSSI(thisNet)) + ",";
-      json += "\"encryption\": \"" + getEncryptionType(WiFi.encryptionType(thisNet)) + "\"";
-      json += "}";
-      if (thisNet < numSsid - 1)
-        json += ",";
-    }
-    json += "]";
-    server.send(200, "text/json", json);
-    json = String();
-  });
   server.begin();
-  DBG_OUTPUT_PORT.println("HTTP server started");
 }
 
 void loop(void){
