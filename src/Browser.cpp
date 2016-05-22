@@ -12,20 +12,6 @@ const char* host = "esp8266fs";
 
 HttpServer server(80);
 
-String getEncryptionType(int thisType) {
-  switch (thisType) {
-    case ENC_TYPE_WEP:
-      return "WEP";
-    case ENC_TYPE_TKIP:
-      return "WPA";
-    case ENC_TYPE_CCMP:
-      return "WPA2";
-    case ENC_TYPE_NONE:
-      return "None";
-    case ENC_TYPE_AUTO:
-      return "Auto";
-  }
-}
 
 /*
 void onGetWiFiNetworks() {
