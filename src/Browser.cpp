@@ -1,9 +1,8 @@
 
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
-#include <ESP8266WebServer.h>
-#include <FS.h>
 #include <ArduinoJson.h>
+#include "HttpServer.hpp"
 
 #define MAX_CONNECTION_WAIT 10
 
@@ -11,44 +10,7 @@ String network_ssid = "BTHub4-NC8S";
 String network_pswd = "d5e89ca8cf";
 const char* host = "esp8266fs";
 
-ESP8266WebServer server(80);
-
-String getContentType(String filename){
-  if(server.hasArg("download")) return "application/octet-stream";
-  else if(filename.endsWith(".htm")) return "text/html";
-  else if(filename.endsWith(".html")) return "text/html";
-  else if(filename.endsWith(".css")) return "text/css";
-  else if(filename.endsWith(".js")) return "application/javascript";
-  else if(filename.endsWith(".png")) return "image/png";
-  else if(filename.endsWith(".gif")) return "image/gif";
-  else if(filename.endsWith(".jpg")) return "image/jpeg";
-  else if(filename.endsWith(".ico")) return "image/x-icon";
-  else if(filename.endsWith(".xml")) return "text/xml";
-  else if(filename.endsWith(".pdf")) return "application/x-pdf";
-  else if(filename.endsWith(".zip")) return "application/x-zip";
-  else if(filename.endsWith(".gz")) return "application/x-gzip";
-  return "text/plain";
-}
-
-bool handleFileRead(String path){
-
-  if(path.endsWith("/"))
-    path += "index.html";
-
-  String pathWithGz = path + ".gz";
-  if(SPIFFS.exists(pathWithGz) || SPIFFS.exists(path)){
-
-    String contentType = getContentType(path);
-    if(SPIFFS.exists(pathWithGz))
-      path = pathWithGz;
-
-    File file = SPIFFS.open(path, "r");
-    server.streamFile(file, contentType);
-    file.close();
-    return true;
-  }
-  return false;
-}
+HttpServer server(80);
 
 String getEncryptionType(int thisType) {
   switch (thisType) {
@@ -65,16 +27,11 @@ String getEncryptionType(int thisType) {
   }
 }
 
+/*
 void onGetWiFiNetworks() {
   int networksCount = WiFi.scanNetworks();
   if (networksCount == -1) {
-    String json = "{";
-    json += "\"type\": \"error\",";
-    json += "\"status\": \"500\",";
-    json += "\"code\": \"UnableToScanWiFiNetwors\",";
-    json += "\"title\": \"Unable to scan WiFi networks.\",";
-    json += "}";
-    server.send(500, "text/json", json);
+    server.sendError(Errors.UnableToScanFiFiNetworks);
   } else {
     String json = "[";
     for (int networkNum = 0; networkNum < networksCount; networkNum++) {
@@ -90,6 +47,7 @@ void onGetWiFiNetworks() {
     server.send(200, "text/json", json);
   }
 }
+
 
 String getSettingsJson() {
   const int BUFFER_SIZE = JSON_OBJECT_SIZE(5);
@@ -166,30 +124,23 @@ void onPutSettings() {
 
   server.send(202, "text/json", getSettingsJson());
 }
-
+*/
 void setup(void){
-  SPIFFS.begin();
-
   WiFi.mode(WIFI_STA);
   WiFi.hostname(host);
 
-  connectToWiFi();
+  //connectToWiFi();
 
   WiFi.softAP(host);
   //WiFi.softAPdisconnect();
 
-  server.onNotFound([](){
-    if(!handleFileRead(server.uri()))
-      server.send(404, "text/plain", "FileNotFound");
-  });
-
-  server.on("/wifi_networks", HTTP_GET, []() { onGetWiFiNetworks(); });
-  server.on("/settings", HTTP_GET, []() { onGetSettings(); });
-  server.on("/settings", HTTP_PUT, []() { onPutSettings(); });
+  //server.on("/wifi_networks", HTTP_GET, []() { onGetWiFiNetworks(); });
+  //server.on("/settings", HTTP_GET, []() { onGetSettings(); });
+  //server.on("/settings", HTTP_PUT, []() { onPutSettings(); });
 
   server.begin();
 }
 
 void loop(void){
-  server.handleClient();
+  server.loop();
 }
