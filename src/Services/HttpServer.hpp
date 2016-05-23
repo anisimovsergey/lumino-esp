@@ -1,3 +1,8 @@
+// Copyright Sergey Anisimov 2016-2017
+// MIT License
+//
+// Moikot
+// https://github.com/anisimovsergey/moikot
 
 #ifndef HTTPSERVER_H
 #define HTTPSERVER_H

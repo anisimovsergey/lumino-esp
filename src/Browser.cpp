@@ -15,33 +15,6 @@ const char* host = "esp8266fs";
 
 HttpServer server(80);
 
-/*
-
-
-bool disconnectFromFiFi() {
-  if (WiFi.status() != WL_DISCONNECTED) {
-    WiFi.disconnect();
-    int i = 0;
-    while ((WiFi.status() == WL_DISCONNECTED) && i < MAX_CONNECTION_WAIT) {
-      delay(1000);
-      i++;
-    }
-  }
-}
-
-bool connectToWiFi() {
-  if (String(WiFi.SSID()) != network_ssid) {
-    disconnectFromFiFi();
-    WiFi.begin(network_ssid.c_str(), network_pswd.c_str());
-    int i = 0;
-    while ((WiFi.status() != WL_CONNECTED) && i < MAX_CONNECTION_WAIT) {
-      delay(1000);
-      i++;
-    }
-  }
-}
-*/
-
 void setup(void){
   WiFi.mode(WIFI_STA);
   WiFi.hostname(host);
