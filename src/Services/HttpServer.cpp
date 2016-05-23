@@ -14,9 +14,6 @@ HttpServer::HttpServer(int port) : server(new ESP8266WebServer(port)) {
   });
 }
 
-HttpServer::~HttpServer() {
-}
-
 String
 HttpServer::getContentType(String filename) {
   if(server->hasArg("download")) return "application/octet-stream";
@@ -69,11 +66,21 @@ HttpServer::sendError(const Error& error) {
 }*/
 
 void
-HttpServer::begin() {
-    server->begin();
+HttpServer::addGetHandler(const char* uri, THandlerFunction fn) {
+  server->on(uri, HTTP_GET, fn);
+}
+
+void
+HttpServer::addPutHandler(const char* uri, THandlerFunction fn) {
+  server->on(uri, HTTP_PUT, fn);
+}
+
+void
+HttpServer::start() {
+  server->begin();
 }
 
 void
 HttpServer::loop() {
-    server->handleClient();
+  server->handleClient();
 }

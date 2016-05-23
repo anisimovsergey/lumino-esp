@@ -4,17 +4,19 @@
 
 #include <WString.h>
 #include <memory>
+#include "IHttpServer.hpp"
 
 class ESP8266WebServer;
 
-class HttpServer {
+class HttpServer : public IHttpServer {
   public:
     HttpServer(int port);
-    virtual ~HttpServer();
 
-    void begin();
+    void start();
     void loop();
-    //void sendError(const Error& error)
+
+    virtual void addGetHandler(const char* uri, THandlerFunction fn) override;
+    virtual void addPutHandler(const char* uri, THandlerFunction fn) override;
 
   private:
     std::unique_ptr<ESP8266WebServer> server;
