@@ -7,9 +7,7 @@
 #ifndef SETTINGSSERIALIZER_H
 #define SETTINGSSERIALIZER_H
 
-#include <WString.h>
-#include "../Models/Settings.hpp"
-
+class Settings;
 class ISerializationContext;
 
 class SettingsSerializer {

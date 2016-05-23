@@ -7,9 +7,7 @@
 #ifndef ERRORSERIALIZER_H
 #define ERRORSERIALIZER_H
 
-#include <WString.h>
-#include "../Core/Error.hpp"
-
+class Error; 
 class ISerializationContext;
 
 class ErrorSerializer {

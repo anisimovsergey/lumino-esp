@@ -1,5 +1,6 @@
 #include "ErrorSerializer.hpp"
 #include "ISerializationContext.hpp"
+#include "../Core/Error.hpp"
 
 Error
 ErrorSerializer::deserialie(const ISerializationContext& context) {

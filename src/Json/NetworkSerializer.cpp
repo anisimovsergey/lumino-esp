@@ -1,6 +1,7 @@
 #include "NetworkSerializer.hpp"
 #include <ESP8266WiFi.h>
 #include "ISerializationContext.hpp"
+#include "../Models/Network.hpp"
 
 String getEncryptionTypeString(int thisType) {
   switch (thisType) {

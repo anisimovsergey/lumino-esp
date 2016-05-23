@@ -7,9 +7,7 @@
 #ifndef NETWORKSERIALIZER_H
 #define NETWORKSERIALIZER_H
 
-#include <WString.h>
-#include "../Models/Network.hpp"
-
+class Network;
 class ISerializationContext;
 
 class NetworkSerializer {
