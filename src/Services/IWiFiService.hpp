@@ -13,7 +13,7 @@ class Network;
 
 class IWiFiService {
 public:
-    virtual int getWiFiNetworks(std::list<Network>& networks) const = 0;
+    virtual bool getWiFiNetworks(std::list<Network>& networks) const = 0;
 };
 
 #endif /* end of include guard: IWIFISERVICE_H */

@@ -22,7 +22,7 @@ void setup(void){
   //connectToWiFi();
 
   WiFi.softAP(host);
-  //WiFi.softAPdisconnect();
+  //WiFi.softAPdisconnect(); // Disconnect and delete from memory.
 
   NetworksController networksController;
   networksController.registerOn(server);
