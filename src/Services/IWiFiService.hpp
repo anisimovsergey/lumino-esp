@@ -9,11 +9,12 @@
 
 #include <list>
 
+class Status;
 class Network;
 
 class IWiFiService {
 public:
-    virtual bool getWiFiNetworks(std::list<Network>& networks) const = 0;
+    virtual Status getWiFiNetworks(std::list<Network>& networks) const = 0;
 };
 
 #endif /* end of include guard: IWIFISERVICE_H */

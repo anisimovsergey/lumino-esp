@@ -11,7 +11,7 @@
 
 class WiFiService : public IWiFiService {
   public:
-    virtual bool getWiFiNetworks(std::list<Network>& networks) const override;
+    virtual Status getWiFiNetworks(std::list<Network>& networks) const override;
 };
 
 #endif /* end of include guard: HTTPSERVER_H */

@@ -1,12 +1,13 @@
 #include "WiFiService.hpp"
 #include <ESP8266WiFi.h>
 #include "../Models/Network.hpp"
+#include "../Core/Status.hpp"
 
-bool
+Status
 WiFiService::getWiFiNetworks(std::list<Network>& networks) const {
   auto networksCount = WiFi.scanNetworks();
   if (networksCount == -1)
-    return false;
+    return Status::UnableToScanFiFiNetworks;
 
   for (int networkNum = 0; networkNum < networksCount; networkNum++) {
     auto ssid = WiFi.SSID(networkNum);
@@ -15,4 +16,5 @@ WiFiService::getWiFiNetworks(std::list<Network>& networks) const {
     Network network(ssid, rssi, encryptionType);
     networks.push_back(network);
   }
+  return Status::Ok;
 }
