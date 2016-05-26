@@ -4,14 +4,16 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef HTTPSERVER_H
-#define HTTPSERVER_H
+#ifndef SERVICES_HTTPSERVER_H
+#define SERVICES_HTTPSERVER_H
 
+#include "IHttpServer.hpp"
 #include <WString.h>
 #include <memory>
-#include "IHttpServer.hpp"
 
 class ESP8266WebServer;
+
+namespace Services {
 
 class HttpServer : public IHttpServer {
   public:
@@ -30,4 +32,6 @@ class HttpServer : public IHttpServer {
     bool    handleFileRead(String path);
 };
 
-#endif /* end of include guard: HTTPSERVER_H */
+}
+
+#endif /* end of include guard: SERVICES_HTTPSERVER_H */

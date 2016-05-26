@@ -4,16 +4,21 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef MOIKOT_JSON_STATUSSERIALIZER_H
-#define MOIKOT_JSON_STATUSSERIALIZER_H
+#ifndef JSON_STATUS_SERIALIZER_H
+#define JSON_STATUS_SERIALIZER_H
 
-class Status;
-class ISerializationContext;
+#include "ISerializationContext.hpp"
+#include "Core/Status.hpp"
+
+namespace Json {
 
 class StatusSerializer {
-public:
-  Status deserialie(const ISerializationContext& context);
-  void serialie(const Status& status, ISerializationContext& context);
+  public:
+    Core::Status deserialie(const ISerializationContext& context);
+    void serialie(const Core::Status& status,
+                  ISerializationContext& context);
 };
 
-#endif /* end of include guard: MOIKOT_JSON_STATUSSERIALIZER_H */
+}
+
+#endif /* end of include guard: JSON_STATUS_SERIALIZER_H */

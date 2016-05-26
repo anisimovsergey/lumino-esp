@@ -4,16 +4,21 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef SETTINGSSERIALIZER_H
-#define SETTINGSSERIALIZER_H
+#ifndef JSON_SETTINGS_SERIALIZER_H
+#define JSON_SETTINGS_SERIALIZER_H
 
-class Settings;
-class ISerializationContext;
+#include "ISerializationContext.hpp"
+#include "Models/Settings.hpp"
+
+namespace Json {
 
 class SettingsSerializer {
-public:
-  Settings deserialie(const ISerializationContext& context);
-  void serialie(const Settings& settings, ISerializationContext& context);
+  public:
+    Models::Settings deserialie(const ISerializationContext& context);
+    void serialie(const Models::Settings& settings,
+                  ISerializationContext& context);
 };
 
-#endif /* end of include guard: SETTINGSSERIALIZER_H */
+}
+
+#endif /* end of include guard: JSON_SETTINGS_SERIALIZER_H */

@@ -1,7 +1,11 @@
 #include "NetworkSerializer.hpp"
-#include <ESP8266WiFi.h>
 #include "ISerializationContext.hpp"
 #include "Models/Network.hpp"
+
+#include <ESP8266WiFi.h>
+
+using namespace Json;
+using namespace Models;
 
 String getEncryptionTypeString(int thisType) {
   switch (thisType) {
@@ -18,15 +22,18 @@ String getEncryptionTypeString(int thisType) {
   }
 }
 
-Network
-NetworkSerializer::deserialie(const ISerializationContext& context) {
+Models::Network
+NetworkSerializer::deserialie(const Json::ISerializationContext& context) {
 }
 
 void
-NetworkSerializer::serialie(const Network& network, ISerializationContext& context) {
+NetworkSerializer::serialie(const Models::Network& network,
+  Json::ISerializationContext& context) {
 
   context.setType("network");
   context.setValue("ssid", network.getSsid());
   context.setValue("rssi", network.getRssi());
-  context.setValue("encryption", getEncryptionTypeString(network.getEncryptionType()));
+
+  String encryption = getEncryptionTypeString(network.getEncryptionType());
+  context.setValue("encryption", encryption);
 }

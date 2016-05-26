@@ -4,17 +4,19 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef IWIFISERVICE_H
-#define IWIFISERVICE_H
+#ifndef SERVICES_I_WIFISERVICE_H
+#define SERVICES_I_WIFISERVICE_H
+
+#include "Core/Status.hpp"
+#include "Models/Network.hpp"
 
 #include <list>
 
-class Status;
-class Network;
-
 class IWiFiService {
-public:
-    virtual Status getWiFiNetworks(std::list<Network>& networks) const = 0;
+  typedef std::list<Models::Network> Networks;
+
+  public:
+    virtual Core::Status getWiFiNetworks(Networks& networks) const = 0;
 };
 
-#endif /* end of include guard: IWIFISERVICE_H */
+#endif /* end of include guard: SERVICES_I_WIFISERVICE_H */

@@ -4,10 +4,12 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef WIFIMANAGER_H
-#define WIFIMANAGER_H
+#ifndef SERVICES_WIFIMANAGER_H
+#define SERVICES_WIFIMANAGER_H
 
 #include "IWiFiManager.hpp"
+
+namespace Services {
 
 class WiFiManager : public IWiFiManager {
   public:
@@ -16,4 +18,6 @@ class WiFiManager : public IWiFiManager {
     virtual void disconnect() override;
 };
 
-#endif /* end of include guard: HTTPSERVER_H */
+}
+
+#endif /* end of include guard: SERVICES_WIFIMANAGER_H */

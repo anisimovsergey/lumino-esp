@@ -1,5 +1,9 @@
 #include "SettingsController.hpp"
+
 #include "Services/IHttpServer.hpp"
+
+using namespace Services;
+using namespace Controllers;
 
 void
 SettingsController::onGetSettings() {

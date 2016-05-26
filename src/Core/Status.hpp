@@ -4,27 +4,32 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef MOIKOT_CORE_STATUS_H
-#define MOIKOT_CORE_STATUS_H
+#ifndef CORE_STATUS_H
+#define CORE_STATUS_H
 
 #include <WString.h>
 
+namespace Core {
+
 class Status {
-public:
-  bool   isOk() const { return ok;  }
-  String getCode() const { return code; };
-  String getTitle() const { return title; };
+  public:
+    // Well-known statuses
+    static const Status Ok;
+    static const Status UnableToScanFiFiNetworks;
 
-  static const Status Ok;
-  static const Status UnableToScanFiFiNetworks;
+  public:
+    bool   isOk() const { return ok;  }
+    String getCode() const { return code; };
+    String getTitle() const { return title; };
 
-private:
-  Status(bool isOk, String code, String title);
+  private:
+    Status(bool isOk, String code, String title);
 
-  bool    ok;
-  String  code;
-  String  title;
+    bool    ok;
+    String  code;
+    String  title;
 };
 
+}
 
-#endif /* end of include guard: MOIKOT_CORE_STATUS_H */
+#endif /* end of include guard: CORE_STATUS_H */

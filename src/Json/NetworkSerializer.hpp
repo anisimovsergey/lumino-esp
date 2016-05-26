@@ -4,16 +4,21 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef NETWORKSERIALIZER_H
-#define NETWORKSERIALIZER_H
+#ifndef JSON_NETWORK_SERIALIZER_H
+#define JSON_NETWORK_SERIALIZER_H
 
-class Network;
-class ISerializationContext;
+#include "ISerializationContext.hpp"
+#include "Models/Network.hpp"
+
+namespace Json {
 
 class NetworkSerializer {
-public:
-  Network deserialie(const ISerializationContext& context);
-  void serialie(const Network& network, ISerializationContext& context);
+  public:
+    Models::Network deserialie(const ISerializationContext& context);
+    void serialie(const Models::Network& network,
+                  ISerializationContext& context);
 };
 
-#endif /* end of include guard: NETWORKSERIALIZER_H */
+}
+
+#endif /* end of include guard: JSON_NETWORK_SERIALIZER_H */

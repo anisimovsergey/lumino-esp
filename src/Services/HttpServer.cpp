@@ -5,6 +5,8 @@
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 
+using namespace Services;
+
 HttpServer::HttpServer(int port) : server(new ESP8266WebServer(port)) {
   SPIFFS.begin();
   // Setting up "File not found" (404) responce

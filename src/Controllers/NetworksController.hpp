@@ -4,17 +4,22 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef NETWORKSCONTROLLER_H
-#define NETWORKSCONTROLLER_H
+#ifndef CONTROLLERS_NETWORKS_CONTROLLER_H
+#define CONTROLLERS_NETWORKS_CONTROLLER_H
 
-class IHttpServer;
+#include "Services/IHttpServer.hpp"
+
+namespace Controllers {
 
 class NetworksController {
-private:
-  void onGetWiFiNetworks();
+  private:
+    void onGetWiFiNetworks();
 
-public:
-  void registerOn(IHttpServer& server);
+  public:
+    // Register the controller on HTTP server.
+    void registerOn(Services::IHttpServer& server);
 };
 
-#endif /* end of include guard: NETWORKSCONTROLLER_H */
+}
+
+#endif /* end of include guard: CONTROLLERS_NETWORKS_CONTROLLER_H */

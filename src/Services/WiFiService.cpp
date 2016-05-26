@@ -1,10 +1,16 @@
 #include "WiFiService.hpp"
-#include <ESP8266WiFi.h>
+
 #include "Models/Network.hpp"
 #include "Core/Status.hpp"
 
+#include <ESP8266WiFi.h>
+
+using namespace Core;
+using namespace Models;
+using namespace Services;
+
 Status
-WiFiService::getWiFiNetworks(std::list<Network>& networks) const {
+WiFiService::getWiFiNetworks(Networks& networks) const {
   int networksCount = WiFi.scanNetworks();
   if (networksCount == -1)
     return Status::UnableToScanFiFiNetworks;

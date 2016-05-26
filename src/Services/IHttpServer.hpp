@@ -4,16 +4,23 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef IHTTPSERVER_H
-#define IHTTPSERVER_H
+#ifndef SERVICES_I_HTTPSERVER_H
+#define SERVICES_I_HTTPSERVER_H
 
 #include <functional>
 
-class IHttpServer {
-public:
-    typedef std::function<void(void)> THandlerFunction;
-    virtual void addGetHandler(const char* uri, THandlerFunction fn) = 0;
-    virtual void addPutHandler(const char* uri, THandlerFunction fn) = 0;
-};
+namespace Services {
 
-#endif /* end of include guard: IHTTPSERVER_H */
+class IHttpServer {
+  public:
+      typedef std::function<void(void)> THandlerFunction;
+
+      virtual void addGetHandler(const char* uri,
+                                 THandlerFunction fn) = 0;
+      virtual void addPutHandler(const char* uri,
+                                 THandlerFunction fn) = 0;
+};
+  
+}
+
+#endif /* end of include guard: SERVICES_I_HTTPSERVER_H */

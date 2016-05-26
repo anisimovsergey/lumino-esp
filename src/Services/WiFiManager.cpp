@@ -1,6 +1,8 @@
 #include "WiFiManager.hpp"
 #include <ESP8266WiFi.h>
 
+using namespace Services;
+
 bool
 WiFiManager::isConnected() {
   return (WiFi.status() == WL_CONNECTED);
