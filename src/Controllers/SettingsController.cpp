@@ -1,5 +1,5 @@
 #include "SettingsController.hpp"
-#include "../Services/IHttpServer.hpp"
+#include "Services/IHttpServer.hpp"
 
 void
 SettingsController::onGetSettings() {

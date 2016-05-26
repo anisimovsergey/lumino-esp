@@ -1,6 +1,6 @@
 #include "SettingsSerializer.hpp"
 #include "ISerializationContext.hpp"
-#include "../Models/Settings.hpp"
+#include "Models/Settings.hpp"
 
 Settings
 SettingsSerializer::deserialie(const ISerializationContext& context) {

@@ -1,6 +1,6 @@
 #include "StatusSerializer.hpp"
 #include "ISerializationContext.hpp"
-#include "../Core/Status.hpp"
+#include "Core/Status.hpp"
 
 Status
 StatusSerializer::deserialie(const ISerializationContext& context) {

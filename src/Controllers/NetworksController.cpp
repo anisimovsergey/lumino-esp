@@ -1,5 +1,5 @@
 #include "NetworksController.hpp"
-#include "../Services/IHttpServer.hpp"
+#include "Services/IHttpServer.hpp"
 
 void
 NetworksController::onGetWiFiNetworks() {

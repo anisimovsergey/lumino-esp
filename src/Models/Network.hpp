@@ -5,15 +5,15 @@
 
 class Network {
 public:
-  Network(String ssid, float rssi, int encryptionType);
+  Network(String ssid, int rssi, int encryptionType);
 
   String  getSsid() const { return ssid; };
-  float   getRssi() const { return rssi; };
+  int     getRssi() const { return rssi; };
   int     getEncryptionType() const { return encryptionType; };
 
 private:
   String  ssid;
-  float   rssi;
+  int     rssi;
   int     encryptionType;
 };
 
