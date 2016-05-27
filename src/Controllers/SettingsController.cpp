@@ -6,7 +6,7 @@ using namespace Services;
 using namespace Controllers;
 
 void
-SettingsController::onGetSettings() {
+SettingsController::onGetSettings(Services::IHttpServer& httpServer) {
   /*
   String getSettingsJson() {
     const int BUFFER_SIZE = JSON_OBJECT_SIZE(5);
@@ -29,7 +29,7 @@ SettingsController::onGetSettings() {
 }
 
 void
-SettingsController::onPutSettings() {
+SettingsController::onPutSettings(Services::IHttpServer& httpServer) {
   /*
   void onPutSettings() {
 
@@ -68,7 +68,11 @@ SettingsController::onPutSettings() {
 }
 
 void
-SettingsController::registerOn(IHttpServer &server) {
-  server.addGetHandler("/settings", [&]() { onGetSettings(); });
-  server.addPutHandler("/settings", [&]() { onPutSettings(); });
+SettingsController::registerOn(IHttpServer &httpServer) {
+  httpServer.addGetHandler("/settings", [&]() {
+    onGetSettings(httpServer);
+  });
+  httpServer.addPutHandler("/settings", [&]() {
+    onPutSettings(httpServer);
+  });
 }

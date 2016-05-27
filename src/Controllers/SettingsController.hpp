@@ -12,13 +12,13 @@
 namespace Controllers {
 
 class SettingsController {
-  private:
-    void onGetSettings();
-    void onPutSettings();
-
   public:
     // Register the controller on HTTP server.
-    void registerOn(Services::IHttpServer& server);
+    void registerOn(Services::IHttpServer& httpServer);
+
+  private:
+    void onGetSettings(Services::IHttpServer& httpServer);
+    void onPutSettings(Services::IHttpServer& httpServer);
 };
 
 }

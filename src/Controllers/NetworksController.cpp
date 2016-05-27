@@ -1,20 +1,32 @@
 #include "NetworksController.hpp"
 
+#include "Core/Status.hpp"
 #include "Services/IHttpServer.hpp"
 
+using namespace Core;
 using namespace Services;
 using namespace Controllers;
 
 NetworksController::NetworksController(
   const Services::IWiFiService& wifiService) : wifiService(wifiService) {
-
 }
 
+void
+NetworksController::registerOn(IHttpServer &httpServer) {
+  httpServer.addGetHandler("/wifi_networks", [&]() {
+    onGetWiFiNetworks(httpServer);
+  });
+}
 
 void
-NetworksController::onGetWiFiNetworks() {
-
-
+NetworksController::onGetWiFiNetworks(Services::IHttpServer& httpServer) {
+  std::list<Models::Network> networks;
+  const Status& status = wifiService.getWiFiNetworks(networks);
+  if (status.isOk()) {
+    httpServer.sendJson(&status);
+  } else {
+    httpServer.sendJson(&networks);
+  }
   /*
   void onGetWiFiNetworks() {
     int networksCount = WiFi.scanNetworks();
@@ -36,9 +48,4 @@ NetworksController::onGetWiFiNetworks() {
     }
   }
   */
-}
-
-void
-NetworksController::registerOn(IHttpServer &server) {
-  server.addGetHandler("/wifi_networks", [&]() { onGetWiFiNetworks(); });
 }

@@ -16,13 +16,13 @@ class NetworksController {
   public:
     NetworksController(const Services::IWiFiService& wifiService);
 
-    // Register the controller on HTTP server.
-    void registerOn(Services::IHttpServer& server);
+   // Register the controller on HTTP server.
+   void registerOn(Services::IHttpServer& httpServer);
 
   private:
     const Services::IWiFiService& wifiService;
 
-    void onGetWiFiNetworks();
+    void onGetWiFiNetworks(Services::IHttpServer& httpServer);
 };
 
 }

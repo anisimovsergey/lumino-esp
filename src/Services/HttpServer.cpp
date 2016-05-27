@@ -78,6 +78,11 @@ HttpServer::addPutHandler(const char* uri, THandlerFunction fn) {
 }
 
 void
+HttpServer::sendJson(const void* value) {
+
+}
+
+void
 HttpServer::start() {
   server->begin();
 }

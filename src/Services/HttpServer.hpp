@@ -22,8 +22,12 @@ class HttpServer : public IHttpServer {
     void start();
     void loop();
 
-    virtual void addGetHandler(const char* uri, THandlerFunction fn) override;
-    virtual void addPutHandler(const char* uri, THandlerFunction fn) override;
+    virtual void addGetHandler(const char* uri,
+                               THandlerFunction fn) override;
+    virtual void addPutHandler(const char* uri,
+                               THandlerFunction fn) override;
+
+    virtual void sendJson(const void* value) override;
 
   private:
     std::unique_ptr<ESP8266WebServer> server;

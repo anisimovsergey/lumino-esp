@@ -19,8 +19,10 @@ class IHttpServer {
                                  THandlerFunction fn) = 0;
       virtual void addPutHandler(const char* uri,
                                  THandlerFunction fn) = 0;
+
+      virtual void sendJson(const void* value) = 0;                          
 };
-  
+
 }
 
 #endif /* end of include guard: SERVICES_I_HTTPSERVER_H */

@@ -15,9 +15,9 @@
 namespace Services {
 
 class IWiFiService {
-  typedef std::list<Models::Network> Networks;
-
   public:
+    typedef std::list<Models::Network> Networks;
+
     virtual Core::Status getWiFiNetworks(Networks& networks) const = 0;
 };
 
