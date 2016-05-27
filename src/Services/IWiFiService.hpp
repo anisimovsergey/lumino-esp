@@ -12,11 +12,15 @@
 
 #include <list>
 
+namespace Services {
+
 class IWiFiService {
   typedef std::list<Models::Network> Networks;
 
   public:
     virtual Core::Status getWiFiNetworks(Networks& networks) const = 0;
 };
+
+}
 
 #endif /* end of include guard: SERVICES_I_WIFISERVICE_H */

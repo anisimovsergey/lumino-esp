@@ -8,16 +8,21 @@
 #define CONTROLLERS_NETWORKS_CONTROLLER_H
 
 #include "Services/IHttpServer.hpp"
+#include "Services/IWiFiService.hpp"
 
 namespace Controllers {
 
 class NetworksController {
-  private:
-    void onGetWiFiNetworks();
-
   public:
+    NetworksController(const Services::IWiFiService& wifiService);
+
     // Register the controller on HTTP server.
     void registerOn(Services::IHttpServer& server);
+
+  private:
+    const Services::IWiFiService& wifiService;
+
+    void onGetWiFiNetworks();
 };
 
 }

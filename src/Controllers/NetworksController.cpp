@@ -5,8 +5,16 @@
 using namespace Services;
 using namespace Controllers;
 
+NetworksController::NetworksController(
+  const Services::IWiFiService& wifiService) : wifiService(wifiService) {
+
+}
+
+
 void
 NetworksController::onGetWiFiNetworks() {
+
+
   /*
   void onGetWiFiNetworks() {
     int networksCount = WiFi.scanNetworks();

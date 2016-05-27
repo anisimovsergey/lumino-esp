@@ -1,16 +1,15 @@
 
 #include "Services/HttpServer.hpp"
+
+#include "Services/WiFiService.hpp"
 #include "Controllers/NetworksController.hpp"
 #include "Controllers/SettingsController.hpp"
 
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
-#include <WiFiClient.h>
-#include <ArduinoJson.h>
 
+using namespace Services;
 using namespace Controllers;
-
-#define MAX_CONNECTION_WAIT 10
 
 String network_ssid = "BTHub4-NC8S";
 String network_pswd = "d5e89ca8cf";
@@ -27,7 +26,9 @@ void setup(void){
   WiFi.softAP(host);
   //WiFi.softAPdisconnect(); // Disconnect and delete from memory.
 
-  NetworksController networksController;
+  WiFiService wifiService;
+
+  NetworksController networksController(wifiService);
   networksController.registerOn(server);
 
   SettingsController settingsController;
