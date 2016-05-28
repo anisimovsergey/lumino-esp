@@ -13,6 +13,7 @@ namespace Core {
 
 class ISerializable {
   public:
+    ~ISerializable() {};
     virtual String getTypeId() const = 0;
 };
 

@@ -25,10 +25,6 @@ String getEncryptionTypeString(int thisType) {
 
 }
 
-Models::Network
-NetworkSerializer::deserialize(const ISerializationContext& context) {
-}
-
 void
 NetworkSerializer::serialize(const Network& network,
                             ISerializationContext& context) {

@@ -9,11 +9,17 @@
 
 #include "ISerializable.hpp"
 
+#include <list>
+#include <functional>
+
 namespace Core {
 
 class IList : public ISerializable {
   public:
     virtual ~IList() {};
+
+    typedef std::function<void(const ISerializable& item)> ForEachFunction;
+    virtual void forEach(ForEachFunction func) const = 0;
 };
 
 template <class T> class List : public IList {
@@ -21,8 +27,20 @@ template <class T> class List : public IList {
     String getTypeId() const override { return "collection"; }
 
     void add(const T& value) {
-
+      elements.push_back(value);
     };
+
+    void forEach(ForEachFunction func) const {
+      for (auto iterator = elements.begin(),
+           end = elements.end();
+           iterator != end;
+           ++iterator) {
+        func(*iterator);
+      }
+    }
+
+  private:
+    std::list<T> elements;
  };
 
 }

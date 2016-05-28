@@ -13,7 +13,6 @@ namespace Controllers {
 
 class SettingsController {
   public:
-    // Register the controller on HTTP server.
     void registerOn(Services::IHttpServer& httpServer);
 
   private:

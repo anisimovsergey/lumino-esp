@@ -13,9 +13,6 @@
 namespace Json {
 
 class NetworkSerializer : public Core::Serializer<Models::Network> {
-  public:
-    Models::Network deserialize(const Core::ISerializationContext& context);
-
   protected:
     void serialize(const Models::Network& network,
                   Core::ISerializationContext& context) override;
