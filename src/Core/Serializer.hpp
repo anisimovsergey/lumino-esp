@@ -15,7 +15,7 @@ template <class T> class Serializer : public ISerializer {
   public:
     virtual void serialize(const ISerializable& object,
                            ISerializationContext& context) override {
-        context.setType(object.getTypeId());
+        context.setValue("type", object.getTypeId());
         const T& objectT = static_cast<const T&>(object);
         serialize(objectT, context);
     }

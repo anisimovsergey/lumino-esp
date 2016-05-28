@@ -7,20 +7,11 @@
 #ifndef CORE_LIST_H
 #define CORE_LIST_H
 
-#include "ISerializable.hpp"
+#include "IList.hpp"
 
 #include <list>
-#include <functional>
 
 namespace Core {
-
-class IList : public ISerializable {
-  public:
-    virtual ~IList() {};
-
-    typedef std::function<void(const ISerializable& item)> ForEachFunction;
-    virtual void forEach(ForEachFunction func) const = 0;
-};
 
 template <class T> class List : public IList {
   public:
@@ -30,14 +21,21 @@ template <class T> class List : public IList {
       elements.push_back(value);
     };
 
-    void forEach(ForEachFunction func) const {
-      for (auto iterator = elements.begin(),
-           end = elements.end();
-           iterator != end;
-           ++iterator) {
-        func(*iterator);
-      }
-    }
+    typedef std::function<void(const T& item)> ForEachFunctionTyped;
+    void forEach(ForEachFunctionTyped func) const {
+        for (auto iterator = elements.begin(),
+             end = elements.end();
+             iterator != end;
+             ++iterator) {
+          func(*iterator);
+        }
+    };
+
+    void forEach(ForEachFunction func) const override {
+      forEach([&](const T& element) {
+        func(element);
+      });
+    };
 
   private:
     std::list<T> elements;
