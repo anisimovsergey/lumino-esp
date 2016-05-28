@@ -15,8 +15,8 @@ namespace Json {
 class StatusSerializer {
   public:
     Core::Status deserialie(const ISerializationContext& context);
-    void serialie(const Core::Status& status,
-                  ISerializationContext& context);
+    void         serialie(const Core::Status& status,
+                          ISerializationContext& context);
 };
 
 }

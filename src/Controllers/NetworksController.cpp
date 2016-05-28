@@ -23,9 +23,9 @@ NetworksController::onGetWiFiNetworks(Services::IHttpServer& httpServer) {
   std::list<Models::Network> networks;
   const Status& status = wifiService.getWiFiNetworks(networks);
   if (status.isOk()) {
-    httpServer.sendJson(&status);
-  } else {
     httpServer.sendJson(&networks);
+  } else {
+    httpServer.sendJson(&status);
   }
   /*
   void onGetWiFiNetworks() {
