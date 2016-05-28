@@ -4,15 +4,17 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef JSON_I_SERIALIZATION_CONTEXT_H
-#define JSON_I_SERIALIZATION_CONTEXT_H
+#ifndef CORE_I_SERIALIZATION_CONTEXT_H
+#define CORE_I_SERIALIZATION_CONTEXT_H
 
 #include <WString.h>
 
-namespace Json {
+namespace Core {
 
 class ISerializationContext {
   public:
+      virtual ~ISerializationContext() {};
+
       virtual String  getString(String key) const = 0;
       virtual bool    getBool(String key) const = 0;
 
@@ -23,4 +25,4 @@ class ISerializationContext {
 
 }
 
-#endif /* end of include guard: JSON_I_SERIALIZATION_CONTEXT_H */
+#endif /* end of include guard: CORE_I_SERIALIZATION_CONTEXT_H */

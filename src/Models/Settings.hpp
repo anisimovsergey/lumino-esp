@@ -7,13 +7,15 @@
 #ifndef MODELS_SETTINGS_H
 #define MODELS_SETTINGS_H
 
-#include <WString.h>
+#include "Core/ISerializable.hpp"
 
 namespace Models {
 
-class Settings {
+class Settings : public Core::ISerializable {
   public:
     Settings(String deviceName, String networkSsid, String networkPassword);
+
+    String getTypeId() const override { return "settings"; }
 
     String  getDeviceName() const { return deviceName; };
     String  getNetworkSsid() const { return networkSsid; };

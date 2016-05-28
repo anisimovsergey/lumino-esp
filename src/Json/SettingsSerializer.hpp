@@ -7,16 +7,18 @@
 #ifndef JSON_SETTINGS_SERIALIZER_H
 #define JSON_SETTINGS_SERIALIZER_H
 
-#include "ISerializationContext.hpp"
+#include "Core/Serializer.hpp"
 #include "Models/Settings.hpp"
 
 namespace Json {
 
-class SettingsSerializer {
+class SettingsSerializer : public Core::Serializer<Models::Settings> {
   public:
-    Models::Settings deserialie(const ISerializationContext& context);
-    void serialie(const Models::Settings& settings,
-                  ISerializationContext& context);
+    Models::Settings deserialize(const Core::ISerializationContext& context);
+
+  protected:
+    void serialize(const Models::Settings& settings,
+                  Core::ISerializationContext& context) override;
 };
 
 }

@@ -1,11 +1,13 @@
 #include "NetworkSerializer.hpp"
-#include "ISerializationContext.hpp"
 #include "Models/Network.hpp"
 
 #include <ESP8266WiFi.h>
 
+using namespace Core;
 using namespace Json;
 using namespace Models;
+
+namespace {
 
 String getEncryptionTypeString(int thisType) {
   switch (thisType) {
@@ -22,13 +24,15 @@ String getEncryptionTypeString(int thisType) {
   }
 }
 
+}
+
 Models::Network
-NetworkSerializer::deserialie(const Json::ISerializationContext& context) {
+NetworkSerializer::deserialize(const ISerializationContext& context) {
 }
 
 void
-NetworkSerializer::serialie(const Models::Network& network,
-  Json::ISerializationContext& context) {
+NetworkSerializer::serialize(const Network& network,
+                            ISerializationContext& context) {
 
   context.setType("network");
   context.setValue("ssid", network.getSsid());

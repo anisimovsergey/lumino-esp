@@ -4,6 +4,7 @@
 #include "Services/WiFiService.hpp"
 #include "Controllers/NetworksController.hpp"
 #include "Controllers/SettingsController.hpp"
+#include "Json/StatusSerializer.hpp"
 
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
@@ -25,6 +26,8 @@ void setup(void){
 
   WiFi.softAP(host);
   //WiFi.softAPdisconnect(); // Disconnect and delete from memory.
+
+  Json::StatusSerializer serializer;
 
   WiFiService wifiService;
 

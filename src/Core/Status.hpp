@@ -7,17 +7,19 @@
 #ifndef CORE_STATUS_H
 #define CORE_STATUS_H
 
-#include <WString.h>
+#include "ISerializable.hpp"
 
 namespace Core {
 
-class Status {
+class Status : public ISerializable {
   public:
     // Well-known statuses
     static const Status Ok;
     static const Status UnableToScanFiFiNetworks;
 
   public:
+    String getTypeId() const override { return "status"; }
+    
     bool   isOk() const { return ok;  }
     String getCode() const { return code; };
     String getTitle() const { return title; };
