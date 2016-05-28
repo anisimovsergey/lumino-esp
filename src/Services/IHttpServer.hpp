@@ -7,6 +7,8 @@
 #ifndef SERVICES_I_HTTPSERVER_H
 #define SERVICES_I_HTTPSERVER_H
 
+#include "Core/ISerializable.hpp"
+
 #include <functional>
 
 namespace Services {
@@ -20,7 +22,7 @@ class IHttpServer {
       virtual void addPutHandler(const char* uri,
                                  THandlerFunction fn) = 0;
 
-      virtual void sendJson(const void* value) = 0;                          
+      virtual void sendJson(const Core::ISerializable& value) = 0;
 };
 
 }

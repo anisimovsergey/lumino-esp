@@ -20,12 +20,12 @@ NetworksController::registerOn(IHttpServer &httpServer) {
 
 void
 NetworksController::onGetWiFiNetworks(Services::IHttpServer& httpServer) {
-  std::list<Models::Network> networks;
+  List<Models::Network> networks;
   const Status& status = wifiService.getWiFiNetworks(networks);
   if (status.isOk()) {
-    httpServer.sendJson(&networks);
+    //httpServer.sendJson(networks);
   } else {
-    httpServer.sendJson(&status);
+    httpServer.sendJson(status);
   }
   /*
   void onGetWiFiNetworks() {

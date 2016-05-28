@@ -55,18 +55,6 @@ HttpServer::handleFileRead(String path) {
   return false;
 }
 
-/*
-void
-HttpServer::sendError(const Error& error) {
-  String json = "{";
-  json += "\"type\": \"error\",";
-  json += "\"status\": \"500\",";
-  json += "\"code\": \"UnableToScanWiFiNetwors\",";
-  json += "\"title\": \"Unable to scan WiFi networks.\",";
-  json += "}";
-  server->send(500, "text/json", json);
-}*/
-
 void
 HttpServer::addGetHandler(const char* uri, THandlerFunction fn) {
   server->on(uri, HTTP_GET, fn);
@@ -78,7 +66,7 @@ HttpServer::addPutHandler(const char* uri, THandlerFunction fn) {
 }
 
 void
-HttpServer::sendJson(const void* value) {
+HttpServer::sendJson(const Core::ISerializable& value) {
 
 }
 

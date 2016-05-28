@@ -8,15 +8,14 @@
 #define SERVICES_I_WIFISERVICE_H
 
 #include "Core/Status.hpp"
+#include "Core/List.hpp"
 #include "Models/Network.hpp"
-
-#include <list>
 
 namespace Services {
 
 class IWiFiService {
   public:
-    typedef std::list<Models::Network> Networks;
+    typedef Core::List<Models::Network> Networks;
 
     virtual Core::Status getWiFiNetworks(Networks& networks) const = 0;
 };

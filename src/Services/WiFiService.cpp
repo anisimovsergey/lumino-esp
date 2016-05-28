@@ -19,7 +19,7 @@ WiFiService::getWiFiNetworks(Networks& networks) const {
     String ssid = WiFi.SSID(networkNum);
     int rssi = WiFi.RSSI(networkNum);
     int encryptionType = WiFi.encryptionType(networkNum);
-    networks.push_back(Network(ssid, rssi, encryptionType));
+    networks.add(Network(ssid, rssi, encryptionType));
   }
   return Status::Ok;
 }

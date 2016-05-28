@@ -12,8 +12,6 @@
 namespace Services {
 
 class WiFiService : public IWiFiService {
-  typedef std::list<Models::Network> Networks;
-
   public:
     virtual Core::Status getWiFiNetworks(Networks& networks) const override;
 };
