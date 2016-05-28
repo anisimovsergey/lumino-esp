@@ -15,10 +15,11 @@ template <class T> class Serializer : public ISerializer {
   public:
     virtual void serialize(const ISerializable& object,
                            ISerializationContext& context) override {
+        context.setType(object.getTypeId());
         const T& objectT = static_cast<const T&>(object);
         serialize(objectT, context);
     }
-    
+
   protected:
     virtual void serialize(const T& object,
                            ISerializationContext& context) = 0;

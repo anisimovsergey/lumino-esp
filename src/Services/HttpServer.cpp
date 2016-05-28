@@ -7,7 +7,8 @@
 
 using namespace Services;
 
-HttpServer::HttpServer(int port) : server(new ESP8266WebServer(port)) {
+HttpServer::HttpServer(int port, const IStatusCodeRegistry& registry) :
+  server(new ESP8266WebServer(port)), registry(registry) {
   SPIFFS.begin();
   // Setting up "File not found" (404) responce
   server->onNotFound([&](){
@@ -56,18 +57,26 @@ HttpServer::handleFileRead(String path) {
 }
 
 void
-HttpServer::addGetHandler(const char* uri, THandlerFunction fn) {
-  server->on(uri, HTTP_GET, fn);
+HttpServer::addGetHandler(const String& uri, THandlerFunction fn) {
+  server->on(uri.c_str(), HTTP_GET, fn);
 }
 
 void
-HttpServer::addPutHandler(const char* uri, THandlerFunction fn) {
-  server->on(uri, HTTP_PUT, fn);
+HttpServer::addPutHandler(const String& uri, THandlerFunction fn) {
+  server->on(uri.c_str(), HTTP_PUT, fn);
+}
+
+void
+HttpServer::sendJson(const Core::Status& status) {
+  String json;
+  int code = registry.getCode(status);
+  server->send(code, "text/json", json);
 }
 
 void
 HttpServer::sendJson(const Core::ISerializable& value) {
-
+  String json;
+  server->send(200, "text/json", json);
 }
 
 void

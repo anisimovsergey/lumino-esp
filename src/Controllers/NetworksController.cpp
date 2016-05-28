@@ -23,7 +23,7 @@ NetworksController::onGetWiFiNetworks(Services::IHttpServer& httpServer) {
   List<Models::Network> networks;
   const Status& status = wifiService.getWiFiNetworks(networks);
   if (status.isOk()) {
-    //httpServer.sendJson(networks);
+    httpServer.sendJson(networks);
   } else {
     httpServer.sendJson(status);
   }

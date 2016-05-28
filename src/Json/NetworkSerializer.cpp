@@ -32,8 +32,6 @@ NetworkSerializer::deserialize(const ISerializationContext& context) {
 void
 NetworkSerializer::serialize(const Network& network,
                             ISerializationContext& context) {
-
-  context.setType("network");
   context.setValue("ssid", network.getSsid());
   context.setValue("rssi", network.getRssi());
 

@@ -2,6 +2,7 @@
 #include "Services/HttpServer.hpp"
 
 #include "Services/WiFiService.hpp"
+#include "Services/StatusCodeRegistry.hpp"
 #include "Controllers/NetworksController.hpp"
 #include "Controllers/SettingsController.hpp"
 #include "Json/StatusSerializer.hpp"
@@ -16,7 +17,7 @@ String network_ssid = "BTHub4-NC8S";
 String network_pswd = "d5e89ca8cf";
 const char* host = "esp8266fs";
 
-Services::HttpServer server(80);
+Services::HttpServer server(80, StatusCodeRegistry());
 
 void setup(void){
   WiFi.mode(WIFI_STA);

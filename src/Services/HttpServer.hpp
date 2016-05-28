@@ -7,6 +7,7 @@
 #ifndef SERVICES_HTTPSERVER_H
 #define SERVICES_HTTPSERVER_H
 
+#include "IStatusCodeRegistry.hpp"
 #include "IHttpServer.hpp"
 #include <WString.h>
 #include <memory>
@@ -17,20 +18,22 @@ namespace Services {
 
 class HttpServer : public IHttpServer {
   public:
-    HttpServer(int port);
+    HttpServer(int port, const IStatusCodeRegistry& registry);
 
     void start();
     void loop();
 
-    virtual void addGetHandler(const char* uri,
+    virtual void addGetHandler(const String& uri,
                                THandlerFunction fn) override;
-    virtual void addPutHandler(const char* uri,
+    virtual void addPutHandler(const String& uri,
                                THandlerFunction fn) override;
 
+    virtual void sendJson(const Core::Status& status) override;
     virtual void sendJson(const Core::ISerializable& value) override;
 
   private:
     std::unique_ptr<ESP8266WebServer> server;
+    const IStatusCodeRegistry&  registry;
 
     String  getContentType(String filename);
     bool    handleFileRead(String path);

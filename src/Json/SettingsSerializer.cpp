@@ -16,7 +16,6 @@ SettingsSerializer::deserialize(const ISerializationContext& context) {
 
 void
 SettingsSerializer::serialize(const Settings& settings, ISerializationContext& context) {
-  context.setType("settings");
   context.setValue("name", settings.getDeviceName());
   context.setValue("wifi_network", settings.getNetworkSsid());
   context.setValue("wifi_password", settings.getNetworkPassword());

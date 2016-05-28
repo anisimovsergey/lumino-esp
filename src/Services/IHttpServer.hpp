@@ -7,6 +7,7 @@
 #ifndef SERVICES_I_HTTPSERVER_H
 #define SERVICES_I_HTTPSERVER_H
 
+#include "Core/Status.hpp"
 #include "Core/ISerializable.hpp"
 
 #include <functional>
@@ -17,11 +18,12 @@ class IHttpServer {
   public:
       typedef std::function<void(void)> THandlerFunction;
 
-      virtual void addGetHandler(const char* uri,
+      virtual void addGetHandler(const String& uri,
                                  THandlerFunction fn) = 0;
-      virtual void addPutHandler(const char* uri,
+      virtual void addPutHandler(const String& uri,
                                  THandlerFunction fn) = 0;
 
+      virtual void sendJson(const Core::Status& status) = 0;
       virtual void sendJson(const Core::ISerializable& value) = 0;
 };
 

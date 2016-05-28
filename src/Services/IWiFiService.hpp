@@ -11,12 +11,12 @@
 #include "Core/List.hpp"
 #include "Models/Network.hpp"
 
+
 namespace Services {
 
 class IWiFiService {
   public:
     typedef Core::List<Models::Network> Networks;
-
     virtual Core::Status getWiFiNetworks(Networks& networks) const = 0;
 };
 
