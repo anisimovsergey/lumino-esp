@@ -14,6 +14,10 @@ namespace Json {
 
 class SettingsSerializer : public Serializer<Models::Settings> {
   public:
+    String getTypeId() const override {
+      return Models::Settings::getStaticTypeId();
+    }
+
     Models::Settings deserialize(const ISerializationContext& context);
 
   protected:

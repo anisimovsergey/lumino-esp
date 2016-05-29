@@ -13,6 +13,11 @@
 namespace Json {
 
 class StatusSerializer : public Serializer<Core::Status> {
+  public:
+    String getTypeId() const override {
+      return Core::Status::getStaticTypeId();
+    }
+
   protected:
     void serialize(const Core::Status& status,
                    ISerializationContext& context) const override;

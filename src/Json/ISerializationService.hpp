@@ -16,7 +16,7 @@ class ISerializationService {
     virtual ~ISerializationService() {}
 
     virtual void serialize(const Core::IEntity& object,
-                           const ISerializationContext& context) const = 0;
+                           ISerializationContext& context) const = 0;
 };
 
 }

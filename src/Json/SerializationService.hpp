@@ -7,14 +7,23 @@
 #ifndef JSON_SERIALIZATION_SERVICE_H
 #define JSON_SERIALIZATION_SERVICE_H
 
+#include "ISerializer.hpp"
 #include "ISerializationService.hpp"
+
+#include <memory>
+#include <list>
 
 namespace Json {
 
 class SerializationService : public ISerializationService {
   public:
     void serialize(const Core::IEntity& object,
-                   const ISerializationContext& context) const override;
+                   ISerializationContext& context) const override;
+
+    void addSerializer(std::shared_ptr<ISerializer> serializer);
+
+  private:
+    std::list<std::shared_ptr<ISerializer>> serializers;
 };
 
 }

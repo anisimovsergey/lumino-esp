@@ -13,6 +13,11 @@
 namespace Json {
 
 class NetworkSerializer : public Serializer<Models::Network> {
+  public:
+    String getTypeId() const override {
+      return Models::Network::getStaticTypeId();
+    }
+
   protected:
     void serialize(const Models::Network& network,
                    ISerializationContext& context) const override;

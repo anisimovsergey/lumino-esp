@@ -13,7 +13,7 @@ namespace Json {
 
 template <class T> class Serializer : public ISerializer {
   public:
-    virtual void serialize(const Core::IEntity& object,
+    void serialize(const Core::IEntity& object,
                            ISerializationContext& context) const override {
         context.setValue("type", object.getTypeId());
         const T& objectT = static_cast<const T&>(object);

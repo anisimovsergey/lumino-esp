@@ -13,6 +13,11 @@
 namespace Json {
 
 class ListSerializer : public Serializer<Core::IList> {
+  public:
+    String getTypeId() const override {
+      return Core::List<class T>::getStaticTypeId();
+    }
+
   protected:
     void serialize(const Core::IList& list,
                    ISerializationContext& context) const override;
