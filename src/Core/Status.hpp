@@ -7,7 +7,7 @@
 #ifndef CORE_STATUS_H
 #define CORE_STATUS_H
 
-#include "IEntity.hpp"
+#include "Entity.hpp"
 
 namespace Core {
 

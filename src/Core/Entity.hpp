@@ -7,7 +7,7 @@
 #ifndef CORE_ENTITY_H
 #define CORE_ENTITY_H
 
-#include <IEntity.hpp>
+#include "IEntity.hpp"
 
 namespace Core {
 

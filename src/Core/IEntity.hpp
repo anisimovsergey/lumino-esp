@@ -17,13 +17,6 @@ class IEntity {
     virtual String getTypeId() const = 0;
 };
 
-template<class T> class Entity : public IEntity {
-  public:
-    String getTypeId() const override {
-      return T::getStaticTypeId();
-    }
-};
-
 }
 
 #endif /* end of include guard: CORE_I_ENTITY_H */

@@ -7,7 +7,7 @@
 #ifndef MODELS_NETWORK_H
 #define MODELS_NETWORK_H
 
-#include "Core/IEntity.hpp"
+#include "Core/Entity.hpp"
 
 namespace Models {
 

@@ -7,7 +7,7 @@
 #ifndef MODELS_SETTINGS_H
 #define MODELS_SETTINGS_H
 
-#include "Core/IEntity.hpp"
+#include "Core/Entity.hpp"
 
 namespace Models {
 
