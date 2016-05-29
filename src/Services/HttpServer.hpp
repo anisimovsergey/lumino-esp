@@ -29,7 +29,7 @@ class HttpServer : public IHttpServer {
                                THandlerFunction fn) override;
 
     virtual void sendJson(const Core::Status& status) override;
-    virtual void sendJson(const Core::ISerializable& value) override;
+    virtual void sendJson(const Core::IEntity& value) override;
 
   private:
     std::unique_ptr<ESP8266WebServer> server;

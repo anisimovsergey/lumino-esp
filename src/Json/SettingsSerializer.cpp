@@ -1,6 +1,5 @@
 #include "SettingsSerializer.hpp"
 
-using namespace Core;
 using namespace Json;
 using namespace Models;
 

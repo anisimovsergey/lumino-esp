@@ -7,16 +7,16 @@
 #ifndef MODELS_NETWORK_H
 #define MODELS_NETWORK_H
 
-#include "Core/ISerializable.hpp"
+#include "Core/IEntity.hpp"
 
 namespace Models {
 
-class Network : public Core::ISerializable {
+class Network : public Core::IEntity {
   public:
     Network(String ssid, int rssi, int encryptionType);
 
     String getTypeId() const override { return "network"; }
-    
+
     String  getSsid() const { return ssid; };
     int     getRssi() const { return rssi; };
     int     getEncryptionType() const { return encryptionType; };

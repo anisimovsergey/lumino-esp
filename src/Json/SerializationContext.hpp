@@ -8,30 +8,24 @@
 #define CORE_SERIALIZATION_CONTEXT_H
 
 #include "ISerializationContext.hpp"
+#include "ISerializationService.hpp"
 
 #include <ArduinoJson.h>
 
-namespace Core {
-
-class ISerializationService {
-  public:
-    virtual ~ISerializationService() {}
-
-    virtual void serialize(const ISerializationContext& context,
-                           const ISerializable& object) const = 0;
-};
+namespace Json {
 
 class SerializationContext : public ISerializationContext {
   public:
-    SerializationContext(const ISerializationService& serializationService,
-                         JsonObject& jsonObject);
+    SerializationContext(
+      const ISerializationService& serializationService,
+      JsonObject& jsonObject);
 
     void setValue(const String& key, const String& value) override;
     void setValue(const String& key, int value) override;
-    void setValue(const String& key, const IList& list) override;
+    void setValue(const String& key, const Core::IList& list) override;
 
   private:
-    JsonObject&                   jsonObject;
+    JsonObject&                             jsonObject;
     const ISerializationService&  serializationService;
 };
 

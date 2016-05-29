@@ -74,7 +74,7 @@ HttpServer::sendJson(const Core::Status& status) {
 }
 
 void
-HttpServer::sendJson(const Core::ISerializable& value) {
+HttpServer::sendJson(const Core::IEntity& value) {
   String json;
   server->send(200, "text/json", json);
 }

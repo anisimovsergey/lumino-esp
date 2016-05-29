@@ -7,15 +7,15 @@
 #ifndef JSON_LIST_SERIALIZER_H
 #define JSON_LIST_SERIALIZER_H
 
-#include "Core/Serializer.hpp"
 #include "Core/List.hpp"
+#include "Serializer.hpp"
 
 namespace Json {
 
-class ListSerializer : public Core::Serializer<Core::IList> {
+class ListSerializer : public Serializer<Core::IList> {
   protected:
     void serialize(const Core::IList& list,
-                   Core::ISerializationContext& context) override;
+                   ISerializationContext& context) override;
 };
 
 }

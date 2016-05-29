@@ -7,11 +7,11 @@
 #ifndef CORE_STATUS_H
 #define CORE_STATUS_H
 
-#include "ISerializable.hpp"
+#include "IEntity.hpp"
 
 namespace Core {
 
-class Status : public ISerializable {
+class Status : public IEntity {
   public:
     // Well-known statuses
     static const Status Ok;

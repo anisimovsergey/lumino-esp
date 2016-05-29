@@ -4,21 +4,21 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef CORE_I_SERIALIZER_H
-#define CORE_I_SERIALIZER_H
+#ifndef JSON_I_SERIALIZER_H
+#define JSON_I_SERIALIZER_H
 
-#include "ISerializable.hpp"
+#include "Core/IEntity.hpp"
 #include "ISerializationContext.hpp"
 
-namespace Core {
+namespace Json {
 
 class ISerializer {
   public:
     virtual ~ISerializer() {};
-    virtual void serialize(const ISerializable& object,
+    virtual void serialize(const Core::IEntity& entity,
                            ISerializationContext& context) = 0;
 };
 
 }
 
-#endif /* end of include guard: CORE_I_SERIALIZER_H */
+#endif /* end of include guard: JSON_I_SERIALIZER_H */

@@ -9,11 +9,11 @@
 
 #include "ISerializer.hpp"
 
-namespace Core {
+namespace Json {
 
 template <class T> class Serializer : public ISerializer {
   public:
-    virtual void serialize(const ISerializable& object,
+    virtual void serialize(const Core::IEntity& object,
                            ISerializationContext& context) override {
         context.setValue("type", object.getTypeId());
         const T& objectT = static_cast<const T&>(object);

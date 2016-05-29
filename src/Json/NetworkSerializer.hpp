@@ -7,15 +7,15 @@
 #ifndef JSON_NETWORK_SERIALIZER_H
 #define JSON_NETWORK_SERIALIZER_H
 
-#include "Core/Serializer.hpp"
 #include "Models/Network.hpp"
+#include "Serializer.hpp"
 
 namespace Json {
 
-class NetworkSerializer : public Core::Serializer<Models::Network> {
+class NetworkSerializer : public Serializer<Models::Network> {
   protected:
     void serialize(const Models::Network& network,
-                  Core::ISerializationContext& context) override;
+                   ISerializationContext& context) override;
 };
 
 }

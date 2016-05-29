@@ -8,7 +8,7 @@
 #define SERVICES_I_HTTPSERVER_H
 
 #include "Core/Status.hpp"
-#include "Core/ISerializable.hpp"
+#include "Core/IEntity.hpp"
 
 #include <functional>
 
@@ -24,7 +24,7 @@ class IHttpServer {
                                  THandlerFunction fn) = 0;
 
       virtual void sendJson(const Core::Status& status) = 0;
-      virtual void sendJson(const Core::ISerializable& value) = 0;
+      virtual void sendJson(const Core::IEntity& value) = 0;
 };
 
 }

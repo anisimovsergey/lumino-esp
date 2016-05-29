@@ -4,19 +4,19 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef CORE_I_SERIALIZABLE_H
-#define CORE_I_SERIALIZABLE_H
+#ifndef CORE_I_ENTITY_H
+#define CORE_I_ENTITY_H
 
 #include <WString.h>
 
 namespace Core {
 
-class ISerializable {
+class IEntity {
   public:
-    ~ISerializable() {};
+    virtual ~IEntity() {};
     virtual String getTypeId() const = 0;
 };
 
 }
 
-#endif /* end of include guard: CORE_I_SERIALIZIBLE_H */
+#endif /* end of include guard: CORE_I_ENTITY_H */

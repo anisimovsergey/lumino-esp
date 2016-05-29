@@ -1,5 +1,6 @@
 #include "SerializationContext.hpp"
 
+using namespace Json;
 using namespace Core;
 
 SerializationContext::SerializationContext(
@@ -22,7 +23,7 @@ SerializationContext::setValue(const String& key, int value) {
 void
 SerializationContext::setValue(const String& key, const IList& list) {
   JsonArray& array = jsonObject.createNestedArray(key);
-  list.forEach([&](const ISerializable& element) {
+  list.forEach([&](const IEntity& element) {
     JsonObject& nestedObject = array.createNestedObject();
     SerializationContext context(serializationService, nestedObject);
     serializationService.serialize(context, element);

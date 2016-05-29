@@ -7,11 +7,11 @@
 #ifndef MODELS_SETTINGS_H
 #define MODELS_SETTINGS_H
 
-#include "Core/ISerializable.hpp"
+#include "Core/IEntity.hpp"
 
 namespace Models {
 
-class Settings : public Core::ISerializable {
+class Settings : public Core::IEntity {
   public:
     Settings(String deviceName, String networkSsid, String networkPassword);
 

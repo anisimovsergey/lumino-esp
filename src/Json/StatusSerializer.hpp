@@ -7,15 +7,15 @@
 #ifndef JSON_STATUS_SERIALIZER_H
 #define JSON_STATUS_SERIALIZER_H
 
-#include "Core/Serializer.hpp"
+#include "Serializer.hpp"
 #include "Core/Status.hpp"
 
 namespace Json {
 
-class StatusSerializer : public Core::Serializer<Core::Status> {
+class StatusSerializer : public Serializer<Core::Status> {
   protected:
     void serialize(const Core::Status& status,
-                   Core::ISerializationContext& context) override;
+                   ISerializationContext& context) override;
 };
 
 }

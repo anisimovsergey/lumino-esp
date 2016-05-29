@@ -7,17 +7,17 @@
 #ifndef CORE_I_LIST_H
 #define CORE_I_LIST_H
 
-#include "ISerializable.hpp"
+#include "IEntity.hpp"
 
 #include <functional>
 
 namespace Core {
 
-class IList : public ISerializable {
+class IList : public IEntity {
   public:
     virtual ~IList() {};
 
-    typedef std::function<void(const ISerializable& item)> ForEachFunction;
+    typedef std::function<void(const IEntity& item)> ForEachFunction;
     virtual void forEach(ForEachFunction func) const = 0;
 };
 
