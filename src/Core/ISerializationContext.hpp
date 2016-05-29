@@ -15,11 +15,11 @@ namespace Core {
 
 class ISerializationContext {
   public:
-      virtual ~ISerializationContext() {};
+    virtual ~ISerializationContext() {};
 
-      virtual void    setValue(String key, String value) = 0;
-      virtual void    setValue(String key, int value) = 0;
-      virtual void    setValue(String key, const IList& list) = 0;
+    virtual void setValue(const String& key, const String& value) = 0;
+    virtual void setValue(const String& key, int value) = 0;
+    virtual void setValue(const String& key, const IList& list) = 0;
 };
 
 }
