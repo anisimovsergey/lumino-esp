@@ -15,7 +15,7 @@ namespace Json {
 class NetworkSerializer : public Serializer<Models::Network> {
   protected:
     void serialize(const Models::Network& network,
-                   ISerializationContext& context) override;
+                   ISerializationContext& context) const override;
 };
 
 }

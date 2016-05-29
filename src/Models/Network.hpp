@@ -11,11 +11,11 @@
 
 namespace Models {
 
-class Network : public Core::IEntity {
+class Network : public Core::Entity<Network> {
   public:
     Network(String ssid, int rssi, int encryptionType);
 
-    String getTypeId() const override { return "network"; }
+    static String  getStaticTypeId() { return "network"; }
 
     String  getSsid() const { return ssid; };
     int     getRssi() const { return rssi; };

@@ -11,15 +11,15 @@
 
 namespace Core {
 
-class Status : public IEntity {
+class Status : public Entity<Status> {
   public:
     // Well-known statuses
     static const Status Ok;
     static const Status UnableToScanFiFiNetworks;
 
   public:
-    String getTypeId() const override { return "status"; }
-    
+    static String getStaticTypeId() { return "status"; }
+
     bool   isOk() const { return ok;  }
     String getCode() const { return code; };
     String getTitle() const { return title; };

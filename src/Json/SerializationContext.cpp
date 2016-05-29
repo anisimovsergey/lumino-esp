@@ -26,6 +26,6 @@ SerializationContext::setValue(const String& key, const IList& list) {
   list.forEach([&](const IEntity& element) {
     JsonObject& nestedObject = array.createNestedObject();
     SerializationContext context(serializationService, nestedObject);
-    serializationService.serialize(context, element);
+    serializationService.serialize(element, context);
   });
 }

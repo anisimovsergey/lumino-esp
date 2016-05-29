@@ -26,7 +26,7 @@ String getEncryptionTypeString(int thisType) {
 
 void
 NetworkSerializer::serialize(const Network& network,
-                            ISerializationContext& context) {
+                            ISerializationContext& context) const {
   context.setValue("ssid", network.getSsid());
   context.setValue("rssi", network.getRssi());
 

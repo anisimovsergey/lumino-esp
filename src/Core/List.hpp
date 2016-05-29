@@ -15,7 +15,11 @@ namespace Core {
 
 template <class T> class List : public IList {
   public:
-    String getTypeId() const override { return "collection"; }
+    static String getStaticTypeId() { return "collection"; }
+
+    String getTypeId() const override {
+      return getStaticTypeId();
+    }
 
     void add(const T& value) {
       elements.push_back(value);

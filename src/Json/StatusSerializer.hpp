@@ -15,7 +15,7 @@ namespace Json {
 class StatusSerializer : public Serializer<Core::Status> {
   protected:
     void serialize(const Core::Status& status,
-                   ISerializationContext& context) override;
+                   ISerializationContext& context) const override;
 };
 
 }

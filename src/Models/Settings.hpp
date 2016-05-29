@@ -11,11 +11,11 @@
 
 namespace Models {
 
-class Settings : public Core::IEntity {
+class Settings : public Core::Entity<Settings> {
   public:
     Settings(String deviceName, String networkSsid, String networkPassword);
 
-    String getTypeId() const override { return "settings"; }
+    static String  getStaticTypeId() { return "settings"; }
 
     String  getDeviceName() const { return deviceName; };
     String  getNetworkSsid() const { return networkSsid; };

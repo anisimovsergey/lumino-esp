@@ -5,6 +5,6 @@ using namespace Core;
 
 void
 ListSerializer::serialize(const IList& list,
-                          ISerializationContext& context) {
+                          ISerializationContext& context) const {
     context.setValue("elements", list);
 }

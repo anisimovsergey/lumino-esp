@@ -15,7 +15,7 @@ namespace Json {
 class ListSerializer : public Serializer<Core::IList> {
   protected:
     void serialize(const Core::IList& list,
-                   ISerializationContext& context) override;
+                   ISerializationContext& context) const override;
 };
 
 }

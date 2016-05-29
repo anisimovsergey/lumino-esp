@@ -5,7 +5,7 @@ using namespace Core;
 
 void
 StatusSerializer::serialize(const Status& status,
-                            ISerializationContext& context) {
+                            ISerializationContext& context) const {
   context.setValue("code", status.getCode());
   context.setValue("title", status.getTitle());
 }

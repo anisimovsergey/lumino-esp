@@ -18,7 +18,7 @@ class SettingsSerializer : public Serializer<Models::Settings> {
 
   protected:
     void serialize(const Models::Settings& settings,
-                   ISerializationContext& context) override;
+                   ISerializationContext& context) const override;
 };
 
 }
