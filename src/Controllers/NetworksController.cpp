@@ -16,16 +16,19 @@ void
 NetworksController::registerOn(IHttpServer &httpServer) {
   httpServer.addGetHandler("/wifi_networks", [&]() {
     Logger::message("GET /wifi_networks");
-    onGetWiFiNetworks(httpServer);
+    this->onGetWiFiNetworks(httpServer);
   });
 }
 
 void
 NetworksController::onGetWiFiNetworks(Services::IHttpServer& httpServer) {
+  Logger::message("Creating list");
   List<Models::Network> networks;
-  const Status& status = wifiService.getWiFiNetworks(networks);
+  Logger::message("Retrieving list of netorks...");
+  Status status = wifiService.getWiFiNetworks(networks);
+  Logger::message("List of netorks retrieved");
   if (status.isOk()) {
-    Logger::message("List of networks retrieved");
+    Logger::message("Successfully");
     httpServer.sendJson(networks);
   } else {
     Logger::error(status.getTitle());

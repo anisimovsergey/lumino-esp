@@ -9,13 +9,17 @@
 
 #include "Core/Status.hpp"
 #include "Core/List.hpp"
+#include "Core/Logger.hpp"
 #include "Models/Network.hpp"
-
 
 namespace Services {
 
 class IWiFiService {
   public:
+    virtual ~IWiFiService() {
+      Core::Logger::message("~IWiFiService");
+    }
+
     typedef Core::List<Models::Network> Networks;
     virtual Core::Status getWiFiNetworks(Networks& networks) const = 0;
 };

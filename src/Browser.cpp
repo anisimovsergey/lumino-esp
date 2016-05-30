@@ -7,6 +7,8 @@
 #include "Controllers/SettingsController.hpp"
 #include "Json/SerializationContextFactory.hpp"
 #include "Json/SerializationService.hpp"
+#include "Json/ListSerializer.hpp"
+#include "Json/NetworkSerializer.hpp"
 
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
@@ -26,9 +28,14 @@ SerializationService serializationService(contextFactory);
 
 HttpServer server(80, statusCodeRegistry, serializationService);
 
+WiFiService wifiService;
+
+NetworksController networksController(wifiService);
+SettingsController settingsController;
+
 void setup(void){
   Logger::initialize();
-  
+
   WiFi.mode(WIFI_STA);
   WiFi.hostname(host);
 
@@ -37,12 +44,10 @@ void setup(void){
   WiFi.softAP(host);
   //WiFi.softAPdisconnect(); // Disconnect and delete from memory.
 
-  WiFiService wifiService;
+  serializationService.addSerializer(std::shared_ptr<ListSerializer>(new ListSerializer()));
+  serializationService.addSerializer(std::shared_ptr<NetworkSerializer>(new NetworkSerializer()));
 
-  NetworksController networksController(wifiService);
   networksController.registerOn(server);
-
-  SettingsController settingsController;
   settingsController.registerOn(server);
 
   server.start();

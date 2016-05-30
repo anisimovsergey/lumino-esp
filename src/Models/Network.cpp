@@ -2,10 +2,11 @@
 
 using namespace Models;
 
-Network::Network(String ssid,
-                 int rssi,
-                 int encryptionType) {
-  this->ssid = ssid;
-  this->rssi = rssi;
-  this->encryptionType = encryptionType;
+Network::Network(
+  String ssid,
+  int rssi,
+  int encryptionType) :
+  ssid(ssid),
+  rssi(rssi),
+  encryptionType(encryptionType) {
 }
