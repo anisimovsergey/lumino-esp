@@ -24,7 +24,7 @@ class IHttpServer {
                                  THandlerFunction fn) = 0;
 
       virtual void sendJson(const Core::Status& status) = 0;
-      virtual void sendJson(const Core::IEntity& value) = 0;
+      virtual void sendJson(const Core::IEntity& entity) = 0;
 };
 
 }

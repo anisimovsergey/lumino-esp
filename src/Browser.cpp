@@ -1,15 +1,16 @@
 
 #include "Services/HttpServer.hpp"
-
 #include "Services/WiFiService.hpp"
 #include "Services/StatusCodeRegistry.hpp"
 #include "Controllers/NetworksController.hpp"
 #include "Controllers/SettingsController.hpp"
-#include "Json/StatusSerializer.hpp"
+#include "Json/SerializationContextFactory.hpp"
+#include "Json/SerializationService.hpp"
 
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 
+using namespace Json;
 using namespace Services;
 using namespace Controllers;
 
@@ -17,7 +18,11 @@ String network_ssid = "BTHub4-NC8S";
 String network_pswd = "d5e89ca8cf";
 const char* host = "esp8266fs";
 
-Services::HttpServer server(80, StatusCodeRegistry());
+StatusCodeRegistry statusCodeRegistry;
+SerializationContextFactory contextFactory;
+SerializationService serializationService(contextFactory);
+
+HttpServer server(80, statusCodeRegistry, serializationService);
 
 void setup(void){
   WiFi.mode(WIFI_STA);
@@ -27,8 +32,6 @@ void setup(void){
 
   WiFi.softAP(host);
   //WiFi.softAPdisconnect(); // Disconnect and delete from memory.
-
-  Json::StatusSerializer serializer;
 
   WiFiService wifiService;
 

@@ -7,9 +7,13 @@
 #ifndef SERVICES_HTTPSERVER_H
 #define SERVICES_HTTPSERVER_H
 
-#include "IStatusCodeRegistry.hpp"
 #include "IHttpServer.hpp"
+
+#include "IStatusCodeRegistry.hpp"
+#include "Json/ISerializationService.hpp"
+
 #include <WString.h>
+
 #include <memory>
 
 class ESP8266WebServer;
@@ -18,7 +22,9 @@ namespace Services {
 
 class HttpServer : public IHttpServer {
   public:
-    HttpServer(int port, const IStatusCodeRegistry& registry);
+    HttpServer(int port,
+               const IStatusCodeRegistry& registry,
+               const Json::ISerializationService& serializationService);
 
     void start();
     void loop();
@@ -29,11 +35,12 @@ class HttpServer : public IHttpServer {
                                THandlerFunction fn) override;
 
     virtual void sendJson(const Core::Status& status) override;
-    virtual void sendJson(const Core::IEntity& value) override;
+    virtual void sendJson(const Core::IEntity& entity) override;
 
   private:
     std::unique_ptr<ESP8266WebServer> server;
-    const IStatusCodeRegistry&  registry;
+    const IStatusCodeRegistry&    registry;
+    const Json::ISerializationService&  serializationService;
 
     String  getContentType(String filename);
     bool    handleFileRead(String path);

@@ -7,8 +7,13 @@
 
 using namespace Services;
 
-HttpServer::HttpServer(int port, const IStatusCodeRegistry& registry) :
-  server(new ESP8266WebServer(port)), registry(registry) {
+HttpServer::HttpServer(
+  int port,
+  const IStatusCodeRegistry& registry,
+  const Json::ISerializationService& serializationService) :
+  server(new ESP8266WebServer(port)),
+  registry(registry),
+  serializationService(serializationService) {
   SPIFFS.begin();
   // Setting up "File not found" (404) responce
   server->onNotFound([&](){
@@ -69,13 +74,13 @@ HttpServer::addPutHandler(const String& uri, THandlerFunction fn) {
 void
 HttpServer::sendJson(const Core::Status& status) {
   int code = registry.getCode(status);
-  String json;
+  String json = serializationService.serialize(status);
   server->send(code, "text/json", json);
 }
 
 void
-HttpServer::sendJson(const Core::IEntity& value) {
-  String json;
+HttpServer::sendJson(const Core::IEntity& entity) {
+  String json = serializationService.serialize(entity);
   server->send(200, "text/json", json);
 }
 

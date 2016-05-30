@@ -6,14 +6,14 @@ using namespace Json;
 using namespace Core;
 
 SerializationService::SerializationService(
-  std::shared_ptr<const ISerializationContextFactory> contextFactory) :
+  const ISerializationContextFactory& contextFactory) :
   contextFactory(contextFactory) {
 
 }
 
 String
 SerializationService::serialize(const IEntity& entity) const {
-  auto context = contextFactory->create(*this);
+  auto context = contextFactory.create(*this);
   serialize(entity, *context);
   return context->toString();
 }

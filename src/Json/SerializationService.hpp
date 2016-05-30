@@ -18,8 +18,7 @@ namespace Json {
 
 class SerializationService : public ISerializationService {
   public:
-    SerializationService(
-      std::shared_ptr<const ISerializationContextFactory> contextFactory);
+    SerializationService(const ISerializationContextFactory& contextFactory);
 
     String serialize(const Core::IEntity& entity) const override;
     void serialize(const Core::IEntity& entity,
@@ -28,7 +27,7 @@ class SerializationService : public ISerializationService {
     void addSerializer(std::shared_ptr<const ISerializer> serializer);
 
   private:
-    std::shared_ptr<const ISerializationContextFactory> contextFactory;
+    const ISerializationContextFactory&              contextFactory;
     std::list<std::shared_ptr<const ISerializer>>       serializers;
 };
 
