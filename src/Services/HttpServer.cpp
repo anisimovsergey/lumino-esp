@@ -1,10 +1,14 @@
 
 #include "HttpServer.hpp"
+
+#include "Core/Logger.hpp"
+
 #include <FS.h>
 #include <WiFiServer.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 
+using namespace Core;
 using namespace Services;
 
 HttpServer::HttpServer(
@@ -73,14 +77,18 @@ HttpServer::addPutHandler(const String& uri, THandlerFunction fn) {
 
 void
 HttpServer::sendJson(const Core::Status& status) {
-  int code = registry.getCode(status);
+  Logger::message("Serializing status """ + status.getCode() + """");
   String json = serializationService.serialize(status);
+  int code = registry.getCode(status);
+  Logger::message("Sending status with code """ + String(code) + """");
   server->send(code, "text/json", json);
 }
 
 void
 HttpServer::sendJson(const Core::IEntity& entity) {
+  Logger::message("Serializing entity of type """ + entity.getTypeId() + """");
   String json = serializationService.serialize(entity);
+  Logger::message("Sending entity of type """ + entity.getTypeId() + """");
   server->send(200, "text/json", json);
 }
 

@@ -1,4 +1,5 @@
 
+#include "Core/Logger.hpp"
 #include "Services/HttpServer.hpp"
 #include "Services/WiFiService.hpp"
 #include "Services/StatusCodeRegistry.hpp"
@@ -10,6 +11,7 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 
+using namespace Core;
 using namespace Json;
 using namespace Services;
 using namespace Controllers;
@@ -25,6 +27,8 @@ SerializationService serializationService(contextFactory);
 HttpServer server(80, statusCodeRegistry, serializationService);
 
 void setup(void){
+  Logger::initialize();
+  
   WiFi.mode(WIFI_STA);
   WiFi.hostname(host);
 
