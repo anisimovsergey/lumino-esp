@@ -18,12 +18,6 @@ HttpServer::HttpServer(
   server(new ESP8266WebServer(port)),
   registry(registry),
   serializationService(serializationService) {
-  SPIFFS.begin();
-  // Setting up "File not found" (404) responce
-  server->onNotFound([&](){
-    if(!handleFileRead(server->uri()))
-      server->send(404, "text/plain", "FileNotFound");
-  });
 }
 
 String
@@ -50,18 +44,23 @@ HttpServer::handleFileRead(String path) {
   if(path.endsWith("/"))
     path += "index.html";
 
+  Logger::message("Request for file """ + path + """");
   String pathWithGz = path + ".gz";
   if(SPIFFS.exists(pathWithGz) || SPIFFS.exists(path)){
-
+    Logger::message("File exist.");
     String contentType = getContentType(path);
     if(SPIFFS.exists(pathWithGz))
       path = pathWithGz;
 
+    Logger::message("Opening file """ + path + """");
     File file = SPIFFS.open(path, "r");
+    Logger::message("Streamin file """ + path + """");
     server->streamFile(file, contentType);
+    Logger::message("Closing file """ + path + """");
     file.close();
     return true;
   }
+  Logger::message("File not found.");
   return false;
 }
 
@@ -94,6 +93,20 @@ HttpServer::sendJson(const Core::IEntity& entity) {
 
 void
 HttpServer::start() {
+  SPIFFS.begin();
+  {
+    Dir dir = SPIFFS.openDir("/");
+    Logger::message("Open /");
+    while (dir.next()) {
+      String fileName = dir.fileName();
+      Logger::message("FS File: " + fileName);
+    }
+  }
+  // Setting up "File not found" (404) responce
+  server->onNotFound([&](){
+    if(!handleFileRead(server->uri()))
+      server->send(404, "text/plain", "FileNotFound");
+  });
   server->begin();
 }
 
