@@ -5,9 +5,17 @@
 using namespace Json;
 using namespace Core;
 
-void
-SerializationService::addSerializer(std::shared_ptr<ISerializer> serializer) {
-  serializers.push_back(serializer);
+SerializationService::SerializationService(
+  std::shared_ptr<const ISerializationContextFactory> contextFactory) :
+  contextFactory(contextFactory) {
+
+}
+
+String
+SerializationService::serialize(const IEntity& entity) const {
+  auto context = contextFactory->create(*this);
+  serialize(entity, *context);
+  return context->toString();
 }
 
 void
@@ -15,7 +23,7 @@ SerializationService::serialize(const IEntity& entity,
                                 ISerializationContext& context) const {
   String type = entity.getTypeId();
   auto findIter = std::find_if(serializers.begin(), serializers.end(),
-    [&](std::shared_ptr<ISerializer> serializer){
+    [&](std::shared_ptr<const ISerializer> serializer){
       return serializer->getTypeId() == type;
     });
 
@@ -23,4 +31,9 @@ SerializationService::serialize(const IEntity& entity,
     return;
 
   (*findIter)->serialize(entity, context);
+}
+
+void
+SerializationService::addSerializer(std::shared_ptr<const ISerializer> serializer) {
+  serializers.push_back(serializer);
 }

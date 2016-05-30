@@ -9,6 +9,7 @@
 
 #include "ISerializer.hpp"
 #include "ISerializationService.hpp"
+#include "ISerializationContextFactory.hpp"
 
 #include <memory>
 #include <list>
@@ -17,13 +18,18 @@ namespace Json {
 
 class SerializationService : public ISerializationService {
   public:
-    void serialize(const Core::IEntity& object,
+    SerializationService(
+      std::shared_ptr<const ISerializationContextFactory> contextFactory);
+
+    String serialize(const Core::IEntity& entity) const override;
+    void serialize(const Core::IEntity& entity,
                    ISerializationContext& context) const override;
 
-    void addSerializer(std::shared_ptr<ISerializer> serializer);
+    void addSerializer(std::shared_ptr<const ISerializer> serializer);
 
   private:
-    std::list<std::shared_ptr<ISerializer>> serializers;
+    std::shared_ptr<const ISerializationContextFactory> contextFactory;
+    std::list<std::shared_ptr<const ISerializer>>       serializers;
 };
 
 }

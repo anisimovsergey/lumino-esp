@@ -12,21 +12,30 @@
 
 #include <ArduinoJson.h>
 
+#include <memory>
+
 namespace Json {
 
 class SerializationContext : public ISerializationContext {
   public:
-    SerializationContext(
-      const ISerializationService& serializationService,
-      JsonObject& jsonObject);
+    static std::shared_ptr<ISerializationContext> create(
+      const ISerializationService& serializationService);
+
+    String toString() const override;
 
     void setValue(const String& key, const String& value) override;
     void setValue(const String& key, int value) override;
     void setValue(const String& key, const Core::IList& list) override;
 
   private:
-    JsonObject&                             jsonObject;
+    SerializationContext(
+      const ISerializationService& serializationService,
+      std::shared_ptr<DynamicJsonBuffer> jsonBuffer,
+      JsonObject& jsonObject);
+
     const ISerializationService&  serializationService;
+    std::shared_ptr<DynamicJsonBuffer>      jsonBuffer;
+    JsonObject&                             jsonObject;
 };
 
 }

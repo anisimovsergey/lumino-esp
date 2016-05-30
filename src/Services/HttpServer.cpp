@@ -68,8 +68,8 @@ HttpServer::addPutHandler(const String& uri, THandlerFunction fn) {
 
 void
 HttpServer::sendJson(const Core::Status& status) {
-  String json;
   int code = registry.getCode(status);
+  String json;
   server->send(code, "text/json", json);
 }
 
