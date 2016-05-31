@@ -11,16 +11,19 @@
 #include "Services/IHttpServer.hpp"
 #include "Services/IWiFiService.hpp"
 
+#include "memory"
+
 namespace Controllers {
 
 class NetworksController : public IApiController {
   public:
-    NetworksController(const Services::IWiFiService& wifiService);
+    NetworksController(
+      std::shared_ptr<const Services::IWiFiService> wifiService);
 
     void registerOn(Services::IHttpServer& httpServer) override;
 
   private:
-    const Services::IWiFiService& wifiService;
+    std::shared_ptr<const Services::IWiFiService> wifiService;
 
     void onGetWiFiNetworks(Services::IHttpServer& httpServer);
 };

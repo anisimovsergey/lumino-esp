@@ -30,18 +30,19 @@ SerializationService serializationService(contextFactory);
 
 HttpServer server(80, statusCodeRegistry, serializationService);
 
-WiFiService wifiService;
-
 void setup(void){
+  // Initializing the logger
   Logger::initialize();
 
+  // The old stuff
   WiFi.mode(WIFI_STA);
   WiFi.hostname(host);
-
   //connectToWiFi();
-
   WiFi.softAP(host);
   //WiFi.softAPdisconnect(); // Disconnect and delete from memory.
+
+  // Creating services
+  std::shared_ptr<WiFiService> wifiService(new WiFiService());
 
   // Registering serializers
   serializationService.addSerializer(

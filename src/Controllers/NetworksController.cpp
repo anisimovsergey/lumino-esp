@@ -9,7 +9,8 @@ using namespace Services;
 using namespace Controllers;
 
 NetworksController::NetworksController(
-  const Services::IWiFiService& wifiService) : wifiService(wifiService) {
+  std::shared_ptr<const IWiFiService> wifiService) :
+  wifiService(wifiService) {
 }
 
 void
@@ -21,11 +22,11 @@ NetworksController::registerOn(IHttpServer &httpServer) {
 }
 
 void
-NetworksController::onGetWiFiNetworks(Services::IHttpServer& httpServer) {
+NetworksController::onGetWiFiNetworks(IHttpServer& httpServer) {
   Logger::message("Creating list");
   List<Models::Network> networks;
   Logger::message("Retrieving list of netorks...");
-  Status status = wifiService.getWiFiNetworks(networks);
+  Status status = wifiService->getWiFiNetworks(networks);
   Logger::message("List of netorks retrieved");
   if (status.isOk()) {
     Logger::message("Successfully");
