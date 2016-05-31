@@ -24,11 +24,7 @@ String network_ssid = "BTHub4-NC8S";
 String network_pswd = "d5e89ca8cf";
 const char* host = "esp8266fs";
 
-StatusCodeRegistry statusCodeRegistry;
-SerializationContextFactory contextFactory;
-SerializationService serializationService(contextFactory);
-
-HttpServer server(80, statusCodeRegistry, serializationService);
+std::list<std::shared_ptr<ILoopedService>> loopedServices;
 
 void setup(void){
   // Initializing the logger
@@ -38,31 +34,45 @@ void setup(void){
   WiFi.mode(WIFI_STA);
   WiFi.hostname(host);
   //connectToWiFi();
+
   WiFi.softAP(host);
   //WiFi.softAPdisconnect(); // Disconnect and delete from memory.
 
   // Creating services
-  std::shared_ptr<WiFiService> wifiService(new WiFiService());
+  std::shared_ptr<WiFiService> wifiService(
+    new WiFiService());
+  std::shared_ptr<StatusCodeRegistry> codeRegistry(
+    new StatusCodeRegistry());
+  std::shared_ptr<SerializationContextFactory> contextFactory(
+    new SerializationContextFactory());
+  std::shared_ptr<SerializationService> serializationService(
+    new SerializationService(contextFactory));
+
+  std::shared_ptr<HttpServer> server(new
+    HttpServer(80, codeRegistry, serializationService));
 
   // Registering serializers
-  serializationService.addSerializer(
+  serializationService->addSerializer(
     std::shared_ptr<StatusSerializer>(new StatusSerializer()));
-  serializationService.addSerializer(
+  serializationService->addSerializer(
     std::shared_ptr<ListSerializer>(new ListSerializer()));
-  serializationService.addSerializer(
+  serializationService->addSerializer(
     std::shared_ptr<NetworkSerializer>(new NetworkSerializer()));
-  serializationService.addSerializer(
+  serializationService->addSerializer(
     std::shared_ptr<SettingsSerializer>(new SettingsSerializer()));
 
   // Registering controllers
-  server.addApiController(
+  server->addApiController(
     std::shared_ptr<NetworksController>(new NetworksController(wifiService)));
-  server.addApiController(
+  server->addApiController(
     std::shared_ptr<SettingsController>(new SettingsController()));
 
-  server.start();
+  loopedServices.push_back(server);
+  server->start();
 }
 
 void loop(void){
-  server.loop();
+  for(auto service : loopedServices) {
+      service->loop();
+  }
 }

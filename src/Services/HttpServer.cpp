@@ -14,8 +14,8 @@ using namespace Controllers;
 
 HttpServer::HttpServer(
   int port,
-  const IStatusCodeRegistry& registry,
-  const Json::ISerializationService& serializationService) :
+  std::shared_ptr<const IStatusCodeRegistry> registry,
+  std::shared_ptr<const Json::ISerializationService> serializationService) :
   server(new ESP8266WebServer(port)),
   registry(registry),
   serializationService(serializationService) {
@@ -79,8 +79,8 @@ HttpServer::addApiController(std::shared_ptr<IApiController> controller) {
 void
 HttpServer::sendJson(const Core::Status& status) {
   Logger::message("Serializing status """ + status.getCode() + """");
-  String json = serializationService.serialize(status);
-  int code = registry.getCode(status);
+  String json = serializationService->serialize(status);
+  int code = registry->getCode(status);
   Logger::message("Sending status with code """ + String(code) + """");
   server->send(code, "text/json", json);
 }
@@ -88,7 +88,7 @@ HttpServer::sendJson(const Core::Status& status) {
 void
 HttpServer::sendJson(const Core::IEntity& entity) {
   Logger::message("Serializing entity of type """ + entity.getTypeId() + """");
-  String json = serializationService.serialize(entity);
+  String json = serializationService->serialize(entity);
   Logger::message("Sending entity of type """ + entity.getTypeId() + """");
   server->send(200, "text/json", json);
 }

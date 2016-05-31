@@ -10,6 +10,7 @@
 #include "IHttpServer.hpp"
 
 #include "IStatusCodeRegistry.hpp"
+#include "ILoopedService.hpp"
 #include "Controllers/IApiController.hpp"
 #include "Json/ISerializationService.hpp"
 
@@ -22,14 +23,14 @@ class ESP8266WebServer;
 
 namespace Services {
 
-class HttpServer : public IHttpServer {
+class HttpServer : public IHttpServer, public ILoopedService {
   public:
     HttpServer(int port,
-               const IStatusCodeRegistry& registry,
-               const Json::ISerializationService& serializationService);
+      std::shared_ptr<const IStatusCodeRegistry> registry,
+      std::shared_ptr<const Json::ISerializationService> serializationService);
 
     void start();
-    void loop();
+    void loop() override;
 
     virtual void addGetHandler(const String& uri,
       THandlerFunction fn) override;
@@ -48,8 +49,8 @@ class HttpServer : public IHttpServer {
     std::unique_ptr<ESP8266WebServer> server;
     std::list<std::shared_ptr<Controllers::IApiController>> controllers;
 
-    const IStatusCodeRegistry&    registry;
-    const Json::ISerializationService&  serializationService;
+    std::shared_ptr<const IStatusCodeRegistry>          registry;
+    std::shared_ptr<const Json::ISerializationService>  serializationService;
 
     String  getContentType(String filename);
     bool    handleFileRead(String path);
