@@ -7,8 +7,10 @@
 #include "Controllers/SettingsController.hpp"
 #include "Json/SerializationContextFactory.hpp"
 #include "Json/SerializationService.hpp"
+#include "Json/StatusSerializer.hpp"
 #include "Json/ListSerializer.hpp"
 #include "Json/NetworkSerializer.hpp"
+#include "Json/SettingsSerializer.hpp"
 
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
@@ -30,9 +32,6 @@ HttpServer server(80, statusCodeRegistry, serializationService);
 
 WiFiService wifiService;
 
-NetworksController networksController(wifiService);
-SettingsController settingsController;
-
 void setup(void){
   Logger::initialize();
 
@@ -44,11 +43,21 @@ void setup(void){
   WiFi.softAP(host);
   //WiFi.softAPdisconnect(); // Disconnect and delete from memory.
 
-  serializationService.addSerializer(std::shared_ptr<ListSerializer>(new ListSerializer()));
-  serializationService.addSerializer(std::shared_ptr<NetworkSerializer>(new NetworkSerializer()));
+  // Registering serializers
+  serializationService.addSerializer(
+    std::shared_ptr<StatusSerializer>(new StatusSerializer()));
+  serializationService.addSerializer(
+    std::shared_ptr<ListSerializer>(new ListSerializer()));
+  serializationService.addSerializer(
+    std::shared_ptr<NetworkSerializer>(new NetworkSerializer()));
+  serializationService.addSerializer(
+    std::shared_ptr<SettingsSerializer>(new SettingsSerializer()));
 
-  networksController.registerOn(server);
-  settingsController.registerOn(server);
+  // Registering controllers
+  server.addApiController(
+    std::shared_ptr<NetworksController>(new NetworksController(wifiService)));
+  server.addApiController(
+    std::shared_ptr<SettingsController>(new SettingsController()));
 
   server.start();
 }

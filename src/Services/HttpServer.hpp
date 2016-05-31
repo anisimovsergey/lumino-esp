@@ -10,11 +10,13 @@
 #include "IHttpServer.hpp"
 
 #include "IStatusCodeRegistry.hpp"
+#include "Controllers/IApiController.hpp"
 #include "Json/ISerializationService.hpp"
 
 #include <WString.h>
 
 #include <memory>
+#include <list>
 
 class ESP8266WebServer;
 
@@ -30,15 +32,22 @@ class HttpServer : public IHttpServer {
     void loop();
 
     virtual void addGetHandler(const String& uri,
-                               THandlerFunction fn) override;
+      THandlerFunction fn) override;
     virtual void addPutHandler(const String& uri,
-                               THandlerFunction fn) override;
+      THandlerFunction fn) override;
 
-    virtual void sendJson(const Core::Status& status) override;
-    virtual void sendJson(const Core::IEntity& entity) override;
+    virtual void addApiController(
+      std::shared_ptr<Controllers::IApiController> controller) override;
+
+    virtual void sendJson(
+      const Core::Status& status) override;
+    virtual void sendJson(
+      const Core::IEntity& entity) override;
 
   private:
     std::unique_ptr<ESP8266WebServer> server;
+    std::list<std::shared_ptr<Controllers::IApiController>> controllers;
+
     const IStatusCodeRegistry&    registry;
     const Json::ISerializationService&  serializationService;
 

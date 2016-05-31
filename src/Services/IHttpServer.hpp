@@ -9,8 +9,10 @@
 
 #include "Core/Status.hpp"
 #include "Core/IEntity.hpp"
+#include "Controllers/IApiController.hpp"
 
 #include <functional>
+#include <memory>
 
 namespace Services {
 
@@ -22,6 +24,9 @@ class IHttpServer {
                                  THandlerFunction fn) = 0;
       virtual void addPutHandler(const String& uri,
                                  THandlerFunction fn) = 0;
+
+      virtual void addApiController(
+        std::shared_ptr<Controllers::IApiController> controller) = 0;
 
       virtual void sendJson(const Core::Status& status) = 0;
       virtual void sendJson(const Core::IEntity& entity) = 0;

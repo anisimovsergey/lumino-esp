@@ -7,13 +7,14 @@
 #ifndef CONTROLLERS_SETTINGS_CONTROLLER_H
 #define CONTROLLERS_SETTINGS_CONTROLLER_H
 
+#include "IApiController.hpp"
 #include "Services/IHttpServer.hpp"
 
 namespace Controllers {
 
-class SettingsController {
+class SettingsController : public IApiController {
   public:
-    void registerOn(Services::IHttpServer& httpServer);
+    void registerOn(Services::IHttpServer& httpServer) override;
 
   private:
     void onGetSettings(Services::IHttpServer& httpServer);

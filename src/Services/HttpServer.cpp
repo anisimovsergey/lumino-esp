@@ -10,6 +10,7 @@
 
 using namespace Core;
 using namespace Services;
+using namespace Controllers;
 
 HttpServer::HttpServer(
   int port,
@@ -41,26 +42,21 @@ HttpServer::getContentType(String filename) {
 bool
 HttpServer::handleFileRead(String path) {
 
-  if(path.endsWith("/"))
+  if (path.endsWith("/"))
     path += "index.html";
 
-  Logger::message("Request for file """ + path + """");
   String pathWithGz = path + ".gz";
-  if(SPIFFS.exists(pathWithGz) || SPIFFS.exists(path)){
-    Logger::message("File exist.");
+  if (SPIFFS.exists(pathWithGz) || SPIFFS.exists(path)){
+
     String contentType = getContentType(path);
     if(SPIFFS.exists(pathWithGz))
       path = pathWithGz;
 
-    Logger::message("Opening file """ + path + """");
     File file = SPIFFS.open(path, "r");
-    Logger::message("Streamin file """ + path + """");
     server->streamFile(file, contentType);
-    Logger::message("Closing file """ + path + """");
     file.close();
     return true;
   }
-  Logger::message("File not found.");
   return false;
 }
 
@@ -72,6 +68,12 @@ HttpServer::addGetHandler(const String& uri, THandlerFunction fn) {
 void
 HttpServer::addPutHandler(const String& uri, THandlerFunction fn) {
   server->on(uri.c_str(), HTTP_PUT, fn);
+}
+
+void
+HttpServer::addApiController(std::shared_ptr<IApiController> controller) {
+  controllers.push_back(controller);
+  controller->registerOn(*this);
 }
 
 void
@@ -94,14 +96,6 @@ HttpServer::sendJson(const Core::IEntity& entity) {
 void
 HttpServer::start() {
   SPIFFS.begin();
-  {
-    Dir dir = SPIFFS.openDir("/");
-    Logger::message("Open /");
-    while (dir.next()) {
-      String fileName = dir.fileName();
-      Logger::message("FS File: " + fileName);
-    }
-  }
   // Setting up "File not found" (404) responce
   server->onNotFound([&](){
     if(!handleFileRead(server->uri()))

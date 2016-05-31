@@ -7,16 +7,17 @@
 #ifndef CONTROLLERS_NETWORKS_CONTROLLER_H
 #define CONTROLLERS_NETWORKS_CONTROLLER_H
 
+#include "IApiController.hpp"
 #include "Services/IHttpServer.hpp"
 #include "Services/IWiFiService.hpp"
 
 namespace Controllers {
 
-class NetworksController {
+class NetworksController : public IApiController {
   public:
     NetworksController(const Services::IWiFiService& wifiService);
 
-   void registerOn(Services::IHttpServer& httpServer);
+    void registerOn(Services::IHttpServer& httpServer) override;
 
   private:
     const Services::IWiFiService& wifiService;
