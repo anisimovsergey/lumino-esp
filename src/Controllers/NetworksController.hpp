@@ -9,7 +9,7 @@
 
 #include "IApiController.hpp"
 #include "Services/IHttpServer.hpp"
-#include "Services/IWiFiService.hpp"
+#include "Services/IWiFiManager.hpp"
 
 #include "memory"
 
@@ -18,12 +18,12 @@ namespace Controllers {
 class NetworksController : public IApiController {
   public:
     NetworksController(
-      std::shared_ptr<const Services::IWiFiService> wifiService);
+      std::shared_ptr<const Services::IWiFiManager> wifiManager);
 
     void registerOn(Services::IHttpServer& httpServer) override;
 
   private:
-    std::shared_ptr<const Services::IWiFiService> wifiService;
+    std::shared_ptr<const Services::IWiFiManager> wifiManager;
 
     void onGetWiFiNetworks(Services::IHttpServer& httpServer);
 };

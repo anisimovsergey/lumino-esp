@@ -1,15 +1,48 @@
 #include "WiFiManager.hpp"
 #include <ESP8266WiFi.h>
 
+using namespace Core;
+using namespace Models;
 using namespace Services;
 
+Core::Status
+WiFiManager::getWiFiNetworks(Networks& networks) const {
+  int networksCount = WiFi.scanNetworks();
+  if (networksCount >= 0) {
+    for (int networkNum = 0; networkNum < networksCount; networkNum++) {
+      String ssid = WiFi.SSID(networkNum);
+      int rssi = WiFi.RSSI(networkNum);
+      int encryptionType = WiFi.encryptionType(networkNum);
+      networks.add(Network(ssid, rssi, encryptionType));
+    }
+    return Status::Ok;
+  } else {
+    return Status::UnableToScanFiFiNetworks;
+  }
+}
+
+String
+WiFiManager::getDeviceName() {
+
+}
+
+String
+WiFiManager::getNetwork() {
+
+}
+
+String
+WiFiManager::getPassword() {
+
+}
+
 bool
-WiFiManager::isConnected() {
+WiFiManager::isConnected() const {
   return (WiFi.status() == WL_CONNECTED);
 }
 
 void
-WiFiManager::connect() {
+WiFiManager::connect(String network, String password) {
   /*
   if (String(WiFi.SSID()) != network_ssid) {
     disconnectFromFiFi();

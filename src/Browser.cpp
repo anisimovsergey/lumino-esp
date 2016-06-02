@@ -1,7 +1,7 @@
 
 #include "Core/Logger.hpp"
 #include "Services/HttpServer.hpp"
-#include "Services/WiFiService.hpp"
+#include "Services/WiFiManager.hpp"
 #include "Services/StatusCodeRegistry.hpp"
 #include "Controllers/NetworksController.hpp"
 #include "Controllers/SettingsController.hpp"
@@ -39,8 +39,8 @@ void setup(void){
   //WiFi.softAPdisconnect(); // Disconnect and delete from memory.
 
   // Creating services
-  std::shared_ptr<WiFiService> wifiService(
-    new WiFiService());
+  std::shared_ptr<WiFiManager> wifiManager(
+    new WiFiManager());
   std::shared_ptr<StatusCodeRegistry> codeRegistry(
     new StatusCodeRegistry());
   std::shared_ptr<SerializationContextFactory> contextFactory(
@@ -48,7 +48,7 @@ void setup(void){
   std::shared_ptr<SerializationService> serializationService(
     new SerializationService(contextFactory));
 
-  std::shared_ptr<HttpServer> server(new
+  std::shared_ptr<HttpServer> httpServer(new
     HttpServer(80, codeRegistry, serializationService));
 
   // Registering serializers
@@ -62,13 +62,15 @@ void setup(void){
     std::shared_ptr<SettingsSerializer>(new SettingsSerializer()));
 
   // Registering controllers
-  server->addApiController(
-    std::shared_ptr<NetworksController>(new NetworksController(wifiService)));
-  server->addApiController(
+  httpServer->addApiController(
+    std::shared_ptr<NetworksController>(new NetworksController(wifiManager)));
+  httpServer->addApiController(
     std::shared_ptr<SettingsController>(new SettingsController()));
 
-  loopedServices.push_back(server);
-  server->start();
+  httpServer->start();
+
+  // Adding servers to the loop
+  loopedServices.push_back(httpServer);
 }
 
 void loop(void){

@@ -13,9 +13,15 @@ namespace Services {
 
 class WiFiManager : public IWiFiManager {
   public:
-    virtual bool isConnected() override;
-    virtual void connect() override;
-    virtual void disconnect() override;
+    Core::Status getWiFiNetworks(Networks& networks) const override;
+
+    String getDeviceName() override;
+    String getNetwork() override;
+    String getPassword() override;
+    bool isConnected() const override;
+
+    void connect(String network, String password) override;
+    void disconnect() override;
 };
 
 }
