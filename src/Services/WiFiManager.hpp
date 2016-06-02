@@ -15,9 +15,9 @@ class WiFiManager : public IWiFiManager {
   public:
     Core::Status getWiFiNetworks(Networks& networks) const override;
 
-    String getDeviceName() override;
-    String getNetwork() override;
-    String getPassword() override;
+    String getDeviceName() const override;
+    String getNetwork() const override;
+    String getPassword() const override;
     bool isConnected() const override;
 
     void connect(String network, String password) override;

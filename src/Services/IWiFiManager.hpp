@@ -20,9 +20,9 @@ class IWiFiManager {
     typedef Core::List<Models::Network> Networks;
     virtual Core::Status getWiFiNetworks(Networks& networks) const = 0;
 
-    virtual String getDeviceName() = 0;
-    virtual String getNetwork() = 0;
-    virtual String getPassword() = 0;
+    virtual String getDeviceName() const = 0;
+    virtual String getNetwork() const = 0;
+    virtual String getPassword() const = 0;
     virtual bool isConnected() const = 0;
 
     virtual void connect(String network, String password) = 0;

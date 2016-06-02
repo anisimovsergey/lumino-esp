@@ -9,14 +9,20 @@
 
 #include "IApiController.hpp"
 #include "Services/IHttpServer.hpp"
+#include "Services/IWiFiManager.hpp"
 
 namespace Controllers {
 
 class SettingsController : public IApiController {
   public:
+    SettingsController(
+      std::shared_ptr<const Services::IWiFiManager> wifiManager);
+
     void registerOn(Services::IHttpServer& httpServer) override;
 
   private:
+    std::shared_ptr<const Services::IWiFiManager> wifiManager;
+
     void onGetSettings(Services::IHttpServer& httpServer);
     void onPutSettings(Services::IHttpServer& httpServer);
 };

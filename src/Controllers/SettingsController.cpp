@@ -1,31 +1,25 @@
 #include "SettingsController.hpp"
 
+#include "Models/Settings.hpp"
 #include "Services/IHttpServer.hpp"
 
 using namespace Services;
+using namespace Models;
 using namespace Controllers;
+
+SettingsController::SettingsController(
+  std::shared_ptr<const IWiFiManager> wifiManager) :
+  wifiManager(wifiManager) {
+}
 
 void
 SettingsController::onGetSettings(Services::IHttpServer& httpServer) {
-  /*
-  String getSettingsJson() {
-    const int BUFFER_SIZE = JSON_OBJECT_SIZE(5);
-    StaticJsonBuffer<BUFFER_SIZE> jsonBuffer;
-
-    JsonObject& root = jsonBuffer.createObject();
-    root["name"] = host;
-    root["wifi_network"] = WiFi.SSID();
-    root["wifi_password"] = "";
-    root["connected"] = WiFi.status() == WL_CONNECTED;
-
-    String json;
-    root.printTo(json);
-    return json;
-  }
-
-  void onGetSettings() {
-    server.send(200, "text/json", getSettingsJson());
-  }*/
+  Settings settings(
+    wifiManager->getDeviceName(),
+    wifiManager->getNetwork(), "",
+    wifiManager->isConnected()
+  );
+  httpServer.sendJson(settings);
 }
 
 void

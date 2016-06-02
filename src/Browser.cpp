@@ -65,7 +65,7 @@ void setup(void){
   httpServer->addApiController(
     std::shared_ptr<NetworksController>(new NetworksController(wifiManager)));
   httpServer->addApiController(
-    std::shared_ptr<SettingsController>(new SettingsController()));
+    std::shared_ptr<SettingsController>(new SettingsController(wifiManager)));
 
   httpServer->start();
 
