@@ -23,17 +23,17 @@ WiFiManager::getWiFiNetworks(Networks& networks) const {
 
 String
 WiFiManager::getDeviceName() const {
-
+  return "Device name";
 }
 
 String
 WiFiManager::getNetwork() const {
-
+  return "Network";
 }
 
 String
 WiFiManager::getPassword() const {
-
+  return "Password";
 }
 
 bool

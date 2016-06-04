@@ -25,6 +25,7 @@ class ISerializationContext {
 
     virtual void setValue(const String& key, const String& value) = 0;
     virtual void setValue(const String& key, int value) = 0;
+    virtual void setValue(const String& key, bool value) = 0;
     virtual void setValue(const String& key, const Core::IList& list) = 0;
 };
 

@@ -33,6 +33,7 @@ class SerializationContext : public ISerializationContext {
 
     void setValue(const String& key, const String& value) override;
     void setValue(const String& key, int value) override;
+    void setValue(const String& key, bool value) override;
     void setValue(const String& key, const Core::IList& list) override;
 
   private:

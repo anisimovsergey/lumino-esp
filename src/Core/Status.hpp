@@ -18,11 +18,12 @@ class Status : public Entity<Status> {
     static const Status NotSupported;
     static const Status IncorrectObjectType;
     static const Status UnableToParseJson;
-    static const Status UnableToFindJsonKey;
     static const Status ValueIsNotString;
     static const Status ValueIsNotBool;
     static const Status UnableToFindSerializer;
     static const Status UnableToScanFiFiNetworks;
+
+    static Status UnableToFindJsonKey(String key);
 
   public:
     static String getStaticTypeId() { return "status"; }

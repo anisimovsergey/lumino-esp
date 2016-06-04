@@ -1,5 +1,7 @@
 #include "SerializationContext.hpp"
 
+#include "Core/Logger.hpp"
+
 using namespace Json;
 using namespace Core;
 
@@ -56,28 +58,29 @@ SerializationContext::toString() const {
 Status
 SerializationContext::getStringValue(const String& key, String& value) {
 
-  auto strVal = jsonObject[key];
-  if (!strVal.success())
-    return Status::UnableToFindJsonKey;
+  auto jsonVal = jsonObject[key];
+  if (!jsonVal.success())
+    return Status::UnableToFindJsonKey(key);
 
-  if (strVal.is<const char*>())
+  if (!jsonVal.is<const char*>())
     return Status::ValueIsNotString;
 
-  value = (const char*)strVal;
+  value = (const char*)jsonVal;
   return Status::Ok;
 }
 
 Status
 SerializationContext::getBoolValue(const String& key, bool& value) {
 
-  auto strVal = jsonObject[key];
-  if (!strVal.success())
-    return Status::UnableToFindJsonKey;
+  auto jsonVal = jsonObject[key];
+  if (!jsonVal.success())
+    return Status::UnableToFindJsonKey(key);
 
-  if (strVal.is<bool>())
+  if (!jsonVal.is<bool>())
     return Status::ValueIsNotBool;
 
-  value = (bool)strVal;
+  value = (bool)jsonVal;
+  return Status::Ok;
 }
 
 void
@@ -87,6 +90,11 @@ SerializationContext::setValue(const String& key, const String& value) {
 
 void
 SerializationContext::setValue(const String& key, int value) {
+  jsonObject[key] = value;
+}
+
+void
+SerializationContext::setValue(const String& key, bool value) {
   jsonObject[key] = value;
 }
 

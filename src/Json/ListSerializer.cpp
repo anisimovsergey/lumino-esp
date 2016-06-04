@@ -19,8 +19,5 @@ ListSerializer::deserialize(
   std::shared_ptr<IList>& list,
   ISerializationContext& context) const {
 
-  List<Models::Network> networks;
-  auto st = List<Models::Network>::dynamicCast(*list, networks);
-
   return Status::NotSupported;
 }

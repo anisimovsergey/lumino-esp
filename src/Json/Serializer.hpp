@@ -9,6 +9,8 @@
 
 #include "ISerializer.hpp"
 
+#include "Core/Logger.hpp"
+
 namespace Json {
 
 template <class T> class Serializer : public ISerializer {
@@ -27,6 +29,7 @@ template <class T> class Serializer : public ISerializer {
 
       std::shared_ptr<T> entityT;
       Core::Status status = deserialize(entityT, context);
+      Core::Logger::message("Deserialized 222");
       entity = entityT;
       return status;
     }
