@@ -13,15 +13,21 @@ namespace Json {
 
 template <class T> class Serializer : public ISerializer {
   public:
-    void serialize(const Core::IEntity& object,
-                           ISerializationContext& context) const override {
-        context.setValue("type", object.getTypeId());
-        const T& objectT = static_cast<const T&>(object);
-        serialize(objectT, context);
+    void serialize(
+      const Core::IEntity& entity,
+      ISerializationContext& context) const override {
+        const T& entityT = static_cast<const T&>(entity);
+        serialize(entityT, context);
+    }
+
+    virtual Core::Status deserialize(
+      std::shared_ptr<Core::IEntity>& entity,
+      ISerializationContext& context) const override {
+      return Core::Status::Ok;
     }
 
   protected:
-    virtual void serialize(const T& object,
+    virtual void serialize(const T& entity,
                            ISerializationContext& context) const = 0;
  };
 

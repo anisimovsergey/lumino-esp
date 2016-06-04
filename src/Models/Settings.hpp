@@ -13,6 +13,8 @@ namespace Models {
 
 class Settings : public Core::Entity<Settings> {
   public:
+    Settings();
+
     Settings(
       String  deviceName,
       String  networkSsid,

@@ -28,6 +28,9 @@ class IHttpServer {
       virtual void addApiController(
         std::shared_ptr<Controllers::IApiController> controller) = 0;
 
+      virtual Core::Status getJson(
+        std::shared_ptr<Core::IEntity>& entity) = 0;
+
       virtual void sendJson(const Core::Status& status) = 0;
       virtual void sendJson(const Core::IEntity& entity) = 0;
 };

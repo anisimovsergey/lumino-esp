@@ -10,14 +10,23 @@
 #include "Core/IEntity.hpp"
 #include "ISerializationContext.hpp"
 
+#include "memory"
+
 namespace Json {
 
 class ISerializer {
   public:
     virtual ~ISerializer() {};
-    virtual void serialize(const Core::IEntity& entity,
-                           ISerializationContext& context) const = 0;
-    virtual String getTypeId() const = 0;                           
+
+    virtual void serialize(
+      const Core::IEntity& entity,
+      ISerializationContext& context) const = 0;
+
+    virtual Core::Status deserialize(
+      std::shared_ptr<Core::IEntity>& entity,
+      ISerializationContext& context) const = 0;
+
+    virtual String getTypeId() const = 0;
 };
 
 }

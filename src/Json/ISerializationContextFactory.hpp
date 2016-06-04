@@ -9,6 +9,7 @@
 
 #include "ISerializationContext.hpp"
 #include "ISerializationService.hpp"
+#include "Core/Status.hpp"
 
 #include <memory>
 
@@ -20,6 +21,11 @@ class ISerializationContextFactory {
 
     virtual std::shared_ptr<ISerializationContext> create(
       const ISerializationService& serializationService) const = 0;
+
+    virtual Core::Status create(
+      const ISerializationService& serializationService,
+      const String& json,
+      std::shared_ptr<ISerializationContext>& context) const = 0;
 };
 
 }

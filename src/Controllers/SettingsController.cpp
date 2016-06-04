@@ -1,8 +1,10 @@
 #include "SettingsController.hpp"
 
+#include "Core/Status.hpp"
 #include "Models/Settings.hpp"
 #include "Services/IHttpServer.hpp"
 
+using namespace Core;
 using namespace Services;
 using namespace Models;
 using namespace Controllers;
@@ -24,6 +26,18 @@ SettingsController::onGetSettings(Services::IHttpServer& httpServer) {
 
 void
 SettingsController::onPutSettings(Services::IHttpServer& httpServer) {
+  std::shared_ptr<IEntity> entity;
+  Status status = httpServer.getJson(entity);
+  if (status.isOk()) {
+    Settings* settings = Settings::dynamicCast(entity.get());
+    if (settings != nullptr) {
+      httpServer.sendJson(*settings);
+    } else {
+      httpServer.sendJson(Status::IncorrectObjectType);
+    }
+  } else {
+    httpServer.sendJson(status);
+  }
   /*
   void onPutSettings() {
 

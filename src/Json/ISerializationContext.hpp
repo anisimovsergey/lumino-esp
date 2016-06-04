@@ -8,6 +8,7 @@
 #define JSON_I_SERIALIZATION_CONTEXT_H
 
 #include "Core/IList.hpp"
+#include "Core/Status.hpp"
 
 #include <WString.h>
 
@@ -18,6 +19,8 @@ class ISerializationContext {
     virtual ~ISerializationContext() {};
 
     virtual String toString() const = 0;
+
+    virtual Core::Status getStringValue(const String& key, String& value) = 0;
 
     virtual void setValue(const String& key, const String& value) = 0;
     virtual void setValue(const String& key, int value) = 0;

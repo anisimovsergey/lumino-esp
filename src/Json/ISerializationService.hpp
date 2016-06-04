@@ -9,15 +9,27 @@
 
 #include "ISerializationContext.hpp"
 
+#include "Core/IEntity.hpp"
+#include "Core/Status.hpp"
+
+#include <memory>
+
 namespace Json {
 
 class ISerializationService {
   public:
     virtual ~ISerializationService() {}
 
-    virtual String serialize(const Core::IEntity& object) const = 0;
-    virtual void serialize(const Core::IEntity& object,
-                           ISerializationContext& context) const = 0;
+    virtual String serialize(
+      const Core::IEntity& object) const = 0;
+
+    virtual void serialize(
+      const Core::IEntity& object,
+      ISerializationContext& context) const = 0;
+
+    virtual Core::Status deserialize(
+      const String& json,
+      std::shared_ptr<Core::IEntity>& entity) const = 0;
 };
 
 }

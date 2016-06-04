@@ -40,6 +40,9 @@ class HttpServer : public IHttpServer, public ILoopedService {
     virtual void addApiController(
       std::shared_ptr<Controllers::IApiController> controller) override;
 
+    virtual Core::Status getJson(
+      std::shared_ptr<Core::IEntity>& entity) override;
+
     virtual void sendJson(
       const Core::Status& status) override;
     virtual void sendJson(

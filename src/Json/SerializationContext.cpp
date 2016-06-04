@@ -27,11 +27,39 @@ SerializationContext::create(
   return std::shared_ptr<ISerializationContext>(context);
 }
 
+Status
+SerializationContext::create(
+  const ISerializationService& serializationService,
+  const String& json,
+  std::shared_ptr<ISerializationContext>& context) {
+
+  std::shared_ptr<DynamicJsonBuffer> jsonBuffer(new DynamicJsonBuffer);
+  JsonObject& jsonObject = jsonBuffer->parseObject(json);
+  if (!jsonObject.success())
+    return Status::UnableToParseJson;
+
+  context = std::shared_ptr<SerializationContext>(new SerializationContext(
+    serializationService,
+    jsonBuffer,
+    jsonObject));
+
+  return Status::Ok;
+}
+
 String
 SerializationContext::toString() const {
   String str;
   jsonObject.printTo(str);
   return str;
+}
+
+Status
+SerializationContext::getStringValue(const String& key, String& value) {
+  const char* strVal = (const char*)jsonObject[key];
+  if (strVal == nullptr)
+    return Status::UnableToFindJsonKey;
+  value = strVal;
+  return Status::Ok;
 }
 
 void

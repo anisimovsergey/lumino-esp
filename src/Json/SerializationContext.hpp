@@ -9,6 +9,7 @@
 
 #include "ISerializationContext.hpp"
 #include "ISerializationService.hpp"
+#include "Core/Status.hpp"
 
 #include <ArduinoJson.h>
 
@@ -20,8 +21,14 @@ class SerializationContext : public ISerializationContext {
   public:
     static std::shared_ptr<ISerializationContext> create(
       const ISerializationService& serializationService);
+    static Core::Status create(
+      const ISerializationService& serializationService,
+      const String& json,
+      std::shared_ptr<ISerializationContext>& context);
 
     String toString() const override;
+
+    Core::Status getStringValue(const String& key, String& value) override;
 
     void setValue(const String& key, const String& value) override;
     void setValue(const String& key, int value) override;

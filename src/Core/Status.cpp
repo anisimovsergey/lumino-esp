@@ -4,6 +4,14 @@ using namespace Core;
 
 const Status Status::Ok =
   Status(true, "Success", "Success.");
+const Status Status::IncorrectObjectType =
+  Status(false, "IncorrectObjectType", "Incorrect object type");
+const Status Status::UnableToParseJson =
+  Status(false, "UnableToParseJson", "Unable to parse JSON.");
+const Status Status::UnableToFindJsonKey =
+  Status(false, "UnableToFindJsonKey", "Unable to find JSON key.");
+const Status Status::UnableToFindSerializer =
+  Status(false, "UnableToFindSerializer", "Unable to find serializer.");
 const Status Status::UnableToScanFiFiNetworks =
   Status(false, "UnableToScanFiFiNetworks", "Unable to scan FiFi networks.");
 

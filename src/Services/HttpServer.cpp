@@ -1,6 +1,7 @@
 
 #include "HttpServer.hpp"
 
+#include "Core/List.hpp"
 #include "Core/Logger.hpp"
 
 #include <FS.h>
@@ -74,6 +75,12 @@ void
 HttpServer::addApiController(std::shared_ptr<IApiController> controller) {
   controllers.push_back(controller);
   controller->registerOn(*this);
+}
+
+Core::Status
+HttpServer::getJson(std::shared_ptr<Core::IEntity>& entity) {
+  String json = server->arg("plain");
+  return serializationService->deserialize(json, entity);
 }
 
 void
