@@ -6,11 +6,12 @@ using namespace Core;
 using namespace Json;
 using namespace Models;
 
-void
+Core::Status
 SettingsSerializer::serialize(const Settings& settings, ISerializationContext& context) const {
   context.setValue("name", settings.getDeviceName());
   context.setValue("wifi_network", settings.getNetworkSsid());
   context.setValue("connected", settings.getIsConnected());
+  return Status::Ok;
 }
 
 Core::Status

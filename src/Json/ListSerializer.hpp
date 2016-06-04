@@ -19,7 +19,7 @@ class ListSerializer : public Serializer<Core::IList> {
     }
 
   protected:
-    void serialize(
+    Core::Status serialize(
       const Core::IList& list,
       ISerializationContext& context) const override;
 

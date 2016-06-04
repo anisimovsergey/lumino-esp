@@ -18,10 +18,8 @@ class SettingsSerializer : public Serializer<Models::Settings> {
       return Models::Settings::getStaticTypeId();
     }
 
-    Models::Settings deserialize(const ISerializationContext& context);
-
   protected:
-    void serialize(
+    Core::Status serialize(
       const Models::Settings& settings,
       ISerializationContext& context) const override;
 

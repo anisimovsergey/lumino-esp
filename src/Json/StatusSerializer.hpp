@@ -19,7 +19,7 @@ class StatusSerializer : public Serializer<Core::Status> {
     }
 
   protected:
-    void serialize(
+    Core::Status serialize(
       const Core::Status& status,
       ISerializationContext& context) const override;
 

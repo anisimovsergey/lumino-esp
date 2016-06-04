@@ -20,10 +20,11 @@ class ISerializationService {
   public:
     virtual ~ISerializationService() {}
 
-    virtual String serialize(
-      const Core::IEntity& object) const = 0;
+    virtual Core::Status serialize(
+      const Core::IEntity& object,
+      String& json) const = 0;
 
-    virtual void serialize(
+    virtual Core::Status serialize(
       const Core::IEntity& object,
       ISerializationContext& context) const = 0;
 

@@ -19,7 +19,7 @@ class NetworkSerializer : public Serializer<Models::Network> {
     }
 
   protected:
-    void serialize(
+    Core::Status serialize(
       const Models::Network& network,
       ISerializationContext& context) const override;
 

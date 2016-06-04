@@ -17,7 +17,7 @@ template<class T> class Entity : public IEntity {
       return T::getStaticTypeId();
     }
 
-    static T* dynamicCast(IEntity* entity) {
+    static T* dynamicCast(const IEntity* entity) {
 
       if (entity == nullptr)
         return nullptr;

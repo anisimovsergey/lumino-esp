@@ -18,7 +18,7 @@ class ISerializer {
   public:
     virtual ~ISerializer() {};
 
-    virtual void serialize(
+    virtual Core::Status serialize(
       const Core::IEntity& entity,
       ISerializationContext& context) const = 0;
 

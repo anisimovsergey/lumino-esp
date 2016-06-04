@@ -8,6 +8,7 @@
 #define CORE_LIST_H
 
 #include "IList.hpp"
+#include "Status.hpp"
 
 #include <list>
 
@@ -40,6 +41,16 @@ template <class T> class List : public IList {
         func(element);
       });
     };
+
+    static Status dynamicCast(const IList& list, List<T>& result) {
+      list.forEach([&](const IEntity& element) {
+        const T* elementT = T::dynamicCast(&element);
+        if (elementT == nullptr)
+          return Status::NotSupported;
+        result.add(*elementT);
+      });
+      return Status::Ok;
+    }
 
   private:
     std::list<T> elements;

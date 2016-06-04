@@ -5,21 +5,28 @@
 using namespace Json;
 using namespace Core;
 
+#define TYPE_FIELD "type"
+
 SerializationService::SerializationService(
   std::shared_ptr<const ISerializationContextFactory> contextFactory) :
   contextFactory(contextFactory) {
 }
 
-String
+Core::Status
 SerializationService::serialize(
-  const IEntity& entity) const {
+  const IEntity& entity,
+  String& json) const {
 
   auto context = contextFactory->create(*this);
-  serialize(entity, *context);
-  return context->toString();
+  Status status = serialize(entity, *context);
+  if (!status.isOk())
+    return status;
+
+  json = context->toString();
+  return Status::Ok;
 }
 
-void
+Core::Status
 SerializationService::serialize (
   const IEntity& entity,
   ISerializationContext& context) const {
@@ -27,10 +34,10 @@ SerializationService::serialize (
   String typeId = entity.getTypeId();
   auto serializer = getSerialzier(typeId);
   if (serializer == nullptr)
-    return; // Must return status
+    return Status::UnableToFindSerializer;
 
-  context.setValue("type", typeId);
-  serializer->serialize(entity, context);
+  context.setValue(TYPE_FIELD, typeId);
+  return serializer->serialize(entity, context);
 }
 
 Status
@@ -44,7 +51,7 @@ SerializationService::deserialize(
     return status;
 
   String typeId;
-  status = context->getStringValue("type", typeId);
+  status = context->getStringValue(TYPE_FIELD, typeId);
   if (!status.isOk())
     return status;
 

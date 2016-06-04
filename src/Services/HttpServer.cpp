@@ -86,7 +86,8 @@ HttpServer::getJson(std::shared_ptr<Core::IEntity>& entity) {
 void
 HttpServer::sendJson(const Core::Status& status) {
   Logger::message("Serializing status """ + status.getCode() + """");
-  String json = serializationService->serialize(status);
+  String json;
+  serializationService->serialize(status, json);
   int code = registry->getCode(status);
   Logger::message("Sending status with code """ + String(code) + """");
   server->send(code, "text/json", json);
@@ -95,7 +96,8 @@ HttpServer::sendJson(const Core::Status& status) {
 void
 HttpServer::sendJson(const Core::IEntity& entity) {
   Logger::message("Serializing entity of type """ + entity.getTypeId() + """");
-  String json = serializationService->serialize(entity);
+  String json;
+  serializationService->serialize(entity, json);
   Logger::message("Sending entity of type """ + entity.getTypeId() + """");
   server->send(200, "text/json", json);
 }

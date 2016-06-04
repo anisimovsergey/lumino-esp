@@ -21,10 +21,11 @@ class SerializationService : public ISerializationService {
     SerializationService(
       std::shared_ptr<const ISerializationContextFactory> contextFactory);
 
-    String serialize(
-      const Core::IEntity& entity) const override;
+    Core::Status serialize(
+      const Core::IEntity& entity,
+      String& json) const override;
 
-    void serialize(
+    Core::Status serialize(
       const Core::IEntity& entity,
       ISerializationContext& context) const override;
 
