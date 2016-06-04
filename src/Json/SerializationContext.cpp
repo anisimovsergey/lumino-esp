@@ -12,26 +12,27 @@ SerializationContext::SerializationContext(
   jsonObject(jsonObject) {
 }
 
-std::shared_ptr<ISerializationContext>
+Status
 SerializationContext::create(
-  const ISerializationService& serializationService) {
+  const ISerializationService& serializationService,
+  std::shared_ptr<ISerializationContext>& context) {
 
   std::shared_ptr<DynamicJsonBuffer> jsonBuffer(new DynamicJsonBuffer);
   JsonObject& jsonObject = jsonBuffer->createObject();
 
-  auto context = new SerializationContext(
+  context = std::shared_ptr<ISerializationContext>(new SerializationContext(
     serializationService,
     jsonBuffer,
-    jsonObject);
+    jsonObject));
 
-  return std::shared_ptr<ISerializationContext>(context);
+  return Status::Ok;
 }
 
 Status
 SerializationContext::create(
   const ISerializationService& serializationService,
-  const String& json,
-  std::shared_ptr<ISerializationContext>& context) {
+  std::shared_ptr<ISerializationContext>& context,
+  const String& json) {
 
   std::shared_ptr<DynamicJsonBuffer> jsonBuffer(new DynamicJsonBuffer);
   JsonObject& jsonObject = jsonBuffer->parseObject(json);
