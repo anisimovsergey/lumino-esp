@@ -1,7 +1,5 @@
 #include "SerializationContext.hpp"
 
-#include "Core/Logger.hpp"
-
 using namespace Json;
 using namespace Core;
 
