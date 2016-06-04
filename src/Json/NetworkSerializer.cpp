@@ -2,6 +2,7 @@
 
 #include <ESP8266WiFi.h>
 
+using namespace Core;
 using namespace Json;
 using namespace Models;
 
@@ -25,11 +26,21 @@ String getEncryptionTypeString(int thisType) {
 }
 
 void
-NetworkSerializer::serialize(const Network& network,
-                            ISerializationContext& context) const {
+NetworkSerializer::serialize(
+  const Network& network,
+  ISerializationContext& context) const {
+
   context.setValue("ssid", network.getSsid());
   context.setValue("rssi", network.getRssi());
 
   String encryption = getEncryptionTypeString(network.getEncryptionType());
   context.setValue("encryption", encryption);
+}
+
+Core::Status
+NetworkSerializer::deserialize(
+  std::shared_ptr<Models::Network>& status,
+  ISerializationContext& context) const {
+
+  return Status::NotSupported;
 }

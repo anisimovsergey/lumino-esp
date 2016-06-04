@@ -19,8 +19,13 @@ class StatusSerializer : public Serializer<Core::Status> {
     }
 
   protected:
-    void serialize(const Core::Status& status,
-                   ISerializationContext& context) const override;
+    void serialize(
+      const Core::Status& status,
+      ISerializationContext& context) const override;
+
+    Core::Status deserialize(
+      std::shared_ptr<Core::Status>& status,
+      ISerializationContext& context) const override;
 };
 
 }

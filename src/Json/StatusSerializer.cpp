@@ -9,3 +9,11 @@ StatusSerializer::serialize(const Status& status,
   context.setValue("code", status.getCode());
   context.setValue("title", status.getTitle());
 }
+
+Core::Status
+StatusSerializer::deserialize(
+  std::shared_ptr<Core::Status>& status,
+  ISerializationContext& context) const {
+
+  return Status::NotSupported;
+}

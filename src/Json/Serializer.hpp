@@ -38,10 +38,7 @@ template <class T> class Serializer : public ISerializer {
 
     virtual Core::Status deserialize(
       std::shared_ptr<T>& entity,
-      ISerializationContext& context) const {
-
-      return Core::Status::NotSupported;
-    }
+      ISerializationContext& context) const = 0;
  };
 
 }
