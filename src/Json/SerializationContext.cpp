@@ -55,11 +55,29 @@ SerializationContext::toString() const {
 
 Status
 SerializationContext::getStringValue(const String& key, String& value) {
-  const char* strVal = (const char*)jsonObject[key];
-  if (strVal == nullptr)
+
+  auto strVal = jsonObject[key];
+  if (!strVal.success())
     return Status::UnableToFindJsonKey;
-  value = strVal;
+
+  if (strVal.is<const char*>())
+    return Status::ValueIsNotString;
+
+  value = (const char*)strVal;
   return Status::Ok;
+}
+
+Status
+SerializationContext::getBoolValue(const String& key, bool& value) {
+
+  auto strVal = jsonObject[key];
+  if (!strVal.success())
+    return Status::UnableToFindJsonKey;
+
+  if (strVal.is<bool>())
+    return Status::ValueIsNotBool;
+
+  value = (bool)strVal;
 }
 
 void

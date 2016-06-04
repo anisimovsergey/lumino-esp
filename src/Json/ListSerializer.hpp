@@ -19,8 +19,13 @@ class ListSerializer : public Serializer<Core::IList> {
     }
 
   protected:
-    void serialize(const Core::IList& list,
-                   ISerializationContext& context) const override;
+    void serialize(
+      const Core::IList& list,
+      ISerializationContext& context) const override;
+
+   Core::Status deserialize(
+     std::shared_ptr<Core::IList>& list,
+     ISerializationContext& context) const override;
 };
 
 }

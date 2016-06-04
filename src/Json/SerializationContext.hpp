@@ -29,6 +29,7 @@ class SerializationContext : public ISerializationContext {
     String toString() const override;
 
     Core::Status getStringValue(const String& key, String& value) override;
+    Core::Status getBoolValue(const String& key, bool& value) override;
 
     void setValue(const String& key, const String& value) override;
     void setValue(const String& key, int value) override;

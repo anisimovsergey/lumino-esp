@@ -16,19 +16,32 @@ template <class T> class Serializer : public ISerializer {
     void serialize(
       const Core::IEntity& entity,
       ISerializationContext& context) const override {
-        const T& entityT = static_cast<const T&>(entity);
-        serialize(entityT, context);
+
+      const T& entityT = static_cast<const T&>(entity);
+      serialize(entityT, context);
     }
 
     virtual Core::Status deserialize(
       std::shared_ptr<Core::IEntity>& entity,
       ISerializationContext& context) const override {
-      return Core::Status::Ok;
+
+      std::shared_ptr<T> entityT;
+      Core::Status status = deserialize(entityT, context);
+      entity = entityT;
+      return status;
     }
 
   protected:
-    virtual void serialize(const T& entity,
-                           ISerializationContext& context) const = 0;
+    virtual void serialize(
+      const T& entity,
+      ISerializationContext& context) const = 0;
+
+    virtual Core::Status deserialize(
+      std::shared_ptr<T>& entity,
+      ISerializationContext& context) const {
+
+      return Core::Status::NotSupported;
+    }
  };
 
 }
