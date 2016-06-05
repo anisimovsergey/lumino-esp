@@ -17,9 +17,7 @@ SettingsController::SettingsController(
 void
 SettingsController::onGetSettings(Services::IHttpServer& httpServer) {
   Settings settings(
-    wifiManager->getDeviceName(),
-    wifiManager->getNetwork(), "",
-    wifiManager->isConnected()
+    wifiManager->getDeviceName()
   );
   httpServer.sendJson(settings);
 }

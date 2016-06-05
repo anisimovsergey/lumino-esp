@@ -13,27 +13,16 @@ namespace Models {
 
 class Settings : public Core::Entity<Settings> {
   public:
-    Settings();
-
     Settings(
-      String  deviceName,
-      String  networkSsid,
-      String  networkPassword,
-      bool    isConnected
+      String  deviceName
     );
 
     static String  getStaticTypeId() { return "settings"; }
 
-    String  getDeviceName() const { return deviceName; };
-    String  getNetworkSsid() const { return networkSsid; };
-    String  getNetworkPassword() const { return networkPassword; };
-    bool    getIsConnected() const { return isConnected; };
+    String      getDeviceName() const { return deviceName; };
 
   private:
     String  deviceName;
-    String  networkSsid;
-    String  networkPassword;
-    bool    isConnected;
 };
 
 }

@@ -5,12 +5,14 @@
 #include "Services/StatusCodeRegistry.hpp"
 #include "Controllers/NetworksController.hpp"
 #include "Controllers/SettingsController.hpp"
+#include "Controllers/ConnectionController.hpp"
 #include "Json/SerializationContextFactory.hpp"
 #include "Json/SerializationService.hpp"
 #include "Json/StatusSerializer.hpp"
 #include "Json/ListSerializer.hpp"
 #include "Json/NetworkSerializer.hpp"
 #include "Json/SettingsSerializer.hpp"
+#include "Json/ConnectionSerializer.hpp"
 
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
@@ -60,12 +62,16 @@ void setup(void){
     std::shared_ptr<NetworkSerializer>(new NetworkSerializer()));
   serializationService->addSerializer(
     std::shared_ptr<SettingsSerializer>(new SettingsSerializer()));
+  serializationService->addSerializer(
+    std::shared_ptr<ConnectionSerializer>(new ConnectionSerializer()));
 
   // Registering controllers
   httpServer->addApiController(
     std::shared_ptr<NetworksController>(new NetworksController(wifiManager)));
   httpServer->addApiController(
     std::shared_ptr<SettingsController>(new SettingsController(wifiManager)));
+  httpServer->addApiController(
+    std::shared_ptr<ConnectionController>(new ConnectionController(wifiManager)));
 
   httpServer->start();
 
