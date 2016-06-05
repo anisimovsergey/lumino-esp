@@ -17,8 +17,12 @@ SerializationService::serialize(
   const IEntity& entity,
   String& json) const {
 
-  auto context = contextFactory->create(*this);
-  Status status = serialize(entity, *context);
+  std::shared_ptr<ISerializationContext> context;
+  Status status = contextFactory->create(*this, context);
+  if (!status.isOk())
+    return status;
+
+  status = serialize(entity, *context);
   if (!status.isOk())
     return status;
 
@@ -46,7 +50,7 @@ SerializationService::deserialize(
   std::shared_ptr<Core::IEntity>& entity) const {
 
   std::shared_ptr<ISerializationContext> context;
-  Status status = contextFactory->create(*this, json, context);
+  Status status = contextFactory->create(*this, context, json);
   if (!status.isOk())
     return status;
 

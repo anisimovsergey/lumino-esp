@@ -19,13 +19,14 @@ class ISerializationContextFactory {
   public:
     virtual ~ISerializationContextFactory() {}
 
-    virtual std::shared_ptr<ISerializationContext> create(
-      const ISerializationService& serializationService) const = 0;
+    virtual Core::Status create(
+      const ISerializationService& serializationService,
+      std::shared_ptr<ISerializationContext>& context) const = 0;
 
     virtual Core::Status create(
       const ISerializationService& serializationService,
-      const String& json,
-      std::shared_ptr<ISerializationContext>& context) const = 0;
+      std::shared_ptr<ISerializationContext>& context,
+      const String& json) const = 0;
 };
 
 }

@@ -19,12 +19,15 @@ namespace Json {
 
 class SerializationContext : public ISerializationContext {
   public:
-    static std::shared_ptr<ISerializationContext> create(
-      const ISerializationService& serializationService);
+
     static Core::Status create(
       const ISerializationService& serializationService,
-      const String& json,
       std::shared_ptr<ISerializationContext>& context);
+
+    static Core::Status create(
+      const ISerializationService& serializationService,
+      std::shared_ptr<ISerializationContext>& context,
+      const String& json);
 
     String toString() const override;
 
@@ -37,14 +40,14 @@ class SerializationContext : public ISerializationContext {
     void setValue(const String& key, const Core::IList& list) override;
 
   private:
+    const ISerializationService&  serializationService;
+    std::shared_ptr<DynamicJsonBuffer>      jsonBuffer;
+    JsonObject&                             jsonObject;
+
     SerializationContext(
       const ISerializationService& serializationService,
       std::shared_ptr<DynamicJsonBuffer> jsonBuffer,
       JsonObject& jsonObject);
-
-    const ISerializationService&  serializationService;
-    std::shared_ptr<DynamicJsonBuffer>      jsonBuffer;
-    JsonObject&                             jsonObject;
 };
 
 }
