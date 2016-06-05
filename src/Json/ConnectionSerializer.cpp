@@ -31,12 +31,7 @@ ConnectionSerializer::deserialize(
   if (!status.isOk())
     return status;
 
-  bool connected;
-  status = context.getBoolValue("connected", connected);
-  if (!status.isOk())
-    return status;
-
   connection = std::shared_ptr<Models::Connection>(
-    new Connection(networkSsid, networkPassword, connected));
+    new Connection(networkSsid, networkPassword));
   return Status::Ok;
 }

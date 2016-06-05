@@ -20,8 +20,7 @@ class Connection : public Core::Entity<Connection> {
 
     Connection(
       String  networkSsid,
-      String  networkPassword,
-      bool    isConnected
+      String  networkPassword
     );
 
     static String  getStaticTypeId() { return "connection"; }

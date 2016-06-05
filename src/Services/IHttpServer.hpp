@@ -24,9 +24,15 @@ class IHttpServer {
                                  THandlerFunction fn) = 0;
       virtual void addPutHandler(const String& uri,
                                  THandlerFunction fn) = 0;
+      virtual void addPostHandler(const String& uri,
+                                  THandlerFunction fn) = 0;
+      virtual void addDeleteHandler(const String& uri,
+                                    THandlerFunction fn) = 0;
 
       virtual void addApiController(
         std::shared_ptr<Controllers::IApiController> controller) = 0;
+
+      virtual void setLocation(const String& location) = 0;
 
       virtual Core::Status getJson(
         std::shared_ptr<Core::IEntity>& entity) = 0;

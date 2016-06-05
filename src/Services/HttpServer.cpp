@@ -71,9 +71,24 @@ HttpServer::addPutHandler(const String& uri, THandlerFunction fn) {
 }
 
 void
+HttpServer::addPostHandler(const String& uri, THandlerFunction fn) {
+  server->on(uri.c_str(), HTTP_POST, fn);
+}
+
+void
+HttpServer::addDeleteHandler(const String& uri, THandlerFunction fn) {
+  server->on(uri.c_str(), HTTP_DELETE, fn);
+}
+
+void
 HttpServer::addApiController(std::shared_ptr<IApiController> controller) {
   controllers.push_back(controller);
   controller->registerOn(*this);
+}
+
+void
+HttpServer::setLocation(const String& location) {
+  server->sendHeader("Location", location);
 }
 
 Core::Status

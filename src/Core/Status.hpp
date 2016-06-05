@@ -21,11 +21,16 @@ class Status : public Entity<Status> {
     static const Status ValueIsNotString;
     static const Status ValueIsNotBool;
     static const Status UnableToFindSerializer;
+    static const Status ResourceNotFound;
+    static const Status ResourceCreated;
+    static const Status UnableToConnect;
     static const Status UnableToScanFiFiNetworks;
 
     static Status UnableToFindJsonKey(String key);
 
   public:
+    Status();
+
     static String getStaticTypeId() { return "status"; }
 
     bool   isOk() const { return ok;  }

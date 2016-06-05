@@ -11,9 +11,7 @@ Connection::Connection(
 
 Connection::Connection(
   String networkSsid,
-  String networkPassword,
-  bool isConnected) :
+  String networkPassword) :
   networkSsid(networkSsid),
-  networkPassword(networkPassword),
-  isConnected(isConnected) {
+  networkPassword(networkPassword) {
 }

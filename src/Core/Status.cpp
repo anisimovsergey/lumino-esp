@@ -16,8 +16,20 @@ const Status Status::ValueIsNotBool =
   Status(false, "ValueIsNotBool", "Value is not boolean.");
 const Status Status::UnableToFindSerializer =
   Status(false, "UnableToFindSerializer", "Unable to find serializer.");
+const Status Status::ResourceNotFound =
+  Status(false, "ResourceNotFound", "Unable to find requested resource.");
+const Status Status::ResourceCreated =
+  Status(false, "ResourceCreated", "The resource was created.");
+const Status Status::UnableToConnect =
+  Status(false, "UnableToConnect", "Unable to connect.");  
 const Status Status::UnableToScanFiFiNetworks =
   Status(false, "UnableToScanFiFiNetworks", "Unable to scan FiFi networks.");
+
+Status::Status() :
+  ok(false),
+  code("Undefined"),
+  title("Undefined error") {
+}
 
 Status::Status(bool ok, String code, String title) :
   ok(ok), code(code), title(title) {

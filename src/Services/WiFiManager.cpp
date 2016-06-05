@@ -5,6 +5,10 @@ using namespace Core;
 using namespace Models;
 using namespace Services;
 
+WiFiManager::WiFiManager() {
+  network = "Network";
+}
+
 Core::Status
 WiFiManager::getWiFiNetworks(Networks& networks) const {
   int networksCount = WiFi.scanNetworks();
@@ -21,6 +25,11 @@ WiFiManager::getWiFiNetworks(Networks& networks) const {
   }
 }
 
+bool
+WiFiManager::hasConnection() const {
+  return (getNetwork().length() > 0);
+}
+
 String
 WiFiManager::getDeviceName() const {
   return "Device name";
@@ -28,7 +37,7 @@ WiFiManager::getDeviceName() const {
 
 String
 WiFiManager::getNetwork() const {
-  return "Network";
+  return network;
 }
 
 String
@@ -41,8 +50,13 @@ WiFiManager::isConnected() const {
   return (WiFi.status() == WL_CONNECTED);
 }
 
-void
+Status
 WiFiManager::connect(String network, String password) {
+  if (network == "Network") {
+    this->network = network;
+    return Status::Ok;
+  } else
+    return Status::UnableToConnect;
   /*
   if (String(WiFi.SSID()) != network_ssid) {
     disconnectFromFiFi();
@@ -56,8 +70,9 @@ WiFiManager::connect(String network, String password) {
   */
 }
 
-void
+Status
 WiFiManager::disconnect() {
+  network = "";
   /*
   if (WiFi.status() != WL_DISCONNECTED) {
     WiFi.disconnect();
@@ -68,4 +83,5 @@ WiFiManager::disconnect() {
     }
   }
   */
+  return Status::Ok;
 }

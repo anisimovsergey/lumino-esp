@@ -32,13 +32,23 @@ class HttpServer : public IHttpServer, public ILoopedService {
     void start();
     void loop() override;
 
-    virtual void addGetHandler(const String& uri,
+    virtual void addGetHandler(
+      const String& uri,
       THandlerFunction fn) override;
-    virtual void addPutHandler(const String& uri,
+    virtual void addPutHandler(
+      const String& uri,
+      THandlerFunction fn) override;
+    virtual void addPostHandler(
+      const String& uri,
+      THandlerFunction fn) override;
+    virtual void addDeleteHandler(
+      const String& uri,
       THandlerFunction fn) override;
 
     virtual void addApiController(
       std::shared_ptr<Controllers::IApiController> controller) override;
+
+    virtual void setLocation(const String& location) override;
 
     virtual Core::Status getJson(
       std::shared_ptr<Core::IEntity>& entity) override;

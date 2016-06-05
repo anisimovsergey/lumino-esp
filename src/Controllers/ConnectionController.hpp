@@ -16,15 +16,16 @@ namespace Controllers {
 class ConnectionController : public IApiController {
   public:
     ConnectionController(
-      std::shared_ptr<const Services::IWiFiManager> wifiManager);
+      std::shared_ptr<Services::IWiFiManager> wifiManager);
 
     void registerOn(Services::IHttpServer& httpServer) override;
 
   private:
-    std::shared_ptr<const Services::IWiFiManager> wifiManager;
+    std::shared_ptr<Services::IWiFiManager> wifiManager;
 
     void onGetConnection(Services::IHttpServer& httpServer);
-    void onPutConnection(Services::IHttpServer& httpServer);
+    void onPostConnection(Services::IHttpServer& httpServer);
+    void onDeleteConnection(Services::IHttpServer& httpServer);
 };
 
 }
