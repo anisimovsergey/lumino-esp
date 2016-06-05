@@ -33,15 +33,17 @@ class Status : public Entity<Status> {
 
     static String getStaticTypeId() { return "status"; }
 
-    bool   isOk() const { return ok;  }
-    String getCode() const { return code; };
+    bool   isOk() const { return this == &Status::Ok;  }
+
+    String getId() const { return id; };
+    int    getCode() const { return code; }
     String getTitle() const { return title; };
 
   private:
-    Status(bool isOk, String code, String title);
+    Status(String id, int code, String title);
 
-    bool    ok;
-    String  code;
+    String  id;
+    int     code;
     String  title;
 };
 

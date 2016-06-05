@@ -1,7 +1,6 @@
 #include "Core/Logger.hpp"
 #include "Services/HttpServer.hpp"
 #include "Services/WiFiManager.hpp"
-#include "Services/StatusCodeRegistry.hpp"
 #include "Json/SerializationService.hpp"
 #include "Json/StatusSerializer.hpp"
 #include "Json/ListSerializer.hpp"
@@ -28,15 +27,13 @@ void setup(void){
     new WiFiManager());
   wifiManager->initialize();
 
-  std::shared_ptr<StatusCodeRegistry> codeRegistry(
-    new StatusCodeRegistry());
   std::shared_ptr<SerializationContextFactory> contextFactory(
     new SerializationContextFactory());
   std::shared_ptr<SerializationService> serializationService(
     new SerializationService(contextFactory));
 
   std::shared_ptr<HttpServer> httpServer(new
-    HttpServer(80, codeRegistry, serializationService));
+    HttpServer(80, serializationService));
 
   // Registering serializers
   serializationService->addSerializer(

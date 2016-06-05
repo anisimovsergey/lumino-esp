@@ -3,39 +3,39 @@
 using namespace Core;
 
 const Status Status::Ok =
-  Status(true, "Success", "Success.");
+  Status("Success", 200, "Success.");
 const Status Status::NotSupported =
-  Status(false, "NotSupported", "Not supported");
+  Status("NotSupported", 501, "Not supported");
 const Status Status::IncorrectObjectType =
-  Status(false, "IncorrectObjectType", "Incorrect object type");
+  Status("IncorrectObjectType", 500, "Incorrect object type");
 const Status Status::UnableToParseJson =
-  Status(false, "UnableToParseJson", "Unable to parse JSON.");
+  Status("UnableToParseJson", 400, "Unable to parse JSON.");
 const Status Status::ValueIsNotString =
-  Status(false, "ValueIsNotString", "Value is not string.");
+  Status("ValueIsNotString", 400, "Value is not string.");
 const Status Status::ValueIsNotBool =
-  Status(false, "ValueIsNotBool", "Value is not boolean.");
+  Status("ValueIsNotBool", 400, "Value is not boolean.");
 const Status Status::UnableToFindSerializer =
-  Status(false, "UnableToFindSerializer", "Unable to find serializer.");
+  Status("UnableToFindSerializer", 500, "Unable to find serializer.");
 const Status Status::ResourceNotFound =
-  Status(false, "ResourceNotFound", "Unable to find requested resource.");
+  Status("ResourceNotFound", 404, "Unable to find requested resource.");
 const Status Status::ResourceCreated =
-  Status(false, "ResourceCreated", "The resource was created.");
+  Status("ResourceCreated", 302, "The resource was created.");
 const Status Status::UnableToConnect =
-  Status(false, "UnableToConnect", "Unable to connect.");  
+  Status("UnableToConnect", 500, "Unable to connect.");
 const Status Status::UnableToScanFiFiNetworks =
-  Status(false, "UnableToScanFiFiNetworks", "Unable to scan FiFi networks.");
+  Status("UnableToScanFiFiNetworks", 500, "Unable to scan FiFi networks.");
 
 Status::Status() :
-  ok(false),
-  code("Undefined"),
+  id("Undefined"),
+  code(500),
   title("Undefined error") {
 }
 
-Status::Status(bool ok, String code, String title) :
-  ok(ok), code(code), title(title) {
+Status::Status(String id, int code, String title) :
+  id(id), code(code), title(title) {
 }
 
 Status
 Status::UnableToFindJsonKey(String key) {
-  return Status(false, "UnableToFindJsonKey", "Unable to find JSON key """ + key + """.");
+  return Status("UnableToFindJsonKey", 400, "Unable to find JSON key """ + key + """.");
 }

@@ -8,13 +8,9 @@
 #define SERVICES_HTTPSERVER_H
 
 #include "IHttpServer.hpp"
-
-#include "IStatusCodeRegistry.hpp"
 #include "ILoopedService.hpp"
 #include "Controllers/IApiController.hpp"
 #include "Json/ISerializationService.hpp"
-
-#include <WString.h>
 
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
@@ -27,7 +23,6 @@ namespace Services {
 class HttpServer : public IHttpServer, public ILoopedService {
   public:
     HttpServer(int port,
-      std::shared_ptr<const IStatusCodeRegistry> registry,
       std::shared_ptr<const Json::ISerializationService> serializationService);
 
     void start();
@@ -62,8 +57,6 @@ class HttpServer : public IHttpServer, public ILoopedService {
   private:
     std::unique_ptr<ESP8266WebServer> server;
     std::list<std::shared_ptr<Controllers::IApiController>> controllers;
-
-    std::shared_ptr<const IStatusCodeRegistry>          registry;
     std::shared_ptr<const Json::ISerializationService>  serializationService;
 
     String  getContentType(String filename);

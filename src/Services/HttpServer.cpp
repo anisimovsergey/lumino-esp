@@ -13,10 +13,8 @@ using namespace Controllers;
 
 HttpServer::HttpServer(
   int port,
-  std::shared_ptr<const IStatusCodeRegistry> registry,
   std::shared_ptr<const Json::ISerializationService> serializationService) :
   server(new ESP8266WebServer(port)),
-  registry(registry),
   serializationService(serializationService) {
 }
 
@@ -100,7 +98,7 @@ void
 HttpServer::sendJson(const Core::Status& status) {
   String json;
   serializationService->serialize(status, json);
-  int code = registry->getCode(status);
+  int code = status.getCode();
   server->send(code, "text/json", json);
 }
 
