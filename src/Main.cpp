@@ -1,48 +1,33 @@
-
 #include "Core/Logger.hpp"
 #include "Services/HttpServer.hpp"
 #include "Services/WiFiManager.hpp"
 #include "Services/StatusCodeRegistry.hpp"
-#include "Controllers/NetworksController.hpp"
-#include "Controllers/SettingsController.hpp"
-#include "Controllers/ConnectionController.hpp"
-#include "Json/SerializationContextFactory.hpp"
 #include "Json/SerializationService.hpp"
 #include "Json/StatusSerializer.hpp"
 #include "Json/ListSerializer.hpp"
 #include "Json/NetworkSerializer.hpp"
 #include "Json/SettingsSerializer.hpp"
 #include "Json/ConnectionSerializer.hpp"
-
-#include <ESP8266WiFi.h>
-#include <ESP8266WebServer.h>
+#include "Json/SerializationContextFactory.hpp"
+#include "Controllers/NetworksController.hpp"
+#include "Controllers/SettingsController.hpp"
+#include "Controllers/ConnectionController.hpp"
 
 using namespace Core;
 using namespace Json;
 using namespace Services;
 using namespace Controllers;
 
-String network_ssid = "BTHub4-NC8S";
-String network_pswd = "d5e89ca8cf";
-const char* host = "esp8266fs";
-
 std::list<std::shared_ptr<ILoopedService>> loopedServices;
 
 void setup(void){
-  // Initializing the logger
   Logger::initialize();
-
-  // The old stuff
-  WiFi.mode(WIFI_STA);
-  WiFi.hostname(host);
-  //connectToWiFi();
-
-  WiFi.softAP(host);
-  //WiFi.softAPdisconnect(); // Disconnect and delete from memory.
 
   // Creating services
   std::shared_ptr<WiFiManager> wifiManager(
     new WiFiManager());
+  wifiManager->initialize();
+
   std::shared_ptr<StatusCodeRegistry> codeRegistry(
     new StatusCodeRegistry());
   std::shared_ptr<SerializationContextFactory> contextFactory(

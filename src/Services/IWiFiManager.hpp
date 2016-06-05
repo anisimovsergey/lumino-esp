@@ -21,9 +21,8 @@ class IWiFiManager {
     virtual Core::Status getWiFiNetworks(Networks& networks) const = 0;
 
     virtual String  getDeviceName() const = 0;
-    virtual bool    hasConnection() const = 0;    
+    virtual bool    hasConnection() const = 0;
     virtual String  getNetwork() const = 0;
-    virtual String  getPassword() const = 0;
     virtual bool    isConnected() const = 0;
 
     virtual Core::Status connect(String network, String password) = 0;

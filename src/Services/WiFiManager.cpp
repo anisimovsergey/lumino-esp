@@ -1,12 +1,23 @@
 #include "WiFiManager.hpp"
+
 #include <ESP8266WiFi.h>
 
 using namespace Core;
 using namespace Models;
 using namespace Services;
 
+#define MAX_CONNECTION_WAIT 10
+
 WiFiManager::WiFiManager() {
-  network = "Network";
+  network = "BTHub4-NC8S";
+  password = "d5e89ca8cf";
+  deviceName = "esp8266fs";
+}
+
+void
+WiFiManager::initialize() {
+  WiFi.mode(WIFI_STA);
+  WiFi.hostname(deviceName.c_str());
 }
 
 Core::Status
@@ -32,17 +43,12 @@ WiFiManager::hasConnection() const {
 
 String
 WiFiManager::getDeviceName() const {
-  return "Device name";
+  return deviceName;
 }
 
 String
 WiFiManager::getNetwork() const {
   return network;
-}
-
-String
-WiFiManager::getPassword() const {
-  return "Password";
 }
 
 bool
@@ -52,36 +58,30 @@ WiFiManager::isConnected() const {
 
 Status
 WiFiManager::connect(String network, String password) {
-  if (network == "Network") {
-    this->network = network;
-    return Status::Ok;
-  } else
-    return Status::UnableToConnect;
-  /*
-  if (String(WiFi.SSID()) != network_ssid) {
-    disconnectFromFiFi();
-    WiFi.begin(network_ssid.c_str(), network_pswd.c_str());
-    int i = 0;
-    while ((WiFi.status() != WL_CONNECTED) && i < MAX_CONNECTION_WAIT) {
-      delay(1000);
-      i++;
-    }
+
+  WiFi.begin(network.c_str(), password.c_str());
+  int i = 0;
+  while ((WiFi.status() != WL_CONNECTED) && i < MAX_CONNECTION_WAIT) {
+    delay(1000);
+    i++;
   }
-  */
+
+  if (WiFi.status() == WL_CONNECTED) {
+    this->network = network;
+    this->password = password;
+    WiFi.softAPdisconnect();
+    return Status::Ok;
+  }
+
+  return Status::UnableToConnect;
 }
 
 Status
 WiFiManager::disconnect() {
-  network = "";
-  /*
-  if (WiFi.status() != WL_DISCONNECTED) {
+  if (WiFi.status() != WL_DISCONNECTED)
     WiFi.disconnect();
-    int i = 0;
-    while ((WiFi.status() == WL_DISCONNECTED) && i < MAX_CONNECTION_WAIT) {
-      delay(1000);
-      i++;
-    }
-  }
-  */
+  network = "";
+  password = "";
+  WiFi.softAP(deviceName.c_str());
   return Status::Ok;
 }

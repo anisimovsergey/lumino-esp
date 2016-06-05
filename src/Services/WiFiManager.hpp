@@ -15,19 +15,22 @@ class WiFiManager : public IWiFiManager {
   public:
     WiFiManager();
 
+    void    initialize();
+
     Core::Status getWiFiNetworks(Networks& networks) const override;
 
     String  getDeviceName() const override;
     bool    hasConnection() const override;
     String  getNetwork() const override;
-    String  getPassword() const override;
     bool    isConnected() const override;
 
     Core::Status connect(String network, String password) override;
     Core::Status disconnect() override;
 
   private:
-    String network;
+    String  deviceName;
+    String  network;
+    String  password;
 };
 
 }

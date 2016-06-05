@@ -16,10 +16,11 @@
 
 #include <WString.h>
 
+#include <ESP8266WiFi.h>
+#include <ESP8266WebServer.h>
+
 #include <memory>
 #include <list>
-
-class ESP8266WebServer;
 
 namespace Services {
 
