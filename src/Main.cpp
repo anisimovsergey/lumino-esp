@@ -58,6 +58,7 @@ void setup(void){
   httpServer->start();
 
   // Adding servers to the loop
+  loopedServices.push_back(wifiManager);
   loopedServices.push_back(httpServer);
 }
 

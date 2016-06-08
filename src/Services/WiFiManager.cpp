@@ -1,5 +1,6 @@
 #include "WiFiManager.hpp"
 #include "Core/Logger.hpp"
+#include "Core/Utils.hpp"
 
 #include <ESP8266WiFi.h>
 
@@ -13,12 +14,14 @@ WiFiManager::WiFiManager() {
   network = "BTHub4-NC8S";
   password = "d5e89ca8cf";
   deviceName = "esp8266fs";
+  dnsServer = std::unique_ptr<DNSServer>(new DNSServer());
 }
 
 void
 WiFiManager::initialize() {
   WiFi.mode(WIFI_STA);
   WiFi.hostname(deviceName.c_str());
+  disconnect();
 }
 
 Core::Status
@@ -77,6 +80,11 @@ WiFiManager::connect(String network, String password) {
   return Status::UnableToConnect;
 }
 
+void
+WiFiManager::loop() {
+  dnsServer->processNextRequest();
+}
+
 Status
 WiFiManager::disconnect() {
   if (WiFi.status() != WL_DISCONNECTED)
@@ -86,11 +94,12 @@ WiFiManager::disconnect() {
 
   Logger::message("Configuring access point """ + deviceName + """ ");
   WiFi.softAP(deviceName.c_str());
-  Logger::message("Access point IP address: " + WiFi.softAPIP());
+  delay(500);
+  Logger::message("Access point IP address: " + Utils::toStringIp(WiFi.softAPIP()));
 
   Logger::message("Configuring captive DNS");
-  //dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
-  //dnsServer->start(DNS_PORT, "*", WiFi.softAPIP());
+  dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
+  dnsServer->start(53, "*", WiFi.softAPIP());
 
   return Status::Ok;
 }

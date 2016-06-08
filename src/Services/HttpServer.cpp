@@ -1,7 +1,8 @@
 
 #include "HttpServer.hpp"
 
-#include "Core/List.hpp"
+#include "Core/Logger.hpp"
+#include "Core/Utils.hpp"
 
 #include <FS.h>
 #include <WiFiServer.h>
@@ -109,13 +110,33 @@ HttpServer::sendJson(const Core::IEntity& entity) {
   server->send(200, "text/json", json);
 }
 
+bool
+HttpServer::isIntercepted() {
+  return !Utils::isIp(server->hostHeader());
+}
+
+void
+HttpServer::redirectToSelf() {
+  Logger::message("Request redirected Header:" + server->hostHeader() + " Uri:" + server->uri());
+  server->sendHeader("Location", String("http://") +
+    Utils::toStringIp(server->client().localIP()), true);
+  server->send (302, "text/plain", "");
+  server->client().stop();
+}
+
 void
 HttpServer::start() {
+  Logger::message("HTTP server started");
   SPIFFS.begin();
   // Setting up "File not found" (404) responce
   server->onNotFound([&](){
-    if(!handleFileRead(server->uri()))
+    Logger::message("Incoming request");
+    if (isIntercepted()) {
+      redirectToSelf();
+    }
+    else if (!handleFileRead(server->uri())) {
       server->send(404, "text/plain", "FileNotFound");
+    }
   });
   server->begin();
 }

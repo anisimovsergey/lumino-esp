@@ -61,6 +61,8 @@ class HttpServer : public IHttpServer, public ILoopedService {
 
     String  getContentType(String filename);
     bool    handleFileRead(String path);
+    bool    isIntercepted();
+    void    redirectToSelf();
 };
 
 }

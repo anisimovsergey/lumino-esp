@@ -8,10 +8,15 @@
 #define SERVICES_WIFIMANAGER_H
 
 #include "IWiFiManager.hpp"
+#include "ILoopedService.hpp"
+
+#include <DNSServer.h>
+
+#include <memory>
 
 namespace Services {
 
-class WiFiManager : public IWiFiManager {
+class WiFiManager : public IWiFiManager, public ILoopedService {
   public:
     WiFiManager();
 
@@ -27,7 +32,11 @@ class WiFiManager : public IWiFiManager {
     Core::Status connect(String network, String password) override;
     Core::Status disconnect() override;
 
+    void loop() override;
+
   private:
+    std::unique_ptr<DNSServer> dnsServer;
+
     String  deviceName;
     String  network;
     String  password;
