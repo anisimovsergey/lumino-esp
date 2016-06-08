@@ -29,3 +29,13 @@ Logger::error(const String& message) {
   DBG_OUTPUT_PORT.print("ERROR: ");
   DBG_OUTPUT_PORT.println(message);
 }
+
+void
+Logger::progress() {
+  DBG_OUTPUT_PORT.print(".");
+}
+
+void
+Logger::newLine() {
+  DBG_OUTPUT_PORT.println("");
+}

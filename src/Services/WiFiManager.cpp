@@ -1,4 +1,5 @@
 #include "WiFiManager.hpp"
+#include "Core/Logger.hpp"
 
 #include <ESP8266WiFi.h>
 
@@ -82,6 +83,14 @@ WiFiManager::disconnect() {
     WiFi.disconnect();
   network = "";
   password = "";
+
+  Logger::message("Configuring access point """ + deviceName + """ ");
   WiFi.softAP(deviceName.c_str());
+  Logger::message("Access point IP address: " + WiFi.softAPIP());
+
+  Logger::message("Configuring captive DNS");
+  //dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
+  //dnsServer->start(DNS_PORT, "*", WiFi.softAPIP());
+
   return Status::Ok;
 }
