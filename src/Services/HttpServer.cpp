@@ -112,15 +112,14 @@ HttpServer::sendJson(const Core::IEntity& entity) {
 
 bool
 HttpServer::isIntercepted() {
-  return !Utils::isIp(server->hostHeader());
+  return server->hostHeader() != "esp8266fs.local";
 }
 
 void
 HttpServer::redirectToSelf() {
-  Logger::message("Request redirected Header:" + server->hostHeader() + " Uri:" + server->uri());
-  server->sendHeader("Location", String("http://") +
-    Utils::toStringIp(server->client().localIP()), true);
-  server->send (302, "text/plain", "");
+  Logger::message("Request redirected");
+  server->sendHeader("Location", String("http://") + "esp8266fs.local");
+  server->send(302, "text/plain", "");
   server->client().stop();
 }
 
@@ -130,7 +129,7 @@ HttpServer::start() {
   SPIFFS.begin();
   // Setting up "File not found" (404) responce
   server->onNotFound([&](){
-    Logger::message("Incoming request");
+    Logger::message("Request Header:" + server->hostHeader() + " Uri:" + server->uri());
     if (isIntercepted()) {
       redirectToSelf();
     }
