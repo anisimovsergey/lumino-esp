@@ -8,25 +8,24 @@
 #define SERVICES_HTTPSERVER_H
 
 #include "IHttpServer.hpp"
-#include "ILoopedService.hpp"
 #include "Controllers/IApiController.hpp"
 #include "Json/ISerializationService.hpp"
 
-#include <ESP8266WiFi.h>
-#include <ESP8266WebServer.h>
+#include <Hash.h>
+#include <ESPAsyncTCP.h>
+#include <ESPAsyncWebServer.h>
 
 #include <memory>
 #include <list>
 
 namespace Services {
 
-class HttpServer : public IHttpServer, public ILoopedService {
+class HttpServer : public IHttpServer {
   public:
     HttpServer(int port,
       std::shared_ptr<const Json::ISerializationService> serializationService);
 
     void start();
-    void loop() override;
 
     virtual void addGetHandler(
       const String& uri,
@@ -55,12 +54,12 @@ class HttpServer : public IHttpServer, public ILoopedService {
       const Core::IEntity& entity) override;
 
   private:
-    std::unique_ptr<ESP8266WebServer> server;
+    std::unique_ptr<AsyncWebServer> server;
     std::list<std::shared_ptr<Controllers::IApiController>> controllers;
     std::shared_ptr<const Json::ISerializationService>  serializationService;
 
-    bool    isIntercepted();
-    void    redirectToSelf();
+    bool    isIntercepted(AsyncWebServerRequest *request);
+    void    redirectToSelf(AsyncWebServerRequest *request);
 };
 
 }

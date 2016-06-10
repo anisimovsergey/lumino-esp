@@ -14,28 +14,36 @@ using namespace Controllers;
 HttpServer::HttpServer(
   int port,
   std::shared_ptr<const Json::ISerializationService> serializationService) :
-  server(new ESP8266WebServer(port)),
+  server(new AsyncWebServer(port)),
   serializationService(serializationService) {
 }
 
 void
 HttpServer::addGetHandler(const String& uri, THandlerFunction fn) {
-  server->on(uri.c_str(), HTTP_GET, fn);
+  server->on(uri.c_str(), HTTP_GET, [&](AsyncWebServerRequest *request){
+    fn();
+  });
 }
 
 void
 HttpServer::addPutHandler(const String& uri, THandlerFunction fn) {
-  server->on(uri.c_str(), HTTP_PUT, fn);
+  server->on(uri.c_str(), HTTP_PUT, [&](AsyncWebServerRequest *request){
+    fn();
+  });
 }
 
 void
 HttpServer::addPostHandler(const String& uri, THandlerFunction fn) {
-  server->on(uri.c_str(), HTTP_POST, fn);
+  server->on(uri.c_str(), HTTP_POST, [&](AsyncWebServerRequest *request){
+    fn();
+  });
 }
 
 void
 HttpServer::addDeleteHandler(const String& uri, THandlerFunction fn) {
-  server->on(uri.c_str(), HTTP_DELETE, fn);
+  server->on(uri.c_str(), HTTP_DELETE, [&](AsyncWebServerRequest *request){
+    fn();
+  });
 }
 
 void
@@ -46,41 +54,41 @@ HttpServer::addApiController(std::shared_ptr<IApiController> controller) {
 
 void
 HttpServer::setLocation(const String& location) {
-  server->sendHeader("Location", location);
+  //server->sendHeader("Location", location);
 }
 
 Core::Status
 HttpServer::getJson(std::shared_ptr<Core::IEntity>& entity) {
-  String json = server->arg("plain");
-  return serializationService->deserialize(json, entity);
+  //String json = server->arg("plain");
+  //return serializationService->deserialize(json, entity);
 }
 
 void
 HttpServer::sendJson(const Core::Status& status) {
-  String json;
-  serializationService->serialize(status, json);
-  int code = status.getCode();
-  server->send(code, "text/json", json);
+  //String json;
+  //serializationService->serialize(status, json);
+  //int code = status.getCode();
+  //server->send(code, "text/json", json);
 }
 
 void
 HttpServer::sendJson(const Core::IEntity& entity) {
-  String json;
-  serializationService->serialize(entity, json);
-  server->send(200, "text/json", json);
+  //String json;
+  //serializationService->serialize(entity, json);
+  //server->send(200, "text/json", json);
 }
 
 bool
-HttpServer::isIntercepted() {
-  return server->hostHeader() != "esp8266fs.local";
+HttpServer::isIntercepted(AsyncWebServerRequest *request) {
+  return request->host() != "www.esp8266fs.local";
 }
 
 void
-HttpServer::redirectToSelf() {
+HttpServer::redirectToSelf(AsyncWebServerRequest *request) {
   Logger::message("Request redirected");
-  server->sendHeader("Location", String("http://") + "esp8266fs.local");
-  server->send(302, "text/plain", "");
-  server->client().stop();
+  AsyncWebServerResponse *response = request->beginResponse(302, "text/plain", "");
+  response->addHeader("Location", String("http://") + "www.esp8266fs.local");
+  request->send(response);
 }
 
 void
@@ -90,18 +98,13 @@ HttpServer::start() {
   server->serveStatic("", SPIFFS, "");
 
   // Setting up "File not found" (404) responce
-  server->onNotFound([&](){
-    Logger::message("Request Header:" + server->hostHeader() + " Uri:" + server->uri());
-    if (isIntercepted()) {
-      redirectToSelf();
+  server->onNotFound([&](AsyncWebServerRequest *request){
+    Logger::message("Request Header:" + request->host() + " Uri:" + request->url());
+    if (isIntercepted(request)) {
+      redirectToSelf(request);
     } else {
-      server->send(404, "text/plain", "FileNotFound");
+      request->send(404);
     }
   });
   server->begin();
-}
-
-void
-HttpServer::loop() {
-  server->handleClient();
 }
