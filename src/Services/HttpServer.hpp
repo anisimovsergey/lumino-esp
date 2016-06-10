@@ -59,8 +59,6 @@ class HttpServer : public IHttpServer, public ILoopedService {
     std::list<std::shared_ptr<Controllers::IApiController>> controllers;
     std::shared_ptr<const Json::ISerializationService>  serializationService;
 
-    String  getContentType(String filename);
-    bool    handleFileRead(String path);
     bool    isIntercepted();
     void    redirectToSelf();
 };
