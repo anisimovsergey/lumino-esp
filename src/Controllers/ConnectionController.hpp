@@ -23,9 +23,9 @@ class ConnectionController : public IApiController {
   private:
     std::shared_ptr<Services::IWiFiManager> wifiManager;
 
-    void onGetConnection(Services::IHttpServer& httpServer);
-    void onPostConnection(Services::IHttpServer& httpServer);
-    void onDeleteConnection(Services::IHttpServer& httpServer);
+    void onGetConnection(Services::IHttpRequest& request);
+    void onPostConnection(Services::IHttpRequest& request);
+    void onDeleteConnection(Services::IHttpRequest& request);
 };
 
 }

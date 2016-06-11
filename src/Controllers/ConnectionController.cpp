@@ -15,25 +15,37 @@ ConnectionController::ConnectionController(
 }
 
 void
-ConnectionController::onGetConnection(Services::IHttpServer& httpServer) {
+ConnectionController::registerOn(IHttpServer &httpServer) {
+  httpServer.addGetHandler("/connection", [&](IHttpRequest& request) {
+    onGetConnection(request);
+  });
+  httpServer.addPostHandler("/connection", [&](IHttpRequest& request) {
+    onPostConnection(request);
+  });
+  httpServer.addDeleteHandler("/connection", [&](IHttpRequest& request) {
+    onDeleteConnection(request);
+  });
+}
 
+void
+ConnectionController::onGetConnection(IHttpRequest& request) {
   Status status;
   if (!wifiManager->hasConnection()) {
     Connection connection(
       wifiManager->getNetwork(),
       wifiManager->isConnected()
     );
-    httpServer.sendJson(connection);
+    request.sendJson(connection);
   } else {
     status = Status::ResourceNotFound;
-    httpServer.sendJson(status);
+    request.sendJson(status);
   }
 }
 
 void
-ConnectionController::onPostConnection(Services::IHttpServer& httpServer) {
+ConnectionController::onPostConnection(IHttpRequest& request) {
   std::shared_ptr<IEntity> entity;
-  Status status = httpServer.getJson(entity);
+  Status status = request.getJson(entity);
   if (status.isOk()) {
     Connection* connection = Connection::dynamicCast(entity.get());
     if (connection != nullptr) {
@@ -42,19 +54,19 @@ ConnectionController::onPostConnection(Services::IHttpServer& httpServer) {
         connection->getNetworkPassword());
       if (status.isOk()) {
         status = Status::ResourceCreated;
-        httpServer.setLocation("/connection");
+        request.addHeader("Location", "/connection");
       }
-      httpServer.sendJson(status);
+      request.sendJson(status);
     } else {
-      httpServer.sendJson(Status::IncorrectObjectType);
+      request.sendJson(Status::IncorrectObjectType);
     }
   } else {
-    httpServer.sendJson(status);
+    request.sendJson(status);
   }
 }
 
 void
-ConnectionController::onDeleteConnection(Services::IHttpServer& httpServer) {
+ConnectionController::onDeleteConnection(IHttpRequest& request) {
 
   Status status;
   if (wifiManager->hasConnection()) {
@@ -62,18 +74,5 @@ ConnectionController::onDeleteConnection(Services::IHttpServer& httpServer) {
   } else {
     status = Status::ResourceNotFound;
   }
-  httpServer.sendJson(status);
-}
-
-void
-ConnectionController::registerOn(IHttpServer &httpServer) {
-  httpServer.addGetHandler("/connection", [&]() {
-    onGetConnection(httpServer);
-  });
-  httpServer.addPostHandler("/connection", [&]() {
-    onPostConnection(httpServer);
-  });
-  httpServer.addDeleteHandler("/connection", [&]() {
-    onDeleteConnection(httpServer);
-  });
+  request.sendJson(status);
 }

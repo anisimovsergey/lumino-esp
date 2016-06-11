@@ -25,7 +25,7 @@ class NetworksController : public IApiController {
   private:
     std::shared_ptr<const Services::IWiFiManager> wifiManager;
 
-    void onGetWiFiNetworks(Services::IHttpServer& httpServer);
+    void onGetWiFiNetworks(Services::IHttpRequest& request);
 };
 
 }

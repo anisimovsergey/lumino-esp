@@ -14,18 +14,18 @@ NetworksController::NetworksController(
 
 void
 NetworksController::registerOn(IHttpServer &httpServer) {
-  httpServer.addGetHandler("/wifi_networks", [&]() {
-    this->onGetWiFiNetworks(httpServer);
+  httpServer.addGetHandler("/wifi_networks", [&](IHttpRequest& request) {
+    this->onGetWiFiNetworks(request);
   });
 }
 
 void
-NetworksController::onGetWiFiNetworks(IHttpServer& httpServer) {
+NetworksController::onGetWiFiNetworks(IHttpRequest& request) {
   List<Models::Network> networks;
   Status status = wifiManager->getWiFiNetworks(networks);
   if (status.isOk()) {
-    httpServer.sendJson(networks);
+    request.sendJson(networks);
   } else {
-    httpServer.sendJson(status);
+    request.sendJson(status);
   }
 }

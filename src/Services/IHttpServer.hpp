@@ -1,4 +1,5 @@
 // Copyright Sergey Anisimov 2016-2017
+// Copyright Sergey Anisimov 2016-2017
 // MIT License
 //
 // Moikot
@@ -7,8 +8,8 @@
 #ifndef SERVICES_I_HTTPSERVER_H
 #define SERVICES_I_HTTPSERVER_H
 
-#include "Core/Status.hpp"
-#include "Core/IEntity.hpp"
+#include "IHttpRequest.hpp"
+
 #include "Controllers/IApiController.hpp"
 
 #include <functional>
@@ -18,7 +19,7 @@ namespace Services {
 
 class IHttpServer {
   public:
-      typedef std::function<void(void)> THandlerFunction;
+      typedef std::function<void(IHttpRequest& request)> THandlerFunction;
 
       virtual void addGetHandler(const String& uri,
                                  THandlerFunction fn) = 0;
@@ -31,14 +32,6 @@ class IHttpServer {
 
       virtual void addApiController(
         std::shared_ptr<Controllers::IApiController> controller) = 0;
-
-      virtual void setLocation(const String& location) = 0;
-
-      virtual Core::Status getJson(
-        std::shared_ptr<Core::IEntity>& entity) = 0;
-
-      virtual void sendJson(const Core::Status& status) = 0;
-      virtual void sendJson(const Core::IEntity& entity) = 0;
 };
 
 }

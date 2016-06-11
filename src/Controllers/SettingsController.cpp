@@ -15,35 +15,35 @@ SettingsController::SettingsController(
 }
 
 void
-SettingsController::onGetSettings(Services::IHttpServer& httpServer) {
+SettingsController::registerOn(IHttpServer &httpServer) {
+  httpServer.addGetHandler("/settings", [&](IHttpRequest& request) {
+    onGetSettings(request);
+  });
+  httpServer.addPutHandler("/settings", [&](IHttpRequest& request) {
+    onPutSettings(request);
+  });
+}
+
+void
+SettingsController::onGetSettings(IHttpRequest& request) {
   Settings settings(
     wifiManager->getDeviceName()
   );
-  httpServer.sendJson(settings);
+  request.sendJson(settings);
 }
 
 void
-SettingsController::onPutSettings(Services::IHttpServer& httpServer) {
+SettingsController::onPutSettings(IHttpRequest& request) {
   std::shared_ptr<IEntity> entity;
-  Status status = httpServer.getJson(entity);
+  Status status = request.getJson(entity);
   if (status.isOk()) {
     Settings* settings = Settings::dynamicCast(entity.get());
     if (settings != nullptr) {
-      httpServer.sendJson(*settings);
+      request.sendJson(*settings);
     } else {
-      httpServer.sendJson(Status::IncorrectObjectType);
+      request.sendJson(Status::IncorrectObjectType);
     }
   } else {
-    httpServer.sendJson(status);
+    request.sendJson(status);
   }
-}
-
-void
-SettingsController::registerOn(IHttpServer &httpServer) {
-  httpServer.addGetHandler("/settings", [&]() {
-    onGetSettings(httpServer);
-  });
-  httpServer.addPutHandler("/settings", [&]() {
-    onPutSettings(httpServer);
-  });
 }

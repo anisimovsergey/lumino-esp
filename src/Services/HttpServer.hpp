@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef SERVICES_HTTPSERVER_H
-#define SERVICES_HTTPSERVER_H
+#ifndef SERVICES_HTTP_SERVER_H
+#define SERVICES_HTTP_SERVER_H
 
 #include "IHttpServer.hpp"
 #include "Controllers/IApiController.hpp"
@@ -43,16 +43,6 @@ class HttpServer : public IHttpServer {
     virtual void addApiController(
       std::shared_ptr<Controllers::IApiController> controller) override;
 
-    virtual void setLocation(const String& location) override;
-
-    virtual Core::Status getJson(
-      std::shared_ptr<Core::IEntity>& entity) override;
-
-    virtual void sendJson(
-      const Core::Status& status) override;
-    virtual void sendJson(
-      const Core::IEntity& entity) override;
-
   private:
     std::unique_ptr<AsyncWebServer> server;
     std::list<std::shared_ptr<Controllers::IApiController>> controllers;
@@ -64,4 +54,4 @@ class HttpServer : public IHttpServer {
 
 }
 
-#endif /* end of include guard: SERVICES_HTTPSERVER_H */
+#endif /* end of include guard: SERVICES_HTTP_SERVER_H */

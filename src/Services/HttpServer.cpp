@@ -1,5 +1,7 @@
 #include "HttpServer.hpp"
 
+#include "HttpRequest.hpp"
+
 #include "Core/Logger.hpp"
 #include "Core/Utils.hpp"
 
@@ -20,29 +22,33 @@ HttpServer::HttpServer(
 
 void
 HttpServer::addGetHandler(const String& uri, THandlerFunction fn) {
-  server->on(uri.c_str(), HTTP_GET, [&](AsyncWebServerRequest *request){
-    fn();
+  server->on(uri.c_str(), HTTP_GET, [&](AsyncWebServerRequest *asyncRequest){
+    HttpRequest request(*asyncRequest, *serializationService);
+    fn(request);
   });
 }
 
 void
 HttpServer::addPutHandler(const String& uri, THandlerFunction fn) {
-  server->on(uri.c_str(), HTTP_PUT, [&](AsyncWebServerRequest *request){
-    fn();
+  server->on(uri.c_str(), HTTP_PUT, [&](AsyncWebServerRequest *asyncRequest){
+    HttpRequest request(*asyncRequest, *serializationService);
+    fn(request);
   });
 }
 
 void
 HttpServer::addPostHandler(const String& uri, THandlerFunction fn) {
-  server->on(uri.c_str(), HTTP_POST, [&](AsyncWebServerRequest *request){
-    fn();
+  server->on(uri.c_str(), HTTP_POST, [&](AsyncWebServerRequest *asyncRequest){
+    HttpRequest request(*asyncRequest, *serializationService);
+    fn(request);
   });
 }
 
 void
 HttpServer::addDeleteHandler(const String& uri, THandlerFunction fn) {
-  server->on(uri.c_str(), HTTP_DELETE, [&](AsyncWebServerRequest *request){
-    fn();
+  server->on(uri.c_str(), HTTP_DELETE, [&](AsyncWebServerRequest *asyncRequest){
+    HttpRequest request(*asyncRequest, *serializationService);
+    fn(request);
   });
 }
 
@@ -50,32 +56,6 @@ void
 HttpServer::addApiController(std::shared_ptr<IApiController> controller) {
   controllers.push_back(controller);
   controller->registerOn(*this);
-}
-
-void
-HttpServer::setLocation(const String& location) {
-  //server->sendHeader("Location", location);
-}
-
-Core::Status
-HttpServer::getJson(std::shared_ptr<Core::IEntity>& entity) {
-  //String json = server->arg("plain");
-  //return serializationService->deserialize(json, entity);
-}
-
-void
-HttpServer::sendJson(const Core::Status& status) {
-  //String json;
-  //serializationService->serialize(status, json);
-  //int code = status.getCode();
-  //server->send(code, "text/json", json);
-}
-
-void
-HttpServer::sendJson(const Core::IEntity& entity) {
-  //String json;
-  //serializationService->serialize(entity, json);
-  //server->send(200, "text/json", json);
 }
 
 bool
@@ -93,11 +73,8 @@ HttpServer::redirectToSelf(AsyncWebServerRequest *request) {
 
 void
 HttpServer::start() {
-  Logger::message("HTTP server started");
   SPIFFS.begin();
   server->serveStatic("", SPIFFS, "");
-
-  // Setting up "File not found" (404) responce
   server->onNotFound([&](AsyncWebServerRequest *request){
     Logger::message("Request Header:" + request->host() + " Uri:" + request->url());
     if (isIntercepted(request)) {
@@ -107,4 +84,5 @@ HttpServer::start() {
     }
   });
   server->begin();
+  Logger::message("HTTP server started");
 }
