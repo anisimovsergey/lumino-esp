@@ -1,7 +1,10 @@
 #include "NetworksController.hpp"
 
 #include "Core/Status.hpp"
+#include "Core/Logger.hpp"
 #include "Services/IHttpServer.hpp"
+
+#include <Arduino.h>
 
 using namespace Core;
 using namespace Services;
@@ -15,7 +18,8 @@ NetworksController::NetworksController(
 void
 NetworksController::registerOn(IHttpServer &httpServer) {
   httpServer.addGetHandler("/wifi_networks", [&](IHttpRequest& request) {
-    this->onGetWiFiNetworks(request);
+    Logger::message("/wifi_networks");
+    onGetWiFiNetworks(request);
   });
 }
 

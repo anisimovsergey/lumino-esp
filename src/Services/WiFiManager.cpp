@@ -26,8 +26,10 @@ WiFiManager::initialize() {
 
 Core::Status
 WiFiManager::getWiFiNetworks(Networks& networks) const {
+  Logger::message("Start scanning networks...");
   int networksCount = WiFi.scanNetworks();
   if (networksCount >= 0) {
+    Logger::message("Networks scanned " + String(networksCount));
     for (int networkNum = 0; networkNum < networksCount; networkNum++) {
       String ssid = WiFi.SSID(networkNum);
       int rssi = WiFi.RSSI(networkNum);
@@ -35,9 +37,9 @@ WiFiManager::getWiFiNetworks(Networks& networks) const {
       networks.add(Network(ssid, rssi, encryptionType));
     }
     return Status::Ok;
-  } else {
-    return Status::UnableToScanFiFiNetworks;
   }
+  Logger::message("Networks scanning error " + String(networksCount));
+  return Status::UnableToScanFiFiNetworks;
 }
 
 bool

@@ -8,8 +8,10 @@
 #define SERVICES_HTTP_SERVER_H
 
 #include "IHttpServer.hpp"
-#include "Controllers/IApiController.hpp"
+#include "ILoopedService.hpp"
+
 #include "Json/ISerializationService.hpp"
+#include "Controllers/IApiController.hpp"
 
 #include <Hash.h>
 #include <ESPAsyncTCP.h>
@@ -20,7 +22,7 @@
 
 namespace Services {
 
-class HttpServer : public IHttpServer {
+class HttpServer : public IHttpServer, public ILoopedService {
   public:
     HttpServer(int port,
       std::shared_ptr<const Json::ISerializationService> serializationService);
@@ -42,6 +44,8 @@ class HttpServer : public IHttpServer {
 
     virtual void addApiController(
       std::shared_ptr<Controllers::IApiController> controller) override;
+
+    void loop() override {};
 
   private:
     std::unique_ptr<AsyncWebServer> server;

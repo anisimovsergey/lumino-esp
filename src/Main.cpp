@@ -47,17 +47,18 @@ void setup(void){
   serializationService->addSerializer(
     std::shared_ptr<ConnectionSerializer>(new ConnectionSerializer()));
 
-  // Registering controllers
+  //Registering controllers
   httpServer->addApiController(
     std::shared_ptr<NetworksController>(new NetworksController(wifiManager)));
-  httpServer->addApiController(
-    std::shared_ptr<SettingsController>(new SettingsController(wifiManager)));
-  httpServer->addApiController(
-    std::shared_ptr<ConnectionController>(new ConnectionController(wifiManager)));
+  //httpServer->addApiController(
+  //  std::shared_ptr<SettingsController>(new SettingsController(wifiManager)));
+  //httpServer->addApiController(
+  //  std::shared_ptr<ConnectionController>(new ConnectionController(wifiManager)));
 
   httpServer->start();
 
   // Adding servers to the loop
+  loopedServices.push_back(httpServer);
   loopedServices.push_back(wifiManager);
 }
 
