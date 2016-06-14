@@ -1,5 +1,7 @@
 #include "SerializationService.hpp"
 
+#include "Core/Logger.hpp"
+
 #include <algorithm>
 
 using namespace Json;
@@ -21,12 +23,13 @@ SerializationService::serialize(
   Status status = contextFactory->create(*this, context);
   if (!status.isOk())
     return status;
-
+  Logger::message("Serialization context created");
   status = serialize(entity, *context);
   if (!status.isOk())
     return status;
-
+  Logger::message("Object serialized");
   json = context->toString();
+  Logger::message("Context converted to string");
   return Status::Ok;
 }
 
@@ -36,12 +39,14 @@ SerializationService::serialize (
   ISerializationContext& context) const {
 
   String typeId = entity.getTypeId();
+  Logger::message("Getting serializer for type " + typeId);
   auto serializer = getSerialzier(typeId);
   if (serializer == nullptr)
     return Status::UnableToFindSerializer;
-
+  Logger::message("Serializer found");
   context.setValue(TYPE_FIELD, typeId);
   return serializer->serialize(entity, context);
+  Logger::message("Serializer used");
 }
 
 Status

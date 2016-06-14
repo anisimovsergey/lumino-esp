@@ -26,8 +26,11 @@ WiFiManager::initialize() {
 
 Core::Status
 WiFiManager::getWiFiNetworks(Networks& networks) const {
-  Logger::message("Start scanning networks...");
-  int networksCount = WiFi.scanNetworks();
+  auto networksCount = WiFi.scanComplete();
+  if (networksCount == WIFI_SCAN_RUNNING) {
+    Logger::message("Scanning networks... ");
+    return Status::Ok;
+  }
   if (networksCount >= 0) {
     Logger::message("Networks scanned " + String(networksCount));
     for (int networkNum = 0; networkNum < networksCount; networkNum++) {
@@ -36,10 +39,12 @@ WiFiManager::getWiFiNetworks(Networks& networks) const {
       int encryptionType = WiFi.encryptionType(networkNum);
       networks.add(Network(ssid, rssi, encryptionType));
     }
+    WiFi.scanDelete();
     return Status::Ok;
   }
-  Logger::message("Networks scanning error " + String(networksCount));
-  return Status::UnableToScanFiFiNetworks;
+  WiFi.scanNetworks(true);
+  Logger::message("Scan started");
+  return Status::Ok;
 }
 
 bool

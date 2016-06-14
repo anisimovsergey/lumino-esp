@@ -3,7 +3,7 @@
 using namespace Core;
 
 const Status Status::Ok =
-  Status("Success", 200, "Success.");
+  Status(true, "Success", 200, "Success.");
 const Status Status::NotSupported =
   Status("NotSupported", 501, "Not supported");
 const Status Status::IncorrectObjectType =
@@ -32,7 +32,11 @@ Status::Status() :
 }
 
 Status::Status(String id, int code, String title) :
-  id(id), code(code), title(title) {
+  ok(false), id(id), code(code), title(title) {
+}
+
+Status::Status(bool ok, String id, int code, String title) :
+  ok(ok), id(id), code(code), title(title) {
 }
 
 Status
