@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef SERVICES_HTTP_SERVER_H
-#define SERVICES_HTTP_SERVER_H
+#ifndef SERVICES_HTTP_SERVER_SYNC_H
+#define SERVICES_HTTP_SERVER_SYNC_H
 
 #include "IHttpServer.hpp"
 #include "ILoopedService.hpp"
@@ -13,19 +13,18 @@
 #include "Json/ISerializationService.hpp"
 #include "Controllers/IApiController.hpp"
 
-#include <Hash.h>
-#include <ESPAsyncTCP.h>
-#include <ESPAsyncWebServer.h>
-
 #include <memory>
 #include <list>
 
+class ESP8266WebServer;
+
 namespace Services {
 
-class HttpServer : public IHttpServer, public ILoopedService {
+class HttpServerSync : public IHttpServer, public ILoopedService {
   public:
-    HttpServer(int port,
+    HttpServerSync(int port,
       std::shared_ptr<const Json::ISerializationService> serializationService);
+    virtual ~HttpServerSync();
 
     void start();
 
@@ -45,17 +44,14 @@ class HttpServer : public IHttpServer, public ILoopedService {
     virtual void addApiController(
       std::shared_ptr<Controllers::IApiController> controller) override;
 
-    void loop() override {};
+    void loop() override;
 
   private:
-    std::unique_ptr<AsyncWebServer> server;
+    std::unique_ptr<ESP8266WebServer> server;
     std::list<std::shared_ptr<Controllers::IApiController>> controllers;
     std::shared_ptr<const Json::ISerializationService>  serializationService;
-
-    bool    isIntercepted(AsyncWebServerRequest *request);
-    void    redirectToSelf(AsyncWebServerRequest *request);
 };
 
 }
 
-#endif /* end of include guard: SERVICES_HTTP_SERVER_H */
+#endif /* end of include guard: SERVICES_HTTP_SERVER_SYNC_H */

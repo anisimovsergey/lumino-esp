@@ -11,14 +11,14 @@
 
 #include "Json/ISerializationService.hpp"
 
-class AsyncWebServerRequest;
+class ESP8266WebServer;
 
 namespace Services {
 
 class HttpRequest : public IHttpRequest {
   public:
     HttpRequest(
-      AsyncWebServerRequest& request,
+      ESP8266WebServer& server,
       const Json::ISerializationService& serializationService);
 
     void addHeader(const String& header, const String& value) override;
@@ -31,7 +31,7 @@ class HttpRequest : public IHttpRequest {
 
   private:
     const Json::ISerializationService& serializationService;
-    AsyncWebServerRequest& request;
+    ESP8266WebServer& server;
 };
 
 }

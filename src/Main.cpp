@@ -1,5 +1,6 @@
 #include "Core/Logger.hpp"
-#include "Services/HttpServer.hpp"
+#include "Services/HttpServerAsync.hpp"
+#include "Services/HttpServerSync.hpp"
 #include "Services/WiFiManager.hpp"
 #include "Json/SerializationService.hpp"
 #include "Json/StatusSerializer.hpp"
@@ -32,8 +33,10 @@ void setup(void){
   std::shared_ptr<SerializationService> serializationService(
     new SerializationService(contextFactory));
 
-  std::shared_ptr<HttpServer> httpServer(new
-    HttpServer(80, serializationService));
+  std::shared_ptr<HttpServerAsync> httpServerAsync(new
+    HttpServerAsync(80));
+  std::shared_ptr<HttpServerSync> httpServerSync(new
+    HttpServerSync(8080, serializationService));
 
   // Registering serializers
   serializationService->addSerializer(
@@ -48,17 +51,19 @@ void setup(void){
     std::shared_ptr<ConnectionSerializer>(new ConnectionSerializer()));
 
   //Registering controllers
-  httpServer->addApiController(
+  httpServerSync->addApiController(
     std::shared_ptr<NetworksController>(new NetworksController(wifiManager)));
   //httpServer->addApiController(
   //  std::shared_ptr<SettingsController>(new SettingsController(wifiManager)));
   //httpServer->addApiController(
   //  std::shared_ptr<ConnectionController>(new ConnectionController(wifiManager)));
 
-  httpServer->start();
+  httpServerAsync->start();
+  httpServerSync->start();
 
   // Adding servers to the loop
-  loopedServices.push_back(httpServer);
+  loopedServices.push_back(httpServerAsync);
+  loopedServices.push_back(httpServerSync);
   loopedServices.push_back(wifiManager);
 }
 
