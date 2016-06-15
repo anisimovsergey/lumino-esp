@@ -5,7 +5,6 @@
 #include "Json/StatusSerializer.hpp"
 #include "Json/ListSerializer.hpp"
 #include "Json/NetworkSerializer.hpp"
-#include "Json/NetworksScanSerializer.hpp"
 #include "Json/SettingsSerializer.hpp"
 #include "Json/ConnectionSerializer.hpp"
 #include "Json/SerializationContextFactory.hpp"
@@ -44,8 +43,6 @@ void setup(void){
   serializationService->addSerializer(
     std::shared_ptr<NetworkSerializer>(new NetworkSerializer()));
   serializationService->addSerializer(
-    std::shared_ptr<NetworksScanSerializer>(new NetworksScanSerializer()));
-  serializationService->addSerializer(
     std::shared_ptr<SettingsSerializer>(new SettingsSerializer()));
   serializationService->addSerializer(
     std::shared_ptr<ConnectionSerializer>(new ConnectionSerializer()));
@@ -53,10 +50,10 @@ void setup(void){
   //Registering controllers
   httpServerAsync->addApiController(
     std::shared_ptr<NetworksController>(new NetworksController(wifiManager)));
-  //httpServer->addApiController(
-  //  std::shared_ptr<SettingsController>(new SettingsController(wifiManager)));
-  //httpServer->addApiController(
-  //  std::shared_ptr<ConnectionController>(new ConnectionController(wifiManager)));
+  httpServerAsync->addApiController(
+    std::shared_ptr<SettingsController>(new SettingsController(wifiManager)));
+  httpServerAsync->addApiController(
+    std::shared_ptr<ConnectionController>(new ConnectionController(wifiManager)));
 
   httpServerAsync->start();
 

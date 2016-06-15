@@ -38,6 +38,7 @@ SettingsController::onPutSettings(IHttpRequest& request) {
   Status status = request.getJson(entity);
   if (status.isOk()) {
     Settings* settings = Settings::dynamicCast(entity.get());
+    // TODO: Update device settings.
     if (settings != nullptr) {
       request.sendJson(*settings);
     } else {

@@ -11,6 +11,16 @@ HttpRequest::HttpRequest(
   AsyncWebServerRequest& request,
   const Json::ISerializationService& serializationService) :
   request(request),
+  body(""),
+  serializationService(serializationService) {
+}
+
+HttpRequest::HttpRequest(
+  AsyncWebServerRequest& request,
+  const String& body,
+  const Json::ISerializationService& serializationService) :
+  request(request),
+  body(body),
   serializationService(serializationService) {
 }
 
@@ -24,8 +34,8 @@ HttpRequest::addHeader(const String& header, const String& value) {
 
 Core::Status
 HttpRequest::getJson(std::shared_ptr<IEntity>& entity) {
-  String json = request.arg("plain");
-  return serializationService.deserialize(json, entity);
+  Logger::message("Body: " + body);
+  return serializationService.deserialize(body, entity);
 }
 
 void

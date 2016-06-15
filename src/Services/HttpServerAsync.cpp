@@ -23,7 +23,7 @@ HttpServerAsync::~HttpServerAsync() {
 
 void
 HttpServerAsync::addGetHandler(const String& uri, THandlerFunction fn) {
-  server->on(uri.c_str(), HTTP_GET, [=](AsyncWebServerRequest* request){
+  server->on(uri.c_str(), HTTP_GET, [=](AsyncWebServerRequest* request) {
     HttpRequest httpRequest(*request, *serializationService);
     fn(httpRequest);
   });
@@ -31,26 +31,41 @@ HttpServerAsync::addGetHandler(const String& uri, THandlerFunction fn) {
 
 void
 HttpServerAsync::addPutHandler(const String& uri, THandlerFunction fn) {
-  //server->on(uri.c_str(), HTTP_PUT, [=](void){
-    //HttpRequest request(*asyncRequest, *serializationService);
-    //fn(request);
-  //});
+  server->on(uri.c_str(), HTTP_PUT, [=](AsyncWebServerRequest* request) {
+    HttpRequest httpRequest(*request, *serializationService);
+    fn(httpRequest);
+  });
 }
 
 void
 HttpServerAsync::addPostHandler(const String& uri, THandlerFunction fn) {
-  //server->on(uri.c_str(), HTTP_POST, [=](void){
-    //HttpRequest request(*asyncRequest, *serializationService);
-    //fn(request);
-  //});
+  String body;
+  server->on(uri.c_str(), HTTP_POST, [=](AsyncWebServerRequest* request) {
+    HttpRequest httpRequest(*request, body, *serializationService);
+    fn(httpRequest);
+  }, nullptr, [&](AsyncWebServerRequest *request,
+    uint8_t *data, size_t len, size_t index, size_t total){
+      String txt;
+      Logger::message("Data len: " + String(len) +
+        " index: " + String(index) +
+        " total: " + String(total));
+      txt.reserve(total);
+      for (size_t i = index; i < index + len; i++) {
+        char c = data[i];
+        Logger::message("ch: " + String(c));
+        txt += c;
+      }
+      Logger::message("Body: " + txt);
+    }
+  );
 }
 
 void
 HttpServerAsync::addDeleteHandler(const String& uri, THandlerFunction fn) {
-  //server->on(uri.c_str(), HTTP_DELETE, [=](void){
-    //HttpRequest request(*asyncRequest, *serializationService);
-    //fn(request);
-  //});
+  server->on(uri.c_str(), HTTP_DELETE, [=](AsyncWebServerRequest* request) {
+    HttpRequest httpRequest(*request, *serializationService);
+    fn(httpRequest);
+  });
 }
 
 void

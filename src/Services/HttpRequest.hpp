@@ -20,6 +20,10 @@ class HttpRequest : public IHttpRequest {
     HttpRequest(
       AsyncWebServerRequest& request,
       const Json::ISerializationService& serializationService);
+    HttpRequest(
+      AsyncWebServerRequest& request,
+      const String& body,
+      const Json::ISerializationService& serializationService);
     virtual ~HttpRequest();
 
     void addHeader(const String& header, const String& value) override;
@@ -32,6 +36,7 @@ class HttpRequest : public IHttpRequest {
 
   private:
     AsyncWebServerRequest& request;
+    const String& body;
     const Json::ISerializationService& serializationService;
 };
 

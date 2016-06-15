@@ -29,10 +29,8 @@ WiFiManager::getWiFiNetworks(Networks& networks) const {
   auto networksCount = WiFi.scanComplete();
   if (networksCount == WIFI_SCAN_RUNNING) {
     Logger::message("Scanning networks... ");
-    return Status::Ok;
-  }
-  if (networksCount >= 0) {
-    Logger::message("Networks scanned " + String(networksCount));
+  } else if (networksCount >= 0) {
+    Logger::message("Networks scanned, total:" + String(networksCount));
     for (int networkNum = 0; networkNum < networksCount; networkNum++) {
       String ssid = WiFi.SSID(networkNum);
       int rssi = WiFi.RSSI(networkNum);
@@ -40,16 +38,16 @@ WiFiManager::getWiFiNetworks(Networks& networks) const {
       networks.add(Network(ssid, rssi, encryptionType));
     }
     WiFi.scanDelete();
-    return Status::Ok;
+  } else {
+    WiFi.scanNetworks(true);
+    Logger::message("Scan started");
   }
-  WiFi.scanNetworks(true);
-  Logger::message("Scan started");
   return Status::Ok;
 }
 
 bool
 WiFiManager::hasConnection() const {
-  return (getNetwork().length() > 0);
+  return (network.length() > 0);
 }
 
 String
@@ -70,21 +68,21 @@ WiFiManager::isConnected() const {
 Status
 WiFiManager::connect(String network, String password) {
 
-  WiFi.begin(network.c_str(), password.c_str());
-  int i = 0;
-  while ((WiFi.status() != WL_CONNECTED) && i < MAX_CONNECTION_WAIT) {
-    delay(1000);
-    i++;
-  }
+  //WiFi.begin(network.c_str(), password.c_str());
+  //int i = 0;
+  //while ((WiFi.status() != WL_CONNECTED) && i < MAX_CONNECTION_WAIT) {
+  //  delay(1000);
+  //  i++;
+  //}
 
-  if (WiFi.status() == WL_CONNECTED) {
+  //if (WiFi.status() == WL_CONNECTED) {
     this->network = network;
     this->password = password;
-    WiFi.softAPdisconnect();
+  //  WiFi.softAPdisconnect();
     return Status::Ok;
-  }
+  //}
 
-  return Status::UnableToConnect;
+  //return Status::UnableToConnect;
 }
 
 void

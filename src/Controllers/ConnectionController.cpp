@@ -29,16 +29,14 @@ ConnectionController::registerOn(IHttpServer &httpServer) {
 
 void
 ConnectionController::onGetConnection(IHttpRequest& request) {
-  Status status;
-  if (!wifiManager->hasConnection()) {
+  if (wifiManager->hasConnection()) {
     Connection connection(
       wifiManager->getNetwork(),
       wifiManager->isConnected()
     );
     request.sendJson(connection);
   } else {
-    status = Status::ResourceNotFound;
-    request.sendJson(status);
+    request.sendJson(Status::ResourceNotFound);
   }
 }
 
@@ -67,7 +65,6 @@ ConnectionController::onPostConnection(IHttpRequest& request) {
 
 void
 ConnectionController::onDeleteConnection(IHttpRequest& request) {
-
   Status status;
   if (wifiManager->hasConnection()) {
     status = wifiManager->disconnect();
