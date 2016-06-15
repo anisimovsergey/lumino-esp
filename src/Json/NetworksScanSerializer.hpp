@@ -4,30 +4,30 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef JSON_NETWORK_SERIALIZER_H
-#define JSON_NETWORK_SERIALIZER_H
+#ifndef JSON_NETWORKS_SCAN_SERIALIZER_H
+#define JSON_NETWORKS_SCAN_SERIALIZER_H
 
-#include "Models/Network.hpp"
+#include "Models/NetworksScan.hpp"
 #include "Serializer.hpp"
 
 namespace Json {
 
-class NetworkSerializer : public Serializer<Models::Network> {
+class NetworksScanSerializer : public Serializer<Models::NetworksScan> {
   public:
     String getTypeId() const override {
-      return Models::Network::getStaticTypeId();
+      return Models::NetworksScan::getStaticTypeId();
     }
 
   protected:
     Core::Status serialize(
-      const Models::Network& network,
+      const Models::NetworksScan& scan,
       ISerializationContext& context) const override;
 
     Core::Status deserialize(
-      std::shared_ptr<Models::Network>& network,
+      std::shared_ptr<Models::NetworksScan>& scan,
       ISerializationContext& context) const override;
 };
 
 }
 
-#endif /* end of include guard: JSON_NETWORK_SERIALIZER_H */
+#endif /* end of include guard: JSON_NETWORKS_SCAN_SERIALIZER_H */

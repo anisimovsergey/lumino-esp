@@ -41,7 +41,7 @@ NetworkSerializer::serialize(
 
 Status
 NetworkSerializer::deserialize(
-  std::shared_ptr<Models::Network>& status,
+  std::shared_ptr<Models::Network>& network,
   ISerializationContext& context) const {
 
   return Status::NotSupported;
