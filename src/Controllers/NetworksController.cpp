@@ -28,8 +28,8 @@ NetworksController::onGetWiFiNetworks(IHttpRequest& request) {
   List<Models::Network> networks;
   Status status = wifiManager->getWiFiNetworks(networks);
   if (status.isOk()) {
-    request.sendJson(networks);
+    request.createResponse(Status::Ok)->sendJson(networks);
   } else {
-    request.sendJson(status);
+    request.createResponse(status);
   }
 }

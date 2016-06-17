@@ -29,7 +29,7 @@ SettingsController::onGetSettings(IHttpRequest& request) {
   Settings settings(
     wifiManager->getDeviceName()
   );
-  request.sendJson(settings);
+  request.createResponse(Status::Ok)->sendJson(settings);
 }
 
 void
@@ -40,11 +40,11 @@ SettingsController::onPutSettings(IHttpRequest& request) {
     Settings* settings = Settings::dynamicCast(entity.get());
     // TODO: Update device settings.
     if (settings != nullptr) {
-      request.sendJson(*settings);
+      request.createResponse(Status::Ok)->sendJson(*settings);
     } else {
-      request.sendJson(Status::IncorrectObjectType);
+      request.createResponse(Status::IncorrectObjectType);
     }
   } else {
-    request.sendJson(status);
+    request.createResponse(status);
   }
 }

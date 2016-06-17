@@ -7,6 +7,7 @@
 #ifndef SERVICES_I_HTTP_REQEST_H
 #define SERVICES_I_HTTP_REQEST_H
 
+#include "IHttpResponse.hpp"
 #include "Core/Status.hpp"
 #include "Core/IEntity.hpp"
 
@@ -18,13 +19,11 @@ namespace Services {
 
 class IHttpRequest {
   public:
-    virtual void addHeader(const String& header, const String& value) = 0;
-
     virtual Core::Status getJson(
       std::shared_ptr<Core::IEntity>& entity) = 0;
 
-    virtual void sendJson(const Core::Status& status) = 0;
-    virtual void sendJson(const Core::IEntity& entity) = 0;
+    virtual std::shared_ptr<IHttpResponse> createResponse(
+      const Core::Status& status) = 0;
 };
 
 }

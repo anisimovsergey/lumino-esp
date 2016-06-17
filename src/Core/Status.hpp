@@ -15,6 +15,7 @@ class Status : public Entity<Status> {
   public:
     // Well-known statuses
     static const Status Ok;
+    static const Status Conflict;
     static const Status NotSupported;
     static const Status IncorrectObjectType;
     static const Status UnableToParseJson;

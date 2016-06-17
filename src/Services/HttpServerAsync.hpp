@@ -53,6 +53,11 @@ class HttpServerAsync : public IHttpServer, public ILoopedService {
     std::list<std::shared_ptr<Controllers::IApiController>> controllers;
     std::shared_ptr<const Json::ISerializationService>  serializationService;
 
+    void addHandler(
+      const String& uri,
+      WebRequestMethod method,
+      THandlerFunction fn);
+    
     bool    isIntercepted(AsyncWebServerRequest* request);
     void    redirectToSelf(AsyncWebServerRequest* request);
 };

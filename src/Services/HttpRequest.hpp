@@ -19,20 +19,15 @@ class HttpRequest : public IHttpRequest {
   public:
     HttpRequest(
       AsyncWebServerRequest& request,
-      const Json::ISerializationService& serializationService);
-    HttpRequest(
-      AsyncWebServerRequest& request,
       const String& body,
       const Json::ISerializationService& serializationService);
     virtual ~HttpRequest();
 
-    void addHeader(const String& header, const String& value) override;
-
     Core::Status getJson(
       std::shared_ptr<Core::IEntity>& entity) override;
 
-    void sendJson(const Core::Status& status) override;
-    void sendJson(const Core::IEntity& entity) override;
+    std::shared_ptr<IHttpResponse> createResponse(
+      const Core::Status& status) override;
 
   private:
     AsyncWebServerRequest& request;

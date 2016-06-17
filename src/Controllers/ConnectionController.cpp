@@ -27,43 +27,41 @@ ConnectionController::registerOn(IHttpServer &httpServer) {
   });
 }
 
-void
+IHttpResponse
 ConnectionController::onGetConnection(IHttpRequest& request) {
-  if (wifiManager->hasConnection()) {
-    Connection connection(
-      wifiManager->getNetwork(),
-      wifiManager->isConnected()
-    );
-    request.sendJson(connection);
-  } else {
-    request.sendJson(Status::ResourceNotFound);
-  }
+  if (!wifiManager->hasConnection())
+    return Status::ResourceNotFound;
+
+  return Connection(
+    wifiManager->getNetwork(),
+    wifiManager->isConnected()
+  );
 }
 
-void
+IHttpResponse
 ConnectionController::onPostConnection(IHttpRequest& request) {
+  if (wifiManager->hasConnection())
+    return Status::Conflict;
+
   std::shared_ptr<IEntity> entity;
   Status status = request.getJson(entity);
-  if (status.isOk()) {
-    Connection* connection = Connection::dynamicCast(entity.get());
-    if (connection != nullptr) {
-      status = wifiManager->connect(
-        connection->getNetworkSsid(),
-        connection->getNetworkPassword());
-      if (status.isOk()) {
-        status = Status::ResourceCreated;
-        request.addHeader("Location", "/connection");
-      }
-      request.sendJson(status);
-    } else {
-      request.sendJson(Status::IncorrectObjectType);
-    }
-  } else {
-    request.sendJson(status);
-  }
+  if (!status.isOk())
+    return status;
+
+  Connection* connection = Connection::dynamicCast(entity.get());
+  if (connection == nullptr)
+    return Status::IncorrectObjectType;
+
+  status = wifiManager->connect(
+    connection->getNetworkSsid(),
+    connection->getNetworkPassword());
+  if (!status.isOk())
+    return Response::status(status);
+
+  return Response::resourceCreated("/connection");
 }
 
-void
+IHttpResponse
 ConnectionController::onDeleteConnection(IHttpRequest& request) {
   Status status;
   if (wifiManager->hasConnection()) {
@@ -71,5 +69,5 @@ ConnectionController::onDeleteConnection(IHttpRequest& request) {
   } else {
     status = Status::ResourceNotFound;
   }
-  request.sendJson(status);
+  return Response::Status(status);
 }

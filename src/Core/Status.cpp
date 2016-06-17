@@ -4,6 +4,8 @@ using namespace Core;
 
 const Status Status::Ok =
   Status(true, "Success", 200, "Success.");
+const Status Status::Conflict =
+  Status("Conflict", 409, "Conflict.");
 const Status Status::NotSupported =
   Status("NotSupported", 501, "Not supported");
 const Status Status::IncorrectObjectType =
