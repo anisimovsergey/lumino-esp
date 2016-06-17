@@ -27,18 +27,18 @@ ConnectionController::registerOn(IHttpServer &httpServer) {
   });
 }
 
-IHttpResponse
+std::shared_ptr<IHttpResponse>
 ConnectionController::onGetConnection(IHttpRequest& request) {
   if (!wifiManager->hasConnection())
     return Status::ResourceNotFound;
 
-  return Connection(
+  return Response::FromEntity(std::shared_ptr<IEntity>(new Connection(
     wifiManager->getNetwork(),
     wifiManager->isConnected()
-  );
+  ));
 }
 
-IHttpResponse
+std::shared_ptr<IHttpResponse>
 ConnectionController::onPostConnection(IHttpRequest& request) {
   if (wifiManager->hasConnection())
     return Status::Conflict;
@@ -61,7 +61,7 @@ ConnectionController::onPostConnection(IHttpRequest& request) {
   return Response::resourceCreated("/connection");
 }
 
-IHttpResponse
+std::shared_ptr<IHttpResponse>
 ConnectionController::onDeleteConnection(IHttpRequest& request) {
   Status status;
   if (wifiManager->hasConnection()) {
@@ -69,5 +69,5 @@ ConnectionController::onDeleteConnection(IHttpRequest& request) {
   } else {
     status = Status::ResourceNotFound;
   }
-  return Response::Status(status);
+  return Response::status(status);
 }
