@@ -8,8 +8,10 @@
 #define SERVICES_I_WIFIMANAGER_H
 
 #include "Core/List.hpp"
-#include "Core/Status.hpp"
+#include "Core/ActionResult.hpp"
 #include "Models/Network.hpp"
+
+#include <memory>
 
 namespace Services {
 
@@ -17,16 +19,16 @@ class IWiFiManager {
   public:
     virtual ~IWiFiManager() {};
 
-    typedef Core::List<Models::Network> Networks;
-    virtual Core::Status getWiFiNetworks(Networks& networks) const = 0;
+    virtual std::shared_ptr<Core::ActionResult>
+      getWiFiNetworks(std::shared_ptr<Core::List<Models::Network>>& networks) const = 0;
 
     virtual String  getDeviceName() const = 0;
     virtual bool    hasConnection() const = 0;
     virtual String  getNetwork() const = 0;
     virtual bool    isConnected() const = 0;
 
-    virtual Core::Status connect(String network, String password) = 0;
-    virtual Core::Status disconnect() = 0;
+    virtual std::shared_ptr<Core::ActionResult> connect(String network, String password) = 0;
+    virtual std::shared_ptr<Core::ActionResult> disconnect() = 0;
 };
 
 }

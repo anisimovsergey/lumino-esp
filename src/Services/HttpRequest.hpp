@@ -9,30 +9,20 @@
 
 #include "IHttpRequest.hpp"
 
-#include "Json/ISerializationService.hpp"
-
 class AsyncWebServerRequest;
 
 namespace Services {
 
 class HttpRequest : public IHttpRequest {
   public:
-    HttpRequest(
-      AsyncWebServerRequest& request,
-      const String& body,
-      const Json::ISerializationService& serializationService);
+    HttpRequest(AsyncWebServerRequest& request);
     virtual ~HttpRequest();
 
-    Core::Status getJson(
-      std::shared_ptr<Core::IEntity>& entity) override;
-
-    std::shared_ptr<IHttpResponse> createResponse(
-      const Core::Status& status) override;
+    virtual String getArgument(String argument) override;
+    virtual String getHeader(String header) override;
 
   private:
     AsyncWebServerRequest& request;
-    const String& body;
-    const Json::ISerializationService& serializationService;
 };
 
 }

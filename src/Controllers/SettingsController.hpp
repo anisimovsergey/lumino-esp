@@ -23,8 +23,14 @@ class SettingsController : public IApiController {
   private:
     std::shared_ptr<const Services::IWiFiManager> wifiManager;
 
-    void onGetSettings(Services::IHttpRequest& request);
-    void onPutSettings(Services::IHttpRequest& request);
+    std::shared_ptr<Core::ActionResult>
+      onGetSettings(
+        Services::IHttpRequest& request);
+        
+    std::shared_ptr<Core::ActionResult>
+      onPutSettings(
+        Services::IHttpRequest& request,
+        const Core::IEntity& entity);
 };
 
 }

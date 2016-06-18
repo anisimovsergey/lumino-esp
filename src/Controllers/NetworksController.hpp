@@ -8,6 +8,7 @@
 #define CONTROLLERS_NETWORKS_CONTROLLER_H
 
 #include "IApiController.hpp"
+#include "Core/ActionResult.hpp"
 #include "Services/IHttpServer.hpp"
 #include "Services/IWiFiManager.hpp"
 
@@ -25,7 +26,8 @@ class NetworksController : public IApiController {
   private:
     std::shared_ptr<const Services::IWiFiManager> wifiManager;
 
-    void onGetWiFiNetworks(Services::IHttpRequest& request);
+    std::shared_ptr<Core::ActionResult>
+      onGetWiFiNetworks(Services::IHttpRequest& request);
 };
 
 }

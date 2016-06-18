@@ -1,6 +1,6 @@
 #include "SettingsController.hpp"
 
-#include "Core/Status.hpp"
+#include "Core/ActionResult.hpp"
 #include "Models/Settings.hpp"
 #include "Services/IHttpServer.hpp"
 
@@ -19,32 +19,27 @@ SettingsController::registerOn(IHttpServer &httpServer) {
   httpServer.addGetHandler("/settings", [&](IHttpRequest& request) {
     onGetSettings(request);
   });
-  httpServer.addPutHandler("/settings", [&](IHttpRequest& request) {
-    onPutSettings(request);
+  httpServer.addPutHandler("/settings", [&](IHttpRequest& request,
+    const Core::IEntity& entity) {
+    onPutSettings(request, entity);
   });
 }
 
-void
+std::shared_ptr<Core::ActionResult>
 SettingsController::onGetSettings(IHttpRequest& request) {
-  Settings settings(
+  std::shared_ptr<Settings> settings(new Settings(
     wifiManager->getDeviceName()
-  );
-  request.createResponse(Status::Ok)->sendJson(settings);
+  ));
+  ActionResult::Success(settings);
 }
 
-void
-SettingsController::onPutSettings(IHttpRequest& request) {
-  std::shared_ptr<IEntity> entity;
-  Status status = request.getJson(entity);
-  if (status.isOk()) {
-    Settings* settings = Settings::dynamicCast(entity.get());
-    // TODO: Update device settings.
-    if (settings != nullptr) {
-      request.createResponse(Status::Ok)->sendJson(*settings);
-    } else {
-      request.createResponse(Status::IncorrectObjectType);
-    }
-  } else {
-    request.createResponse(status);
-  }
+std::shared_ptr<Core::ActionResult>
+SettingsController::onPutSettings(
+  IHttpRequest& request, const Core::IEntity& entity) {
+  auto settings = Settings::dynamicCast(&entity);
+  if (settings == nullptr)
+    return ActionResult::IncorrectObjectType();
+
+  // TODO: Update device settings.
+  ActionResult::Success();
 }

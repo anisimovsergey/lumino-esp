@@ -10,6 +10,7 @@
 
 #include "IHttpRequest.hpp"
 
+#include "Core/ActionResult.hpp"
 #include "Controllers/IApiController.hpp"
 
 #include <functional>
@@ -19,16 +20,23 @@ namespace Services {
 
 class IHttpServer {
   public:
-      typedef std::function<void(IHttpRequest& request)> THandlerFunction;
+      typedef std::function<void(IHttpRequest& request)> TRequestHandler;
+      typedef std::function<void(IHttpRequest& request,
+        const Core::IEntity& entity)> TRequestWithEntityHandler;
 
-      virtual void addGetHandler(const String& uri,
-                                 THandlerFunction fn) = 0;
-      virtual void addPutHandler(const String& uri,
-                                 THandlerFunction fn) = 0;
-      virtual void addPostHandler(const String& uri,
-                                  THandlerFunction fn) = 0;
-      virtual void addDeleteHandler(const String& uri,
-                                    THandlerFunction fn) = 0;
+      virtual std::shared_ptr<Core::ActionResult>
+        addGetHandler(const String& uri,
+        TRequestHandler fn) = 0;
+      virtual std::shared_ptr<Core::ActionResult>
+        addDeleteHandler(const String& uri,
+        TRequestHandler fn) = 0;
+
+      virtual std::shared_ptr<Core::ActionResult>
+        addPostHandler(const String& uri,
+        TRequestWithEntityHandler fn) = 0;
+      virtual std::shared_ptr<Core::ActionResult>
+        addPutHandler(const String& uri,
+        TRequestWithEntityHandler fn) = 0;
 
       virtual void addApiController(
         std::shared_ptr<Controllers::IApiController> controller) = 0;

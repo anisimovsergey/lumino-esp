@@ -24,25 +24,26 @@ WiFiManager::initialize() {
   disconnect();
 }
 
-Core::Status
-WiFiManager::getWiFiNetworks(Networks& networks) const {
+std::shared_ptr<Core::ActionResult>
+WiFiManager::getWiFiNetworks(std::shared_ptr<List<Network>>& networks) const {
   auto networksCount = WiFi.scanComplete();
   if (networksCount == WIFI_SCAN_RUNNING) {
     Logger::message("Scanning networks... ");
   } else if (networksCount >= 0) {
+    networks = std::shared_ptr<List<Network>>(new List<Network>());
     Logger::message("Networks scanned, total:" + String(networksCount));
     for (int networkNum = 0; networkNum < networksCount; networkNum++) {
       String ssid = WiFi.SSID(networkNum);
       int rssi = WiFi.RSSI(networkNum);
       int encryptionType = WiFi.encryptionType(networkNum);
-      networks.add(Network(ssid, rssi, encryptionType));
+      networks->add(Network(ssid, rssi, encryptionType));
     }
     WiFi.scanDelete();
   } else {
     WiFi.scanNetworks(true);
     Logger::message("Scan started");
   }
-  return Status::Ok;
+  return ActionResult::Success();
 }
 
 bool
@@ -65,7 +66,7 @@ WiFiManager::isConnected() const {
   return (WiFi.status() == WL_CONNECTED);
 }
 
-Status
+std::shared_ptr<Core::ActionResult>
 WiFiManager::connect(String network, String password) {
 
   //WiFi.begin(network.c_str(), password.c_str());
@@ -79,7 +80,7 @@ WiFiManager::connect(String network, String password) {
     this->network = network;
     this->password = password;
   //  WiFi.softAPdisconnect();
-    return Status::Ok;
+    return ActionResult::Success();
   //}
 
   //return Status::UnableToConnect;
@@ -90,7 +91,7 @@ WiFiManager::loop() {
   dnsServer->processNextRequest();
 }
 
-Status
+std::shared_ptr<Core::ActionResult>
 WiFiManager::disconnect() {
   if (WiFi.status() != WL_DISCONNECTED)
     WiFi.disconnect();
@@ -106,5 +107,5 @@ WiFiManager::disconnect() {
   dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
   dnsServer->start(53, "*", WiFi.softAPIP());
 
-  return Status::Ok;
+  return ActionResult::Success();
 }

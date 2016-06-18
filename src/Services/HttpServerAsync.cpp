@@ -18,27 +18,59 @@ HttpServerAsync::HttpServerAsync(
   serializationService(serializationService) {
 }
 
+//std::shared_ptr<IEntity> entity;
+//auto actionResult = request.getJson(entity);
+//if (!actionResult->isOk())
+//  return actionResult;
+/*
+void
+HttpResponse::sendJson(const Status& status) {
+  String json;
+  Logger::message("sendJson status");
+  serializationService.serialize(status, json);
+  int code = status.getCode();
+  Logger::message(json);
+  response.send(code, "text/json", json);
+}
+
+void
+HttpResponse::sendJson(const IEntity& entity) {
+  String json;
+  Logger::message("sendJson entity");
+  auto status = serializationService.serialize(entity, json);
+  if (!status.isOk()) {
+    sendJson(status);
+    return;
+  }
+  Logger::message(json);
+  response.send(200, "text/json", json);
+}*/
+
 HttpServerAsync::~HttpServerAsync() {
 }
 
-void
-HttpServerAsync::addGetHandler(const String& uri, THandlerFunction fn) {
+std::shared_ptr<Core::ActionResult>
+HttpServerAsync::addGetHandler(const String& uri, TRequestHandler fn) {
   addHandler(uri, HTTP_GET, fn);
 }
 
-void
-HttpServerAsync::addPutHandler(const String& uri, THandlerFunction fn) {
-  addHandler(uri, HTTP_PUT, fn);
-}
-
-void
-HttpServerAsync::addPostHandler(const String& uri, THandlerFunction fn) {
-  addHandler(uri, HTTP_POST, fn);
-}
-
-void
-HttpServerAsync::addDeleteHandler(const String& uri, THandlerFunction fn) {
+std::shared_ptr<Core::ActionResult>
+HttpServerAsync::addDeleteHandler(const String& uri, TRequestHandler fn) {
   addHandler(uri, HTTP_DELETE, fn);
+}
+
+std::shared_ptr<Core::ActionResult>
+HttpServerAsync::addPostHandler(
+  const String& uri,
+  TRequestWithEntityHandler fn) {
+
+}
+
+std::shared_ptr<Core::ActionResult>
+HttpServerAsync::addPutHandler(
+  const String& uri,
+  TRequestWithEntityHandler fn) {
+
 }
 
 void
@@ -47,15 +79,43 @@ HttpServerAsync::addApiController(std::shared_ptr<IApiController> controller) {
   controller->registerOn(*this);
 }
 
+//Core::Status
+//HttpRequest::getJson(std::shared_ptr<IEntity>& entity) {
+//  Logger::message("Body: " + body);
+//  return serializationService.deserialize(body, entity);
+//}
+
+//std::shared_ptr<IHttpResponse>
+//HttpRequest::createResponse(const Core::Status& status) {
+//    return std::shared_ptr<IHttpResponse>(
+//      new HttpResponse(*request.beginResponse(status.getCode())),
+//      serializationService
+//    )
+//}
+
+
 void
 HttpServerAsync::addHandler(
   const String& uri,
   WebRequestMethod method,
-  THandlerFunction fn) {
+  TRequestHandler fn) {
+  server->on(uri.c_str(), method, [=](AsyncWebServerRequest* request) {
+    HttpRequest httpRequest(*request);
+    fn(httpRequest);
+  });
+}
+
+void
+HttpServerAsync::addHandler(
+  const String& uri,
+  WebRequestMethod method,
+  TRequestWithEntityHandler fn) {
+
   server->on(uri.c_str(), method, [=](AsyncWebServerRequest* request) {
     String body((char*)request->_tempObject);
-    HttpRequest httpRequest(*request, body, *serializationService);
-    fn(httpRequest);
+    IEntity* entity;
+    HttpRequest httpRequest(*request);
+    fn(httpRequest, *entity);
   }, nullptr, [&](AsyncWebServerRequest *request,
     uint8_t *data, size_t len, size_t index, size_t total){
       if(index == 0)

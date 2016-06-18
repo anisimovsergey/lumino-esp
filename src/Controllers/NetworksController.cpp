@@ -23,13 +23,12 @@ NetworksController::registerOn(IHttpServer &httpServer) {
   });
 }
 
-void
+std::shared_ptr<Core::ActionResult>
 NetworksController::onGetWiFiNetworks(IHttpRequest& request) {
-  List<Models::Network> networks;
-  Status status = wifiManager->getWiFiNetworks(networks);
-  if (status.isOk()) {
-    request.createResponse(Status::Ok)->sendJson(networks);
-  } else {
-    request.createResponse(status);
-  }
+  std::shared_ptr<List<Models::Network>> networks;
+  auto actionResult = wifiManager->getWiFiNetworks(networks);
+  if (!actionResult->isOk())
+    return actionResult;
+
+  ActionResult::Success(networks);
 }

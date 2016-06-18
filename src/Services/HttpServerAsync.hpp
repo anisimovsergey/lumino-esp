@@ -30,18 +30,19 @@ class HttpServerAsync : public IHttpServer, public ILoopedService {
 
     void start();
 
-    virtual void addGetHandler(
+    virtual std::shared_ptr<Core::ActionResult> addGetHandler(
       const String& uri,
-      THandlerFunction fn) override;
-    virtual void addPutHandler(
+      TRequestHandler fn) override;
+    virtual std::shared_ptr<Core::ActionResult> addDeleteHandler(
       const String& uri,
-      THandlerFunction fn) override;
-    virtual void addPostHandler(
+      TRequestHandler fn) override;
+
+    virtual std::shared_ptr<Core::ActionResult> addPostHandler(
       const String& uri,
-      THandlerFunction fn) override;
-    virtual void addDeleteHandler(
+      TRequestWithEntityHandler fn) override;
+    virtual std::shared_ptr<Core::ActionResult> addPutHandler(
       const String& uri,
-      THandlerFunction fn) override;
+      TRequestWithEntityHandler fn) override;
 
     virtual void addApiController(
       std::shared_ptr<Controllers::IApiController> controller) override;
@@ -56,8 +57,13 @@ class HttpServerAsync : public IHttpServer, public ILoopedService {
     void addHandler(
       const String& uri,
       WebRequestMethod method,
-      THandlerFunction fn);
-    
+      TRequestHandler fn);
+
+    void addHandler(
+      const String& uri,
+      WebRequestMethod method,
+      TRequestWithEntityHandler fn);
+
     bool    isIntercepted(AsyncWebServerRequest* request);
     void    redirectToSelf(AsyncWebServerRequest* request);
 };

@@ -19,55 +19,49 @@ ConnectionController::registerOn(IHttpServer &httpServer) {
   httpServer.addGetHandler("/connection", [&](IHttpRequest& request) {
     onGetConnection(request);
   });
-  httpServer.addPostHandler("/connection", [&](IHttpRequest& request) {
-    onPostConnection(request);
+  httpServer.addPostHandler("/connection", [&](IHttpRequest& request,
+    const Core::IEntity& entity) {
+    onPostConnection(request, entity);
   });
   httpServer.addDeleteHandler("/connection", [&](IHttpRequest& request) {
     onDeleteConnection(request);
   });
 }
 
-std::shared_ptr<IHttpResponse>
+std::shared_ptr<ActionResult>
 ConnectionController::onGetConnection(IHttpRequest& request) {
   if (!wifiManager->hasConnection())
-    return Status::ResourceNotFound;
+    return ActionResult::ResourceNotFound();
 
-  return Response::FromEntity(std::shared_ptr<IEntity>(new Connection(
-    wifiManager->getNetwork(),
-    wifiManager->isConnected()
-  ));
+  return ActionResult::Success(
+    std::shared_ptr<IEntity>(new Connection(
+      wifiManager->getNetwork(),
+      wifiManager->isConnected()
+    )));
 }
 
-std::shared_ptr<IHttpResponse>
-ConnectionController::onPostConnection(IHttpRequest& request) {
+std::shared_ptr<ActionResult>
+ConnectionController::onPostConnection(IHttpRequest& request, const IEntity& entity) {
   if (wifiManager->hasConnection())
-    return Status::Conflict;
+    return ActionResult::Conflict();
 
-  std::shared_ptr<IEntity> entity;
-  Status status = request.getJson(entity);
-  if (!status.isOk())
-    return status;
-
-  Connection* connection = Connection::dynamicCast(entity.get());
+  auto connection = Connection::dynamicCast(&entity);
   if (connection == nullptr)
-    return Status::IncorrectObjectType;
+    return ActionResult::IncorrectObjectType();
 
-  status = wifiManager->connect(
+  auto actionResult = wifiManager->connect(
     connection->getNetworkSsid(),
     connection->getNetworkPassword());
-  if (!status.isOk())
-    return Response::status(status);
+  if (!actionResult->isOk())
+    return actionResult;
 
-  return Response::resourceCreated("/connection");
+  return ActionResult::RedirectTo("/connection");
 }
 
-std::shared_ptr<IHttpResponse>
+std::shared_ptr<ActionResult>
 ConnectionController::onDeleteConnection(IHttpRequest& request) {
-  Status status;
-  if (wifiManager->hasConnection()) {
-    status = wifiManager->disconnect();
-  } else {
-    status = Status::ResourceNotFound;
-  }
-  return Response::status(status);
+  if (!wifiManager->hasConnection())
+    Status::ResourceNotFound;
+
+  return wifiManager->disconnect();
 }

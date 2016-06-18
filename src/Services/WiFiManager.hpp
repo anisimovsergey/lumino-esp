@@ -22,15 +22,18 @@ class WiFiManager : public IWiFiManager, public ILoopedService {
 
     void    initialize();
 
-    Core::Status getWiFiNetworks(Networks& networks) const override;
+    std::shared_ptr<Core::ActionResult>
+      getWiFiNetworks(std::shared_ptr<Core::List<Models::Network>>& networks) const override;
 
     String  getDeviceName() const override;
     bool    hasConnection() const override;
     String  getNetwork() const override;
     bool    isConnected() const override;
 
-    Core::Status connect(String network, String password) override;
-    Core::Status disconnect() override;
+    std::shared_ptr<Core::ActionResult>
+      connect(String network, String password) override;
+    std::shared_ptr<Core::ActionResult>
+      disconnect() override;
 
     void loop() override;
 
