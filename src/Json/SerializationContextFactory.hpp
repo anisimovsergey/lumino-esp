@@ -15,11 +15,11 @@ namespace Json {
 
 class SerializationContextFactory : public ISerializationContextFactory {
   public:
-    Core::Status create(
+    std::shared_ptr<Core::ActionResult> create(
       const ISerializationService& serializationService,
       std::shared_ptr<ISerializationContext>& context) const override;
 
-    Core::Status create(
+    std::shared_ptr<Core::ActionResult> create(
       const ISerializationService& serializationService,
       std::shared_ptr<ISerializationContext>& context,
       const String& json) const override;

@@ -8,7 +8,6 @@
 #define CORE_LIST_H
 
 #include "IList.hpp"
-#include "Status.hpp"
 
 #include <list>
 

@@ -8,23 +8,23 @@
 #define JSON_STATUS_SERIALIZER_H
 
 #include "Serializer.hpp"
-#include "Core/Status.hpp"
+#include "Core/ActionResult.hpp"
 
 namespace Json {
 
-class StatusSerializer : public Serializer<Core::Status> {
+class ActionResultSerializer : public Serializer<Core::ActionResult> {
   public:
     String getTypeId() const override {
-      return Core::Status::getStaticTypeId();
+      return Core::ActionResult::getStaticTypeId();
     }
 
   protected:
-    Core::Status serialize(
-      const Core::Status& status,
+    virtual std::shared_ptr<Core::ActionResult> serialize(
+      const Core::ActionResult& actionResult,
       ISerializationContext& context) const override;
 
-    Core::Status deserialize(
-      std::shared_ptr<Core::Status>& status,
+    virtual std::shared_ptr<Core::ActionResult> deserialize(
+      std::shared_ptr<Core::ActionResult>& actionResult,
       ISerializationContext& context) const override;
 };
 

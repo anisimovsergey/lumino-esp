@@ -7,7 +7,6 @@
 #ifndef SERVICES_I_HTTP_REQEST_H
 #define SERVICES_I_HTTP_REQEST_H
 
-#include "Core/Status.hpp"
 #include "Core/IEntity.hpp"
 
 #include <WString.h>

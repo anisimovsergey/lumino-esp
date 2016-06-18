@@ -2,7 +2,7 @@
 #include "Services/HttpServerAsync.hpp"
 #include "Services/WiFiManager.hpp"
 #include "Json/SerializationService.hpp"
-#include "Json/StatusSerializer.hpp"
+#include "Json/ActionResultSerializer.hpp"
 #include "Json/ListSerializer.hpp"
 #include "Json/NetworkSerializer.hpp"
 #include "Json/SettingsSerializer.hpp"
@@ -37,7 +37,7 @@ void setup(void){
 
   // Registering serializers
   serializationService->addSerializer(
-    std::shared_ptr<StatusSerializer>(new StatusSerializer()));
+    std::shared_ptr<ActionResultSerializer>(new ActionResultSerializer()));
   serializationService->addSerializer(
     std::shared_ptr<ListSerializer>(new ListSerializer()));
   serializationService->addSerializer(

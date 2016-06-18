@@ -5,19 +5,19 @@
 using namespace Json;
 using namespace Core;
 
-Status
+std::shared_ptr<Core::ActionResult>
 ListSerializer::serialize(
   const IList& list,
   ISerializationContext& context) const {
 
   context.setValue("elements", list);
-  return Status::Ok;
+  return ActionResult::Success();
 }
 
-Status
+std::shared_ptr<Core::ActionResult>
 ListSerializer::deserialize(
   std::shared_ptr<IList>& list,
   ISerializationContext& context) const {
 
-  return Status::NotSupported;
+  return ActionResult::NotSupported();
 }

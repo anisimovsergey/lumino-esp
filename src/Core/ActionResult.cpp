@@ -95,7 +95,6 @@ ActionResult::UnableToFindJsonKey(String key) {
     "Unable to find JSON key """ + key + """."));
 }
 
-
 ActionResult::ActionResult(String id, int code, String title) :
   id(id), code(code), title(title), ok(false) {
 }

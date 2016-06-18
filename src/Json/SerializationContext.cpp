@@ -12,7 +12,7 @@ SerializationContext::SerializationContext(
   jsonObject(jsonObject) {
 }
 
-Status
+std::shared_ptr<Core::ActionResult>
 SerializationContext::create(
   const ISerializationService& serializationService,
   std::shared_ptr<ISerializationContext>& context) {
@@ -25,10 +25,10 @@ SerializationContext::create(
     jsonBuffer,
     jsonObject));
 
-  return Status::Ok;
+  return ActionResult::Success();
 }
 
-Status
+std::shared_ptr<Core::ActionResult>
 SerializationContext::create(
   const ISerializationService& serializationService,
   std::shared_ptr<ISerializationContext>& context,
@@ -37,14 +37,14 @@ SerializationContext::create(
   std::shared_ptr<DynamicJsonBuffer> jsonBuffer(new DynamicJsonBuffer);
   JsonObject& jsonObject = jsonBuffer->parseObject(json);
   if (!jsonObject.success())
-    return Status::UnableToParseJson;
+    return ActionResult::UnableToParseJson();
 
   context = std::shared_ptr<SerializationContext>(new SerializationContext(
     serializationService,
     jsonBuffer,
     jsonObject));
 
-  return Status::Ok;
+  return ActionResult::Success();
 }
 
 String
@@ -54,32 +54,32 @@ SerializationContext::toString() const {
   return str;
 }
 
-Status
+std::shared_ptr<Core::ActionResult>
 SerializationContext::getStringValue(const String& key, String& value) {
 
   auto jsonVal = jsonObject[key];
   if (!jsonVal.success())
-    return Status::UnableToFindJsonKey(key);
+    return ActionResult::UnableToFindJsonKey(key);
 
   if (!jsonVal.is<const char*>())
-    return Status::ValueIsNotString;
+    return ActionResult::ValueIsNotAString();
 
   value = (const char*)jsonVal;
-  return Status::Ok;
+  return ActionResult::Success();
 }
 
-Status
+std::shared_ptr<Core::ActionResult>
 SerializationContext::getBoolValue(const String& key, bool& value) {
 
   auto jsonVal = jsonObject[key];
   if (!jsonVal.success())
-    return Status::UnableToFindJsonKey(key);
+    return ActionResult::UnableToFindJsonKey(key);
 
   if (!jsonVal.is<bool>())
-    return Status::ValueIsNotBool;
+    return ActionResult::ValueIsNotABoolean();
 
   value = (bool)jsonVal;
-  return Status::Ok;
+  return ActionResult::Success();
 }
 
 void

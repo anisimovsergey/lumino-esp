@@ -19,11 +19,11 @@ class SettingsSerializer : public Serializer<Models::Settings> {
     }
 
   protected:
-    Core::Status serialize(
+    std::shared_ptr<Core::ActionResult> serialize(
       const Models::Settings& settings,
       ISerializationContext& context) const override;
 
-    Core::Status deserialize(
+    std::shared_ptr<Core::ActionResult> deserialize(
       std::shared_ptr<Models::Settings>& settings,
       ISerializationContext& context) const override;
 };

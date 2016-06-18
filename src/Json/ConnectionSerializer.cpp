@@ -1,37 +1,35 @@
 #include "ConnectionSerializer.hpp"
 
-#include "Core/Status.hpp"
-
 using namespace Core;
 using namespace Json;
 using namespace Models;
 
-Core::Status
+std::shared_ptr<Core::ActionResult>
 ConnectionSerializer::serialize(
   const Connection& connection,
   ISerializationContext& context) const {
 
   context.setValue("wifi_network", connection.getNetworkSsid());
   context.setValue("connected", connection.getIsConnected());
-  return Status::Ok;
+  return ActionResult::Success();
 }
 
-Core::Status
+std::shared_ptr<Core::ActionResult>
 ConnectionSerializer::deserialize(
   std::shared_ptr<Models::Connection>& connection,
   ISerializationContext& context) const {
 
   String networkSsid;
-  Status status = context.getStringValue("wifi_network", networkSsid);
-  if (!status.isOk())
-    return status;
+  auto actionResult = context.getStringValue("wifi_network", networkSsid);
+  if (!actionResult->isOk())
+    return actionResult;
 
   String networkPassword;
-  status = context.getStringValue("wifi_password", networkPassword);
-  if (!status.isOk())
-    return status;
+  actionResult = context.getStringValue("wifi_password", networkPassword);
+  if (!actionResult->isOk())
+    return actionResult;
 
   connection = std::shared_ptr<Models::Connection>(
     new Connection(networkSsid, networkPassword));
-  return Status::Ok;
+  return ActionResult::Success();
 }

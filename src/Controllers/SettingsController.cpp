@@ -17,11 +17,11 @@ SettingsController::SettingsController(
 void
 SettingsController::registerOn(IHttpServer &httpServer) {
   httpServer.addGetHandler("/settings", [&](IHttpRequest& request) {
-    onGetSettings(request);
+    return onGetSettings(request);
   });
   httpServer.addPutHandler("/settings", [&](IHttpRequest& request,
     const Core::IEntity& entity) {
-    onPutSettings(request, entity);
+    return onPutSettings(request, entity);
   });
 }
 

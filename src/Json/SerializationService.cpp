@@ -14,26 +14,28 @@ SerializationService::SerializationService(
   contextFactory(contextFactory) {
 }
 
-Core::Status
+std::shared_ptr<Core::ActionResult>
 SerializationService::serialize(
   const IEntity& entity,
   String& json) const {
 
   std::shared_ptr<ISerializationContext> context;
-  Status status = contextFactory->create(*this, context);
-  if (!status.isOk())
-    return status;
+  auto actionResult = contextFactory->create(*this, context);
+  if (!actionResult->isOk())
+    return actionResult;
+
   Logger::message("Serialization context created");
-  status = serialize(entity, *context);
-  if (!status.isOk())
-    return status;
+  actionResult = serialize(entity, *context);
+  if (!actionResult->isOk())
+    return actionResult;
+
   Logger::message("Object serialized");
   json = context->toString();
   Logger::message("Context converted to string");
-  return Status::Ok;
+  return ActionResult::Success();
 }
 
-Core::Status
+std::shared_ptr<Core::ActionResult>
 SerializationService::serialize (
   const IEntity& entity,
   ISerializationContext& context) const {
@@ -42,31 +44,32 @@ SerializationService::serialize (
   Logger::message("Getting serializer for type " + typeId);
   auto serializer = getSerialzier(typeId);
   if (serializer == nullptr)
-    return Status::UnableToFindSerializer;
+    return ActionResult::UnableToFindSerializer();
+
   Logger::message("Serializer found");
   context.setValue(TYPE_FIELD, typeId);
   return serializer->serialize(entity, context);
   Logger::message("Serializer used");
 }
 
-Status
+std::shared_ptr<Core::ActionResult>
 SerializationService::deserialize(
   const String& json,
   std::shared_ptr<Core::IEntity>& entity) const {
 
   std::shared_ptr<ISerializationContext> context;
-  Status status = contextFactory->create(*this, context, json);
-  if (!status.isOk())
-    return status;
+  auto actionResult = contextFactory->create(*this, context, json);
+  if (!actionResult->isOk())
+    return actionResult;
 
   String typeId;
-  status = context->getStringValue(TYPE_FIELD, typeId);
-  if (!status.isOk())
-    return status;
+  actionResult = context->getStringValue(TYPE_FIELD, typeId);
+  if (!actionResult->isOk())
+    return actionResult;
 
   auto serializer = getSerialzier(typeId);
   if (serializer == nullptr)
-    return Status::UnableToFindSerializer;
+    return ActionResult::UnableToFindSerializer();
 
   return serializer->deserialize(entity, *context);
 }

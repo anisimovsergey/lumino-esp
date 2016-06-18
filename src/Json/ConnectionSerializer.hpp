@@ -19,11 +19,11 @@ class ConnectionSerializer : public Serializer<Models::Connection> {
     }
 
   protected:
-    Core::Status serialize(
+    std::shared_ptr<Core::ActionResult> serialize(
       const Models::Connection& connection,
       ISerializationContext& context) const override;
 
-    Core::Status deserialize(
+    std::shared_ptr<Core::ActionResult> deserialize(
       std::shared_ptr<Models::Connection>& connection,
       ISerializationContext& context) const override;
 };

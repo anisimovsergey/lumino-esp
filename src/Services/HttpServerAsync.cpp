@@ -93,7 +93,6 @@ HttpServerAsync::addApiController(std::shared_ptr<IApiController> controller) {
 //    )
 //}
 
-
 void
 HttpServerAsync::addHandler(
   const String& uri,
@@ -101,7 +100,8 @@ HttpServerAsync::addHandler(
   TRequestHandler fn) {
   server->on(uri.c_str(), method, [=](AsyncWebServerRequest* request) {
     HttpRequest httpRequest(*request);
-    fn(httpRequest);
+    auto result = fn(httpRequest);
+    // TODO : Send response
   });
 }
 
@@ -113,9 +113,13 @@ HttpServerAsync::addHandler(
 
   server->on(uri.c_str(), method, [=](AsyncWebServerRequest* request) {
     String body((char*)request->_tempObject);
-    IEntity* entity;
+    std::shared_ptr<IEntity> entity;
+    auto result = serializationService->deserialize(body, entity);
+    if (!result->isOk())
+      ; // TODO Send error back.
     HttpRequest httpRequest(*request);
-    fn(httpRequest, *entity);
+    result = fn(httpRequest, *entity);
+    // TODO : Send response
   }, nullptr, [&](AsyncWebServerRequest *request,
     uint8_t *data, size_t len, size_t index, size_t total){
       if(index == 0)

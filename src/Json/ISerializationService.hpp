@@ -10,7 +10,6 @@
 #include "ISerializationContext.hpp"
 
 #include "Core/IEntity.hpp"
-#include "Core/Status.hpp"
 
 #include <memory>
 
@@ -20,15 +19,15 @@ class ISerializationService {
   public:
     virtual ~ISerializationService() {}
 
-    virtual Core::Status serialize(
+    virtual std::shared_ptr<Core::ActionResult> serialize(
       const Core::IEntity& object,
       String& json) const = 0;
 
-    virtual Core::Status serialize(
+    virtual std::shared_ptr<Core::ActionResult> serialize(
       const Core::IEntity& object,
       ISerializationContext& context) const = 0;
 
-    virtual Core::Status deserialize(
+    virtual std::shared_ptr<Core::ActionResult> deserialize(
       const String& json,
       std::shared_ptr<Core::IEntity>& entity) const = 0;
 };

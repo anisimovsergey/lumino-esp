@@ -19,11 +19,11 @@ class NetworkSerializer : public Serializer<Models::Network> {
     }
 
   protected:
-    Core::Status serialize(
+    std::shared_ptr<Core::ActionResult> serialize(
       const Models::Network& network,
       ISerializationContext& context) const override;
 
-    Core::Status deserialize(
+    std::shared_ptr<Core::ActionResult> deserialize(
       std::shared_ptr<Models::Network>& network,
       ISerializationContext& context) const override;
 };

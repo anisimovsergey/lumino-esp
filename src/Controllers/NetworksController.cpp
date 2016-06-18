@@ -1,6 +1,5 @@
 #include "NetworksController.hpp"
 
-#include "Core/Status.hpp"
 #include "Core/Logger.hpp"
 #include "Services/IHttpServer.hpp"
 
@@ -19,7 +18,7 @@ void
 NetworksController::registerOn(IHttpServer &httpServer) {
   httpServer.addGetHandler("/wifi_networks", [&](IHttpRequest& request) {
     Logger::message("/wifi_networks");
-    onGetWiFiNetworks(request);
+    return onGetWiFiNetworks(request);
   });
 }
 

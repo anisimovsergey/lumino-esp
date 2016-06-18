@@ -13,7 +13,7 @@ namespace Json {
 
 template <class T> class Serializer : public ISerializer {
   public:
-    Core::Status serialize(
+    virtual std::shared_ptr<Core::ActionResult> serialize(
       const Core::IEntity& entity,
       ISerializationContext& context) const override {
 
@@ -21,22 +21,22 @@ template <class T> class Serializer : public ISerializer {
       return serialize(entityT, context);
     }
 
-    virtual Core::Status deserialize(
+    virtual std::shared_ptr<Core::ActionResult> deserialize(
       std::shared_ptr<Core::IEntity>& entity,
       ISerializationContext& context) const override {
 
       std::shared_ptr<T> entityT;
-      Core::Status status = deserialize(entityT, context);
+      auto actionResult = deserialize(entityT, context);
       entity = entityT;
-      return status;
+      return actionResult;
     }
 
   protected:
-    virtual Core::Status serialize(
+    virtual std::shared_ptr<Core::ActionResult> serialize(
       const T& entity,
       ISerializationContext& context) const = 0;
 
-    virtual Core::Status deserialize(
+    virtual std::shared_ptr<Core::ActionResult> deserialize(
       std::shared_ptr<T>& entity,
       ISerializationContext& context) const = 0;
  };

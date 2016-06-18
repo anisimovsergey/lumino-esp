@@ -1,6 +1,5 @@
 #include "ConnectionController.hpp"
 
-#include "Core/Status.hpp"
 #include "Models/Connection.hpp"
 #include "Services/IHttpServer.hpp"
 
@@ -17,14 +16,14 @@ ConnectionController::ConnectionController(
 void
 ConnectionController::registerOn(IHttpServer &httpServer) {
   httpServer.addGetHandler("/connection", [&](IHttpRequest& request) {
-    onGetConnection(request);
+    return onGetConnection(request);
   });
   httpServer.addPostHandler("/connection", [&](IHttpRequest& request,
     const Core::IEntity& entity) {
-    onPostConnection(request, entity);
+    return onPostConnection(request, entity);
   });
   httpServer.addDeleteHandler("/connection", [&](IHttpRequest& request) {
-    onDeleteConnection(request);
+    return onDeleteConnection(request);
   });
 }
 
@@ -61,7 +60,7 @@ ConnectionController::onPostConnection(IHttpRequest& request, const IEntity& ent
 std::shared_ptr<ActionResult>
 ConnectionController::onDeleteConnection(IHttpRequest& request) {
   if (!wifiManager->hasConnection())
-    Status::ResourceNotFound;
+    ActionResult::ResourceNotFound();
 
   return wifiManager->disconnect();
 }
