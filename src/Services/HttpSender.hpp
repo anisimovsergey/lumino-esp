@@ -15,20 +15,21 @@ namespace Services {
 
 template <class T> class HttpSender : public IHttpSender {
   public:
+    String getTypeId() const override {
+      return T::getStaticTypeId();
+    }
+
     virtual void send(
-      const Json::ISerializationService& serializationSerivce,
       IHttpRequest& request,
       const Core::IActionResult& actionResult) const override {
 
       const T& actionResultT = static_cast<const T&>(actionResult);
-      auto response = prepareResponse(
-        serializationSerivce, request, actionResultT);
+      auto response = prepareResponse(request, actionResultT);
       response->send();
     }
 
   protected:
     virtual std::shared_ptr<IHttpResponse> prepareResponse(
-      const Json::ISerializationService& serializationSerivce,
       IHttpRequest& request,
       const T& actionResult) const = 0;
  };

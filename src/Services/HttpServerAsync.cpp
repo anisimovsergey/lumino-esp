@@ -76,8 +76,8 @@ HttpServerAsync::addHandler(
 
   server->on(uri.c_str(), method, [=](AsyncWebServerRequest* request) {
     String body((char*)request->_tempObject);
-    std::shared_ptr<IEntity> entity;
     HttpRequest httpRequest(*request);
+    std::shared_ptr<IEntity> entity;
     auto actionResult = serializationService->deserialize(body, entity);
     if (actionResult->isOk()) {
       actionResult = requestHandler(httpRequest, *entity);
@@ -102,7 +102,7 @@ HttpServerAsync::sendResponse(
   Logger::message("Getting sender for type " + typeId);
   auto sender = getSender(typeId);
   if (sender != nullptr) {
-    sender->send(*serializationService, request, *result);
+    sender->send(request, *result);
   }
 }
 

@@ -15,7 +15,6 @@ namespace Services {
  class RedirectResultSender : public HttpSender<Core::RedirectResult> {
    protected:
      virtual std::shared_ptr<IHttpResponse> prepareResponse(
-       const Json::ISerializationService& serializationSerivce,
        IHttpRequest& request,
        const Core::RedirectResult& redirectResult) const override;
   };

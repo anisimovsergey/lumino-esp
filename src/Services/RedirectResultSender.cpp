@@ -5,7 +5,6 @@ using namespace Services;
 
 std::shared_ptr<IHttpResponse>
 RedirectResultSender::prepareResponse(
-  const Json::ISerializationService& serializationSerivce,
   IHttpRequest& request,
   const RedirectResult& redirectResult) const {
 

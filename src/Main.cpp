@@ -1,6 +1,9 @@
 #include "Core/Logger.hpp"
 #include "Services/HttpServerAsync.hpp"
 #include "Services/WiFiManager.hpp"
+#include "Services/ObjectResultSender.hpp"
+#include "Services/StatusResultSender.hpp"
+#include "Services/RedirectResultSender.hpp"
 #include "Json/SerializationService.hpp"
 #include "Json/StatusResultSerializer.hpp"
 #include "Json/ListSerializer.hpp"
@@ -46,6 +49,14 @@ void setup(void){
     std::shared_ptr<SettingsSerializer>(new SettingsSerializer()));
   serializationService->addSerializer(
     std::shared_ptr<ConnectionSerializer>(new ConnectionSerializer()));
+
+  // Registering senders
+  httpServerAsync->addHttpSender(
+    std::shared_ptr<IHttpSender>(new ObjectResultSender(serializationService)));
+  httpServerAsync->addHttpSender(
+    std::shared_ptr<IHttpSender>(new StatusResultSender(serializationService)));
+  httpServerAsync->addHttpSender(
+    std::shared_ptr<IHttpSender>(new RedirectResultSender()));
 
   //Registering controllers
   httpServerAsync->addApiController(

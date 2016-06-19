@@ -18,7 +18,6 @@ class IHttpSender {
     virtual ~IHttpSender() {};
 
     virtual void send(
-      const Json::ISerializationService& serializationSerivce,
       IHttpRequest& request,
       const Core::IActionResult& actionResult) const = 0;
 
