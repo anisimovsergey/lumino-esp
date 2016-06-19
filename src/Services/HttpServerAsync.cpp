@@ -49,24 +49,24 @@ HttpResponse::sendJson(const IEntity& entity) {
 HttpServerAsync::~HttpServerAsync() {
 }
 
-std::shared_ptr<Core::ActionResult>
+std::shared_ptr<Core::IActionResult>
 HttpServerAsync::addGetHandler(const String& uri, TRequestHandler fn) {
   addHandler(uri, HTTP_GET, fn);
 }
 
-std::shared_ptr<Core::ActionResult>
+std::shared_ptr<Core::IActionResult>
 HttpServerAsync::addDeleteHandler(const String& uri, TRequestHandler fn) {
   addHandler(uri, HTTP_DELETE, fn);
 }
 
-std::shared_ptr<Core::ActionResult>
+std::shared_ptr<Core::IActionResult>
 HttpServerAsync::addPostHandler(
   const String& uri,
   TRequestWithEntityHandler fn) {
 
 }
 
-std::shared_ptr<Core::ActionResult>
+std::shared_ptr<Core::IActionResult>
 HttpServerAsync::addPutHandler(
   const String& uri,
   TRequestWithEntityHandler fn) {

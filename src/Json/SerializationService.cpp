@@ -14,7 +14,7 @@ SerializationService::SerializationService(
   contextFactory(contextFactory) {
 }
 
-std::shared_ptr<Core::ActionResult>
+std::shared_ptr<Core::IActionResult>
 SerializationService::serialize(
   const IEntity& entity,
   String& json) const {
@@ -32,10 +32,10 @@ SerializationService::serialize(
   Logger::message("Object serialized");
   json = context->toString();
   Logger::message("Context converted to string");
-  return ActionResult::Success();
+  return StatusResult::OK();
 }
 
-std::shared_ptr<Core::ActionResult>
+std::shared_ptr<Core::IActionResult>
 SerializationService::serialize (
   const IEntity& entity,
   ISerializationContext& context) const {
@@ -44,7 +44,8 @@ SerializationService::serialize (
   Logger::message("Getting serializer for type " + typeId);
   auto serializer = getSerialzier(typeId);
   if (serializer == nullptr)
-    return ActionResult::UnableToFindSerializer();
+    return StatusResult::BadRequest("Unable to find serializer for type """ +
+      typeId + """.");
 
   Logger::message("Serializer found");
   context.setValue(TYPE_FIELD, typeId);
@@ -52,7 +53,7 @@ SerializationService::serialize (
   Logger::message("Serializer used");
 }
 
-std::shared_ptr<Core::ActionResult>
+std::shared_ptr<Core::IActionResult>
 SerializationService::deserialize(
   const String& json,
   std::shared_ptr<Core::IEntity>& entity) const {
@@ -69,7 +70,8 @@ SerializationService::deserialize(
 
   auto serializer = getSerialzier(typeId);
   if (serializer == nullptr)
-    return ActionResult::UnableToFindSerializer();
+    return StatusResult::BadRequest("Unable to find serializer for type """ +
+      typeId + """.");
 
   return serializer->deserialize(entity, *context);
 }

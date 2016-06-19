@@ -12,19 +12,19 @@
 
 namespace Json {
 
-class ActionResultSerializer : public Serializer<Core::ActionResult> {
+class StatusResultSerializer : public Serializer<Core::StatusResult> {
   public:
     String getTypeId() const override {
-      return Core::ActionResult::getStaticTypeId();
+      return Core::StatusResult::getStaticTypeId();
     }
 
   protected:
-    virtual std::shared_ptr<Core::ActionResult> serialize(
-      const Core::ActionResult& actionResult,
+    virtual std::shared_ptr<Core::IActionResult> serialize(
+      const Core::StatusResult& statusResult,
       ISerializationContext& context) const override;
 
-    virtual std::shared_ptr<Core::ActionResult> deserialize(
-      std::shared_ptr<Core::ActionResult>& actionResult,
+    virtual std::shared_ptr<Core::IActionResult> deserialize(
+      std::shared_ptr<Core::StatusResult>& statusResult,
       ISerializationContext& context) const override;
 };
 

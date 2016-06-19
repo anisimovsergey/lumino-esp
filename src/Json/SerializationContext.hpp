@@ -19,20 +19,20 @@ namespace Json {
 class SerializationContext : public ISerializationContext {
   public:
 
-    static std::shared_ptr<Core::ActionResult> create(
+    static std::shared_ptr<Core::IActionResult> create(
       const ISerializationService& serializationService,
       std::shared_ptr<ISerializationContext>& context);
 
-    static std::shared_ptr<Core::ActionResult> create(
+    static std::shared_ptr<Core::IActionResult> create(
       const ISerializationService& serializationService,
       std::shared_ptr<ISerializationContext>& context,
       const String& json);
 
     String toString() const override;
 
-    std::shared_ptr<Core::ActionResult>
+    std::shared_ptr<Core::IActionResult>
       getStringValue(const String& key, String& value) override;
-    std::shared_ptr<Core::ActionResult>
+    std::shared_ptr<Core::IActionResult>
       getBoolValue(const String& key, bool& value) override;
 
     void setValue(const String& key, const String& value) override;

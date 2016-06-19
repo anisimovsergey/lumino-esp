@@ -24,7 +24,7 @@ WiFiManager::initialize() {
   disconnect();
 }
 
-std::shared_ptr<Core::ActionResult>
+std::shared_ptr<Core::IActionResult>
 WiFiManager::getWiFiNetworks(std::shared_ptr<List<Network>>& networks) const {
   auto networksCount = WiFi.scanComplete();
   if (networksCount == WIFI_SCAN_RUNNING) {
@@ -43,7 +43,7 @@ WiFiManager::getWiFiNetworks(std::shared_ptr<List<Network>>& networks) const {
     WiFi.scanNetworks(true);
     Logger::message("Scan started");
   }
-  return ActionResult::Success();
+  return StatusResult::OK();
 }
 
 bool
@@ -66,7 +66,7 @@ WiFiManager::isConnected() const {
   return (WiFi.status() == WL_CONNECTED);
 }
 
-std::shared_ptr<Core::ActionResult>
+std::shared_ptr<Core::IActionResult>
 WiFiManager::connect(String network, String password) {
 
   //WiFi.begin(network.c_str(), password.c_str());
@@ -80,7 +80,7 @@ WiFiManager::connect(String network, String password) {
     this->network = network;
     this->password = password;
   //  WiFi.softAPdisconnect();
-    return ActionResult::Success();
+    return StatusResult::OK();
   //}
 
   //return Status::UnableToConnect;
@@ -91,7 +91,7 @@ WiFiManager::loop() {
   dnsServer->processNextRequest();
 }
 
-std::shared_ptr<Core::ActionResult>
+std::shared_ptr<Core::IActionResult>
 WiFiManager::disconnect() {
   if (WiFi.status() != WL_DISCONNECTED)
     WiFi.disconnect();
@@ -107,5 +107,5 @@ WiFiManager::disconnect() {
   dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
   dnsServer->start(53, "*", WiFi.softAPIP());
 
-  return ActionResult::Success();
+  return StatusResult::OK();
 }

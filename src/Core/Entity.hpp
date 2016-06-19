@@ -16,17 +16,6 @@ template<class T> class Entity : public IEntity {
     String getTypeId() const override {
       return T::getStaticTypeId();
     }
-
-    static T* dynamicCast(const IEntity* entity) {
-
-      if (entity == nullptr)
-        return nullptr;
-
-      if (entity->getTypeId() == T::getStaticTypeId())
-        return (T*)(entity);
-
-      return nullptr;
-    }
 };
 
 }

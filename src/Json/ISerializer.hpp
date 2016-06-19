@@ -18,11 +18,11 @@ class ISerializer {
   public:
     virtual ~ISerializer() {};
 
-    virtual std::shared_ptr<Core::ActionResult> serialize(
+    virtual std::shared_ptr<Core::IActionResult> serialize(
       const Core::IEntity& entity,
       ISerializationContext& context) const = 0;
 
-    virtual std::shared_ptr<Core::ActionResult> deserialize(
+    virtual std::shared_ptr<Core::IActionResult> deserialize(
       std::shared_ptr<Core::IEntity>& entity,
       ISerializationContext& context) const = 0;
 

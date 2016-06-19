@@ -4,13 +4,13 @@ using namespace Core;
 using namespace Json;
 using namespace Models;
 
-std::shared_ptr<Core::ActionResult>
+std::shared_ptr<Core::IActionResult>
 SettingsSerializer::serialize(const Settings& settings, ISerializationContext& context) const {
   context.setValue("name", settings.getDeviceName());
-  return ActionResult::Success();
+  return StatusResult::OK();
 }
 
-std::shared_ptr<Core::ActionResult>
+std::shared_ptr<Core::IActionResult>
 SettingsSerializer::deserialize(
   std::shared_ptr<Models::Settings>& settings,
   ISerializationContext& context) const {
@@ -21,5 +21,5 @@ SettingsSerializer::deserialize(
     return actionResult;
 
   settings = std::shared_ptr<Models::Settings>(new Settings(deviceName));
-  return ActionResult::Success();
+  return StatusResult::OK();
 }

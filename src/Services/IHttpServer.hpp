@@ -20,21 +20,21 @@ namespace Services {
 
 class IHttpServer {
   public:
-      typedef std::function<std::shared_ptr<Core::ActionResult>(IHttpRequest& request)> TRequestHandler;
-      typedef std::function<std::shared_ptr<Core::ActionResult>(IHttpRequest& request,
+      typedef std::function<std::shared_ptr<Core::IActionResult>(IHttpRequest& request)> TRequestHandler;
+      typedef std::function<std::shared_ptr<Core::IActionResult>(IHttpRequest& request,
         const Core::IEntity& entity)> TRequestWithEntityHandler;
 
-      virtual std::shared_ptr<Core::ActionResult>
+      virtual std::shared_ptr<Core::IActionResult>
         addGetHandler(const String& uri,
         TRequestHandler fn) = 0;
-      virtual std::shared_ptr<Core::ActionResult>
+      virtual std::shared_ptr<Core::IActionResult>
         addDeleteHandler(const String& uri,
         TRequestHandler fn) = 0;
 
-      virtual std::shared_ptr<Core::ActionResult>
+      virtual std::shared_ptr<Core::IActionResult>
         addPostHandler(const String& uri,
         TRequestWithEntityHandler fn) = 0;
-      virtual std::shared_ptr<Core::ActionResult>
+      virtual std::shared_ptr<Core::IActionResult>
         addPutHandler(const String& uri,
         TRequestWithEntityHandler fn) = 0;
 

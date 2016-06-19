@@ -19,15 +19,15 @@ class ISerializationService {
   public:
     virtual ~ISerializationService() {}
 
-    virtual std::shared_ptr<Core::ActionResult> serialize(
+    virtual std::shared_ptr<Core::IActionResult> serialize(
       const Core::IEntity& object,
       String& json) const = 0;
 
-    virtual std::shared_ptr<Core::ActionResult> serialize(
+    virtual std::shared_ptr<Core::IActionResult> serialize(
       const Core::IEntity& object,
       ISerializationContext& context) const = 0;
 
-    virtual std::shared_ptr<Core::ActionResult> deserialize(
+    virtual std::shared_ptr<Core::IActionResult> deserialize(
       const String& json,
       std::shared_ptr<Core::IEntity>& entity) const = 0;
 };

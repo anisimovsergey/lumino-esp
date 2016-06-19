@@ -25,21 +25,23 @@ SettingsController::registerOn(IHttpServer &httpServer) {
   });
 }
 
-std::shared_ptr<Core::ActionResult>
+std::shared_ptr<Core::IActionResult>
 SettingsController::onGetSettings(IHttpRequest& request) {
   std::shared_ptr<Settings> settings(new Settings(
     wifiManager->getDeviceName()
   ));
-  ActionResult::Success(settings);
+  ObjectResult::OK(settings);
 }
 
-std::shared_ptr<Core::ActionResult>
+std::shared_ptr<Core::IActionResult>
 SettingsController::onPutSettings(
   IHttpRequest& request, const Core::IEntity& entity) {
-  auto settings = Settings::dynamicCast(&entity);
+  auto settings = entity.dynamicCast<Settings>();
   if (settings == nullptr)
-    return ActionResult::IncorrectObjectType();
+    return StatusResult::BadRequest("Type Settings expected.");
 
   // TODO: Update device settings.
-  ActionResult::Success();
+  ObjectResult::OK(std::shared_ptr<Settings>(new Settings(
+    wifiManager->getDeviceName()
+  )));
 }

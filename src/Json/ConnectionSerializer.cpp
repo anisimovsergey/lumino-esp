@@ -4,17 +4,17 @@ using namespace Core;
 using namespace Json;
 using namespace Models;
 
-std::shared_ptr<Core::ActionResult>
+std::shared_ptr<Core::IActionResult>
 ConnectionSerializer::serialize(
   const Connection& connection,
   ISerializationContext& context) const {
 
   context.setValue("wifi_network", connection.getNetworkSsid());
   context.setValue("connected", connection.getIsConnected());
-  return ActionResult::Success();
+  return StatusResult::OK();
 }
 
-std::shared_ptr<Core::ActionResult>
+std::shared_ptr<Core::IActionResult>
 ConnectionSerializer::deserialize(
   std::shared_ptr<Models::Connection>& connection,
   ISerializationContext& context) const {
@@ -31,5 +31,5 @@ ConnectionSerializer::deserialize(
 
   connection = std::shared_ptr<Models::Connection>(
     new Connection(networkSsid, networkPassword));
-  return ActionResult::Success();
+  return StatusResult::OK();
 }

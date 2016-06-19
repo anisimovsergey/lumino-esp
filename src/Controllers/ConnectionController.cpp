@@ -27,26 +27,26 @@ ConnectionController::registerOn(IHttpServer &httpServer) {
   });
 }
 
-std::shared_ptr<ActionResult>
+std::shared_ptr<IActionResult>
 ConnectionController::onGetConnection(IHttpRequest& request) {
   if (!wifiManager->hasConnection())
-    return ActionResult::ResourceNotFound();
+    return StatusResult::NotFound("Connection doesn't exist.");
 
-  return ActionResult::Success(
+  return ObjectResult::OK(
     std::shared_ptr<IEntity>(new Connection(
       wifiManager->getNetwork(),
       wifiManager->isConnected()
     )));
 }
 
-std::shared_ptr<ActionResult>
+std::shared_ptr<IActionResult>
 ConnectionController::onPostConnection(IHttpRequest& request, const IEntity& entity) {
   if (wifiManager->hasConnection())
-    return ActionResult::Conflict();
+    return StatusResult::Conflict("Connection already exists.");
 
-  auto connection = Connection::dynamicCast(&entity);
+  auto connection = entity.dynamicCast<Connection>();
   if (connection == nullptr)
-    return ActionResult::IncorrectObjectType();
+    return StatusResult::BadRequest("Type Connection expected.");
 
   auto actionResult = wifiManager->connect(
     connection->getNetworkSsid(),
@@ -54,13 +54,13 @@ ConnectionController::onPostConnection(IHttpRequest& request, const IEntity& ent
   if (!actionResult->isOk())
     return actionResult;
 
-  return ActionResult::RedirectTo("/connection");
+  return RedirectResult::ToRoute("/connection");
 }
 
-std::shared_ptr<ActionResult>
+std::shared_ptr<IActionResult>
 ConnectionController::onDeleteConnection(IHttpRequest& request) {
   if (!wifiManager->hasConnection())
-    ActionResult::ResourceNotFound();
+    StatusResult::NotFound("Connection doesn't exist.");
 
   return wifiManager->disconnect();
 }

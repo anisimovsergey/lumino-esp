@@ -22,12 +22,12 @@ NetworksController::registerOn(IHttpServer &httpServer) {
   });
 }
 
-std::shared_ptr<Core::ActionResult>
+std::shared_ptr<Core::IActionResult>
 NetworksController::onGetWiFiNetworks(IHttpRequest& request) {
   std::shared_ptr<List<Models::Network>> networks;
   auto actionResult = wifiManager->getWiFiNetworks(networks);
   if (!actionResult->isOk())
     return actionResult;
 
-  ActionResult::Success(networks);
+  ObjectResult::OK(networks);
 }

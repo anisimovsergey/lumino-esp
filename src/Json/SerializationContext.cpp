@@ -12,7 +12,7 @@ SerializationContext::SerializationContext(
   jsonObject(jsonObject) {
 }
 
-std::shared_ptr<Core::ActionResult>
+std::shared_ptr<Core::IActionResult>
 SerializationContext::create(
   const ISerializationService& serializationService,
   std::shared_ptr<ISerializationContext>& context) {
@@ -25,10 +25,10 @@ SerializationContext::create(
     jsonBuffer,
     jsonObject));
 
-  return ActionResult::Success();
+  return StatusResult::OK();
 }
 
-std::shared_ptr<Core::ActionResult>
+std::shared_ptr<Core::IActionResult>
 SerializationContext::create(
   const ISerializationService& serializationService,
   std::shared_ptr<ISerializationContext>& context,
@@ -37,14 +37,14 @@ SerializationContext::create(
   std::shared_ptr<DynamicJsonBuffer> jsonBuffer(new DynamicJsonBuffer);
   JsonObject& jsonObject = jsonBuffer->parseObject(json);
   if (!jsonObject.success())
-    return ActionResult::UnableToParseJson();
+    return StatusResult::BadRequest("Incorrect JSON format.");
 
   context = std::shared_ptr<SerializationContext>(new SerializationContext(
     serializationService,
     jsonBuffer,
     jsonObject));
 
-  return ActionResult::Success();
+  return StatusResult::OK();
 }
 
 String
@@ -54,32 +54,32 @@ SerializationContext::toString() const {
   return str;
 }
 
-std::shared_ptr<Core::ActionResult>
+std::shared_ptr<Core::IActionResult>
 SerializationContext::getStringValue(const String& key, String& value) {
 
   auto jsonVal = jsonObject[key];
   if (!jsonVal.success())
-    return ActionResult::UnableToFindJsonKey(key);
+    return StatusResult::BadRequest("Key """ + key + """ is not defined.");
 
   if (!jsonVal.is<const char*>())
-    return ActionResult::ValueIsNotAString();
+    return StatusResult::BadRequest("Value for key """ + key + """ should be a string.");
 
   value = (const char*)jsonVal;
-  return ActionResult::Success();
+  return StatusResult::OK();
 }
 
-std::shared_ptr<Core::ActionResult>
+std::shared_ptr<Core::IActionResult>
 SerializationContext::getBoolValue(const String& key, bool& value) {
 
   auto jsonVal = jsonObject[key];
   if (!jsonVal.success())
-    return ActionResult::UnableToFindJsonKey(key);
+    return StatusResult::BadRequest("Key """ + key + """ is not defined.");
 
   if (!jsonVal.is<bool>())
-    return ActionResult::ValueIsNotABoolean();
+    return StatusResult::BadRequest("Value for key """ + key + """ should be a boolean.");
 
   value = (bool)jsonVal;
-  return ActionResult::Success();
+  return StatusResult::OK();
 }
 
 void

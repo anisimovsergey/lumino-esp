@@ -30,17 +30,17 @@ class HttpServerAsync : public IHttpServer, public ILoopedService {
 
     void start();
 
-    virtual std::shared_ptr<Core::ActionResult> addGetHandler(
+    virtual std::shared_ptr<Core::IActionResult> addGetHandler(
       const String& uri,
       TRequestHandler fn) override;
-    virtual std::shared_ptr<Core::ActionResult> addDeleteHandler(
+    virtual std::shared_ptr<Core::IActionResult> addDeleteHandler(
       const String& uri,
       TRequestHandler fn) override;
 
-    virtual std::shared_ptr<Core::ActionResult> addPostHandler(
+    virtual std::shared_ptr<Core::IActionResult> addPostHandler(
       const String& uri,
       TRequestWithEntityHandler fn) override;
-    virtual std::shared_ptr<Core::ActionResult> addPutHandler(
+    virtual std::shared_ptr<Core::IActionResult> addPutHandler(
       const String& uri,
       TRequestWithEntityHandler fn) override;
 

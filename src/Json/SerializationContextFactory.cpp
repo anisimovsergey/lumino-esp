@@ -5,14 +5,14 @@
 using namespace Json;
 using namespace Core;
 
-std::shared_ptr<Core::ActionResult>
+std::shared_ptr<Core::IActionResult>
 SerializationContextFactory::create(
   const ISerializationService& serializationService,
   std::shared_ptr<ISerializationContext>& context) const {
     return SerializationContext::create(serializationService, context);
 }
 
-std::shared_ptr<Core::ActionResult>
+std::shared_ptr<Core::IActionResult>
 SerializationContextFactory::create(
   const ISerializationService& serializationService,
   std::shared_ptr<ISerializationContext>& context,
