@@ -46,12 +46,15 @@ class HttpServerAsync : public IHttpServer, public ILoopedService {
 
     virtual void addApiController(
       std::shared_ptr<Controllers::IApiController> controller) override;
+    virtual void addHttpSender(
+      std::shared_ptr<IHttpSender> httpSender) override;
 
     void loop() override {};
 
   private:
     std::unique_ptr<AsyncWebServer> server;
     std::list<std::shared_ptr<Controllers::IApiController>> controllers;
+    std::list<std::shared_ptr<IHttpSender>> senders;
     std::shared_ptr<const Json::ISerializationService>  serializationService;
 
     void addHandler(

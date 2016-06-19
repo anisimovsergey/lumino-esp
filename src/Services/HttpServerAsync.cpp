@@ -18,34 +18,6 @@ HttpServerAsync::HttpServerAsync(
   serializationService(serializationService) {
 }
 
-//std::shared_ptr<IEntity> entity;
-//auto actionResult = request.getJson(entity);
-//if (!actionResult->isOk())
-//  return actionResult;
-/*
-void
-HttpResponse::sendJson(const Status& status) {
-  String json;
-  Logger::message("sendJson status");
-  serializationService.serialize(status, json);
-  int code = status.getCode();
-  Logger::message(json);
-  response.send(code, "text/json", json);
-}
-
-void
-HttpResponse::sendJson(const IEntity& entity) {
-  String json;
-  Logger::message("sendJson entity");
-  auto status = serializationService.serialize(entity, json);
-  if (!status.isOk()) {
-    sendJson(status);
-    return;
-  }
-  Logger::message(json);
-  response.send(200, "text/json", json);
-}*/
-
 HttpServerAsync::~HttpServerAsync() {
 }
 
@@ -77,6 +49,11 @@ void
 HttpServerAsync::addApiController(std::shared_ptr<IApiController> controller) {
   controllers.push_back(controller);
   controller->registerOn(*this);
+}
+
+void
+HttpServerAsync::addHttpSender(std::shared_ptr<IHttpSender> httpSender) {
+  senders.push_back(httpSender);
 }
 
 //Core::Status

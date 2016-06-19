@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef JSON_OBJECT_RESULT_SENDER_HPP
-#define JSON_OBJECT_RESULT_SENDER_HPP
+#ifndef SERVICES_OBJECT_RESULT_SENDER_HPP
+#define SERVICES_OBJECT_RESULT_SENDER_HPP
 
 #include "HttpSender.hpp"
 #include "Core/ActionResult.hpp"
@@ -22,4 +22,4 @@ namespace Services {
 
 }
 
-#endif /* end of include guard: JSON_OBJECT_RESULT_SENDER_HPP */
+#endif /* end of include guard: SERVICES_OBJECT_RESULT_SENDER_HPP */

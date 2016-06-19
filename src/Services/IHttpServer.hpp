@@ -9,6 +9,7 @@
 #define SERVICES_I_HTTPSERVER_H
 
 #include "IHttpRequest.hpp"
+#include "IHttpSender.hpp"
 
 #include "Core/ActionResult.hpp"
 #include "Controllers/IApiController.hpp"
@@ -40,6 +41,9 @@ class IHttpServer {
 
       virtual void addApiController(
         std::shared_ptr<Controllers::IApiController> controller) = 0;
+
+      virtual void addHttpSender(
+        std::shared_ptr<IHttpSender> httpSender) = 0;
 };
 
 }
