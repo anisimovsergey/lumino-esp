@@ -7,6 +7,7 @@
 #ifndef SERVICES_I_HTTP_REQEST_H
 #define SERVICES_I_HTTP_REQEST_H
 
+#include "IHttpResponse.hpp"
 #include "Core/IEntity.hpp"
 
 #include <WString.h>
@@ -19,6 +20,8 @@ class IHttpRequest {
   public:
     virtual String getArgument(String parameter) = 0;
     virtual String getHeader(String header) = 0;
+    virtual std::shared_ptr<IHttpResponse> createResponse(
+      int code, String contentType, String content);
 };
 
 }

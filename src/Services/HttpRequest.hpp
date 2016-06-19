@@ -20,6 +20,8 @@ class HttpRequest : public IHttpRequest {
 
     virtual String getArgument(String argument) override;
     virtual String getHeader(String header) override;
+    virtual std::shared_ptr<IHttpResponse> createResponse(
+      int code, String contentType, String content) override;
 
   private:
     AsyncWebServerRequest& request;
