@@ -15,6 +15,7 @@
 
 #include <memory>
 #include <list>
+#include <algorithm>
 
 #include <Hash.h>
 #include <ESPAsyncTCP.h>
@@ -32,17 +33,17 @@ class HttpServerAsync : public IHttpServer, public ILoopedService {
 
     virtual std::shared_ptr<Core::IActionResult> addGetHandler(
       const String& uri,
-      TRequestHandler fn) override;
+      TRequestHandler requestHandler) override;
     virtual std::shared_ptr<Core::IActionResult> addDeleteHandler(
       const String& uri,
-      TRequestHandler fn) override;
+      TRequestHandler requestHandler) override;
 
     virtual std::shared_ptr<Core::IActionResult> addPostHandler(
       const String& uri,
-      TRequestWithEntityHandler fn) override;
+      TRequestWithEntityHandler requestHandler) override;
     virtual std::shared_ptr<Core::IActionResult> addPutHandler(
       const String& uri,
-      TRequestWithEntityHandler fn) override;
+      TRequestWithEntityHandler requestHandler) override;
 
     virtual void addApiController(
       std::shared_ptr<Controllers::IApiController> controller) override;
@@ -60,12 +61,18 @@ class HttpServerAsync : public IHttpServer, public ILoopedService {
     void addHandler(
       const String& uri,
       WebRequestMethod method,
-      TRequestHandler fn);
+      TRequestHandler requestHandler);
 
     void addHandler(
       const String& uri,
       WebRequestMethod method,
-      TRequestWithEntityHandler fn);
+      TRequestWithEntityHandler requestHandler);
+
+    void sendResponse(
+      IHttpRequest& request,
+      std::shared_ptr<Core::IActionResult> result);
+
+    std::shared_ptr<IHttpSender> getSender(String typeId) const;
 
     bool    isIntercepted(AsyncWebServerRequest* request);
     void    redirectToSelf(AsyncWebServerRequest* request);

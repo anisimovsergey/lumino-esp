@@ -27,17 +27,17 @@ class IHttpServer {
 
       virtual std::shared_ptr<Core::IActionResult>
         addGetHandler(const String& uri,
-        TRequestHandler fn) = 0;
+        TRequestHandler requestHandler) = 0;
       virtual std::shared_ptr<Core::IActionResult>
         addDeleteHandler(const String& uri,
-        TRequestHandler fn) = 0;
+        TRequestHandler requestHandler) = 0;
 
       virtual std::shared_ptr<Core::IActionResult>
         addPostHandler(const String& uri,
-        TRequestWithEntityHandler fn) = 0;
+        TRequestWithEntityHandler requestHandler) = 0;
       virtual std::shared_ptr<Core::IActionResult>
         addPutHandler(const String& uri,
-        TRequestWithEntityHandler fn) = 0;
+        TRequestWithEntityHandler frequestHandlern) = 0;
 
       virtual void addApiController(
         std::shared_ptr<Controllers::IApiController> controller) = 0;

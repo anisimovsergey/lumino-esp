@@ -36,12 +36,12 @@ class SerializationService : public ISerializationService {
     void addSerializer(
       std::shared_ptr<const ISerializer> serializer);
 
-    const ISerializer* getSerialzier(
-      const String& typeId) const;
-
   private:
     std::shared_ptr<const ISerializationContextFactory>   contextFactory;
     std::list<std::shared_ptr<const ISerializer>>         serializers;
+
+    std::shared_ptr<const ISerializer> getSerialzier(
+      String typeId) const;
 };
 
 }

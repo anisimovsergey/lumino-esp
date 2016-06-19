@@ -82,9 +82,8 @@ SerializationService::addSerializer(
   serializers.push_back(serializer);
 }
 
-const ISerializer*
-SerializationService::getSerialzier(
-  const String& typeId) const {
+std::shared_ptr<const ISerializer>
+SerializationService::getSerialzier(String typeId) const {
 
   auto findIter = std::find_if(serializers.begin(), serializers.end(),
     [&](std::shared_ptr<const ISerializer> serializer){
@@ -94,5 +93,5 @@ SerializationService::getSerialzier(
   if (findIter == serializers.end())
     return nullptr;
 
-  return findIter->get();
+  return *findIter;
 }

@@ -22,26 +22,26 @@ HttpServerAsync::~HttpServerAsync() {
 }
 
 std::shared_ptr<Core::IActionResult>
-HttpServerAsync::addGetHandler(const String& uri, TRequestHandler fn) {
-  addHandler(uri, HTTP_GET, fn);
+HttpServerAsync::addGetHandler(const String& uri, TRequestHandler requestHandler) {
+  addHandler(uri, HTTP_GET, requestHandler);
 }
 
 std::shared_ptr<Core::IActionResult>
-HttpServerAsync::addDeleteHandler(const String& uri, TRequestHandler fn) {
-  addHandler(uri, HTTP_DELETE, fn);
+HttpServerAsync::addDeleteHandler(const String& uri, TRequestHandler requestHandler) {
+  addHandler(uri, HTTP_DELETE, requestHandler);
 }
 
 std::shared_ptr<Core::IActionResult>
 HttpServerAsync::addPostHandler(
   const String& uri,
-  TRequestWithEntityHandler fn) {
+  TRequestWithEntityHandler requestHandler) {
 
 }
 
 std::shared_ptr<Core::IActionResult>
 HttpServerAsync::addPutHandler(
   const String& uri,
-  TRequestWithEntityHandler fn) {
+  TRequestWithEntityHandler requestHandler) {
 
 }
 
@@ -56,29 +56,15 @@ HttpServerAsync::addHttpSender(std::shared_ptr<IHttpSender> httpSender) {
   senders.push_back(httpSender);
 }
 
-//Core::Status
-//HttpRequest::getJson(std::shared_ptr<IEntity>& entity) {
-//  Logger::message("Body: " + body);
-//  return serializationService.deserialize(body, entity);
-//}
-
-//std::shared_ptr<IHttpResponse>
-//HttpRequest::createResponse(const Core::Status& status) {
-//    return std::shared_ptr<IHttpResponse>(
-//      new HttpResponse(*request.beginResponse(status.getCode())),
-//      serializationService
-//    )
-//}
-
 void
 HttpServerAsync::addHandler(
   const String& uri,
   WebRequestMethod method,
-  TRequestHandler fn) {
+  TRequestHandler requestHandler) {
+
   server->on(uri.c_str(), method, [=](AsyncWebServerRequest* request) {
     HttpRequest httpRequest(*request);
-    auto result = fn(httpRequest);
-    // TODO : Send response
+    sendResponse(httpRequest, requestHandler(httpRequest));
   });
 }
 
@@ -86,17 +72,17 @@ void
 HttpServerAsync::addHandler(
   const String& uri,
   WebRequestMethod method,
-  TRequestWithEntityHandler fn) {
+  TRequestWithEntityHandler requestHandler) {
 
   server->on(uri.c_str(), method, [=](AsyncWebServerRequest* request) {
     String body((char*)request->_tempObject);
     std::shared_ptr<IEntity> entity;
-    auto result = serializationService->deserialize(body, entity);
-    if (!result->isOk())
-      ; // TODO Send error back.
     HttpRequest httpRequest(*request);
-    result = fn(httpRequest, *entity);
-    // TODO : Send response
+    auto actionResult = serializationService->deserialize(body, entity);
+    if (actionResult->isOk()) {
+      actionResult = requestHandler(httpRequest, *entity);
+    }
+    sendResponse(httpRequest, actionResult);
   }, nullptr, [&](AsyncWebServerRequest *request,
     uint8_t *data, size_t len, size_t index, size_t total){
       if(index == 0)
@@ -105,6 +91,33 @@ HttpServerAsync::addHandler(
         memcpy((uint8_t*)request->_tempObject+index, data, len);
     }
   );
+}
+
+void
+HttpServerAsync::sendResponse(
+  IHttpRequest& request,
+  std::shared_ptr<Core::IActionResult> result) {
+
+  String typeId = result->getTypeId();
+  Logger::message("Getting sender for type " + typeId);
+  auto sender = getSender(typeId);
+  if (sender != nullptr) {
+    sender->send(*serializationService, request, *result);
+  }
+}
+
+std::shared_ptr<IHttpSender>
+HttpServerAsync::getSender(String typeId) const {
+
+  auto findIter = std::find_if(senders.begin(), senders.end(),
+    [&](std::shared_ptr<const IHttpSender> sender){
+      return sender->getTypeId() == typeId;
+    });
+
+  if (findIter == senders.end())
+    return nullptr;
+
+  return *findIter;
 }
 
 bool
