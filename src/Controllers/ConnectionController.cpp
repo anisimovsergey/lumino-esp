@@ -60,7 +60,7 @@ ConnectionController::onPostConnection(IHttpRequest& request, const IEntity& ent
 std::shared_ptr<IActionResult>
 ConnectionController::onDeleteConnection(IHttpRequest& request) {
   if (!wifiManager->hasConnection())
-    StatusResult::NotFound("Connection doesn't exist.");
+    return StatusResult::NotFound("Connection doesn't exist.");
 
   return wifiManager->disconnect();
 }

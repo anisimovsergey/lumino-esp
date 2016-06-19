@@ -1,5 +1,7 @@
 #include "StatusResultSender.hpp"
 
+#include "Core/Logger.hpp"
+
 using namespace Core;
 using namespace Json;
 using namespace Services;
@@ -20,5 +22,6 @@ StatusResultSender::prepareResponse(
   if (!status->isOk()) {
     code = status->getStatusCode().getCode();
   }
+  Logger::message("Creating response wiht json " + json);
   return request.createResponse(code, "text/json", json);
 }

@@ -25,17 +25,17 @@ class IHttpServer {
       typedef std::function<std::shared_ptr<Core::IActionResult>(IHttpRequest& request,
         const Core::IEntity& entity)> TRequestWithEntityHandler;
 
-      virtual std::shared_ptr<Core::IActionResult>
+      virtual void
         addGetHandler(const String& uri,
         TRequestHandler requestHandler) = 0;
-      virtual std::shared_ptr<Core::IActionResult>
+      virtual void
         addDeleteHandler(const String& uri,
         TRequestHandler requestHandler) = 0;
 
-      virtual std::shared_ptr<Core::IActionResult>
+      virtual void
         addPostHandler(const String& uri,
         TRequestWithEntityHandler requestHandler) = 0;
-      virtual std::shared_ptr<Core::IActionResult>
+      virtual void
         addPutHandler(const String& uri,
         TRequestWithEntityHandler frequestHandlern) = 0;
 

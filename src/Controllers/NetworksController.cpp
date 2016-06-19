@@ -18,7 +18,9 @@ void
 NetworksController::registerOn(IHttpServer &httpServer) {
   httpServer.addGetHandler("/wifi_networks", [&](IHttpRequest& request) {
     Logger::message("/wifi_networks");
-    return onGetWiFiNetworks(request);
+    auto actionResult = onGetWiFiNetworks(request);
+    Logger::message("Action result type " + actionResult->getTypeId());
+    return actionResult;
   });
 }
 
@@ -26,8 +28,10 @@ std::shared_ptr<Core::IActionResult>
 NetworksController::onGetWiFiNetworks(IHttpRequest& request) {
   std::shared_ptr<List<Models::Network>> networks;
   auto actionResult = wifiManager->getWiFiNetworks(networks);
-  if (!actionResult->isOk())
+  if (!actionResult->isOk()) {
+    Logger::error("Unable to get WiFi networks, error " + actionResult->getStatusCode().getText());
     return actionResult;
-
-  ObjectResult::OK(networks);
+  }
+  Logger::message("WiFi networks fetched");
+  return ObjectResult::OK(networks);
 }

@@ -58,7 +58,7 @@ void setup(void){
   httpServerAsync->addHttpSender(
     std::shared_ptr<IHttpSender>(new RedirectResultSender()));
 
-  //Registering controllers
+  // Registering controllers
   httpServerAsync->addApiController(
     std::shared_ptr<NetworksController>(new NetworksController(wifiManager)));
   httpServerAsync->addApiController(

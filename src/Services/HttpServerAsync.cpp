@@ -21,28 +21,28 @@ HttpServerAsync::HttpServerAsync(
 HttpServerAsync::~HttpServerAsync() {
 }
 
-std::shared_ptr<Core::IActionResult>
+void
 HttpServerAsync::addGetHandler(const String& uri, TRequestHandler requestHandler) {
   addHandler(uri, HTTP_GET, requestHandler);
 }
 
-std::shared_ptr<Core::IActionResult>
+void
 HttpServerAsync::addDeleteHandler(const String& uri, TRequestHandler requestHandler) {
   addHandler(uri, HTTP_DELETE, requestHandler);
 }
 
-std::shared_ptr<Core::IActionResult>
+void
 HttpServerAsync::addPostHandler(
   const String& uri,
   TRequestWithEntityHandler requestHandler) {
-
+  addHandler(uri, HTTP_POST, requestHandler);
 }
 
-std::shared_ptr<Core::IActionResult>
+void
 HttpServerAsync::addPutHandler(
   const String& uri,
   TRequestWithEntityHandler requestHandler) {
-
+  addHandler(uri, HTTP_PUT, requestHandler);
 }
 
 void
@@ -64,7 +64,9 @@ HttpServerAsync::addHandler(
 
   server->on(uri.c_str(), method, [=](AsyncWebServerRequest* request) {
     HttpRequest httpRequest(*request);
-    sendResponse(httpRequest, requestHandler(httpRequest));
+    auto actionResult = requestHandler(httpRequest);
+    Logger::message("Action result type " + actionResult->getTypeId());
+    sendResponse(httpRequest, actionResult);
   });
 }
 
@@ -75,7 +77,9 @@ HttpServerAsync::addHandler(
   TRequestWithEntityHandler requestHandler) {
 
   server->on(uri.c_str(), method, [=](AsyncWebServerRequest* request) {
+    Logger::message("Creating body");
     String body((char*)request->_tempObject);
+    Logger::message("Created: " + body);
     HttpRequest httpRequest(*request);
     std::shared_ptr<IEntity> entity;
     auto actionResult = serializationService->deserialize(body, entity);
@@ -85,10 +89,16 @@ HttpServerAsync::addHandler(
     sendResponse(httpRequest, actionResult);
   }, nullptr, [&](AsyncWebServerRequest *request,
     uint8_t *data, size_t len, size_t index, size_t total){
-      if(index == 0)
-        request->_tempObject = malloc(total);
-      if(request->_tempObject != NULL)
+      if (index == 0) {
+        Logger::message("Allocating " + String(total));
+        request->_tempObject = malloc(total + 1);
+        *((uint8_t*)request->_tempObject + total) = '\0';
+        Logger::message("Allocated");
+      }
+      if(request->_tempObject != NULL) {
+        Logger::message("Copying to index:" + String(index) + " len:" + String(len));
         memcpy((uint8_t*)request->_tempObject+index, data, len);
+      }
     }
   );
 }
@@ -101,8 +111,13 @@ HttpServerAsync::sendResponse(
   String typeId = result->getTypeId();
   Logger::message("Getting sender for type " + typeId);
   auto sender = getSender(typeId);
-  if (sender != nullptr) {
+  if (sender) {
+    Logger::message("Sender found sending...");
     sender->send(request, *result);
+    Logger::message("Sent");
+  } else {
+    auto response = request.createResponse(StatusCode::InternalServerError.getCode());
+    response->send();
   }
 }
 
@@ -127,7 +142,7 @@ HttpServerAsync::isIntercepted(AsyncWebServerRequest *request) {
 
 void
 HttpServerAsync::redirectToSelf(AsyncWebServerRequest *request) {
-  Logger::message("Request redirected");
+  //Logger::message("Request redirected");
   AsyncWebServerResponse *response = request->beginResponse(302, "text/plain", "");
   response->addHeader("Location", String("http://") + "www.esp8266fs.local");
   request->send(response);
@@ -139,7 +154,7 @@ HttpServerAsync::start() {
   // Set up static content
   server->serveStatic("", SPIFFS, "");
   server->onNotFound([&](AsyncWebServerRequest *request){
-    Logger::message("Request Header:" + request->host() + " Uri:" + request->url());
+    //Logger::message("Request Header:" + request->host() + " Uri:" + request->url());
     if (isIntercepted(request)) {
       redirectToSelf(request);
     } else {

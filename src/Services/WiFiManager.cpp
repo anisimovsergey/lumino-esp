@@ -26,11 +26,11 @@ WiFiManager::initialize() {
 
 std::shared_ptr<Core::IActionResult>
 WiFiManager::getWiFiNetworks(std::shared_ptr<List<Network>>& networks) const {
+  networks = std::shared_ptr<List<Network>>(new List<Network>());
   auto networksCount = WiFi.scanComplete();
   if (networksCount == WIFI_SCAN_RUNNING) {
     Logger::message("Scanning networks... ");
   } else if (networksCount >= 0) {
-    networks = std::shared_ptr<List<Network>>(new List<Network>());
     Logger::message("Networks scanned, total:" + String(networksCount));
     for (int networkNum = 0; networkNum < networksCount; networkNum++) {
       String ssid = WiFi.SSID(networkNum);

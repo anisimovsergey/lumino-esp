@@ -20,6 +20,7 @@ SerializationService::serialize(
   String& json) const {
 
   std::shared_ptr<ISerializationContext> context;
+  Logger::message("Creating serialization context");
   auto actionResult = contextFactory->create(*this, context);
   if (!actionResult->isOk())
     return actionResult;
@@ -43,7 +44,7 @@ SerializationService::serialize (
   String typeId = entity.getTypeId();
   Logger::message("Getting serializer for type " + typeId);
   auto serializer = getSerialzier(typeId);
-  if (serializer == nullptr)
+  if (!serializer)
     return StatusResult::BadRequest("Unable to find serializer for type """ +
       typeId + """.");
 
@@ -69,7 +70,7 @@ SerializationService::deserialize(
     return actionResult;
 
   auto serializer = getSerialzier(typeId);
-  if (serializer == nullptr)
+  if (!serializer)
     return StatusResult::BadRequest("Unable to find serializer for type """ +
       typeId + """.");
 
@@ -90,8 +91,10 @@ SerializationService::getSerialzier(String typeId) const {
       return serializer->getTypeId() == typeId;
     });
 
-  if (findIter == serializers.end())
+  if (findIter == serializers.end()) {
+    Logger::message("Serializer not found for " + typeId);
     return nullptr;
+  }
 
   return *findIter;
 }

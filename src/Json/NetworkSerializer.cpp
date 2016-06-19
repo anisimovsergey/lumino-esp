@@ -21,6 +21,7 @@ String getEncryptionTypeString(int thisType) {
     case ENC_TYPE_AUTO:
       return "Auto";
   }
+  return "Unknown";
 }
 
 }

@@ -31,7 +31,7 @@ template<class T> class ActionResult : public IActionResult {
 
     // From IActionResult
     virtual bool        isOk() const override {
-      return (statusCode != StatusCode::OK);
+      return (statusCode == StatusCode::OK);
     }
     virtual StatusCode  getStatusCode() const override {
       return statusCode;

@@ -1,5 +1,7 @@
 #include "ObjectResultSender.hpp"
 
+#include "Core/Logger.hpp"
+
 using namespace Core;
 using namespace Json;
 using namespace Services;
@@ -16,9 +18,13 @@ ObjectResultSender::prepareResponse(
 
   String json;
   int    code = objectResult.getStatusCode().getCode();
-  auto status = serializationService->serialize(*objectResult.getEntity(), json);
-  if (!status->isOk()) {
-    code = status->getStatusCode().getCode();
+  if (objectResult.getEntity()) {
+    auto status = serializationService->serialize(*objectResult.getEntity(), json);
+    if (!status->isOk()) {
+      code = status->getStatusCode().getCode();
+    }
+  } else {
+    Logger::error("Entity is empty.");
   }
   return request.createResponse(code, "text/json", json);
 }

@@ -30,7 +30,7 @@ SettingsController::onGetSettings(IHttpRequest& request) {
   std::shared_ptr<Settings> settings(new Settings(
     wifiManager->getDeviceName()
   ));
-  ObjectResult::OK(settings);
+  return ObjectResult::OK(settings);
 }
 
 std::shared_ptr<Core::IActionResult>
@@ -41,7 +41,7 @@ SettingsController::onPutSettings(
     return StatusResult::BadRequest("Type Settings expected.");
 
   // TODO: Update device settings.
-  ObjectResult::OK(std::shared_ptr<Settings>(new Settings(
+  return ObjectResult::OK(std::shared_ptr<Settings>(new Settings(
     wifiManager->getDeviceName()
   )));
 }
