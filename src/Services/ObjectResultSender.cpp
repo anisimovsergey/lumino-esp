@@ -1,17 +1,17 @@
-#include "StatusResultSender.hpp"
+#include "ObjectResultSender.hpp"
 
 using namespace Core;
 using namespace Services;
 
 std::shared_ptr<IHttpResponse>
-StatusResultSender::prepareResponse(
+ObjectResultSender::prepareResponse(
   const Json::ISerializationService& serializationSerivce,
   IHttpRequest& request,
-  const StatusResult& statusResult) const {
+  const ObjectResult& objectResult) const {
 
   String json;
-  int    code = statusResult.getStatusCode().getCode();
-  auto status = serializationSerivce.serialize(statusResult, json);
+  int    code = objectResult.getStatusCode().getCode();
+  auto status = serializationSerivce.serialize(*objectResult.getEntity(), json);
   if (!status->isOk()) {
     code = status->getStatusCode().getCode();
   }
