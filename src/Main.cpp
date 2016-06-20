@@ -15,6 +15,8 @@
 #include "Controllers/SettingsController.hpp"
 #include "Controllers/ConnectionController.hpp"
 
+#include <FS.h>
+
 using namespace Core;
 using namespace Json;
 using namespace Services;
@@ -24,6 +26,7 @@ std::list<std::shared_ptr<ILoopedService>> loopedServices;
 
 void setup(void){
   Logger::initialize();
+  SPIFFS.begin();
 
   // Creating services
   auto wifiManager(std::make_shared<WiFiManager>());

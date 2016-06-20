@@ -17,9 +17,8 @@
 #include <list>
 #include <algorithm>
 
-#include <Hash.h>
-#include <ESPAsyncTCP.h>
-#include <ESPAsyncWebServer.h>
+class AsyncWebServer;
+class AsyncWebServerRequest;
 
 namespace Services {
 
@@ -34,6 +33,7 @@ class HttpServerAsync : public IHttpServer, public ILoopedService {
     virtual void addGetHandler(
       const String& uri,
       TRequestHandler requestHandler) override;
+
     virtual void addDeleteHandler(
       const String& uri,
       TRequestHandler requestHandler) override;
@@ -41,12 +41,14 @@ class HttpServerAsync : public IHttpServer, public ILoopedService {
     virtual void addPostHandler(
       const String& uri,
       TRequestWithEntityHandler requestHandler) override;
+
     virtual void addPutHandler(
       const String& uri,
       TRequestWithEntityHandler requestHandler) override;
 
     virtual void addApiController(
       std::shared_ptr<IHttpController> controller) override;
+
     virtual void addHttpSender(
       std::shared_ptr<IHttpSender> httpSender) override;
 
@@ -60,12 +62,12 @@ class HttpServerAsync : public IHttpServer, public ILoopedService {
 
     void addHandler(
       const String& uri,
-      WebRequestMethod method,
+      int method,
       TRequestHandler requestHandler);
 
     void addHandler(
       const String& uri,
-      WebRequestMethod method,
+      int method,
       TRequestWithEntityHandler requestHandler);
 
     void sendResponse(

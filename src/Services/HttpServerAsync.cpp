@@ -5,7 +5,8 @@
 #include "Core/Logger.hpp"
 #include "Core/Utils.hpp"
 
-#include <FS.h>
+#include <Hash.h>
+#include <ESPAsyncWebServer.h>
 
 using namespace Core;
 using namespace Services;
@@ -58,10 +59,10 @@ HttpServerAsync::addHttpSender(std::shared_ptr<IHttpSender> httpSender) {
 void
 HttpServerAsync::addHandler(
   const String& uri,
-  WebRequestMethod method,
+  int method,
   TRequestHandler requestHandler) {
 
-  server->on(uri.c_str(), method, [=](AsyncWebServerRequest* request) {
+  server->on(uri.c_str(), (WebRequestMethod)method, [=](AsyncWebServerRequest* request) {
     HttpRequest httpRequest(*request);
     auto actionResult = requestHandler(httpRequest);
     Logger::message("Action result type " + actionResult->getTypeId());
@@ -72,10 +73,10 @@ HttpServerAsync::addHandler(
 void
 HttpServerAsync::addHandler(
   const String& uri,
-  WebRequestMethod method,
+  int method,
   TRequestWithEntityHandler requestHandler) {
 
-  server->on(uri.c_str(), method, [=](AsyncWebServerRequest* request) {
+  server->on(uri.c_str(), (WebRequestMethod)method, [=](AsyncWebServerRequest* request) {
     Logger::message("Creating body");
     String body((char*)request->_tempObject);
     Logger::message("Created: " + body);
@@ -149,7 +150,6 @@ HttpServerAsync::redirectToSelf(AsyncWebServerRequest *request) {
 
 void
 HttpServerAsync::start() {
-  SPIFFS.begin();
   // Set up static content
   server->serveStatic("", SPIFFS, "");
   server->onNotFound([&](AsyncWebServerRequest *request){
