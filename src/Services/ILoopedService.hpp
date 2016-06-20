@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef SERVICES_I_LOOPED_SERVICE_H
-#define SERVICES_I_LOOPED_SERVICE_H
+#ifndef SERVICES_I_LOOPED_SERVICE_HPP
+#define SERVICES_I_LOOPED_SERVICE_HPP
 
 namespace Services {
 
@@ -17,4 +17,4 @@ class ILoopedService {
 
 }
 
-#endif /* end of include guard: SERVICES_I_LOOPED_SERVICE_H */
+#endif /* end of include guard: SERVICES_I_LOOPED_SERVICE_HPP */

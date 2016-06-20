@@ -29,12 +29,12 @@ HttpRequest::getHeader(String header) {
 std::shared_ptr<IHttpResponse>
 HttpRequest::createResponse(int code) {
   auto response = request.beginResponse(code);
-  return std::shared_ptr<IHttpResponse>(new HttpResponse(request, *response));
+  return std::make_shared<HttpResponse>(request, *response);
 }
 
 std::shared_ptr<IHttpResponse>
 HttpRequest::createResponse(
   int code, String contentType, String content) {
   auto response = request.beginResponse(code, contentType, content);
-  return std::shared_ptr<IHttpResponse>(new HttpResponse(request, *response));
+  return std::make_shared<HttpResponse>(request, *response);
 }

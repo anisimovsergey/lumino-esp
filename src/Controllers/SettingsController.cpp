@@ -41,7 +41,7 @@ SettingsController::onPutSettings(
     return StatusResult::BadRequest("Type Settings expected.");
 
   // TODO: Update device settings.
-  return ObjectResult::OK(std::shared_ptr<Settings>(new Settings(
+  return ObjectResult::OK(std::make_shared<Settings>(
     wifiManager->getDeviceName()
-  )));
+  ));
 }

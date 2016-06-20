@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef SERVICES_I_WIFIMANAGER_H
-#define SERVICES_I_WIFIMANAGER_H
+#ifndef SERVICES_I_WIFIMANAGER_HPP
+#define SERVICES_I_WIFIMANAGER_HPP
 
 #include "Core/List.hpp"
 #include "Core/ActionResult.hpp"
@@ -33,4 +33,4 @@ class IWiFiManager {
 
 }
 
-#endif /* end of include guard: SERVICES_I_WIFIMANAGER_H */
+#endif /* end of include guard: SERVICES_I_WIFIMANAGER_HPP */

@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef JSON_I_SERIALIZATION_CONTEXT_FACTORY_H
-#define JSON_I_SERIALIZATION_CONTEXT_FACTORY_H
+#ifndef JSON_I_SERIALIZATION_CONTEXT_FACTORY_HPP
+#define JSON_I_SERIALIZATION_CONTEXT_FACTORY_HPP
 
 #include "ISerializationContext.hpp"
 #include "ISerializationService.hpp"
@@ -30,4 +30,4 @@ class ISerializationContextFactory {
 
 }
 
-#endif /* end of include guard: JSON_I_SERIALIZATION_CONTEXT_FACTORY_H */
+#endif /* end of include guard: JSON_I_SERIALIZATION_CONTEXT_FACTORY_HPP */

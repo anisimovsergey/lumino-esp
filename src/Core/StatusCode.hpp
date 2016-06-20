@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef CORE_STATUS_CODE_H
-#define CORE_STATUS_CODE_H
+#ifndef CORE_STATUS_CODE_HPP
+#define CORE_STATUS_CODE_HPP
 
 #include <WString.h>
 
@@ -44,4 +44,4 @@ class StatusCode {
 
 }
 
-#endif /* end of include guard: CORE_STATUS_CODE_H */
+#endif /* end of include guard: CORE_STATUS_CODE_HPP */

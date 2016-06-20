@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef CORE_I_ENTITY_H
-#define CORE_I_ENTITY_H
+#ifndef CORE_I_ENTITY_HPP
+#define CORE_I_ENTITY_HPP
 
 #include <WString.h>
 
@@ -33,4 +33,4 @@ class IEntity {
 
 }
 
-#endif /* end of include guard: CORE_I_ENTITY_H */
+#endif /* end of include guard: CORE_I_ENTITY_HPP */

@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef CORE_LOGGER_H
-#define CORE_LOGGER_H
+#ifndef CORE_LOGGER_HPP
+#define CORE_LOGGER_HPP
 
 #include <WString.h>
 
@@ -25,4 +25,4 @@ class Logger {
 
 }
 
-#endif /* end of include guard: CORE_LOGGER_H */
+#endif /* end of include guard: CORE_LOGGER_HPP */

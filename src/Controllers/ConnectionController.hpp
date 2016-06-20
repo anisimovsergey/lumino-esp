@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef CONTROLLERS_CONNECTION_CONTROLLER_H
-#define CONTROLLERS_CONNECTION_CONTROLLER_H
+#ifndef CONTROLLERS_CONNECTION_CONTROLLER_HPP
+#define CONTROLLERS_CONNECTION_CONTROLLER_HPP
 
 #include "IApiController.hpp"
 #include "Core/ActionResult.hpp"
@@ -22,20 +22,26 @@ class ConnectionController : public IApiController {
     ConnectionController(
       std::shared_ptr<Services::IWiFiManager> wifiManager);
 
-    void registerOn(Services::IHttpServer& httpServer) override;
+    void registerOn(
+      Services::IHttpServer& httpServer) override;
 
   private:
     std::shared_ptr<Services::IWiFiManager> wifiManager;
 
     std::shared_ptr<Core::IActionResult>
-      onGetConnection(Services::IHttpRequest& request);
+      onGetConnection(
+        Services::IHttpRequest& request);
+
     std::shared_ptr<Core::IActionResult>
-      onPostConnection(Services::IHttpRequest& request,
-      const Core::IEntity& entity);
+      onPostConnection(
+        Services::IHttpRequest& request,
+        const Core::IEntity& entity);
+
     std::shared_ptr<Core::IActionResult>
-      onDeleteConnection(Services::IHttpRequest& request);
+      onDeleteConnection(
+        Services::IHttpRequest& request);
 };
 
 }
 
-#endif /* end of include guard: CONTROLLERS_CONNECTION_CONTROLLER_H */
+#endif /* end of include guard: CONTROLLERS_CONNECTION_CONTROLLER_HPP */

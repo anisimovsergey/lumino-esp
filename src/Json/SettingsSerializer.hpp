@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef JSON_SETTINGS_SERIALIZER_H
-#define JSON_SETTINGS_SERIALIZER_H
+#ifndef JSON_SETTINGS_SERIALIZER_HPP
+#define JSON_SETTINGS_SERIALIZER_HPP
 
 #include "Serializer.hpp"
 #include "Models/Settings.hpp"
@@ -30,4 +30,4 @@ class SettingsSerializer : public Serializer<Models::Settings> {
 
 }
 
-#endif /* end of include guard: JSON_SETTINGS_SERIALIZER_H */
+#endif /* end of include guard: JSON_SETTINGS_SERIALIZER_HPP */

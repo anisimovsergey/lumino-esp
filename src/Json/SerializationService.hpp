@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef JSON_SERIALIZATION_SERVICE_H
-#define JSON_SERIALIZATION_SERVICE_H
+#ifndef JSON_SERIALIZATION_SERVICE_HPP
+#define JSON_SERIALIZATION_SERVICE_HPP
 
 #include "ISerializer.hpp"
 #include "ISerializationService.hpp"
@@ -46,4 +46,4 @@ class SerializationService : public ISerializationService {
 
 }
 
-#endif /* end of include guard: SERVICES_SERIALIZATION_SERVICE_H */
+#endif /* end of include guard: SERVICES_SERIALIZATION_SERVICE_HPP */

@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef JSON_SERIALIZER_H
-#define JSON_SERIALIZER_H
+#ifndef JSON_SERIALIZER_HPP
+#define JSON_SERIALIZER_HPP
 
 #include "ISerializer.hpp"
 
@@ -43,4 +43,4 @@ template <class T> class Serializer : public ISerializer {
 
 }
 
-#endif /* end of include guard: JSON_SERIALIZER_H */
+#endif /* end of include guard: JSON_SERIALIZER_HPP */

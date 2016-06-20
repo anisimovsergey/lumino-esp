@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef CORE_ACTION_RESULT_H
-#define CORE_ACTION_RESULT_H
+#ifndef CORE_ACTION_RESULT_HPP
+#define CORE_ACTION_RESULT_HPP
 
 #include "Entity.hpp"
 #include "StatusCode.hpp"
@@ -105,4 +105,4 @@ class ObjectResult : public ActionResult<ObjectResult> {
 
 }
 
-#endif /* end of include guard: CORE_ACTION_RESULT_H */
+#endif /* end of include guard: CORE_ACTION_RESULT_HPP */

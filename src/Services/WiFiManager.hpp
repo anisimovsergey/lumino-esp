@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef SERVICES_WIFIMANAGER_H
-#define SERVICES_WIFIMANAGER_H
+#ifndef SERVICES_WIFIMANAGER_HPP
+#define SERVICES_WIFIMANAGER_HPP
 
 #include "IWiFiManager.hpp"
 #include "ILoopedService.hpp"
@@ -47,4 +47,4 @@ class WiFiManager : public IWiFiManager, public ILoopedService {
 
 }
 
-#endif /* end of include guard: SERVICES_WIFIMANAGER_H */
+#endif /* end of include guard: SERVICES_WIFIMANAGER_HPP */

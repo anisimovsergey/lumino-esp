@@ -5,8 +5,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef SERVICES_I_HTTPSERVER_H
-#define SERVICES_I_HTTPSERVER_H
+#ifndef SERVICES_I_HPPTTPSERVER_HPP
+#define SERVICES_I_HPPTTPSERVER_HPP
 
 #include "IHttpRequest.hpp"
 #include "IHttpSender.hpp"
@@ -48,4 +48,4 @@ class IHttpServer {
 
 }
 
-#endif /* end of include guard: SERVICES_I_HTTPSERVER_H */
+#endif /* end of include guard: SERVICES_I_HPPTTPSERVER_HPP */

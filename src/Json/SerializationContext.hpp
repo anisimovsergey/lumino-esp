@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef JSON_SERIALIZATION_CONTEXT_H
-#define JSON_SERIALIZATION_CONTEXT_H
+#ifndef JSON_SERIALIZATION_CONTEXT_HPP
+#define JSON_SERIALIZATION_CONTEXT_HPP
 
 #include "ISerializationContext.hpp"
 #include "ISerializationService.hpp"
@@ -18,15 +18,10 @@ namespace Json {
 
 class SerializationContext : public ISerializationContext {
   public:
-
-    static std::shared_ptr<Core::IActionResult> create(
+    SerializationContext(
       const ISerializationService& serializationService,
-      std::shared_ptr<ISerializationContext>& context);
-
-    static std::shared_ptr<Core::IActionResult> create(
-      const ISerializationService& serializationService,
-      std::shared_ptr<ISerializationContext>& context,
-      const String& json);
+      std::shared_ptr<DynamicJsonBuffer> jsonBuffer,
+      JsonObject& jsonObject);
 
     String toString() const override;
 
@@ -44,13 +39,8 @@ class SerializationContext : public ISerializationContext {
     const ISerializationService&  serializationService;
     std::shared_ptr<DynamicJsonBuffer>      jsonBuffer;
     JsonObject&                             jsonObject;
-
-    SerializationContext(
-      const ISerializationService& serializationService,
-      std::shared_ptr<DynamicJsonBuffer> jsonBuffer,
-      JsonObject& jsonObject);
 };
 
 }
 
-#endif /* end of include guard: JSON_SERIALIZATION_CONTEXT_H */
+#endif /* end of include guard: JSON_SERIALIZATION_CONTEXT_HPP */

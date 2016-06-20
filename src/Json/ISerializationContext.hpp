@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef JSON_I_SERIALIZATION_CONTEXT_H
-#define JSON_I_SERIALIZATION_CONTEXT_H
+#ifndef JSON_I_SERIALIZATION_CONTEXT_HPP
+#define JSON_I_SERIALIZATION_CONTEXT_HPP
 
 #include "Core/ActionResult.hpp"
 #include "Core/IList.hpp"
@@ -33,4 +33,4 @@ class ISerializationContext {
 
 }
 
-#endif /* end of include guard: SERVICES_I_SERIALIZATION_CONTEXT_H */
+#endif /* end of include guard: SERVICES_I_SERIALIZATION_CONTEXT_HPP */

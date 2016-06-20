@@ -26,45 +26,43 @@ void setup(void){
   Logger::initialize();
 
   // Creating services
-  std::shared_ptr<WiFiManager> wifiManager(
-    new WiFiManager());
+  auto wifiManager(std::make_shared<WiFiManager>());
   wifiManager->initialize();
 
-  std::shared_ptr<SerializationContextFactory> contextFactory(
-    new SerializationContextFactory());
-  std::shared_ptr<SerializationService> serializationService(
-    new SerializationService(contextFactory));
-
-  std::shared_ptr<HttpServerAsync> httpServerAsync(new
-    HttpServerAsync(80, serializationService));
+  auto contextFactory(
+    std::make_shared<SerializationContextFactory>());
+  auto serializationService(
+    std::make_shared<SerializationService>(contextFactory));
+  auto httpServerAsync(
+    std::make_shared<HttpServerAsync>(80, serializationService));
 
   // Registering serializers
   serializationService->addSerializer(
-    std::shared_ptr<StatusResultSerializer>(new StatusResultSerializer()));
+    std::make_shared<StatusResultSerializer>());
   serializationService->addSerializer(
-    std::shared_ptr<ListSerializer>(new ListSerializer()));
+    std::make_shared<ListSerializer>());
   serializationService->addSerializer(
-    std::shared_ptr<NetworkSerializer>(new NetworkSerializer()));
+    std::make_shared<NetworkSerializer>());
   serializationService->addSerializer(
-    std::shared_ptr<SettingsSerializer>(new SettingsSerializer()));
+    std::make_shared<SettingsSerializer>());
   serializationService->addSerializer(
-    std::shared_ptr<ConnectionSerializer>(new ConnectionSerializer()));
+    std::make_shared<ConnectionSerializer>());
 
   // Registering senders
   httpServerAsync->addHttpSender(
-    std::shared_ptr<IHttpSender>(new ObjectResultSender(serializationService)));
+    std::make_shared<ObjectResultSender>(serializationService));
   httpServerAsync->addHttpSender(
-    std::shared_ptr<IHttpSender>(new StatusResultSender(serializationService)));
+    std::make_shared<StatusResultSender>(serializationService));
   httpServerAsync->addHttpSender(
-    std::shared_ptr<IHttpSender>(new RedirectResultSender()));
+    std::make_shared<RedirectResultSender>());
 
   // Registering controllers
   httpServerAsync->addApiController(
-    std::shared_ptr<NetworksController>(new NetworksController(wifiManager)));
+    std::make_shared<NetworksController>(wifiManager));
   httpServerAsync->addApiController(
-    std::shared_ptr<SettingsController>(new SettingsController(wifiManager)));
+    std::make_shared<SettingsController>(wifiManager));
   httpServerAsync->addApiController(
-    std::shared_ptr<ConnectionController>(new ConnectionController(wifiManager)));
+    std::make_shared<ConnectionController>(wifiManager));
 
   httpServerAsync->start();
 

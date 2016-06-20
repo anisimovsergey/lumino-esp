@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef CORE_ENTITY_H
-#define CORE_ENTITY_H
+#ifndef CORE_ENTITY_HPP
+#define CORE_ENTITY_HPP
 
 #include "IEntity.hpp"
 
@@ -20,4 +20,4 @@ template<class T> class Entity : public IEntity {
 
 }
 
-#endif /* end of include guard: CORE_ENTITY_H */
+#endif /* end of include guard: CORE_ENTITY_HPP */

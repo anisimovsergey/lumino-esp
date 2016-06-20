@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef SERVICES_HTTP_SENDER_HPP
-#define SERVICES_HTTP_SENDER_HPP
+#ifndef SERVICES_HPPTTP_SENDER_HPP
+#define SERVICES_HPPTTP_SENDER_HPP
 
 #include "IHttpSender.hpp"
 #include "IHttpRequest.hpp"
@@ -36,4 +36,4 @@ template <class T> class HttpSender : public IHttpSender {
 
 }
 
-#endif /* end of include guard: SERVICES_HTTP_SENDER_HPP */
+#endif /* end of include guard: SERVICES_HPPTTP_SENDER_HPP */

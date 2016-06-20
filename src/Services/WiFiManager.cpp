@@ -26,7 +26,7 @@ WiFiManager::initialize() {
 
 std::shared_ptr<Core::IActionResult>
 WiFiManager::getWiFiNetworks(std::shared_ptr<List<Network>>& networks) const {
-  networks = std::shared_ptr<List<Network>>(new List<Network>());
+  networks = std::make_shared<List<Network>>();
   auto networksCount = WiFi.scanComplete();
   if (networksCount == WIFI_SCAN_RUNNING) {
     Logger::message("Scanning networks... ");

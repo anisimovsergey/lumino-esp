@@ -20,6 +20,6 @@ SettingsSerializer::deserialize(
   if (!actionResult->isOk())
     return actionResult;
 
-  settings = std::shared_ptr<Models::Settings>(new Settings(deviceName));
+  settings = std::make_shared<Models::Settings>(deviceName);
   return StatusResult::OK();
 }

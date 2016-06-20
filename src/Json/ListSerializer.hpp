@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef JSON_LIST_SERIALIZER_H
-#define JSON_LIST_SERIALIZER_H
+#ifndef JSON_LIST_SERIALIZER_HPP
+#define JSON_LIST_SERIALIZER_HPP
 
 #include "Core/List.hpp"
 #include "Serializer.hpp"
@@ -30,4 +30,4 @@ class ListSerializer : public Serializer<Core::IList> {
 
 }
 
-#endif /* end of include guard: JSON_LIST_SERIALIZER_H */
+#endif /* end of include guard: JSON_LIST_SERIALIZER_HPP */

@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef JSON_I_SERIALIZER_H
-#define JSON_I_SERIALIZER_H
+#ifndef JSON_I_SERIALIZER_HPP
+#define JSON_I_SERIALIZER_HPP
 
 #include "Core/IEntity.hpp"
 #include "ISerializationContext.hpp"
@@ -31,4 +31,4 @@ class ISerializer {
 
 }
 
-#endif /* end of include guard: JSON_I_SERIALIZER_H */
+#endif /* end of include guard: JSON_I_SERIALIZER_HPP */

@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef CONTROLLERS_SETTINGS_CONTROLLER_H
-#define CONTROLLERS_SETTINGS_CONTROLLER_H
+#ifndef CONTROLLERS_SETTINGS_CONTROLLER_HPP
+#define CONTROLLERS_SETTINGS_CONTROLLER_HPP
 
 #include "IApiController.hpp"
 #include "Services/IHttpServer.hpp"
@@ -35,4 +35,4 @@ class SettingsController : public IApiController {
 
 }
 
-#endif /* end of include guard: CONTROLLERS_SETTINGS_CONTROLLER_H */
+#endif /* end of include guard: CONTROLLERS_SETTINGS_CONTROLLER_HPP */

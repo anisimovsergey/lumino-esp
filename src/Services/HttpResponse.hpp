@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef SERVICES_HTTP_RESPONSE_H
-#define SERVICES_HTTP_RESPONSE_H
+#ifndef SERVICES_HPPTTP_RESPONSE_HPP
+#define SERVICES_HPPTTP_RESPONSE_HPP
 
 #include "IHttpResponse.hpp"
 
@@ -31,4 +31,4 @@ class HttpResponse : public IHttpResponse {
 
 }
 
-#endif /* end of include guard: SERVICES_HTTP_RESPONSE_H */
+#endif /* end of include guard: SERVICES_HPPTTP_RESPONSE_HPP */

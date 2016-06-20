@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef SERVICES_HTTP_SERVER_ASYNC_H
-#define SERVICES_HTTP_SERVER_ASYNC_H
+#ifndef SERVICES_HPPTTP_SERVER_ASYNC_HPP
+#define SERVICES_HPPTTP_SERVER_ASYNC_HPP
 
 #include "IHttpServer.hpp"
 #include "ILoopedService.hpp"
@@ -80,4 +80,4 @@ class HttpServerAsync : public IHttpServer, public ILoopedService {
 
 }
 
-#endif /* end of include guard: SERVICES_HTTP_SERVER_ASYNC_H */
+#endif /* end of include guard: SERVICES_HPPTTP_SERVER_ASYNC_HPP */

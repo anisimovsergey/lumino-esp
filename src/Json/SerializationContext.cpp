@@ -12,41 +12,6 @@ SerializationContext::SerializationContext(
   jsonObject(jsonObject) {
 }
 
-std::shared_ptr<Core::IActionResult>
-SerializationContext::create(
-  const ISerializationService& serializationService,
-  std::shared_ptr<ISerializationContext>& context) {
-
-  std::shared_ptr<DynamicJsonBuffer> jsonBuffer(new DynamicJsonBuffer);
-  JsonObject& jsonObject = jsonBuffer->createObject();
-
-  context = std::shared_ptr<ISerializationContext>(new SerializationContext(
-    serializationService,
-    jsonBuffer,
-    jsonObject));
-
-  return StatusResult::OK();
-}
-
-std::shared_ptr<Core::IActionResult>
-SerializationContext::create(
-  const ISerializationService& serializationService,
-  std::shared_ptr<ISerializationContext>& context,
-  const String& json) {
-
-  std::shared_ptr<DynamicJsonBuffer> jsonBuffer(new DynamicJsonBuffer);
-  JsonObject& jsonObject = jsonBuffer->parseObject(json);
-  if (!jsonObject.success())
-    return StatusResult::BadRequest("Incorrect JSON format.");
-
-  context = std::shared_ptr<SerializationContext>(new SerializationContext(
-    serializationService,
-    jsonBuffer,
-    jsonObject));
-
-  return StatusResult::OK();
-}
-
 String
 SerializationContext::toString() const {
   String str;

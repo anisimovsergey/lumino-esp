@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef CONTROLLERS_I_API_CONTROLLER_H
-#define CONTROLLERS_I_API_CONTROLLER_H
+#ifndef CONTROLLERS_I_API_CONTROLLER_HPP
+#define CONTROLLERS_I_API_CONTROLLER_HPP
 
 namespace Services {
   class IHttpServer;
@@ -20,4 +20,4 @@ class IApiController {
 
 }
 
-#endif /* end of include guard: CONTROLLERS_I_API_CONTROLLER_H */
+#endif /* end of include guard: CONTROLLERS_I_API_CONTROLLER_HPP */

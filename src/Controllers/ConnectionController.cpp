@@ -33,10 +33,10 @@ ConnectionController::onGetConnection(IHttpRequest& request) {
     return StatusResult::NotFound("Connection doesn't exist.");
 
   return ObjectResult::OK(
-    std::shared_ptr<IEntity>(new Connection(
+    std::make_shared<Connection>(
       wifiManager->getNetwork(),
       wifiManager->isConnected()
-    )));
+    ));
 }
 
 std::shared_ptr<IActionResult>

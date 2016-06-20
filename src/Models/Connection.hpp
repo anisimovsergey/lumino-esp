@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef MODELS_CONNECTION_H
-#define MODELS_CONNECTION_H
+#ifndef MODELS_CONNECTION_HPP
+#define MODELS_CONNECTION_HPP
 
 #include "Core/Entity.hpp"
 
@@ -37,4 +37,4 @@ class Connection : public Core::Entity<Connection> {
 
 }
 
-#endif /* end of include guard: MODELS_CONNECTION_H */
+#endif /* end of include guard: MODELS_CONNECTION_HPP */

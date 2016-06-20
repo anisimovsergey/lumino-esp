@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef CORE_LIST_H
-#define CORE_LIST_H
+#ifndef CORE_LIST_HPP
+#define CORE_LIST_HPP
 
 #include "IList.hpp"
 
@@ -47,4 +47,4 @@ template <class T> class List : public IList {
 
 }
 
-#endif /* end of include guard: CORE_LIST_H */
+#endif /* end of include guard: CORE_LIST_HPP */

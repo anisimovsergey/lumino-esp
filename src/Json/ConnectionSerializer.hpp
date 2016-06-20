@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef JSON_CONNECTION_SERIALIZER_H
-#define JSON_CONNECTION_SERIALIZER_H
+#ifndef JSON_CONNECTION_SERIALIZER_HPP
+#define JSON_CONNECTION_SERIALIZER_HPP
 
 #include "Serializer.hpp"
 #include "Models/Connection.hpp"
@@ -30,4 +30,4 @@ class ConnectionSerializer : public Serializer<Models::Connection> {
 
 }
 
-#endif /* end of include guard: JSON_CONNECTION_SERIALIZER_H */
+#endif /* end of include guard: JSON_CONNECTION_SERIALIZER_HPP */

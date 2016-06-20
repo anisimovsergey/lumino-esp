@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef MODELS_NETWORK_H
-#define MODELS_NETWORK_H
+#ifndef MODELS_NETWORK_HPP
+#define MODELS_NETWORK_HPP
 
 #include "Core/Entity.hpp"
 
@@ -29,4 +29,4 @@ class Network : public Core::Entity<Network> {
 
 }
 
-#endif /* end of include guard: MODELS_NETWORK_H */
+#endif /* end of include guard: MODELS_NETWORK_HPP */

@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef SERVICES_HTTP_REQEST_H
-#define SERVICES_HTTP_REQEST_H
+#ifndef SERVICES_HPPTTP_REQEST_HPP
+#define SERVICES_HPPTTP_REQEST_HPP
 
 #include "IHttpRequest.hpp"
 
@@ -31,4 +31,4 @@ class HttpRequest : public IHttpRequest {
 
 }
 
-#endif /* end of include guard: SERVICES_HTTP_REQEST_H */
+#endif /* end of include guard: SERVICES_HPPTTP_REQEST_HPP */

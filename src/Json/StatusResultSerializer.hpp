@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef JSON_STATUS_SERIALIZER_H
-#define JSON_STATUS_SERIALIZER_H
+#ifndef JSON_STATUS_SERIALIZER_HPP
+#define JSON_STATUS_SERIALIZER_HPP
 
 #include "Serializer.hpp"
 #include "Core/ActionResult.hpp"
@@ -30,4 +30,4 @@ class StatusResultSerializer : public Serializer<Core::StatusResult> {
 
 }
 
-#endif /* end of include guard: JSON_STATUS_SERIALIZER_H */
+#endif /* end of include guard: JSON_STATUS_SERIALIZER_HPP */

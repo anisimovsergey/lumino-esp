@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef JSON_NETWORK_SERIALIZER_H
-#define JSON_NETWORK_SERIALIZER_H
+#ifndef JSON_NETWORK_SERIALIZER_HPP
+#define JSON_NETWORK_SERIALIZER_HPP
 
 #include "Models/Network.hpp"
 #include "Serializer.hpp"
@@ -30,4 +30,4 @@ class NetworkSerializer : public Serializer<Models::Network> {
 
 }
 
-#endif /* end of include guard: JSON_NETWORK_SERIALIZER_H */
+#endif /* end of include guard: JSON_NETWORK_SERIALIZER_HPP */

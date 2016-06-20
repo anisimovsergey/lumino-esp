@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef SERVICES_I_HTTP_SENDER_H
-#define SERVICES_I_HTTP_SENDER_H
+#ifndef SERVICES_I_HPPTTP_SENDER_HPP
+#define SERVICES_I_HPPTTP_SENDER_HPP
 
 #include "Core/ActionResult.hpp"
 #include "Json/ISerializationService.hpp"
@@ -26,4 +26,4 @@ class IHttpSender {
 
 }
 
-#endif /* end of include guard: SERVICES_I_HTTP_SENDER_H */
+#endif /* end of include guard: SERVICES_I_HPPTTP_SENDER_HPP */

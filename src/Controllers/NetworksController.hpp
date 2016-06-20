@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef CONTROLLERS_NETWORKS_CONTROLLER_H
-#define CONTROLLERS_NETWORKS_CONTROLLER_H
+#ifndef CONTROLLERS_NETWORKS_CONTROLLER_HPP
+#define CONTROLLERS_NETWORKS_CONTROLLER_HPP
 
 #include "IApiController.hpp"
 #include "Core/ActionResult.hpp"
@@ -32,4 +32,4 @@ class NetworksController : public IApiController {
 
 }
 
-#endif /* end of include guard: CONTROLLERS_NETWORKS_CONTROLLER_H */
+#endif /* end of include guard: CONTROLLERS_NETWORKS_CONTROLLER_HPP */

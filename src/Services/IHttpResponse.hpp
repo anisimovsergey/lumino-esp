@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef SERVICES_I_HTTP_RESPONSE_H
-#define SERVICES_I_HTTP_RESPONSE_H
+#ifndef SERVICES_I_HPPTTP_RESPONSE_HPP
+#define SERVICES_I_HPPTTP_RESPONSE_HPP
 
 #include <WString.h>
 
@@ -19,4 +19,4 @@ class IHttpResponse {
 
 }
 
-#endif /* end of include guard: SERVICES_I_HTTP_RESPONSE_H */
+#endif /* end of include guard: SERVICES_I_HPPTTP_RESPONSE_HPP */

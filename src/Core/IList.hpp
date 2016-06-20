@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef CORE_I_LIST_H
-#define CORE_I_LIST_H
+#ifndef CORE_I_LIST_HPP
+#define CORE_I_LIST_HPP
 
 #include "IEntity.hpp"
 
@@ -23,4 +23,4 @@ class IList : public IEntity {
 
 }
 
-#endif /* end of include guard: CORE_I_LIST_H */
+#endif /* end of include guard: CORE_I_LIST_HPP */

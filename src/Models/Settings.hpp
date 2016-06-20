@@ -4,8 +4,8 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef MODELS_SETTINGS_H
-#define MODELS_SETTINGS_H
+#ifndef MODELS_SETTINGS_HPP
+#define MODELS_SETTINGS_HPP
 
 #include "Core/Entity.hpp"
 
@@ -27,4 +27,4 @@ class Settings : public Core::Entity<Settings> {
 
 }
 
-#endif /* end of include guard: MODELS_SETTINGS_H */
+#endif /* end of include guard: MODELS_SETTINGS_HPP */

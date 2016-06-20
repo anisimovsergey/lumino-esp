@@ -1,10 +1,5 @@
 #include "NetworksController.hpp"
 
-#include "Core/Logger.hpp"
-#include "Services/IHttpServer.hpp"
-
-#include <Arduino.h>
-
 using namespace Core;
 using namespace Services;
 using namespace Controllers;
@@ -17,10 +12,7 @@ NetworksController::NetworksController(
 void
 NetworksController::registerOn(IHttpServer &httpServer) {
   httpServer.addGetHandler("/wifi_networks", [&](IHttpRequest& request) {
-    Logger::message("/wifi_networks");
-    auto actionResult = onGetWiFiNetworks(request);
-    Logger::message("Action result type " + actionResult->getTypeId());
-    return actionResult;
+    return onGetWiFiNetworks(request);
   });
 }
 
@@ -28,10 +20,8 @@ std::shared_ptr<Core::IActionResult>
 NetworksController::onGetWiFiNetworks(IHttpRequest& request) {
   std::shared_ptr<List<Models::Network>> networks;
   auto actionResult = wifiManager->getWiFiNetworks(networks);
-  if (!actionResult->isOk()) {
-    Logger::error("Unable to get WiFi networks, error " + actionResult->getStatusCode().getText());
+  if (!actionResult->isOk())
     return actionResult;
-  }
-  Logger::message("WiFi networks fetched");
+
   return ObjectResult::OK(networks);
 }
