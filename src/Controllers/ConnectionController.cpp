@@ -28,7 +28,9 @@ ConnectionController::registerOn(IHttpServer &httpServer) {
 }
 
 std::shared_ptr<IActionResult>
-ConnectionController::onGetConnection(IHttpRequest& request) {
+ConnectionController::onGetConnection(
+  IHttpRequest& request) {
+
   if (!wifiManager->hasConnection())
     return StatusResult::NotFound("Connection doesn't exist.");
 
@@ -40,7 +42,10 @@ ConnectionController::onGetConnection(IHttpRequest& request) {
 }
 
 std::shared_ptr<IActionResult>
-ConnectionController::onPostConnection(IHttpRequest& request, const IEntity& entity) {
+ConnectionController::onPostConnection(
+  IHttpRequest& request,
+  const IEntity& entity) {
+
   if (wifiManager->hasConnection())
     return StatusResult::Conflict("Connection already exists.");
 
@@ -58,7 +63,9 @@ ConnectionController::onPostConnection(IHttpRequest& request, const IEntity& ent
 }
 
 std::shared_ptr<IActionResult>
-ConnectionController::onDeleteConnection(IHttpRequest& request) {
+ConnectionController::onDeleteConnection(
+  IHttpRequest& request) {
+
   if (!wifiManager->hasConnection())
     return StatusResult::NotFound("Connection doesn't exist.");
 
