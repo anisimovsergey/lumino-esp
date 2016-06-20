@@ -2,69 +2,50 @@
 
 using namespace Core;
 
-const StatusCode StatusCode::OK =
-  StatusCode(200, "OK");
-const StatusCode StatusCode::Created =
-  StatusCode(201, "Created");
-const StatusCode StatusCode::NoContent =
-  StatusCode(204, "NoContent");
-const StatusCode StatusCode::Redirect =
-  StatusCode(302, "Redirect");
-const StatusCode StatusCode::BadRequest =
-  StatusCode(400, "BadRequest");
-const StatusCode StatusCode::NotFound =
-  StatusCode(404, "NotFound");
-const StatusCode StatusCode::Conflict =
-  StatusCode(409, "Conflict");
-const StatusCode StatusCode::InternalServerError =
-  StatusCode(500, "InternalServerError");
-const StatusCode StatusCode::NotImplemented =
-  StatusCode(500, "NotImplemented");
-
-const StatusCode StausCode::Continue = 100,
-const StatusCode StausCode::SwitchingProtocols = 101,
-const StatusCode StausCode::OK = 200,
-const StatusCode StausCode::Created = 201,
-const StatusCode StausCode::Accepted = 202,
-const StatusCode StausCode::NonAuthoritativeInformation = 203,
-const StatusCode StausCode::NoContent = 204,
-const StatusCode StausCode::ResetContent = 205,
-const StatusCode StausCode::PartialContent = 206,
-const StatusCode StausCode::MultipleChoices = 300,
-const StatusCode StausCode::Ambiguous = 300,
-const StatusCode StausCode::MovedPermanently = 301,
-const StatusCode StausCode::Moved = 301,
-const StatusCode StausCode::Found = 302,
-const StatusCode StausCode::Redirect = 302,
-const StatusCode StausCode::SeeOther = 303,
-const StatusCode StausCode::RedirectMethod = 303,
-const StatusCode StausCode::NotModified = 304,
-const StatusCode StausCode::UseProxy = 305,
-const StatusCode StausCode::Unused = 306,
-const StatusCode StausCode::RedirectKeepVerb = 307,
-const StatusCode StausCode::TemporaryRedirect = 307,
-const StatusCode StausCode::BadRequest = 400,
-const StatusCode StausCode::Unauthorized = 401,
-const StatusCode StausCode::PaymentRequired = 402,
-const StatusCode StausCode::Forbidden = 403,
-const StatusCode StausCode::NotFound = 404,
-const StatusCode StausCode::MethodNotAllowed = 405,
-const StatusCode StausCode::NotAcceptable = 406,
-const StatusCode StausCode::ProxyAuthenticationRequired = 407,
-const StatusCode StausCode::RequestTimeout = 408,
-const StatusCode StausCode::Conflict = 409,
-const StatusCode StausCode::Gone = 410,
-const StatusCode StausCode::LengthRequired = 411,
-const StatusCode StausCode::PreconditionFailed = 412,
-const StatusCode StausCode::RequestEntityTooLarge = 413,
-const StatusCode StausCode::RequestUriTooLong = 414,
-const StatusCode StausCode::UnsupportedMediaType = 415,
-const StatusCode StausCode::RequestedRangeNotSatisfiable = 416,
-const StatusCode StausCode::ExpectationFailed = 417,
-const StatusCode StausCode::UpgradeRequired = 426,
-const StatusCode StausCode::InternalServerError = 500,
-const StatusCode StausCode::NotImplemented = 501,
-const StatusCode StausCode::BadGateway = 502,
-const StatusCode StausCode::ServiceUnavailable = 503,
-const StatusCode StausCode::GatewayTimeout = 504,
-const StatusCode StausCode::HttpVersionNotSupported = 505,
+const StatusCode StatusCode::Continue = StatusCode(100, "Continue");
+const StatusCode StatusCode::SwitchingProtocols = StatusCode(101, "SwitchingProtocols");
+const StatusCode StatusCode::OK = StatusCode(200, "OK");
+const StatusCode StatusCode::Created = StatusCode(201, "Created");
+const StatusCode StatusCode::Accepted = StatusCode(202, "Accepted");
+const StatusCode StatusCode::NonAuthoritativeInformation = StatusCode(203, "NonAuthoritativeInformation");
+const StatusCode StatusCode::NoContent = StatusCode(204, "NoContent");
+const StatusCode StatusCode::ResetContent = StatusCode(205, "ResetContent");
+const StatusCode StatusCode::PartialContent = StatusCode(206, "PartialContent");
+const StatusCode StatusCode::MultipleChoices = StatusCode(300, "MultipleChoices");
+const StatusCode StatusCode::Ambiguous = StatusCode(300, "Ambiguous");
+const StatusCode StatusCode::MovedPermanently = StatusCode(301, "MovedPermanently");
+const StatusCode StatusCode::Moved = StatusCode(301, "Moved");
+const StatusCode StatusCode::Found = StatusCode(302, "Found");
+const StatusCode StatusCode::Redirect = StatusCode(302, "Redirect");
+const StatusCode StatusCode::SeeOther = StatusCode(303, "SeeOther");
+const StatusCode StatusCode::RedirectMethod = StatusCode(303, "RedirectMethod");
+const StatusCode StatusCode::NotModified = StatusCode(304, "NotModified");
+const StatusCode StatusCode::UseProxy = StatusCode(305, "UseProxy");
+const StatusCode StatusCode::Unused = StatusCode(306, "Unused");
+const StatusCode StatusCode::RedirectKeepVerb = StatusCode(307, "RedirectKeepVerb");
+const StatusCode StatusCode::TemporaryRedirect = StatusCode(307, "TemporaryRedirect");
+const StatusCode StatusCode::BadRequest = StatusCode(400, "BadRequest");
+const StatusCode StatusCode::Unauthorized = StatusCode(401, "Unauthorized");
+const StatusCode StatusCode::PaymentRequired = StatusCode(402, "PaymentRequired");
+const StatusCode StatusCode::Forbidden = StatusCode(403, "Forbidden");
+const StatusCode StatusCode::NotFound = StatusCode(404, "NotFound");
+const StatusCode StatusCode::MethodNotAllowed = StatusCode(405, "MethodNotAllowed");
+const StatusCode StatusCode::NotAcceptable = StatusCode(406, "NotAcceptable");
+const StatusCode StatusCode::ProxyAuthenticationRequired = StatusCode(407, "ProxyAuthenticationRequired");
+const StatusCode StatusCode::RequestTimeout = StatusCode(408, "RequestTimeout");
+const StatusCode StatusCode::Conflict = StatusCode(409, "Conflict");
+const StatusCode StatusCode::Gone = StatusCode(410, "Gone");
+const StatusCode StatusCode::LengthRequired = StatusCode(411, "LengthRequired");
+const StatusCode StatusCode::PreconditionFailed = StatusCode(412, "PreconditionFailed");
+const StatusCode StatusCode::RequestEntityTooLarge = StatusCode(413, "RequestEntityTooLarge");
+const StatusCode StatusCode::RequestUriTooLong = StatusCode(414, "RequestUriTooLong");
+const StatusCode StatusCode::UnsupportedMediaType = StatusCode(415, "UnsupportedMediaType");
+const StatusCode StatusCode::RequestedRangeNotSatisfiable = StatusCode(416, "RequestedRangeNotSatisfiable");
+const StatusCode StatusCode::ExpectationFailed = StatusCode(417, "ExpectationFailed");
+const StatusCode StatusCode::UpgradeRequired = StatusCode(426, "UpgradeRequired");
+const StatusCode StatusCode::InternalServerError = StatusCode(500, "InternalServerError");
+const StatusCode StatusCode::NotImplemented = StatusCode(501, "NotImplemented");
+const StatusCode StatusCode::BadGateway = StatusCode(502, "BadGateway");
+const StatusCode StatusCode::ServiceUnavailable = StatusCode(503, "ServiceUnavailable");
+const StatusCode StatusCode::GatewayTimeout = StatusCode(504, "GatewayTimeout");
+const StatusCode StatusCode::HttpVersionNotSupported = StatusCode(505, "HttpVersionNotSupported");
