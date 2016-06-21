@@ -11,7 +11,7 @@ ObjectResultSender::ObjectResultSender(
   serializationService(serializationService) {
 }
 
-std::shared_ptr<IHttpResponse>
+std::unique_ptr<IHttpResponse>
 ObjectResultSender::prepareResponse(
   IHttpRequest& request,
   const ObjectResult& objectResult) const {

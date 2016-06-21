@@ -21,7 +21,7 @@ namespace Services {
         std::shared_ptr<const Json::ISerializationService>  serializationService);
 
    protected:
-     virtual std::shared_ptr<IHttpResponse> prepareResponse(
+     virtual std::unique_ptr<IHttpResponse> prepareResponse(
        IHttpRequest& request,
        const Core::StatusResult& statusResult) const override;
 

@@ -5,7 +5,7 @@
 using namespace Core;
 using namespace Services;
 
-std::shared_ptr<IHttpResponse>
+std::unique_ptr<IHttpResponse>
 RedirectResultSender::prepareResponse(
   IHttpRequest& request,
   const RedirectResult& redirectResult) const {

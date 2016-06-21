@@ -29,7 +29,7 @@ template <class T> class HttpSender : public IHttpSender {
     }
 
   protected:
-    virtual std::shared_ptr<IHttpResponse> prepareResponse(
+    virtual std::unique_ptr<IHttpResponse> prepareResponse(
       IHttpRequest& request,
       const T& actionResult) const = 0;
  };

@@ -11,7 +11,7 @@ StatusResultSender::StatusResultSender(
   serializationService(serializationService) {
 }
 
-std::shared_ptr<IHttpResponse>
+std::unique_ptr<IHttpResponse>
 StatusResultSender::prepareResponse(
   IHttpRequest& request,
   const StatusResult& statusResult) const {
