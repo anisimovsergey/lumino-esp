@@ -27,16 +27,16 @@ class ConnectionController : public Services::IHttpController {
   private:
     std::shared_ptr<Services::IWiFiManager> wifiManager;
 
-    std::shared_ptr<Core::IActionResult>
+    std::unique_ptr<Core::IActionResult>
       onGetConnection(
         Services::IHttpRequest& request);
 
-    std::shared_ptr<Core::IActionResult>
+    std::unique_ptr<Core::IActionResult>
       onPostConnection(
         Services::IHttpRequest& request,
         const Core::IEntity& entity);
 
-    std::shared_ptr<Core::IActionResult>
+    std::unique_ptr<Core::IActionResult>
       onDeleteConnection(
         Services::IHttpRequest& request);
 };

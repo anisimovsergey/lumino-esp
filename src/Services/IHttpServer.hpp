@@ -21,8 +21,8 @@ namespace Services {
 
 class IHttpServer {
   public:
-      typedef std::function<std::shared_ptr<Core::IActionResult>(IHttpRequest& request)> TRequestHandler;
-      typedef std::function<std::shared_ptr<Core::IActionResult>(IHttpRequest& request,
+      typedef std::function<std::unique_ptr<Core::IActionResult>(IHttpRequest& request)> TRequestHandler;
+      typedef std::function<std::unique_ptr<Core::IActionResult>(IHttpRequest& request,
         const Core::IEntity& entity)> TRequestWithEntityHandler;
 
       virtual void

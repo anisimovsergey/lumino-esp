@@ -20,9 +20,9 @@ class ISerializationContext {
 
     virtual String toString() const = 0;
 
-    virtual std::shared_ptr<Core::IActionResult>
+    virtual std::unique_ptr<Core::IActionResult>
       getStringValue(const String& key, String& value) = 0;
-    virtual std::shared_ptr<Core::IActionResult>
+    virtual std::unique_ptr<Core::IActionResult>
       getBoolValue(const String& key, bool& value) = 0;
 
     virtual void setValue(const String& key, const String& value) = 0;

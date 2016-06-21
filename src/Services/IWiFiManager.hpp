@@ -19,7 +19,7 @@ class IWiFiManager {
   public:
     virtual ~IWiFiManager() {};
 
-    virtual std::shared_ptr<Core::IActionResult>
+    virtual std::unique_ptr<Core::IActionResult>
       getWiFiNetworks(std::shared_ptr<Core::List<Models::Network>>& networks) const = 0;
 
     virtual String  getDeviceName() const = 0;
@@ -27,8 +27,8 @@ class IWiFiManager {
     virtual String  getNetwork() const = 0;
     virtual bool    isConnected() const = 0;
 
-    virtual std::shared_ptr<Core::IActionResult> connect(String network, String password) = 0;
-    virtual std::shared_ptr<Core::IActionResult> disconnect() = 0;
+    virtual std::unique_ptr<Core::IActionResult> connect(String network, String password) = 0;
+    virtual std::unique_ptr<Core::IActionResult> disconnect() = 0;
 };
 
 }

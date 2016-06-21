@@ -24,7 +24,7 @@ WiFiManager::initialize() {
   disconnect();
 }
 
-std::shared_ptr<Core::IActionResult>
+std::unique_ptr<Core::IActionResult>
 WiFiManager::getWiFiNetworks(std::shared_ptr<List<Network>>& networks) const {
   networks = std::make_shared<List<Network>>();
   auto networksCount = WiFi.scanComplete();
@@ -66,7 +66,7 @@ WiFiManager::isConnected() const {
   return (WiFi.status() == WL_CONNECTED);
 }
 
-std::shared_ptr<Core::IActionResult>
+std::unique_ptr<Core::IActionResult>
 WiFiManager::connect(String network, String password) {
 
   //WiFi.begin(network.c_str(), password.c_str());
@@ -91,7 +91,7 @@ WiFiManager::loop() {
   dnsServer->processNextRequest();
 }
 
-std::shared_ptr<Core::IActionResult>
+std::unique_ptr<Core::IActionResult>
 WiFiManager::disconnect() {
   if (WiFi.status() != WL_DISCONNECTED)
     WiFi.disconnect();

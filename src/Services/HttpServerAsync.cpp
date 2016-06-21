@@ -66,7 +66,7 @@ HttpServerAsync::addHandler(
     HttpRequest httpRequest(*request);
     auto actionResult = requestHandler(httpRequest);
     Logger::message("Action result type " + actionResult->getTypeId());
-    sendResponse(httpRequest, actionResult);
+    sendResponse(httpRequest, *actionResult);
   });
 }
 
@@ -86,7 +86,7 @@ HttpServerAsync::addHandler(
     if (actionResult->isOk()) {
       actionResult = requestHandler(httpRequest, *entity);
     }
-    sendResponse(httpRequest, actionResult);
+    sendResponse(httpRequest, *actionResult);
   }, nullptr, [&](AsyncWebServerRequest *request,
     uint8_t *data, size_t len, size_t index, size_t total){
       if (index == 0) {
@@ -106,14 +106,14 @@ HttpServerAsync::addHandler(
 void
 HttpServerAsync::sendResponse(
   IHttpRequest& request,
-  std::shared_ptr<Core::IActionResult> result) {
+  const IActionResult& result) {
 
-  String typeId = result->getTypeId();
+  String typeId = result.getTypeId();
   Logger::message("Getting sender for type " + typeId);
   auto sender = getSender(typeId);
   if (sender) {
     Logger::message("Sender found sending...");
-    sender->send(request, *result);
+    sender->send(request, result);
     Logger::message("Sent");
   } else {
     auto response = request.createResponse(StatusCode::InternalServerError.getCode());

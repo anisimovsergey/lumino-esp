@@ -21,15 +21,15 @@ class SerializationService : public ISerializationService {
     SerializationService(
       std::shared_ptr<const ISerializationContextFactory> contextFactory);
 
-    std::shared_ptr<Core::IActionResult> serialize(
+    std::unique_ptr<Core::IActionResult> serialize(
       const Core::IEntity& entity,
       String& json) const override;
 
-    std::shared_ptr<Core::IActionResult> serialize(
+    std::unique_ptr<Core::IActionResult> serialize(
       const Core::IEntity& entity,
       ISerializationContext& context) const override;
 
-    std::shared_ptr<Core::IActionResult> deserialize(
+    std::unique_ptr<Core::IActionResult> deserialize(
       const String& json,
       std::shared_ptr<Core::IEntity>& entity) const override;
 

@@ -49,18 +49,13 @@ class StatusResult : public ActionResult<StatusResult> {
   public:
     static String  getStaticTypeId() { return "statusResult"; }
 
-    static std::shared_ptr<IActionResult> OK();
-    static std::shared_ptr<IActionResult> Conflict(String message);
-    static std::shared_ptr<IActionResult> BadRequest(String message);
-    static std::shared_ptr<IActionResult> NotFound(String message);
-    static std::shared_ptr<IActionResult> InternalServerError(String message);
-    static std::shared_ptr<IActionResult> NotImplemented();
-    static std::shared_ptr<IActionResult> NotImplemented(String message);
-
-    String getMessage() const { return message; }
-
-  private:
-    const String message;
+    static std::unique_ptr<IActionResult> OK();
+    static std::unique_ptr<IActionResult> Conflict(String message);
+    static std::unique_ptr<IActionResult> BadRequest(String message);
+    static std::unique_ptr<IActionResult> NotFound(String message);
+    static std::unique_ptr<IActionResult> InternalServerError(String message);
+    static std::unique_ptr<IActionResult> NotImplemented();
+    static std::unique_ptr<IActionResult> NotImplemented(String message);
 
     StatusResult(const StatusCode& statusCode) :
       ActionResult(statusCode), message(statusCode.getText()) {
@@ -68,39 +63,44 @@ class StatusResult : public ActionResult<StatusResult> {
     StatusResult(const StatusCode& statusCode, String message) :
       ActionResult(statusCode), message(message) {
     }
+
+    String getMessage() const { return message; }
+
+  private:
+    const String message;
 };
 
 class RedirectResult : public ActionResult<RedirectResult> {
 public:
   static String  getStaticTypeId() { return "redirectResult"; }
 
-  static std::shared_ptr<IActionResult> ToRoute(String route);
+  static std::unique_ptr<IActionResult> ToRoute(String route);
+
+  RedirectResult(String route) :
+    ActionResult(StatusCode::Redirect), route(route) {
+  }
 
   String getRoute() const { return route; }
 
 private:
   const String route;
-
-  RedirectResult(String route) :
-    ActionResult(StatusCode::Redirect), route(route) {
-  }
 };
 
 class ObjectResult : public ActionResult<ObjectResult> {
   public:
     static String  getStaticTypeId() { return "objectResult"; }
 
-    static std::shared_ptr<IActionResult> OK(
+    static std::unique_ptr<IActionResult> OK(
       std::shared_ptr<IEntity> entity);
+
+    ObjectResult(const std::shared_ptr<IEntity> entity) :
+      ActionResult(StatusCode::OK), entity(entity) {
+    }
 
     const std::shared_ptr<IEntity> getEntity() const { return entity; };
 
   private:
     const std::shared_ptr<IEntity> entity;
-
-    ObjectResult(const std::shared_ptr<IEntity> entity) :
-      ActionResult(StatusCode::OK), entity(entity) {
-    }
 };
 
 }

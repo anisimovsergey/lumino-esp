@@ -14,7 +14,6 @@ namespace Core {
 
 class Utils {
   public:
-
     static String toStringIp(IPAddress ip) {
       String res = "";
       for (int i = 0; i < 3; i++) {
@@ -23,9 +22,6 @@ class Utils {
       res += String(((ip >> 8 * 3)) & 0xFF);
       return res;
     }
-
-  private:
-    Utils() {};
 };
 
 }

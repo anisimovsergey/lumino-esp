@@ -4,7 +4,7 @@ using namespace Core;
 using namespace Json;
 using namespace Models;
 
-std::shared_ptr<Core::IActionResult>
+std::unique_ptr<Core::IActionResult>
 ConnectionSerializer::serialize(
   const Connection& connection,
   ISerializationContext& context) const {
@@ -14,7 +14,7 @@ ConnectionSerializer::serialize(
   return StatusResult::OK();
 }
 
-std::shared_ptr<Core::IActionResult>
+std::unique_ptr<Core::IActionResult>
 ConnectionSerializer::deserialize(
   std::shared_ptr<Models::Connection>& connection,
   ISerializationContext& context) const {

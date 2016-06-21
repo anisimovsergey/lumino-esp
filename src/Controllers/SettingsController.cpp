@@ -25,7 +25,7 @@ SettingsController::registerOn(IHttpServer &httpServer) {
   });
 }
 
-std::shared_ptr<Core::IActionResult>
+std::unique_ptr<Core::IActionResult>
 SettingsController::onGetSettings(IHttpRequest& request) {
   std::shared_ptr<Settings> settings(new Settings(
     wifiManager->getDeviceName()
@@ -33,7 +33,7 @@ SettingsController::onGetSettings(IHttpRequest& request) {
   return ObjectResult::OK(settings);
 }
 
-std::shared_ptr<Core::IActionResult>
+std::unique_ptr<Core::IActionResult>
 SettingsController::onPutSettings(
   IHttpRequest& request, const Core::IEntity& entity) {
   auto settings = entity.dynamicCast<Settings>();

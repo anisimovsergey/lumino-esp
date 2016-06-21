@@ -14,7 +14,7 @@ SerializationService::SerializationService(
   contextFactory(contextFactory) {
 }
 
-std::shared_ptr<Core::IActionResult>
+std::unique_ptr<Core::IActionResult>
 SerializationService::serialize(
   const IEntity& entity,
   String& json) const {
@@ -36,7 +36,7 @@ SerializationService::serialize(
   return StatusResult::OK();
 }
 
-std::shared_ptr<Core::IActionResult>
+std::unique_ptr<Core::IActionResult>
 SerializationService::serialize (
   const IEntity& entity,
   ISerializationContext& context) const {
@@ -54,7 +54,7 @@ SerializationService::serialize (
   Logger::message("Serializer used");
 }
 
-std::shared_ptr<Core::IActionResult>
+std::unique_ptr<Core::IActionResult>
 SerializationService::deserialize(
   const String& json,
   std::shared_ptr<Core::IEntity>& entity) const {

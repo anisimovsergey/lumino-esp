@@ -19,7 +19,7 @@ SerializationContext::toString() const {
   return str;
 }
 
-std::shared_ptr<Core::IActionResult>
+std::unique_ptr<Core::IActionResult>
 SerializationContext::getStringValue(const String& key, String& value) {
 
   auto jsonVal = jsonObject[key];
@@ -33,7 +33,7 @@ SerializationContext::getStringValue(const String& key, String& value) {
   return StatusResult::OK();
 }
 
-std::shared_ptr<Core::IActionResult>
+std::unique_ptr<Core::IActionResult>
 SerializationContext::getBoolValue(const String& key, bool& value) {
 
   auto jsonVal = jsonObject[key];

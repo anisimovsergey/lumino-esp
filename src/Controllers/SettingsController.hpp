@@ -23,11 +23,11 @@ class SettingsController : public Services::IHttpController {
   private:
     std::shared_ptr<const Services::IWiFiManager> wifiManager;
 
-    std::shared_ptr<Core::IActionResult>
+    std::unique_ptr<Core::IActionResult>
       onGetSettings(
         Services::IHttpRequest& request);
 
-    std::shared_ptr<Core::IActionResult>
+    std::unique_ptr<Core::IActionResult>
       onPutSettings(
         Services::IHttpRequest& request,
         const Core::IEntity& entity);

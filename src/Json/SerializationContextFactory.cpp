@@ -2,10 +2,12 @@
 
 #include "SerializationContext.hpp"
 
+#include "Core/Memory.hpp"
+
 using namespace Json;
 using namespace Core;
 
-std::shared_ptr<Core::IActionResult>
+std::unique_ptr<Core::IActionResult>
 SerializationContextFactory::create(
   const ISerializationService& serializationService,
   std::shared_ptr<ISerializationContext>& context) const {
@@ -13,14 +15,14 @@ SerializationContextFactory::create(
   std::shared_ptr<DynamicJsonBuffer> jsonBuffer(new DynamicJsonBuffer);
   JsonObject& jsonObject = jsonBuffer->createObject();
 
-  context = std::make_shared<SerializationContext>(
+  context = make_unique<SerializationContext>(
     serializationService,
     jsonBuffer,
     jsonObject);
   return StatusResult::OK();
 }
 
-std::shared_ptr<Core::IActionResult>
+std::unique_ptr<Core::IActionResult>
 SerializationContextFactory::create(
   const ISerializationService& serializationService,
   std::shared_ptr<ISerializationContext>& context,
@@ -31,7 +33,7 @@ SerializationContextFactory::create(
   if (!jsonObject.success())
     return StatusResult::BadRequest("Incorrect JSON format.");
 
-  context = std::make_shared<SerializationContext>(
+  context = make_unique<SerializationContext>(
     serializationService,
     jsonBuffer,
     jsonObject);

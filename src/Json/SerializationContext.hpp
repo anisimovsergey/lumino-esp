@@ -25,9 +25,9 @@ class SerializationContext : public ISerializationContext {
 
     String toString() const override;
 
-    std::shared_ptr<Core::IActionResult>
+    std::unique_ptr<Core::IActionResult>
       getStringValue(const String& key, String& value) override;
-    std::shared_ptr<Core::IActionResult>
+    std::unique_ptr<Core::IActionResult>
       getBoolValue(const String& key, bool& value) override;
 
     void setValue(const String& key, const String& value) override;

@@ -27,7 +27,7 @@ ConnectionController::registerOn(IHttpServer &httpServer) {
   });
 }
 
-std::shared_ptr<IActionResult>
+std::unique_ptr<IActionResult>
 ConnectionController::onGetConnection(
   IHttpRequest& request) {
 
@@ -41,7 +41,7 @@ ConnectionController::onGetConnection(
     ));
 }
 
-std::shared_ptr<IActionResult>
+std::unique_ptr<IActionResult>
 ConnectionController::onPostConnection(
   IHttpRequest& request,
   const IEntity& entity) {
@@ -62,7 +62,7 @@ ConnectionController::onPostConnection(
   return RedirectResult::ToRoute("/connection");
 }
 
-std::shared_ptr<IActionResult>
+std::unique_ptr<IActionResult>
 ConnectionController::onDeleteConnection(
   IHttpRequest& request) {
 

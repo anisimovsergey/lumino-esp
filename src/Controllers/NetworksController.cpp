@@ -16,7 +16,7 @@ NetworksController::registerOn(IHttpServer &httpServer) {
   });
 }
 
-std::shared_ptr<Core::IActionResult>
+std::unique_ptr<Core::IActionResult>
 NetworksController::onGetWiFiNetworks(IHttpRequest& request) {
   std::shared_ptr<List<Models::Network>> networks;
   auto actionResult = wifiManager->getWiFiNetworks(networks);

@@ -26,7 +26,7 @@ String getEncryptionTypeString(int thisType) {
 
 }
 
-std::shared_ptr<Core::IActionResult>
+std::unique_ptr<Core::IActionResult>
 NetworkSerializer::serialize(
   const Network& network,
   ISerializationContext& context) const {
@@ -40,7 +40,7 @@ NetworkSerializer::serialize(
   return StatusResult::OK();
 }
 
-std::shared_ptr<Core::IActionResult>
+std::unique_ptr<Core::IActionResult>
 NetworkSerializer::deserialize(
   std::shared_ptr<Models::Network>& network,
   ISerializationContext& context) const {

@@ -72,7 +72,7 @@ class HttpServerAsync : public IHttpServer, public ILoopedService {
 
     void sendResponse(
       IHttpRequest& request,
-      std::shared_ptr<Core::IActionResult> result);
+      const Core::IActionResult& result);
 
     std::shared_ptr<IHttpSender> getSender(String typeId) const;
 
