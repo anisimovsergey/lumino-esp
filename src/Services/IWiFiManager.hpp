@@ -19,8 +19,8 @@ class IWiFiManager {
   public:
     virtual ~IWiFiManager() {};
 
-    virtual std::unique_ptr<Core::IActionResult>
-      getWiFiNetworks(std::shared_ptr<Core::List<Models::Network>>& networks) const = 0;
+    virtual std::unique_ptr<Core::ObjectResultA<Core::List<Models::Network>>>
+      getWiFiNetworks() const = 0;
 
     virtual String  getDeviceName() const = 0;
     virtual bool    hasConnection() const = 0;

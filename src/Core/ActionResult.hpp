@@ -9,6 +9,7 @@
 
 #include "Entity.hpp"
 #include "StatusCode.hpp"
+#include "Core/Memory.hpp"
 
 #include <memory>
 
@@ -22,7 +23,8 @@ public:
   virtual StatusCode  getStatusCode() const = 0;
 };
 
-template<class T> class ActionResult : public IActionResult {
+template<class T>
+class ActionResult : public IActionResult {
   public:
     // From IEntity
     virtual String getTypeId() const override {
@@ -101,6 +103,23 @@ class ObjectResult : public ActionResult<ObjectResult> {
 
   private:
     const std::shared_ptr<IEntity> entity;
+};
+
+template<class T>
+class ObjectResultA : public ObjectResult {
+  public:
+    static std::unique_ptr<ObjectResultA<T>> OK(
+      std::shared_ptr<T> entity) {
+      return make_unique<ObjectResultA>(entity);
+    }
+
+    ObjectResultA(const std::shared_ptr<T> entity) :
+      ObjectResult(entity) {
+    }
+
+    const std::shared_ptr<T> getEntity() const {
+       return (std::shared_ptr<T>)ObjectResult::getEntity();
+    }
 };
 
 }

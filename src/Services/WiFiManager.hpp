@@ -22,8 +22,8 @@ class WiFiManager : public IWiFiManager, public ILoopedService {
 
     void    initialize();
 
-    std::unique_ptr<Core::IActionResult>
-      getWiFiNetworks(std::shared_ptr<Core::List<Models::Network>>& networks) const override;
+    std::unique_ptr<Core::ObjectResultA<Core::List<Models::Network>>>
+      getWiFiNetworks() const override;
 
     String  getDeviceName() const override;
     bool    hasConnection() const override;
