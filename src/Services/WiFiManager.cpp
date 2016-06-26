@@ -14,7 +14,7 @@ WiFiManager::WiFiManager() {
   network = "BTHub4-NC8S";
   password = "d5e89ca8cf";
   deviceName = "esp8266fs";
-  dnsServer = std::unique_ptr<DNSServer>(new DNSServer());
+  dnsServer = make_unique<DNSServer>();
 }
 
 void

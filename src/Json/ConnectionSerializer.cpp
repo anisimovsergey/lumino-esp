@@ -29,7 +29,7 @@ ConnectionSerializer::deserialize(
   if (!actionResult->isOk())
     return actionResult;
 
-  connection = std::shared_ptr<Models::Connection>(
-    new Connection(networkSsid, networkPassword));
+  connection = std::make_shared<Models::Connection>(
+    networkSsid, networkPassword);
   return StatusResult::OK();
 }

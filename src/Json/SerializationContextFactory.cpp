@@ -12,7 +12,8 @@ SerializationContextFactory::create(
   const ISerializationService& serializationService,
   std::shared_ptr<ISerializationContext>& context) const {
 
-  std::shared_ptr<DynamicJsonBuffer> jsonBuffer(new DynamicJsonBuffer);
+  std::shared_ptr<DynamicJsonBuffer> jsonBuffer(
+    std::make_shared<DynamicJsonBuffer>());
   JsonObject& jsonObject = jsonBuffer->createObject();
 
   context = make_unique<SerializationContext>(
@@ -28,7 +29,8 @@ SerializationContextFactory::create(
   std::shared_ptr<ISerializationContext>& context,
   const String& json) const {
 
-  std::shared_ptr<DynamicJsonBuffer> jsonBuffer(new DynamicJsonBuffer);
+  std::shared_ptr<DynamicJsonBuffer> jsonBuffer(
+    std::make_shared<DynamicJsonBuffer>());
   JsonObject& jsonObject = jsonBuffer->parseObject(json);
   if (!jsonObject.success())
     return StatusResult::BadRequest("Incorrect JSON format.");

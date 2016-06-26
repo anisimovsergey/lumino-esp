@@ -14,7 +14,7 @@ using namespace Services;
 HttpServerAsync::HttpServerAsync(
   int port,
   std::shared_ptr<const Json::ISerializationService> serializationService) :
-  server(new AsyncWebServer(port)),
+  server(make_unique<AsyncWebServer>(port)),
   serializationService(serializationService) {
 }
 
