@@ -41,8 +41,3 @@ std::unique_ptr<IActionResult>
 RedirectResult::ToRoute(String route) {
   return make_unique<RedirectResult>(route);
 }
-
-std::unique_ptr<IActionResult>
-ObjectResult::OK(std::shared_ptr<IEntity> entity) {
-  return make_unique<ObjectResult>(entity);
-}

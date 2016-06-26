@@ -27,10 +27,9 @@ SettingsController::registerOn(IHttpServer &httpServer) {
 
 std::unique_ptr<Core::IActionResult>
 SettingsController::onGetSettings(IHttpRequest& request) {
-  std::shared_ptr<Settings> settings(new Settings(
+  return ObjectResult<Settings>::OK(make_unique<Settings>(
     wifiManager->getDeviceName()
   ));
-  return ObjectResult::OK(settings);
 }
 
 std::unique_ptr<Core::IActionResult>
@@ -41,7 +40,7 @@ SettingsController::onPutSettings(
     return StatusResult::BadRequest("Type Settings expected.");
 
   // TODO: Update device settings.
-  return ObjectResult::OK(std::make_shared<Settings>(
+  return ObjectResult<Settings>::OK(make_unique<Settings>(
     wifiManager->getDeviceName()
   ));
 }

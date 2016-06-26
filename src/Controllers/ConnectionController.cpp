@@ -34,8 +34,8 @@ ConnectionController::onGetConnection(
   if (!wifiManager->hasConnection())
     return StatusResult::NotFound("Connection doesn't exist.");
 
-  return ObjectResult::OK(
-    std::make_shared<Connection>(
+  return ObjectResult<Connection>::OK(
+    make_unique<Connection>(
       wifiManager->getNetwork(),
       wifiManager->isConnected()
     ));

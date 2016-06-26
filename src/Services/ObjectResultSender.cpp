@@ -14,17 +14,13 @@ ObjectResultSender::ObjectResultSender(
 std::unique_ptr<IHttpResponse>
 ObjectResultSender::prepareResponse(
   IHttpRequest& request,
-  const ObjectResult& objectResult) const {
+  const ObjectResultBase& objectResult) const {
 
   String json;
   int    code = objectResult.getStatusCode().getCode();
-  if (objectResult.getEntity()) {
-    auto status = serializationService->serialize(*objectResult.getEntity(), json);
-    if (!status->isOk()) {
-      code = status->getStatusCode().getCode();
-    }
-  } else {
-    Logger::error("Entity is empty.");
+  auto status = serializationService->serialize(objectResult.getEntity(), json);
+  if (!status->isOk()) {
+    code = status->getStatusCode().getCode();
   }
   return request.createResponse(code, "text/json", json);
 }

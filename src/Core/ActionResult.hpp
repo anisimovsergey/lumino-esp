@@ -88,38 +88,40 @@ private:
   const String route;
 };
 
-class ObjectResult : public ActionResult<ObjectResult> {
+class ObjectResultBase : public ActionResult<ObjectResultBase> {
   public:
     static String  getStaticTypeId() { return "objectResult"; }
 
-    static std::unique_ptr<IActionResult> OK(
-      std::shared_ptr<IEntity> entity);
+    virtual const IEntity& getEntity() const = 0;
 
-    ObjectResult(const std::shared_ptr<IEntity> entity) :
-      ActionResult(StatusCode::OK), entity(entity) {
+  protected:
+    ObjectResultBase(const StatusCode& statusCode) : ActionResult(statusCode) {
     }
-
-    const std::shared_ptr<IEntity> getEntity() const { return entity; };
-
-  private:
-    const std::shared_ptr<IEntity> entity;
 };
 
 template<class T>
-class ObjectResultA : public ObjectResult {
+class ObjectResult : public ObjectResultBase {
   public:
-    static std::unique_ptr<ObjectResultA<T>> OK(
-      std::shared_ptr<T> entity) {
-      return make_unique<ObjectResultA>(entity);
+    static std::unique_ptr<ObjectResult<T>> OK(std::unique_ptr<T> entity) {
+      return make_unique<ObjectResult>(
+        StatusCode::OK,
+        std::move(entity));
     }
 
-    ObjectResultA(const std::shared_ptr<T> entity) :
-      ObjectResult(entity) {
+    ObjectResult(const StatusCode& statusCode, std::unique_ptr<T> entity) :
+      ObjectResultBase(statusCode), entity(std::move(entity)) {
     }
 
-    const std::shared_ptr<T> getEntity() const {
-       return (std::shared_ptr<T>)ObjectResult::getEntity();
+    const T& get() const {
+      return *entity;
     }
+
+    virtual const IEntity& getEntity() const override {
+      return *entity;
+    }
+
+  private:
+    std::unique_ptr<T> entity;
 };
 
 }

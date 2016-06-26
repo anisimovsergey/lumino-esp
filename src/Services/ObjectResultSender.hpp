@@ -15,7 +15,7 @@
 
 namespace Services {
 
-  class ObjectResultSender : public HttpSender<Core::ObjectResult> {
+  class ObjectResultSender : public HttpSender<Core::ObjectResultBase> {
     public:
       ObjectResultSender(
         std::shared_ptr<const Json::ISerializationService> serializationService);
@@ -23,7 +23,7 @@ namespace Services {
     protected:
       virtual std::unique_ptr<IHttpResponse> prepareResponse(
         IHttpRequest& request,
-        const Core::ObjectResult& objectResult) const override;
+        const Core::ObjectResultBase& objectResult) const override;
 
     private:
       std::shared_ptr<const Json::ISerializationService>  serializationService;

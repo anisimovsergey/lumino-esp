@@ -19,7 +19,7 @@ class IWiFiManager {
   public:
     virtual ~IWiFiManager() {};
 
-    virtual std::unique_ptr<Core::ObjectResultA<Core::List<Models::Network>>>
+    virtual std::unique_ptr<Core::ObjectResult<Core::List<Models::Network>>>
       getWiFiNetworks() const = 0;
 
     virtual String  getDeviceName() const = 0;

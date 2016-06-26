@@ -22,7 +22,7 @@ class WiFiManager : public IWiFiManager, public ILoopedService {
 
     void    initialize();
 
-    std::unique_ptr<Core::ObjectResultA<Core::List<Models::Network>>>
+    std::unique_ptr<Core::ObjectResult<Core::List<Models::Network>>>
       getWiFiNetworks() const override;
 
     String  getDeviceName() const override;

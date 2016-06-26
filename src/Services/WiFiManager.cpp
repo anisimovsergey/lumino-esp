@@ -24,9 +24,9 @@ WiFiManager::initialize() {
   disconnect();
 }
 
-std::unique_ptr<Core::ObjectResultA<Core::List<Models::Network>>>
+std::unique_ptr<Core::ObjectResult<Core::List<Models::Network>>>
 WiFiManager::getWiFiNetworks() const {
-  auto networks = std::make_shared<List<Network>>();
+  auto networks = make_unique<List<Network>>();
   auto networksCount = WiFi.scanComplete();
   if (networksCount == WIFI_SCAN_RUNNING) {
     Logger::message("Scanning networks... ");
@@ -43,7 +43,9 @@ WiFiManager::getWiFiNetworks() const {
     WiFi.scanNetworks(true);
     Logger::message("Scan started");
   }
-  return ObjectResultA<Core::List<Models::Network>>::OK(networks);
+  return ObjectResult<Core::List<Models::Network>>::OK(
+    std::move(networks)
+  );
 }
 
 bool
