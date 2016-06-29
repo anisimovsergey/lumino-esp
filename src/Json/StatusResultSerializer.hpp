@@ -19,12 +19,12 @@ class StatusResultSerializer : public Serializer<Core::StatusResult> {
     }
 
   protected:
-    virtual std::unique_ptr<Core::IActionResult> serialize(
+    virtual std::unique_ptr<Core::StatusResult> serialize(
       const Core::StatusResult& statusResult,
       ISerializationContext& context) const override;
 
-    virtual std::unique_ptr<Core::IActionResult> deserialize(
-      std::shared_ptr<Core::StatusResult>& statusResult,
+    virtual std::unique_ptr<Core::StatusResult> deserialize(
+      std::unique_ptr<Core::StatusResult>& statusResult,
       ISerializationContext& context) const override;
 };
 

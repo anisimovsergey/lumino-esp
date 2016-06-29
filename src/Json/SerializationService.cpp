@@ -14,7 +14,7 @@ SerializationService::SerializationService(
   contextFactory(contextFactory) {
 }
 
-std::unique_ptr<Core::IActionResult>
+std::unique_ptr<Core::StatusResult>
 SerializationService::serialize(
   const IEntity& entity,
   String& json) const {
@@ -36,7 +36,7 @@ SerializationService::serialize(
   return StatusResult::OK();
 }
 
-std::unique_ptr<Core::IActionResult>
+std::unique_ptr<Core::StatusResult>
 SerializationService::serialize (
   const IEntity& entity,
   ISerializationContext& context) const {
@@ -54,10 +54,10 @@ SerializationService::serialize (
   Logger::message("Serializer used");
 }
 
-std::unique_ptr<Core::IActionResult>
+std::unique_ptr<Core::StatusResult>
 SerializationService::deserialize(
   const String& json,
-  std::shared_ptr<Core::IEntity>& entity) const {
+  std::unique_ptr<Core::IEntity>& entity) const {
 
   std::shared_ptr<ISerializationContext> context;
   auto actionResult = contextFactory->create(*this, context, json);

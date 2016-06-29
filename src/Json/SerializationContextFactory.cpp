@@ -7,7 +7,7 @@
 using namespace Json;
 using namespace Core;
 
-std::unique_ptr<Core::IActionResult>
+std::unique_ptr<Core::StatusResult>
 SerializationContextFactory::create(
   const ISerializationService& serializationService,
   std::shared_ptr<ISerializationContext>& context) const {
@@ -23,7 +23,7 @@ SerializationContextFactory::create(
   return StatusResult::OK();
 }
 
-std::unique_ptr<Core::IActionResult>
+std::unique_ptr<Core::StatusResult>
 SerializationContextFactory::create(
   const ISerializationService& serializationService,
   std::shared_ptr<ISerializationContext>& context,

@@ -18,5 +18,9 @@ NetworksController::registerOn(IHttpServer &httpServer) {
 
 std::unique_ptr<Core::IActionResult>
 NetworksController::onGetWiFiNetworks(IHttpRequest& request) {
-  return wifiManager->getWiFiNetworks();
+  std::unique_ptr<Core::List<Models::Network>> networks;
+  auto result = wifiManager->getWiFiNetworks(networks);
+  if (!result->isOk())
+    return std::move(result);
+  return ObjectResult::OK(std::move(networks));
 }

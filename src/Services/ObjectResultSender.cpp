@@ -14,7 +14,7 @@ ObjectResultSender::ObjectResultSender(
 std::unique_ptr<IHttpResponse>
 ObjectResultSender::prepareResponse(
   IHttpRequest& request,
-  const ObjectResultBase& objectResult) const {
+  const ObjectResult& objectResult) const {
 
   String json;
   int    code = objectResult.getStatusCode().getCode();

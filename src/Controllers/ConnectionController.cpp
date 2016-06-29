@@ -34,7 +34,7 @@ ConnectionController::onGetConnection(
   if (!wifiManager->hasConnection())
     return StatusResult::NotFound("Connection doesn't exist.");
 
-  return ObjectResult<Connection>::OK(
+  return ObjectResult::OK(
     make_unique<Connection>(
       wifiManager->getNetwork(),
       wifiManager->isConnected()
@@ -53,11 +53,11 @@ ConnectionController::onPostConnection(
   if (connection == nullptr)
     return StatusResult::BadRequest("Type Connection expected.");
 
-  auto actionResult = wifiManager->connect(
+  auto result = wifiManager->connect(
     connection->getNetworkSsid(),
     connection->getNetworkPassword());
-  if (!actionResult->isOk())
-    return actionResult;
+  if (!result->isOk())
+    return std::move(result);
 
   return RedirectResult::ToRoute("/connection");
 }

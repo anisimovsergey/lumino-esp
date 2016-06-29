@@ -4,15 +4,15 @@ using namespace Core;
 using namespace Json;
 using namespace Models;
 
-std::unique_ptr<Core::IActionResult>
+std::unique_ptr<Core::StatusResult>
 SettingsSerializer::serialize(const Settings& settings, ISerializationContext& context) const {
   context.setValue("name", settings.getDeviceName());
   return StatusResult::OK();
 }
 
-std::unique_ptr<Core::IActionResult>
+std::unique_ptr<Core::StatusResult>
 SettingsSerializer::deserialize(
-  std::shared_ptr<Models::Settings>& settings,
+  std::unique_ptr<Models::Settings>& settings,
   ISerializationContext& context) const {
 
   String deviceName;
@@ -20,6 +20,6 @@ SettingsSerializer::deserialize(
   if (!actionResult->isOk())
     return actionResult;
 
-  settings = std::make_shared<Models::Settings>(deviceName);
+  settings = make_unique<Models::Settings>(deviceName);
   return StatusResult::OK();
 }

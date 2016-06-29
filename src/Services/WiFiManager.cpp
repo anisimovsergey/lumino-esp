@@ -24,9 +24,10 @@ WiFiManager::initialize() {
   disconnect();
 }
 
-std::unique_ptr<Core::ObjectResult<Core::List<Models::Network>>>
-WiFiManager::getWiFiNetworks() const {
-  auto networks = make_unique<List<Network>>();
+std::unique_ptr<Core::StatusResult>
+WiFiManager::getWiFiNetworks(
+  std::unique_ptr<List<Network>>& networks) const {
+  networks = make_unique<List<Network>>();
   auto networksCount = WiFi.scanComplete();
   if (networksCount == WIFI_SCAN_RUNNING) {
     Logger::message("Scanning networks... ");
@@ -43,9 +44,7 @@ WiFiManager::getWiFiNetworks() const {
     WiFi.scanNetworks(true);
     Logger::message("Scan started");
   }
-  return ObjectResult<Core::List<Models::Network>>::OK(
-    std::move(networks)
-  );
+  return StatusResult::OK();
 }
 
 bool
@@ -68,7 +67,7 @@ WiFiManager::isConnected() const {
   return (WiFi.status() == WL_CONNECTED);
 }
 
-std::unique_ptr<Core::IActionResult>
+std::unique_ptr<Core::StatusResult>
 WiFiManager::connect(String network, String password) {
 
   //WiFi.begin(network.c_str(), password.c_str());
@@ -93,7 +92,7 @@ WiFiManager::loop() {
   dnsServer->processNextRequest();
 }
 
-std::unique_ptr<Core::IActionResult>
+std::unique_ptr<Core::StatusResult>
 WiFiManager::disconnect() {
   if (WiFi.status() != WL_DISCONNECTED)
     WiFi.disconnect();

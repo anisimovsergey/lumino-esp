@@ -5,7 +5,7 @@
 using namespace Json;
 using namespace Core;
 
-std::unique_ptr<Core::IActionResult>
+std::unique_ptr<Core::StatusResult>
 ListSerializer::serialize(
   const IList& list,
   ISerializationContext& context) const {
@@ -14,9 +14,9 @@ ListSerializer::serialize(
   return StatusResult::OK();
 }
 
-std::unique_ptr<Core::IActionResult>
+std::unique_ptr<Core::StatusResult>
 ListSerializer::deserialize(
-  std::shared_ptr<IList>& list,
+  std::unique_ptr<IList>& list,
   ISerializationContext& context) const {
 
   return StatusResult::OK();

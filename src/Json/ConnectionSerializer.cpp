@@ -4,7 +4,7 @@ using namespace Core;
 using namespace Json;
 using namespace Models;
 
-std::unique_ptr<Core::IActionResult>
+std::unique_ptr<Core::StatusResult>
 ConnectionSerializer::serialize(
   const Connection& connection,
   ISerializationContext& context) const {
@@ -14,22 +14,29 @@ ConnectionSerializer::serialize(
   return StatusResult::OK();
 }
 
-std::unique_ptr<Core::IActionResult>
+std::unique_ptr<Core::StatusResult>
 ConnectionSerializer::deserialize(
-  std::shared_ptr<Models::Connection>& connection,
+  std::unique_ptr<Models::Connection>& connection,
   ISerializationContext& context) const {
 
   String networkSsid;
   auto actionResult = context.getStringValue("wifi_network", networkSsid);
-  if (!actionResult->isOk())
-    return actionResult;
+  if (!actionResult->isOk()) {
+    return StatusResult::BadRequest(
+      "Unable to deserialize type """ + getTypeId() + """.",
+      std::move(actionResult));
+  }
 
   String networkPassword;
   actionResult = context.getStringValue("wifi_password", networkPassword);
-  if (!actionResult->isOk())
-    return actionResult;
+  if (!actionResult->isOk()) {
+    return StatusResult::BadRequest(
+      "Unable to deserialize type """ + getTypeId() + """.",
+      std::move(actionResult));
+  }
 
-  connection = std::make_shared<Models::Connection>(
-    networkSsid, networkPassword);
+  connection = make_unique<Connection>(
+    networkSsid, networkPassword
+  );
   return StatusResult::OK();
 }

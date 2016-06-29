@@ -16,11 +16,10 @@
 namespace Core {
 
 class IActionResult : public IEntity {
-public:
-  virtual ~IActionResult() {};
+  public:
+    virtual ~IActionResult() {};
 
-  virtual bool        isOk() const = 0;
-  virtual StatusCode  getStatusCode() const = 0;
+    virtual StatusCode getStatusCode() const = 0;
 };
 
 template<class T>
@@ -30,98 +29,105 @@ class ActionResult : public IActionResult {
     virtual String getTypeId() const override {
       return T::getStaticTypeId();
     }
+};
 
-    // From IActionResult
-    virtual bool        isOk() const override {
-      return (statusCode == StatusCode::OK);
-    }
-    virtual StatusCode  getStatusCode() const override {
-      return statusCode;
-    }
+class RedirectResult : public ActionResult<RedirectResult> {
+public:
+  static String getStaticTypeId() { return "redirectResult"; }
 
-  protected:
-    ActionResult(const StatusCode& statusCode) : statusCode(statusCode) {
-    }
+  static std::unique_ptr<RedirectResult> ToRoute(String route);
 
-  private:
-    const StatusCode statusCode;
+  RedirectResult(String route) : route(route) {
+  }
+
+  virtual StatusCode getStatusCode() const override {
+    return StatusCode::Redirect;
+  }
+
+  String getRoute() const {
+    return route;
+  }
+
+private:
+  const String route;
 };
 
 class StatusResult : public ActionResult<StatusResult> {
   public:
     static String  getStaticTypeId() { return "statusResult"; }
 
-    static std::unique_ptr<IActionResult> OK();
-    static std::unique_ptr<IActionResult> Conflict(String message);
-    static std::unique_ptr<IActionResult> BadRequest(String message);
-    static std::unique_ptr<IActionResult> NotFound(String message);
-    static std::unique_ptr<IActionResult> InternalServerError(String message);
-    static std::unique_ptr<IActionResult> NotImplemented();
-    static std::unique_ptr<IActionResult> NotImplemented(String message);
+    static std::unique_ptr<StatusResult> OK();
+    static std::unique_ptr<StatusResult> Conflict(String message);
+    static std::unique_ptr<StatusResult> BadRequest(String message);
+    static std::unique_ptr<StatusResult> BadRequest(String message,
+      std::unique_ptr<StatusResult> innerResult);
+    static std::unique_ptr<StatusResult> NotFound(String message);
+    static std::unique_ptr<StatusResult> InternalServerError(String message);
+    static std::unique_ptr<StatusResult> NotImplemented();
+    static std::unique_ptr<StatusResult> NotImplemented(String message);
 
     StatusResult(const StatusCode& statusCode) :
-      ActionResult(statusCode), message(statusCode.getText()) {
+      statusCode(statusCode), message(statusCode.getText()) {
     }
     StatusResult(const StatusCode& statusCode, String message) :
-      ActionResult(statusCode), message(message) {
+      statusCode(statusCode), message(message) {
+    }
+    StatusResult(const StatusCode& statusCode, String message,
+      std::unique_ptr<StatusResult> innerResult) :
+      statusCode(statusCode), message(message),
+      innerResult(std::move(innerResult)) {
     }
 
-    String getMessage() const { return message; }
+    // From IActionResult
+    virtual StatusCode getStatusCode() const override {
+      return statusCode;
+    }
+
+    bool isOk() const {
+      return (getStatusCode() == StatusCode::OK);
+    }
+
+    String getMessage() const {
+      return message;
+    }
+
+    const StatusResult* getInnerReuslt() const {
+      return innerResult.get();
+    }
 
   private:
+    const StatusCode statusCode;
     const String message;
+    const std::unique_ptr<StatusResult> innerResult;
 };
 
-class RedirectResult : public ActionResult<RedirectResult> {
-public:
-  static String  getStaticTypeId() { return "redirectResult"; }
 
-  static std::unique_ptr<IActionResult> ToRoute(String route);
-
-  RedirectResult(String route) :
-    ActionResult(StatusCode::Redirect), route(route) {
-  }
-
-  String getRoute() const { return route; }
-
-private:
-  const String route;
-};
-
-class ObjectResultBase : public ActionResult<ObjectResultBase> {
+class ObjectResult : public ActionResult<ObjectResult> {
   public:
     static String  getStaticTypeId() { return "objectResult"; }
 
-    virtual const IEntity& getEntity() const = 0;
-
-  protected:
-    ObjectResultBase(const StatusCode& statusCode) : ActionResult(statusCode) {
-    }
-};
-
-template<class T>
-class ObjectResult : public ObjectResultBase {
-  public:
-    static std::unique_ptr<ObjectResult<T>> OK(std::unique_ptr<T> entity) {
+    static std::unique_ptr<ObjectResult> OK(std::unique_ptr<IEntity> entity) {
       return make_unique<ObjectResult>(
         StatusCode::OK,
         std::move(entity));
     }
 
-    ObjectResult(const StatusCode& statusCode, std::unique_ptr<T> entity) :
-      ObjectResultBase(statusCode), entity(std::move(entity)) {
+    ObjectResult(const StatusCode& statusCode, std::unique_ptr<IEntity> entity) :
+      statusCode(statusCode), entity(std::move(entity)) {
     }
 
-    const T& get() const {
-      return *entity;
+    // From IActionResult
+    virtual StatusCode getStatusCode() const override {
+      return statusCode;
     }
 
-    virtual const IEntity& getEntity() const override {
+    const IEntity& getEntity() const {
       return *entity;
     }
 
   private:
-    std::unique_ptr<T> entity;
+    const StatusCode statusCode;
+    const std::unique_ptr<IEntity> entity;
 };
 
 }

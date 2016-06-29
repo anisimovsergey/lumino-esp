@@ -81,11 +81,13 @@ HttpServerAsync::addHandler(
     String body((char*)request->_tempObject);
     Logger::message("Created: " + body);
     HttpRequest httpRequest(*request);
-    std::shared_ptr<IEntity> entity;
-    auto actionResult = serializationService->deserialize(body, entity);
-    if (actionResult->isOk()) {
-      actionResult = requestHandler(httpRequest, *entity);
+    std::unique_ptr<IEntity> entity;
+    auto statusResult = serializationService->deserialize(body, entity);
+    if (!statusResult->isOk()) {
+      sendResponse(httpRequest, *statusResult);
+      return;
     }
+    auto actionResult = requestHandler(httpRequest, *entity);
     sendResponse(httpRequest, *actionResult);
   }, nullptr, [&](AsyncWebServerRequest *request,
     uint8_t *data, size_t len, size_t index, size_t total){

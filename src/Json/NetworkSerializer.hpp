@@ -19,12 +19,12 @@ class NetworkSerializer : public Serializer<Models::Network> {
     }
 
   protected:
-    std::unique_ptr<Core::IActionResult> serialize(
+    std::unique_ptr<Core::StatusResult> serialize(
       const Models::Network& network,
       ISerializationContext& context) const override;
 
-    std::unique_ptr<Core::IActionResult> deserialize(
-      std::shared_ptr<Models::Network>& network,
+    std::unique_ptr<Core::StatusResult> deserialize(
+      std::unique_ptr<Models::Network>& network,
       ISerializationContext& context) const override;
 };
 

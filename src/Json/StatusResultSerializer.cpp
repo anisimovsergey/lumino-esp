@@ -3,7 +3,7 @@
 using namespace Json;
 using namespace Core;
 
-std::unique_ptr<Core::IActionResult>
+std::unique_ptr<Core::StatusResult>
 StatusResultSerializer::serialize(const StatusResult& statusResult,
                             ISerializationContext& context) const {
 
@@ -13,9 +13,9 @@ StatusResultSerializer::serialize(const StatusResult& statusResult,
   return StatusResult::OK();
 }
 
-std::unique_ptr<Core::IActionResult>
+std::unique_ptr<Core::StatusResult>
 StatusResultSerializer::deserialize(
-  std::shared_ptr<StatusResult>& statusResult,
+  std::unique_ptr<StatusResult>& statusResult,
   ISerializationContext& context) const {
 
   return StatusResult::NotImplemented();

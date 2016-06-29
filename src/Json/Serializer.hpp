@@ -13,7 +13,7 @@ namespace Json {
 
 template <class T> class Serializer : public ISerializer {
   public:
-    virtual std::unique_ptr<Core::IActionResult> serialize(
+    virtual std::unique_ptr<Core::StatusResult> serialize(
       const Core::IEntity& entity,
       ISerializationContext& context) const override {
 
@@ -21,23 +21,22 @@ template <class T> class Serializer : public ISerializer {
       return serialize(entityT, context);
     }
 
-    virtual std::unique_ptr<Core::IActionResult> deserialize(
-      std::shared_ptr<Core::IEntity>& entity,
+    virtual std::unique_ptr<Core::StatusResult> deserialize(
+      std::unique_ptr<Core::IEntity>& entity,
       ISerializationContext& context) const override {
-
-      std::shared_ptr<T> entityT;
-      auto actionResult = deserialize(entityT, context);
-      entity = entityT;
-      return actionResult;
+      std::unique_ptr<T> entityT;
+      auto result = deserialize(entityT, context);
+      entity = std::move(entityT);
+      return result;
     }
 
   protected:
-    virtual std::unique_ptr<Core::IActionResult> serialize(
+    virtual std::unique_ptr<Core::StatusResult> serialize(
       const T& entity,
       ISerializationContext& context) const = 0;
 
-    virtual std::unique_ptr<Core::IActionResult> deserialize(
-      std::shared_ptr<T>& entity,
+    virtual std::unique_ptr<Core::StatusResult> deserialize(
+      std::unique_ptr<T>& entity,
       ISerializationContext& context) const = 0;
  };
 
