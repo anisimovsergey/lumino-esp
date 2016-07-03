@@ -84,19 +84,19 @@ HttpServerAsync::addHandler(
     HttpRequest httpRequest(*request);
     std::unique_ptr<IEntity> entity;
     auto statusResult = serializationService->deserialize(body, entity);
-    if (!statusResult->isOk()) {
+    if (statusResult->isOk()) {
+      auto actionResult = requestHandler(httpRequest, *entity);
+      sendResponse(httpRequest, *actionResult);
+    } else {
       sendResponse(httpRequest, *statusResult);
-      return;
     }
-    auto actionResult = requestHandler(httpRequest, *entity);
-    sendResponse(httpRequest, *actionResult);
   }, nullptr, [&](AsyncWebServerRequest *request,
                   uint8_t *data, size_t len, size_t index, size_t total){
       if (index == 0) {
         request->_tempObject = malloc(total + 1);
         *((uint8_t*)request->_tempObject + total) = '\0';
       }
-      if(request->_tempObject != nullptr) {
+      if (request->_tempObject != nullptr) {
         memcpy((uint8_t*)request->_tempObject+index, data, len);
       }
     }
@@ -106,20 +106,18 @@ HttpServerAsync::addHandler(
 void
 HttpServerAsync::sendResponse(
   IHttpRequest& request,
-  const IActionResult& result) {
+  const IActionResult& actionResult) {
 
-  String typeId = result.getTypeId();
+  auto sender = getSender(actionResult.getTypeId());
+  if (!sender)
+    return;
+
   std::unique_ptr<IHttpResponse> response;
-  auto sender = getSender(typeId);
-  if (sender) {
-      auto actionResult = sender->getResponse(request, result, response);
-      if (!actionResult->isOk())
-          sender->getResponse(request, result, response);
-  } else {
-      response = request.createResponse(StatusCode::InternalServerError.getCode());
-  }
-  if (response)
-    response->send();
+  auto result = sender->getResponse(request, actionResult, response);
+  if (!result->isOk())
+    return;
+
+  response->send();
 }
 
 std::shared_ptr<IHttpSender>
@@ -143,14 +141,13 @@ HttpServerAsync::isIntercepted(AsyncWebServerRequest *request) {
 
 void
 HttpServerAsync::redirectToSelf(AsyncWebServerRequest *request) {
-  AsyncWebServerResponse *response = request->beginResponse(302, "text/plain", "");
-  response->addHeader("Location", String("http://") + "www.esp8266fs.local");
-  request->send(response);
+  HttpRequest httpRequest(*request);
+  auto redirectResult = RedirectResult::ToRoute("www.esp8266fs.local");
+  sendResponse(httpRequest, *redirectResult);
 }
 
 void
 HttpServerAsync::start() {
-  // Set up static content
   server->serveStatic("", SPIFFS, "");
   server->onNotFound([&](AsyncWebServerRequest *request){
     if (isIntercepted(request)) {
