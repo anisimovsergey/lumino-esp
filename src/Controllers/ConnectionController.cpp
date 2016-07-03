@@ -57,7 +57,8 @@ ConnectionController::onPostConnection(
     connection->getNetworkSsid(),
     connection->getNetworkPassword());
   if (!result->isOk())
-    return std::move(result);
+    return StatusResult::InternalServerError("Unable to create a connection",
+      std::move(result));
 
   return RedirectResult::ToRoute("/connection");
 }

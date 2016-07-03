@@ -21,6 +21,7 @@ NetworksController::onGetWiFiNetworks(IHttpRequest& request) {
   std::unique_ptr<Core::List<Models::Network>> networks;
   auto result = wifiManager->getWiFiNetworks(networks);
   if (!result->isOk())
-    return std::move(result);
+    return StatusResult::InternalServerError("Unable to scan WiFi networks",
+      std::move(result));
   return ObjectResult::OK(std::move(networks));
 }

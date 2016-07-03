@@ -63,6 +63,8 @@ class StatusResult : public ActionResult<StatusResult> {
       std::unique_ptr<StatusResult> innerResult);
     static std::unique_ptr<StatusResult> NotFound(String message);
     static std::unique_ptr<StatusResult> InternalServerError(String message);
+    static std::unique_ptr<StatusResult> InternalServerError(String message,
+      std::unique_ptr<StatusResult> innerResult);
     static std::unique_ptr<StatusResult> NotImplemented();
     static std::unique_ptr<StatusResult> NotImplemented(String message);
 

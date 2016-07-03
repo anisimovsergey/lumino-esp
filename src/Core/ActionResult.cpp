@@ -34,6 +34,12 @@ StatusResult::InternalServerError(String message) {
 }
 
 std::unique_ptr<StatusResult>
+StatusResult::InternalServerError(String message,
+  std::unique_ptr<StatusResult> innerResult) {
+  return make_unique<StatusResult>(StatusCode::InternalServerError, message, std::move(innerResult));
+}
+
+std::unique_ptr<StatusResult>
 StatusResult::NotImplemented() {
   return NotImplemented("Not implemented.");
 }
