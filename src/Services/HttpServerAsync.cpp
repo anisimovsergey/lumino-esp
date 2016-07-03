@@ -11,9 +11,11 @@ using namespace Services;
 
 HttpServerAsync::HttpServerAsync(
   int port,
-  std::shared_ptr<const Json::ISerializationService> serializationService) :
+  std::shared_ptr<const Json::ISerializationService> serializationService,
+  std::shared_ptr<const IWiFiManager> wifiManager) :
   server(make_unique<AsyncWebServer>(port)),
-  serializationService(serializationService) {
+  serializationService(serializationService),
+  wifiManager(wifiManager) {
 }
 
 HttpServerAsync::~HttpServerAsync() {
@@ -134,15 +136,21 @@ HttpServerAsync::getSender(String typeId) const {
   return *findIter;
 }
 
+String
+HttpServerAsync::getLocalDomain() {
+  return wifiManager->getDeviceName() + ".local";
+}
+
 bool
 HttpServerAsync::isIntercepted(AsyncWebServerRequest *request) {
-  return request->host() != "www.esp8266fs.local";
+  return request->host() != getLocalDomain();
 }
 
 void
 HttpServerAsync::redirectToSelf(AsyncWebServerRequest *request) {
   HttpRequest httpRequest(*request);
-  auto redirectResult = RedirectResult::ToRoute("www.esp8266fs.local");
+  auto route = String("http://") + getLocalDomain();
+  auto redirectResult = RedirectResult::ToRoute(route);
   sendResponse(httpRequest, *redirectResult);
 }
 

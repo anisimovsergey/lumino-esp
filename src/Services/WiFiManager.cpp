@@ -8,20 +8,18 @@ using namespace Core;
 using namespace Models;
 using namespace Services;
 
-#define MAX_CONNECTION_WAIT 10
-
-WiFiManager::WiFiManager() {
-  network = "BTHub4-NC8S";
-  password = "d5e89ca8cf";
+WiFiManager::WiFiManager() : dnsServer(make_unique<DNSServer>()) {
   deviceName = "esp8266fs";
-  dnsServer = make_unique<DNSServer>();
+  network = WiFi.SSID();
+  delayed_disconnect = false;
 }
 
 void
 WiFiManager::initialize() {
   WiFi.mode(WIFI_STA);
   WiFi.hostname(deviceName.c_str());
-  disconnect();
+  // Start soft AP without checking connection.
+  startSoftAP();
 }
 
 std::unique_ptr<Core::StatusResult>
@@ -30,9 +28,7 @@ WiFiManager::getWiFiNetworks(
   networks = make_unique<List<Network>>();
   auto networksCount = WiFi.scanComplete();
   if (networksCount == WIFI_SCAN_RUNNING) {
-    Logger::message("Scanning networks... ");
   } else if (networksCount >= 0) {
-    Logger::message("Networks scanned, total:" + String(networksCount));
     for (int networkNum = 0; networkNum < networksCount; networkNum++) {
       String ssid = WiFi.SSID(networkNum);
       int rssi = WiFi.RSSI(networkNum);
@@ -42,7 +38,6 @@ WiFiManager::getWiFiNetworks(
     WiFi.scanDelete();
   } else {
     WiFi.scanNetworks(true);
-    Logger::message("Scan started");
   }
   return StatusResult::OK();
 }
@@ -70,43 +65,41 @@ WiFiManager::isConnected() const {
 std::unique_ptr<Core::StatusResult>
 WiFiManager::connect(String network, String password) {
 
-  //WiFi.begin(network.c_str(), password.c_str());
-  //int i = 0;
-  //while ((WiFi.status() != WL_CONNECTED) && i < MAX_CONNECTION_WAIT) {
-  //  delay(1000);
-  //  i++;
-  //}
+  if (WiFi.status() == WL_CONNECTED)
+    return StatusResult::Conflict("Already connected.");
 
-  //if (WiFi.status() == WL_CONNECTED) {
-    this->network = network;
-    this->password = password;
-  //  WiFi.softAPdisconnect();
-    return StatusResult::OK();
-  //}
+  this->network = network;
+  WiFi.begin(network.c_str(), password.c_str());
 
-  //return Status::UnableToConnect;
+  return StatusResult::OK();
 }
 
 void
 WiFiManager::loop() {
+  if (delayed_disconnect) {
+    WiFi.disconnect();
+    delayed_disconnect = false;
+  }
   dnsServer->processNextRequest();
 }
 
 std::unique_ptr<Core::StatusResult>
 WiFiManager::disconnect() {
-  if (WiFi.status() != WL_DISCONNECTED)
-    WiFi.disconnect();
-  network = "";
-  password = "";
 
-  Logger::message("Configuring access point """ + deviceName + """ ");
+  delayed_disconnect = true;
+  network = "";
+  return StatusResult::OK();
+}
+
+void
+WiFiManager::startSoftAP() {
   WiFi.softAP(deviceName.c_str());
   delay(500);
-  Logger::message("Access point IP address: " + Utils::toStringIp(WiFi.softAPIP()));
-
-  Logger::message("Configuring captive DNS");
   dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
   dnsServer->start(53, "*", WiFi.softAPIP());
+}
 
-  return StatusResult::OK();
+void
+WiFiManager::stopSoftAP() {
+  WiFi.softAPdisconnect();
 }

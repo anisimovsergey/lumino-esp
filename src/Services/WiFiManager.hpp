@@ -39,10 +39,12 @@ class WiFiManager : public IWiFiManager, public ILoopedService {
 
   private:
     std::unique_ptr<DNSServer> dnsServer;
-
     String  deviceName;
     String  network;
-    String  password;
+    bool    delayed_disconnect;
+
+    void    startSoftAP();
+    void    stopSoftAP();
 };
 
 }

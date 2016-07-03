@@ -48,7 +48,7 @@ template <class T> class List : public IList {
         for (auto iterator = elements.begin(), end = elements.end();
              iterator != end; ++iterator) {
           auto result = func(*iterator);
-          if (result->isOk())
+          if (!result->isOk())
             return result;
         }
         return Core::StatusResult::OK();

@@ -37,7 +37,7 @@ void setup(void){
   auto serializationService(
     std::make_shared<SerializationService>(contextFactory));
   auto httpServerAsync(
-    std::make_shared<HttpServerAsync>(80, serializationService));
+    std::make_shared<HttpServerAsync>(80, serializationService, wifiManager));
 
   // Registering serializers
   serializationService->addSerializer(

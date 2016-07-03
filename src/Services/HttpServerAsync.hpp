@@ -9,6 +9,7 @@
 
 #include "IHttpServer.hpp"
 #include "IHttpController.hpp"
+#include "IWiFiManager.hpp"
 #include "ILoopedService.hpp"
 
 #include "Json/ISerializationService.hpp"
@@ -25,7 +26,8 @@ namespace Services {
 class HttpServerAsync : public IHttpServer, public ILoopedService {
   public:
     HttpServerAsync(int port,
-      std::shared_ptr<const Json::ISerializationService> serializationService);
+      std::shared_ptr<const Json::ISerializationService> serializationService,
+      std::shared_ptr<const IWiFiManager> wifiManager);
     virtual ~HttpServerAsync();
 
     void start();
@@ -59,6 +61,7 @@ class HttpServerAsync : public IHttpServer, public ILoopedService {
     std::list<std::shared_ptr<IHttpController>> controllers;
     std::list<std::shared_ptr<IHttpSender>> senders;
     std::shared_ptr<const Json::ISerializationService>  serializationService;
+    std::shared_ptr<const IWiFiManager> wifiManager;
 
     void addHandler(
       const String& uri,
@@ -75,7 +78,7 @@ class HttpServerAsync : public IHttpServer, public ILoopedService {
       const Core::IActionResult& actionResult);
 
     std::shared_ptr<IHttpSender> getSender(String typeId) const;
-
+    String  getLocalDomain();
     bool    isIntercepted(AsyncWebServerRequest* request);
     void    redirectToSelf(AsyncWebServerRequest* request);
 };
