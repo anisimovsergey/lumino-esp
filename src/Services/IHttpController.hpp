@@ -13,6 +13,8 @@ class IHttpServer;
 
 class IHttpController {
   public:
+    virtual ~IHttpController();
+
     virtual void registerOn(IHttpServer& httpServer) = 0;
 };
 

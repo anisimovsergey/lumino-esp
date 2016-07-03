@@ -15,13 +15,14 @@ namespace Services {
 
 class IHttpSender {
   public:
-    virtual ~IHttpSender() {};
-
-    virtual void send(
-      IHttpRequest& request,
-      const Core::IActionResult& actionResult) const = 0;
+    virtual ~IHttpSender();
 
     virtual String getTypeId() const = 0;
+
+    virtual std::unique_ptr<Core::StatusResult> getResponse(
+      IHttpRequest& request,
+      const Core::IActionResult& actionResult,
+      std::unique_ptr<IHttpResponse>& response) const = 0;
 };
 
 }

@@ -14,9 +14,10 @@ namespace Services {
 
  class RedirectResultSender : public HttpSender<Core::RedirectResult> {
    protected:
-     virtual std::unique_ptr<IHttpResponse> prepareResponse(
+     virtual std::unique_ptr<Core::StatusResult> getResponse(
        IHttpRequest& request,
-       const Core::RedirectResult& redirectResult) const override;
+       const Core::RedirectResult& redirectResult,
+       std::unique_ptr<IHttpResponse>& response) const override;
   };
 
 }

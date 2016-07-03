@@ -1,7 +1,5 @@
 #include "StatusResultSender.hpp"
 
-#include "Core/Logger.hpp"
-
 using namespace Core;
 using namespace Json;
 using namespace Services;
@@ -11,17 +9,18 @@ StatusResultSender::StatusResultSender(
   serializationService(serializationService) {
 }
 
-std::unique_ptr<IHttpResponse>
-StatusResultSender::prepareResponse(
+std::unique_ptr<Core::StatusResult>
+StatusResultSender::getResponse(
   IHttpRequest& request,
-  const StatusResult& statusResult) const {
+  const StatusResult& statusResult,
+  std::unique_ptr<IHttpResponse>& response) const {
 
   String json;
   int    code = statusResult.getStatusCode().getCode();
   auto status = serializationService->serialize(statusResult, json);
-  if (!status->isOk()) {
-    code = status->getStatusCode().getCode();
-  }
-  Logger::message("Creating response wiht json " + json);
-  return request.createResponse(code, "text/json", json);
+  if (!status->isOk())
+    return status;
+
+  response = request.createResponse(code, "text/json", json);
+  return StatusResult::OK();
 }

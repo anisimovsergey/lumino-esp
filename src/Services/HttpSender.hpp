@@ -15,23 +15,25 @@ namespace Services {
 
 template <class T> class HttpSender : public IHttpSender {
   public:
-    String getTypeId() const override {
+    // From IHttpSender
+    virtual String getTypeId() const override {
       return T::getStaticTypeId();
     }
 
-    virtual void send(
+    virtual std::unique_ptr<Core::StatusResult> getResponse(
       IHttpRequest& request,
-      const Core::IActionResult& actionResult) const override {
+      const Core::IActionResult& actionResult,
+      std::unique_ptr<IHttpResponse>& response) const override {
 
       const T& actionResultT = static_cast<const T&>(actionResult);
-      auto response = prepareResponse(request, actionResultT);
-      response->send();
+      return getResponse(request, actionResultT, response);
     }
 
   protected:
-    virtual std::unique_ptr<IHttpResponse> prepareResponse(
+    virtual std::unique_ptr<Core::StatusResult> getResponse(
       IHttpRequest& request,
-      const T& actionResult) const = 0;
+      const T& value,
+      std::unique_ptr<IHttpResponse>& response) const = 0;
  };
 
 }

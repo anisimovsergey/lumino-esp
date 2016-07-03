@@ -1,21 +1,17 @@
 #include "RedirectResultSender.hpp"
 
-#include "Core/Logger.hpp"
-
 using namespace Core;
 using namespace Services;
 
-std::unique_ptr<IHttpResponse>
-RedirectResultSender::prepareResponse(
+std::unique_ptr<Core::StatusResult>
+RedirectResultSender::getResponse(
   IHttpRequest& request,
-  const RedirectResult& redirectResult) const {
+  const RedirectResult& redirectResult,
+  std::unique_ptr<IHttpResponse>& response) const {
 
-  Logger::message("Getting code...");
   int  code = redirectResult.getStatusCode().getCode();
-  Logger::message("Creating response...");
-  auto response = request.createResponse(code);
-  Logger::message("Setting location...");
+  response = request.createResponse(code);
   response->setHeader("Location", redirectResult.getRoute());
-  Logger::message("Returning response...");
-  return response;
+
+  return StatusResult::OK();
 }

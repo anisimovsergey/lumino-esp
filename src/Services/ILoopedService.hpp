@@ -11,7 +11,7 @@ namespace Services {
 
 class ILoopedService {
   public:
-      virtual ~ILoopedService() {};
+      virtual ~ILoopedService();
       virtual void loop() = 0;
 };
 

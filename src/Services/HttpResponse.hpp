@@ -19,7 +19,6 @@ class HttpResponse : public IHttpResponse {
     HttpResponse(
       AsyncWebServerRequest& request,
       AsyncWebServerResponse& response);
-    virtual ~HttpResponse();
 
     virtual void setHeader(String header, String value) override;
     virtual void send() override;

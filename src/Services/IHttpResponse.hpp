@@ -13,6 +13,8 @@ namespace Services {
 
 class IHttpResponse {
   public:
+    virtual ~IHttpResponse();
+
     virtual void setHeader(String header, String value) = 0;
     virtual void send() = 0;
 };

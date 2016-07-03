@@ -21,27 +21,25 @@ namespace Services {
 
 class IHttpServer {
   public:
-      typedef std::function<std::unique_ptr<Core::IActionResult>(IHttpRequest& request)> TRequestHandler;
-      typedef std::function<std::unique_ptr<Core::IActionResult>(IHttpRequest& request,
-        const Core::IEntity& entity)> TRequestWithEntityHandler;
+      typedef std::function<std::unique_ptr<Core::IActionResult>
+        (IHttpRequest& request)> TRequestHandler;
+      typedef std::function<std::unique_ptr<Core::IActionResult>
+        (IHttpRequest& request,
+         const Core::IEntity& entity)> TRequestWithEntityHandler;
 
-      virtual void
-        addGetHandler(const String& uri,
-        TRequestHandler requestHandler) = 0;
-      virtual void
-        addDeleteHandler(const String& uri,
-        TRequestHandler requestHandler) = 0;
+      ~IHttpServer();
 
-      virtual void
-        addPostHandler(const String& uri,
+      virtual void addGetHandler(const String& uri,
+        TRequestHandler requestHandler) = 0;
+      virtual void addDeleteHandler(const String& uri,
+        TRequestHandler requestHandler) = 0;
+      virtual void addPostHandler(const String& uri,
         TRequestWithEntityHandler requestHandler) = 0;
-      virtual void
-        addPutHandler(const String& uri,
+      virtual void addPutHandler(const String& uri,
         TRequestWithEntityHandler frequestHandlern) = 0;
 
       virtual void addApiController(
         std::shared_ptr<IHttpController> controller) = 0;
-
       virtual void addHttpSender(
         std::shared_ptr<IHttpSender> httpSender) = 0;
 };

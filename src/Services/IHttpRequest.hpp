@@ -18,13 +18,12 @@ namespace Services {
 
 class IHttpRequest {
   public:
+    virtual ~IHttpRequest();
+
     virtual String getArgument(String parameter) = 0;
-
     virtual String getHeader(String header) = 0;
-
     virtual std::unique_ptr<IHttpResponse> createResponse(
       int code) = 0;
-      
     virtual std::unique_ptr<IHttpResponse> createResponse(
       int code, String contentType, String content) = 0;
 };

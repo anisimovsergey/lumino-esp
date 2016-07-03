@@ -14,9 +14,6 @@ HttpRequest::HttpRequest(
   request(request) {
 }
 
-HttpRequest::~HttpRequest() {
-}
-
 String
 HttpRequest::getArgument(String argument) {
   return request.arg(argument.c_str());

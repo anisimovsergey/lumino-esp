@@ -17,17 +17,18 @@ namespace Services {
 
 class IWiFiManager {
   public:
-    virtual ~IWiFiManager() {};
+    virtual ~IWiFiManager();
 
-    virtual std::unique_ptr<Core::StatusResult>
-      getWiFiNetworks(std::unique_ptr<Core::List<Models::Network>>& networks) const = 0;
+    virtual std::unique_ptr<Core::StatusResult> getWiFiNetworks(
+      std::unique_ptr<Core::List<Models::Network>>& networks) const = 0;
 
     virtual String  getDeviceName() const = 0;
     virtual bool    hasConnection() const = 0;
     virtual String  getNetwork() const = 0;
     virtual bool    isConnected() const = 0;
 
-    virtual std::unique_ptr<Core::StatusResult> connect(String network, String password) = 0;
+    virtual std::unique_ptr<Core::StatusResult> connect(
+      String network, String password) = 0;
     virtual std::unique_ptr<Core::StatusResult> disconnect() = 0;
 };
 

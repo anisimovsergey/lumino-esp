@@ -13,9 +13,6 @@ HttpResponse::HttpResponse(
   request(request), response(response) {
 }
 
-HttpResponse::~HttpResponse() {
-}
-
 void
 HttpResponse::setHeader(String header, String value) {
   response.addHeader(header, value);
