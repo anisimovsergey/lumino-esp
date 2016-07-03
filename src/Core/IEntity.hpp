@@ -13,7 +13,7 @@ namespace Core {
 
 class IEntity {
   public:
-    virtual ~IEntity() {};
+    virtual ~IEntity();
     virtual String getTypeId() const = 0;
 
     template<typename T> T* dynamicCast() {

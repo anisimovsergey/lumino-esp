@@ -15,30 +15,43 @@ namespace Core {
 
 template <class T> class List : public IList {
   public:
-    static String getStaticTypeId() { return "collection"; }
+    static String getStaticTypeId() { return "list"; }
 
+    // From IEntity
     String getTypeId() const override {
       return getStaticTypeId();
     }
 
-    void add(const T& value) {
-      elements.push_back(value);
-    };
+    // From IList
+    virtual std::unique_ptr<Core::StatusResult> add(
+      const IEntity& item) const override {
+      return add((const T&)item);
+    }
 
-    typedef std::function<void(const T& item)> ForEachFunctionTyped;
-    void forEach(ForEachFunctionTyped func) const {
-        for (auto iterator = elements.begin(),
-             end = elements.end();
-             iterator != end;
-             ++iterator) {
-          func(*iterator);
-        }
-    };
-
-    void forEach(ForEachFunction func) const override {
-      forEach([&](const T& element) {
-        func(element);
+    virtual std::unique_ptr<Core::StatusResult>
+      forEach(ForEachFunction func) const override {
+      return forEach([&](const T& element) {
+        return func(element);
       });
+    };
+
+    std::unique_ptr<Core::StatusResult> add(const T& value) {
+      elements.push_back(value);
+      return Core::StatusResult::OK();
+    };
+
+    typedef std::function<std::unique_ptr<Core::StatusResult>
+      (const T& item)> ForEachFunctionTyped;
+
+    std::unique_ptr<Core::StatusResult> forEach(
+      ForEachFunctionTyped func) const {
+        for (auto iterator = elements.begin(), end = elements.end();
+             iterator != end; ++iterator) {
+          auto result = func(*iterator);
+          if (result->isOk())
+            return result;
+        }
+        return Core::StatusResult::OK();
     };
 
   private:

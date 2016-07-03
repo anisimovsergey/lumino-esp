@@ -17,7 +17,7 @@ namespace Core {
 
 class IActionResult : public IEntity {
   public:
-    virtual ~IActionResult() {};
+    virtual ~IActionResult();
 
     virtual StatusCode getStatusCode() const = 0;
 };

@@ -17,7 +17,7 @@ namespace Json {
 
 class ISerializationService {
   public:
-    virtual ~ISerializationService() {}
+    virtual ~ISerializationService();
 
     virtual std::unique_ptr<Core::StatusResult> serialize(
       const Core::IEntity& object,

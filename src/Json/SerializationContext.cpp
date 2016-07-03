@@ -5,11 +5,11 @@ using namespace Core;
 
 SerializationContext::SerializationContext(
   const ISerializationService& serializationService,
-  std::shared_ptr<DynamicJsonBuffer> jsonBuffer,
+  std::shared_ptr<const DynamicJsonBuffer> jsonBuffer,
   JsonObject& jsonObject) :
-  serializationService(serializationService),
-  jsonBuffer(jsonBuffer),
-  jsonObject(jsonObject) {
+    serializationService(serializationService),
+    jsonBuffer(jsonBuffer),
+    jsonObject(jsonObject) {
 }
 
 String
@@ -47,27 +47,47 @@ SerializationContext::getBoolValue(const String& key, bool& value) {
   return StatusResult::OK();
 }
 
-void
+std::unique_ptr<Core::StatusResult>
 SerializationContext::setValue(const String& key, const String& value) {
   jsonObject[key] = value;
+  return StatusResult::OK();
 }
 
-void
+std::unique_ptr<Core::StatusResult>
 SerializationContext::setValue(const String& key, int value) {
   jsonObject[key] = value;
+  return StatusResult::OK();
 }
 
-void
+std::unique_ptr<Core::StatusResult>
 SerializationContext::setValue(const String& key, bool value) {
   jsonObject[key] = value;
+  return StatusResult::OK();
 }
 
-void
+std::unique_ptr<Core::StatusResult>
 SerializationContext::setValue(const String& key, const IList& list) {
-  JsonArray& array = jsonObject.createNestedArray(key);
-  list.forEach([&](const IEntity& element) {
-    JsonObject& nestedObject = array.createNestedObject();
+  auto& array = jsonObject.createNestedArray(key);
+  return list.forEach([&](const IEntity& element) {
+    auto& nestedObject = array.createNestedObject();
     SerializationContext context(serializationService, jsonBuffer, nestedObject);
-    serializationService.serialize(element, context);
+    auto result = serializationService.serialize(element, context);
+    if (!result->isOk()) {
+        return StatusResult::InternalServerError(
+          "Unable to serialize an element of the list.", std::move(result));
+    }
+    return StatusResult::OK();
   });
+}
+
+std::unique_ptr<Core::StatusResult>
+SerializationContext::setValue(const String& key, const Core::IEntity& entity) {
+  auto& nestedObject = jsonObject.createNestedObject(key);
+  SerializationContext context(serializationService, jsonBuffer, nestedObject);
+  auto result = serializationService.serialize(entity, context);
+  if (!result->isOk()) {
+      return StatusResult::InternalServerError(
+        "Unable to serialize a nested entity.", std::move(result));
+  }
+  return StatusResult::OK();
 }

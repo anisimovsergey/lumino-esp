@@ -14,7 +14,7 @@ ConnectionController::ConnectionController(
 }
 
 void
-ConnectionController::registerOn(IHttpServer &httpServer) {
+ConnectionController::registerOn(IHttpServer& httpServer) {
   httpServer.addGetHandler("/connection", [&](IHttpRequest& request) {
     return onGetConnection(request);
   });
@@ -47,11 +47,11 @@ ConnectionController::onPostConnection(
   const IEntity& entity) {
 
   if (wifiManager->hasConnection())
-    return StatusResult::Conflict("Connection already exists.");
+    return StatusResult::Conflict("A connection already exists.");
 
   auto connection = entity.dynamicCast<Connection>();
-  if (connection == nullptr)
-    return StatusResult::BadRequest("Type Connection expected.");
+    if (connection == nullptr)
+      return StatusResult::BadRequest("Type Connection expected.");
 
   auto result = wifiManager->connect(
     connection->getNetworkSsid(),
@@ -70,5 +70,10 @@ ConnectionController::onDeleteConnection(
   if (!wifiManager->hasConnection())
     return StatusResult::NotFound("Connection doesn't exist.");
 
-  return wifiManager->disconnect();
+  auto result = wifiManager->disconnect();
+  if (!result->isOk())
+    return StatusResult::InternalServerError("Unable to delete the connection",
+      std::move(result));
+
+  return StatusResult::OK();
 }

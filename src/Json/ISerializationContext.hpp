@@ -16,7 +16,7 @@ namespace Json {
 
 class ISerializationContext {
   public:
-    virtual ~ISerializationContext() {};
+    virtual ~ISerializationContext();
 
     virtual String toString() const = 0;
 
@@ -25,10 +25,16 @@ class ISerializationContext {
     virtual std::unique_ptr<Core::StatusResult>
       getBoolValue(const String& key, bool& value) = 0;
 
-    virtual void setValue(const String& key, const String& value) = 0;
-    virtual void setValue(const String& key, int value) = 0;
-    virtual void setValue(const String& key, bool value) = 0;
-    virtual void setValue(const String& key, const Core::IList& list) = 0;
+    virtual std::unique_ptr<Core::StatusResult>
+      setValue(const String& key, const String& value) = 0;
+    virtual std::unique_ptr<Core::StatusResult>
+      setValue(const String& key, int value) = 0;
+    virtual std::unique_ptr<Core::StatusResult>
+      setValue(const String& key, bool value) = 0;
+    virtual std::unique_ptr<Core::StatusResult>
+      setValue(const String& key, const Core::IList& list) = 0;
+    virtual std::unique_ptr<Core::StatusResult>
+      setValue(const String& key, const Core::IEntity& entity) = 0;
 };
 
 }

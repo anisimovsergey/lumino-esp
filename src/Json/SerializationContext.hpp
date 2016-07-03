@@ -20,25 +20,32 @@ class SerializationContext : public ISerializationContext {
   public:
     SerializationContext(
       const ISerializationService& serializationService,
-      std::shared_ptr<DynamicJsonBuffer> jsonBuffer,
+      std::shared_ptr<const DynamicJsonBuffer> jsonBuffer,
       JsonObject& jsonObject);
 
+    // From ISerializationContext
     String toString() const override;
 
-    std::unique_ptr<Core::StatusResult>
+    virtual std::unique_ptr<Core::StatusResult>
       getStringValue(const String& key, String& value) override;
-    std::unique_ptr<Core::StatusResult>
+    virtual std::unique_ptr<Core::StatusResult>
       getBoolValue(const String& key, bool& value) override;
 
-    void setValue(const String& key, const String& value) override;
-    void setValue(const String& key, int value) override;
-    void setValue(const String& key, bool value) override;
-    void setValue(const String& key, const Core::IList& list) override;
+    virtual std::unique_ptr<Core::StatusResult>
+      setValue(const String& key, const String& value) override;
+    virtual std::unique_ptr<Core::StatusResult>
+      setValue(const String& key, int value) override;
+    virtual std::unique_ptr<Core::StatusResult>
+      setValue(const String& key, bool value) override;
+    virtual std::unique_ptr<Core::StatusResult>
+      setValue(const String& key, const Core::IList& list) override;
+    virtual std::unique_ptr<Core::StatusResult>
+      setValue(const String& key, const Core::IEntity& entity) override;
 
   private:
-    const ISerializationService&  serializationService;
-    std::shared_ptr<DynamicJsonBuffer>      jsonBuffer;
-    JsonObject&                             jsonObject;
+    const ISerializationService&              serializationService;
+    std::shared_ptr<const DynamicJsonBuffer>  jsonBuffer;
+    JsonObject&                               jsonObject;
 };
 
 }

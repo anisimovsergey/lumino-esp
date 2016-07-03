@@ -2,6 +2,9 @@
 
 using namespace Core;
 
+IActionResult::~IActionResult() {
+}
+
 std::unique_ptr<StatusResult>
 StatusResult::OK() {
   return make_unique<StatusResult>(StatusCode::OK);

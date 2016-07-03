@@ -16,7 +16,9 @@ namespace Json {
 
 class ISerializer {
   public:
-    virtual ~ISerializer() {};
+    virtual ~ISerializer();
+
+    virtual String getTypeId() const = 0;
 
     virtual std::unique_ptr<Core::StatusResult> serialize(
       const Core::IEntity& entity,
@@ -25,8 +27,6 @@ class ISerializer {
     virtual std::unique_ptr<Core::StatusResult> deserialize(
       std::unique_ptr<Core::IEntity>& entity,
       ISerializationContext& context) const = 0;
-
-    virtual String getTypeId() const = 0;
 };
 
 }

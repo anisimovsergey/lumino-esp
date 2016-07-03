@@ -7,7 +7,6 @@
 #ifndef CONTROLLERS_NETWORKS_CONTROLLER_HPP
 #define CONTROLLERS_NETWORKS_CONTROLLER_HPP
 
-#include "Core/ActionResult.hpp"
 #include "Services/IHttpController.hpp"
 #include "Services/IHttpServer.hpp"
 #include "Services/IWiFiManager.hpp"
@@ -21,13 +20,14 @@ class NetworksController : public Services::IHttpController {
     NetworksController(
       std::shared_ptr<const Services::IWiFiManager> wifiManager);
 
-    void registerOn(Services::IHttpServer& httpServer) override;
+    void registerOn(
+      Services::IHttpServer& httpServer) override;
 
   private:
     std::shared_ptr<const Services::IWiFiManager> wifiManager;
 
-    std::unique_ptr<Core::IActionResult>
-      onGetWiFiNetworks(Services::IHttpRequest& request);
+    std::unique_ptr<Core::IActionResult> onGetWiFiNetworks(
+      Services::IHttpRequest& request);
 };
 
 }

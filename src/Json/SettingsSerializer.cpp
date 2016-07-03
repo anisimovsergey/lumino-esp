@@ -4,9 +4,15 @@ using namespace Core;
 using namespace Json;
 using namespace Models;
 
+#define FIELD_NAME "name"
+
 std::unique_ptr<Core::StatusResult>
 SettingsSerializer::serialize(const Settings& settings, ISerializationContext& context) const {
-  context.setValue("name", settings.getDeviceName());
+
+  auto result = context.setValue(FIELD_NAME, settings.getDeviceName());
+  if (!result->isOk())
+    return result;
+
   return StatusResult::OK();
 }
 
@@ -16,9 +22,9 @@ SettingsSerializer::deserialize(
   ISerializationContext& context) const {
 
   String deviceName;
-  auto actionResult = context.getStringValue("name", deviceName);
-  if (!actionResult->isOk())
-    return actionResult;
+  auto result = context.getStringValue(FIELD_NAME, deviceName);
+  if (!result->isOk())
+    return result;
 
   settings = make_unique<Models::Settings>(deviceName);
   return StatusResult::OK();

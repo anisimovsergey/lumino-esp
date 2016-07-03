@@ -18,17 +18,16 @@ class SettingsController : public Services::IHttpController {
     SettingsController(
       std::shared_ptr<const Services::IWiFiManager> wifiManager);
 
-    void registerOn(Services::IHttpServer& httpServer) override;
+    void registerOn(
+      Services::IHttpServer& httpServer) override;
 
   private:
     std::shared_ptr<const Services::IWiFiManager> wifiManager;
 
-    std::unique_ptr<Core::IActionResult>
-      onGetSettings(
+    std::unique_ptr<Core::IActionResult> onGetSettings(
         Services::IHttpRequest& request);
 
-    std::unique_ptr<Core::IActionResult>
-      onPutSettings(
+    std::unique_ptr<Core::IActionResult> onPutSettings(
         Services::IHttpRequest& request,
         const Core::IEntity& entity);
 };

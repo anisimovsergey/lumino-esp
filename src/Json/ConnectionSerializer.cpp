@@ -4,13 +4,23 @@ using namespace Core;
 using namespace Json;
 using namespace Models;
 
+#define FIELD_WIFI_NETWORK    "wifi_network"
+#define FIELD_WIFI_PASSWORD   "wifi_password"
+#define FIELD_CONNECTED       "connected"
+
 std::unique_ptr<Core::StatusResult>
 ConnectionSerializer::serialize(
   const Connection& connection,
   ISerializationContext& context) const {
 
-  context.setValue("wifi_network", connection.getNetworkSsid());
-  context.setValue("connected", connection.getIsConnected());
+  auto result = context.setValue(FIELD_WIFI_NETWORK, connection.getNetworkSsid());
+  if (!result->isOk())
+    return result;
+
+  result = context.setValue(FIELD_CONNECTED, connection.getIsConnected());
+  if (!result->isOk())
+    return result;
+
   return StatusResult::OK();
 }
 
@@ -20,20 +30,14 @@ ConnectionSerializer::deserialize(
   ISerializationContext& context) const {
 
   String networkSsid;
-  auto actionResult = context.getStringValue("wifi_network", networkSsid);
-  if (!actionResult->isOk()) {
-    return StatusResult::BadRequest(
-      "Unable to deserialize type """ + getTypeId() + """.",
-      std::move(actionResult));
-  }
+  auto result = context.getStringValue(FIELD_WIFI_NETWORK, networkSsid);
+  if (!result->isOk())
+    return result;
 
   String networkPassword;
-  actionResult = context.getStringValue("wifi_password", networkPassword);
-  if (!actionResult->isOk()) {
-    return StatusResult::BadRequest(
-      "Unable to deserialize type """ + getTypeId() + """.",
-      std::move(actionResult));
-  }
+  result = context.getStringValue(FIELD_WIFI_PASSWORD, networkPassword);
+  if (!result->isOk())
+    return result;
 
   connection = make_unique<Connection>(
     networkSsid, networkPassword

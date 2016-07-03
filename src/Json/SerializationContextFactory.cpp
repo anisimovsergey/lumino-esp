@@ -10,7 +10,7 @@ using namespace Core;
 std::unique_ptr<Core::StatusResult>
 SerializationContextFactory::create(
   const ISerializationService& serializationService,
-  std::shared_ptr<ISerializationContext>& context) const {
+  std::unique_ptr<ISerializationContext>& context) const {
 
   std::shared_ptr<DynamicJsonBuffer> jsonBuffer(
     std::make_shared<DynamicJsonBuffer>());
@@ -25,9 +25,8 @@ SerializationContextFactory::create(
 
 std::unique_ptr<Core::StatusResult>
 SerializationContextFactory::create(
-  const ISerializationService& serializationService,
-  std::shared_ptr<ISerializationContext>& context,
-  const String& json) const {
+  const ISerializationService& serializationService, const String& json,
+  std::unique_ptr<ISerializationContext>& context) const {
 
   std::shared_ptr<DynamicJsonBuffer> jsonBuffer(
     std::make_shared<DynamicJsonBuffer>());

@@ -15,7 +15,7 @@ SettingsController::SettingsController(
 }
 
 void
-SettingsController::registerOn(IHttpServer &httpServer) {
+SettingsController::registerOn(IHttpServer& httpServer) {
   httpServer.addGetHandler("/settings", [&](IHttpRequest& request) {
     return onGetSettings(request);
   });

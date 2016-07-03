@@ -5,12 +5,17 @@
 using namespace Json;
 using namespace Core;
 
+#define FIELD_ELEMENTS "elements"
+
 std::unique_ptr<Core::StatusResult>
 ListSerializer::serialize(
   const IList& list,
   ISerializationContext& context) const {
 
-  context.setValue("elements", list);
+  auto result = context.setValue(FIELD_ELEMENTS, list);
+  if (!result->isOk())
+    return result;
+
   return StatusResult::OK();
 }
 
@@ -19,5 +24,5 @@ ListSerializer::deserialize(
   std::unique_ptr<IList>& list,
   ISerializationContext& context) const {
 
-  return StatusResult::OK();
+  return StatusResult::NotImplemented();
 }

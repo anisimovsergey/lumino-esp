@@ -1,7 +1,5 @@
 #include "SerializationService.hpp"
 
-#include "Core/Logger.hpp"
-
 #include <algorithm>
 
 using namespace Json;
@@ -19,20 +17,16 @@ SerializationService::serialize(
   const IEntity& entity,
   String& json) const {
 
-  std::shared_ptr<ISerializationContext> context;
-  Logger::message("Creating serialization context");
-  auto actionResult = contextFactory->create(*this, context);
-  if (!actionResult->isOk())
-    return actionResult;
+  std::unique_ptr<ISerializationContext> context;
+  auto result = contextFactory->create(*this, context);
+  if (!result->isOk())
+    return result;
 
-  Logger::message("Serialization context created");
-  actionResult = serialize(entity, *context);
-  if (!actionResult->isOk())
-    return actionResult;
+  result = serialize(entity, *context);
+  if (!result->isOk())
+    return result;
 
-  Logger::message("Object serialized");
   json = context->toString();
-  Logger::message("Context converted to string");
   return StatusResult::OK();
 }
 
@@ -42,16 +36,13 @@ SerializationService::serialize (
   ISerializationContext& context) const {
 
   String typeId = entity.getTypeId();
-  Logger::message("Getting serializer for type " + typeId);
   auto serializer = getSerialzier(typeId);
   if (!serializer)
-    return StatusResult::BadRequest("Unable to find serializer for type """ +
-      typeId + """.");
+    return StatusResult::BadRequest(
+      "Unable to find a serializer for type """ + typeId + """.");
 
-  Logger::message("Serializer found");
   context.setValue(TYPE_FIELD, typeId);
   return serializer->serialize(entity, context);
-  Logger::message("Serializer used");
 }
 
 std::unique_ptr<Core::StatusResult>
@@ -59,8 +50,8 @@ SerializationService::deserialize(
   const String& json,
   std::unique_ptr<Core::IEntity>& entity) const {
 
-  std::shared_ptr<ISerializationContext> context;
-  auto actionResult = contextFactory->create(*this, context, json);
+  std::unique_ptr<ISerializationContext> context;
+  auto actionResult = contextFactory->create(*this, json, context);
   if (!actionResult->isOk())
     return actionResult;
 
@@ -91,10 +82,8 @@ SerializationService::getSerialzier(String typeId) const {
       return serializer->getTypeId() == typeId;
     });
 
-  if (findIter == serializers.end()) {
-    Logger::message("Serializer not found for " + typeId);
+  if (findIter == serializers.end())
     return nullptr;
-  }
 
   return *findIter;
 }

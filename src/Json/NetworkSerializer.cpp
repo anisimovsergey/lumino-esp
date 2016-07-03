@@ -6,6 +6,10 @@ using namespace Core;
 using namespace Json;
 using namespace Models;
 
+#define FIELD_SSID "ssid"
+#define FIELD_RSSI "rssi"
+#define FIELD_ENCRYPTION "encryption"
+
 namespace {
 
 String getEncryptionTypeString(int thisType) {
@@ -31,11 +35,18 @@ NetworkSerializer::serialize(
   const Network& network,
   ISerializationContext& context) const {
 
-  context.setValue("ssid", network.getSsid());
-  context.setValue("rssi", network.getRssi());
+  auto result = context.setValue(FIELD_SSID, network.getSsid());
+  if (!result->isOk())
+    return result;
 
-  String encryption = getEncryptionTypeString(network.getEncryptionType());
-  context.setValue("encryption", encryption);
+  result = context.setValue(FIELD_RSSI, network.getRssi());
+  if (!result->isOk())
+    return result;
+
+  auto encryption = getEncryptionTypeString(network.getEncryptionType());
+  result = context.setValue(FIELD_ENCRYPTION, encryption);
+  if (!result->isOk())
+    return result;
 
   return StatusResult::OK();
 }

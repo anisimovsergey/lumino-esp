@@ -9,16 +9,25 @@
 
 #include "ISerializer.hpp"
 
+#include "Core/ActionResult.hpp"
+
 namespace Json {
 
 template <class T> class Serializer : public ISerializer {
   public:
+    // From ISerializer
     virtual std::unique_ptr<Core::StatusResult> serialize(
       const Core::IEntity& entity,
       ISerializationContext& context) const override {
 
-      const T& entityT = static_cast<const T&>(entity);
-      return serialize(entityT, context);
+      auto& entityT = static_cast<const T&>(entity);
+      auto result = serialize(entityT, context);
+      if (!result->isOk()) {
+        return Core::StatusResult::InternalServerError(
+          "Unable to serialize an instance of type """ + getTypeId() + """.",
+          std::move(result));
+      }
+      return result;
     }
 
     virtual std::unique_ptr<Core::StatusResult> deserialize(
@@ -26,6 +35,11 @@ template <class T> class Serializer : public ISerializer {
       ISerializationContext& context) const override {
       std::unique_ptr<T> entityT;
       auto result = deserialize(entityT, context);
+      if (!result->isOk()) {
+        return Core::StatusResult::InternalServerError(
+          "Unable to deserialize an instance of type """ + getTypeId() + """.",
+          std::move(result));
+      }
       entity = std::move(entityT);
       return result;
     }

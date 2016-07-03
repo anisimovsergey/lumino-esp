@@ -20,12 +20,11 @@ class ISerializationContextFactory {
 
     virtual std::unique_ptr<Core::StatusResult> create(
       const ISerializationService& serializationService,
-      std::shared_ptr<ISerializationContext>& context) const = 0;
+      std::unique_ptr<ISerializationContext>& context) const = 0;
 
     virtual std::unique_ptr<Core::StatusResult> create(
-      const ISerializationService& serializationService,
-      std::shared_ptr<ISerializationContext>& context,
-      const String& json) const = 0;
+      const ISerializationService& serializationService, const String& json,
+      std::unique_ptr<ISerializationContext>& context) const = 0;
 };
 
 }

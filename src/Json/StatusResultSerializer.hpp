@@ -14,11 +14,13 @@ namespace Json {
 
 class StatusResultSerializer : public Serializer<Core::StatusResult> {
   public:
-    String getTypeId() const override {
+    // From ISerializer
+    virtual String getTypeId() const override {
       return Core::StatusResult::getStaticTypeId();
     }
 
   protected:
+    // From Serializer
     virtual std::unique_ptr<Core::StatusResult> serialize(
       const Core::StatusResult& statusResult,
       ISerializationContext& context) const override;

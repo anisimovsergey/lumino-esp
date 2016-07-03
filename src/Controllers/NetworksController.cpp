@@ -10,7 +10,7 @@ NetworksController::NetworksController(
 }
 
 void
-NetworksController::registerOn(IHttpServer &httpServer) {
+NetworksController::registerOn(IHttpServer& httpServer) {
   httpServer.addGetHandler("/wifi_networks", [&](IHttpRequest& request) {
     return onGetWiFiNetworks(request);
   });

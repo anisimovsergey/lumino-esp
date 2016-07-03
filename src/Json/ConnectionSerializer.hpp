@@ -14,16 +14,18 @@ namespace Json {
 
 class ConnectionSerializer : public Serializer<Models::Connection> {
   public:
-    String getTypeId() const override {
+    // From ISerializer
+    virtual String getTypeId() const override {
       return Models::Connection::getStaticTypeId();
     }
 
   protected:
-    std::unique_ptr<Core::StatusResult> serialize(
+    // From Serializer
+    virtual std::unique_ptr<Core::StatusResult> serialize(
       const Models::Connection& connection,
       ISerializationContext& context) const override;
 
-    std::unique_ptr<Core::StatusResult> deserialize(
+    virtual std::unique_ptr<Core::StatusResult> deserialize(
       std::unique_ptr<Models::Connection>& connection,
       ISerializationContext& context) const override;
 };
