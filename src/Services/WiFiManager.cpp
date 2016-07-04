@@ -8,10 +8,9 @@ using namespace Core;
 using namespace Models;
 using namespace Services;
 
-WiFiManager::WiFiManager() : dnsServer(make_unique<DNSServer>()) {
+WiFiManager::WiFiManager(std::shared_ptr<Core::IMessageQueue> messageQueue) :
+  dnsServer(make_unique<DNSServer>()), messageQueue(messageQueue) {
   deviceName = "esp8266fs";
-  network = WiFi.SSID();
-  delayed_disconnect = false;
 }
 
 void
@@ -44,7 +43,7 @@ WiFiManager::getWiFiNetworks(
 
 bool
 WiFiManager::hasConnection() const {
-  return (network.length() > 0);
+  return (WiFi.SSID().length() > 0);
 }
 
 String
@@ -54,7 +53,7 @@ WiFiManager::getDeviceName() const {
 
 String
 WiFiManager::getNetwork() const {
-  return network;
+  return WiFi.SSID();
 }
 
 bool
@@ -64,30 +63,28 @@ WiFiManager::isConnected() const {
 
 std::unique_ptr<Core::StatusResult>
 WiFiManager::connect(String network, String password) {
-
-  if (WiFi.status() == WL_CONNECTED)
+  if (isConnected())
     return StatusResult::Conflict("Already connected.");
 
-  this->network = network;
-  WiFi.begin(network.c_str(), password.c_str());
-
+  messageQueue->post([&](){
+    WiFi.begin(network.c_str(), password.c_str());
+  });
   return StatusResult::OK();
 }
 
 void
 WiFiManager::loop() {
-  if (delayed_disconnect) {
-    WiFi.disconnect();
-    delayed_disconnect = false;
-  }
   dnsServer->processNextRequest();
 }
 
 std::unique_ptr<Core::StatusResult>
 WiFiManager::disconnect() {
+  if (!hasConnection())
+    return StatusResult::Conflict("Connection doesn't exist.");
 
-  delayed_disconnect = true;
-  network = "";
+  messageQueue->post([&](){
+    WiFi.disconnect();
+  });
   return StatusResult::OK();
 }
 

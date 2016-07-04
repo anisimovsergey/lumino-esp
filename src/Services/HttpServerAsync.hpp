@@ -10,8 +10,7 @@
 #include "IHttpServer.hpp"
 #include "IHttpController.hpp"
 #include "IWiFiManager.hpp"
-#include "ILoopedService.hpp"
-
+#include "Core/ILoopedService.hpp"
 #include "Json/ISerializationService.hpp"
 
 #include <memory>
@@ -23,7 +22,7 @@ class AsyncWebServerRequest;
 
 namespace Services {
 
-class HttpServerAsync : public IHttpServer, public ILoopedService {
+class HttpServerAsync : public IHttpServer, public Core::ILoopedService {
   public:
     HttpServerAsync(int port,
       std::shared_ptr<const Json::ISerializationService> serializationService,

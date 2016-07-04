@@ -8,7 +8,8 @@
 #define SERVICES_WIFIMANAGER_HPP
 
 #include "IWiFiManager.hpp"
-#include "ILoopedService.hpp"
+#include "Core/ILoopedService.hpp"
+#include "Core/IMessageQueue.hpp"
 
 #include <DNSServer.h>
 
@@ -16,9 +17,9 @@
 
 namespace Services {
 
-class WiFiManager : public IWiFiManager, public ILoopedService {
+class WiFiManager : public IWiFiManager, public Core::ILoopedService {
   public:
-    WiFiManager();
+    WiFiManager(std::shared_ptr<Core::IMessageQueue> messageQueue);
 
     void    initialize();
 
@@ -39,8 +40,8 @@ class WiFiManager : public IWiFiManager, public ILoopedService {
 
   private:
     std::unique_ptr<DNSServer> dnsServer;
+    std::shared_ptr<Core::IMessageQueue> messageQueue;
     String  deviceName;
-    String  network;
     bool    delayed_disconnect;
 
     void    startSoftAP();

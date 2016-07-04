@@ -1,4 +1,5 @@
 #include "Core/Logger.hpp"
+#include "Core/MessageQueue.hpp"
 #include "Services/HttpServerAsync.hpp"
 #include "Services/WiFiManager.hpp"
 #include "Services/ObjectResultSender.hpp"
@@ -29,7 +30,8 @@ void setup(void){
   SPIFFS.begin();
 
   // Creating services
-  auto wifiManager(std::make_shared<WiFiManager>());
+  auto messageQueue(std::make_shared<MessageQueue>());
+  auto wifiManager(std::make_shared<WiFiManager>(messageQueue));
   wifiManager->initialize();
 
   auto contextFactory(
@@ -70,6 +72,7 @@ void setup(void){
   httpServerAsync->start();
 
   // Adding servers to the loop
+  loopedServices.push_back(messageQueue);
   loopedServices.push_back(httpServerAsync);
   loopedServices.push_back(wifiManager);
 }

@@ -1,6 +1,6 @@
 #include "ILoopedService.hpp"
 
-using namespace Services;
+using namespace Core;
 
 ILoopedService::~ILoopedService() {
 }
