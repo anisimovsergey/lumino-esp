@@ -8,8 +8,10 @@ using namespace Core;
 using namespace Models;
 using namespace Services;
 
-WiFiManager::WiFiManager(std::shared_ptr<Core::IMessageQueue> messageQueue) :
-  dnsServer(make_unique<DNSServer>()), messageQueue(messageQueue) {
+WiFiManager::WiFiManager(std::shared_ptr<Core::IMessageQueue> messageQueue,
+  std::shared_ptr<IDisplay> display) :
+  dnsServer(make_unique<DNSServer>()), messageQueue(messageQueue),
+  display(display) {
   deviceName = "esp8266fs";
 }
 
@@ -17,6 +19,10 @@ void
 WiFiManager::initialize() {
   WiFi.mode(WIFI_STA);
   WiFi.hostname(deviceName.c_str());
+  // Start connecting pattern
+  //messageQueue->addRecurrentTask(500, [&](){
+  //  updateDisplay();
+  //});
   // Start soft AP without checking connection.
   startSoftAP();
 }
@@ -66,7 +72,7 @@ WiFiManager::connect(String network, String password) {
   if (isConnected())
     return StatusResult::Conflict("Already connected.");
 
-  messageQueue->post([&](){
+  messageQueue->post([=](){
     WiFi.begin(network.c_str(), password.c_str());
   });
   return StatusResult::OK();
@@ -74,6 +80,7 @@ WiFiManager::connect(String network, String password) {
 
 void
 WiFiManager::loop() {
+  updateDisplay();
   dnsServer->processNextRequest();
 }
 
@@ -82,7 +89,7 @@ WiFiManager::disconnect() {
   if (!hasConnection())
     return StatusResult::Conflict("Connection doesn't exist.");
 
-  messageQueue->post([&](){
+  messageQueue->post([=](){
     WiFi.disconnect();
   });
   return StatusResult::OK();
@@ -99,4 +106,12 @@ WiFiManager::startSoftAP() {
 void
 WiFiManager::stopSoftAP() {
   WiFi.softAPdisconnect();
+}
+
+void
+WiFiManager::updateDisplay() {
+  if (isConnected())
+    display->showSigh(DisplaySign::Connected);
+  else
+    display->showSigh(DisplaySign::Disconnected);
 }

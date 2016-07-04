@@ -1,5 +1,6 @@
 #include "Core/Logger.hpp"
 #include "Core/MessageQueue.hpp"
+#include "Services/Display.hpp"
 #include "Services/HttpServerAsync.hpp"
 #include "Services/WiFiManager.hpp"
 #include "Services/ObjectResultSender.hpp"
@@ -17,6 +18,7 @@
 #include "Controllers/ConnectionController.hpp"
 
 #include <FS.h>
+#include <Adafruit_NeoPixel.h>
 
 using namespace Core;
 using namespace Json;
@@ -31,7 +33,8 @@ void setup(void){
 
   // Creating services
   auto messageQueue(std::make_shared<MessageQueue>());
-  auto wifiManager(std::make_shared<WiFiManager>(messageQueue));
+  auto display(std::make_shared<Display>());
+  auto wifiManager(std::make_shared<WiFiManager>(messageQueue, display));
   wifiManager->initialize();
 
   auto contextFactory(
