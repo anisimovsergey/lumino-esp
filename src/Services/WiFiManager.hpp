@@ -21,8 +21,7 @@ namespace Services {
 class WiFiManager : public IWiFiManager, public Core::ILoopedService {
   public:
     WiFiManager(
-      std::shared_ptr<Core::IMessageQueue> messageQueue,
-      std::shared_ptr<IDisplay> display);
+      std::shared_ptr<Core::IMessageQueue> messageQueue);
 
     void    initialize();
 
@@ -44,7 +43,6 @@ class WiFiManager : public IWiFiManager, public Core::ILoopedService {
   private:
     std::unique_ptr<DNSServer> dnsServer;
     std::shared_ptr<Core::IMessageQueue> messageQueue;
-    std::shared_ptr<IDisplay> display;
     String  deviceName;
     bool    delayed_disconnect;
 

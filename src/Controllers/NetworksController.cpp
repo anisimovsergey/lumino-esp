@@ -4,6 +4,8 @@ using namespace Core;
 using namespace Services;
 using namespace Controllers;
 
+static const String WiFiNetworksUrl = "/wifi_networks";
+
 NetworksController::NetworksController(
   std::shared_ptr<const IWiFiManager> wifiManager) :
   wifiManager(wifiManager) {
@@ -11,17 +13,14 @@ NetworksController::NetworksController(
 
 void
 NetworksController::registerOn(IHttpServer& httpServer) {
-  httpServer.addGetHandler("/wifi_networks", [&](IHttpRequest& request) {
+  httpServer.addGetHandler(WiFiNetworksUrl, [&](IHttpRequest& request) {
     return onGetWiFiNetworks(request);
   });
 }
 
 std::unique_ptr<Core::IActionResult>
 NetworksController::onGetWiFiNetworks(IHttpRequest& request) {
-  std::unique_ptr<Core::List<Models::Network>> networks;
-  auto result = wifiManager->getWiFiNetworks(networks);
-  if (!result->isOk())
-    return StatusResult::InternalServerError("Unable to scan WiFi networks",
-      std::move(result));
-  return ObjectResult::OK(std::move(networks));
+
+  auto message = request.createMessage(Message::GetWiFiNetworks);
+  return messageQueue->addMessage(message);
 }
