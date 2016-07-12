@@ -20,6 +20,10 @@ class MessageQueue : public Core::IMessageQueue {
 
     // From IMessageQueue
     virtual void post(TAction action) override;
+    //virtual void postMessage() override;
+    //virtual std::unique_ptr<EventHandler>subscribe();
+    //virtual void unsubcribe(std::unique_ptr<EventHandler>)
+
 
   private:
     std::queue<TAction> actions;
