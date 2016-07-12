@@ -8,6 +8,7 @@
 #define SERVICES_DISPLAY_HPP
 
 #include "IDisplay.hpp"
+#include "Core/ILoopedService.hpp"
 
 #include <memory>
 
@@ -15,11 +16,15 @@ class Adafruit_NeoPixel;
 
 namespace Services {
 
-class Display : public IDisplay {
+class Display : public IDisplay, public Core::ILoopedService  {
   public:
     Display();
 
+    // From IDisplay
     virtual void showSigh(const DisplaySign& sign) override;
+
+    // From ILoopedService
+    virtual void loop() override;
 
   private:
     DisplaySign currentSign;

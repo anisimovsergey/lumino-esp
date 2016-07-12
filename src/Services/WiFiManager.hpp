@@ -46,7 +46,6 @@ class WiFiManager : public IWiFiManager, public Core::ILoopedService {
     std::shared_ptr<Core::IMessageQueue> messageQueue;
     std::shared_ptr<IDisplay> display;
     String  deviceName;
-    bool    delayed_disconnect;
 
     void    startSoftAP();
     void    stopSoftAP();
