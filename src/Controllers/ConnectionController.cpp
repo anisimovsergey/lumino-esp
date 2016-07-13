@@ -34,6 +34,7 @@ ConnectionController::onGetConnection(
   IHttpRequest& request) {
 
   auto message = request.createMessage(Message::GetConnection);
+  auto message = UnicastMessage::GetConnection(reuest.getClient());
   return messageQueue->addMessage(message);
 }
 
@@ -43,8 +44,8 @@ ConnectionController::onPostConnection(
   const IEntity& entity) {
 
   auto connection = entity.dynamicCast<Connection>();
-    if (connection == nullptr)
-      return StatusResult::BadRequest("Type Connection expected.");
+  if (connection == nullptr)
+    return StatusResult::BadRequest("Type Connection expected.");
 
   auto message = request.createMessage(
     Message::CreateConnection(connection, ConnectionUrl));
