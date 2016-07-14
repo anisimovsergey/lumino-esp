@@ -8,11 +8,12 @@ using namespace Core;
 using namespace Models;
 using namespace Services;
 
-WiFiManager::WiFiManager(std::shared_ptr<Core::IMessageQueue> messageQueue,
-  std::shared_ptr<IDisplay> display) :
-  dnsServer(make_unique<DNSServer>()), messageQueue(messageQueue),
-  display(display) {
+WiFiManager::WiFiManager(std::shared_ptr<Core::IMessageQueue> messageQueue) :
+  dnsServer(make_unique<DNSServer>()), messageQueue(messageQueue) {
   deviceName = "esp8266fs";
+}
+
+WiFiManager::~WiFiManager() {
 }
 
 void
@@ -80,6 +81,7 @@ WiFiManager::stopSoftAP() {
   WiFi.softAPdisconnect();
 }
 
+/*
 std::unique_ptr<IActionResult>
 WiFiManager::onCreateConnection(const CreateConnectionMessage& message) {
 
@@ -148,3 +150,4 @@ WiFiManager::onScanComplete() {
   }
   messageQueue->addMessage(message);
 }
+*/

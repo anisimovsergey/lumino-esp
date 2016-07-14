@@ -20,13 +20,10 @@ namespace Services {
 
 class WiFiManager : public IWiFiManager, public Core::ILoopedService {
   public:
-    WiFiManager(
-      std::shared_ptr<Core::IMessageQueue> messageQueue);
+    WiFiManager(std::shared_ptr<Core::IMessageQueue> messageQueue);
+    ~WiFiManager();
 
     void    initialize();
-
-    std::unique_ptr<Core::StatusResult> getWiFiNetworks(
-      std::unique_ptr<Core::List<Models::Network>>& networks) const override;
 
     String  getDeviceName() const override;
     bool    hasConnection() const override;

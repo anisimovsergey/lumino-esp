@@ -5,12 +5,10 @@ Request
   "type": "request",
   "message": "create",
   "resource": "/connection",
-  "request": {
-    "content" : {
-      "type": "connection",
-      "ssid": "blah",
-      "password": "blah"
-    }
+  "content" : {
+    "type": "connection",
+    "ssid": "network SSID",
+    "password": "password"
   }
 }
 ```
@@ -20,7 +18,8 @@ Message accepted response
   "type": "response",
   "message": "create",
   "resource": "/connection",
-  "response": {
+  "result": {
+    "type": "statusResult",
     "code": 202
   }
 }
@@ -31,9 +30,10 @@ Message processed notification
   "type": "notification",
   "message": "create",
   "resource": "/connection",
-  "notification": {
+  "result": {
+    "type": "statusResult",
     "code": 302,
-    "metadata" : {
+    "attributes" : {
       "location": "/connection"
     }
   }

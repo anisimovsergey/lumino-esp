@@ -13,7 +13,8 @@ Message accepted response
   "type": "response",
   "message": "get",
   "resource": "/connection",
-  "response": {
+  "result": {
+    "type": "statusResult",
     "code": 202
   }
 }
@@ -24,9 +25,9 @@ Message processed notification
   "type": "notification",
   "message": "get",
   "resource": "/connection",
-  "notification": {
-    "code": 200,
-    "content" : {
+  "result": {
+    "type": "objectResult",
+    "object" : {
       "type": "connection",
       "network": "network name",
       "isConnected": true

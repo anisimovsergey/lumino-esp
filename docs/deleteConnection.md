@@ -13,7 +13,8 @@ Message accepted response
   "type": "response",
   "message": "delete",
   "resource": "/connection",
-  "response": {
+  "result": {
+    "type": "statusResult",
     "code": 202
   }
 }
@@ -24,7 +25,8 @@ Message processed notification
   "type": "notification",
   "message": "delete",
   "resource": "/connection",
-  "notification": {
+  "result": {
+    "type": "statusResult",
     "code": 204,
   }
 }
