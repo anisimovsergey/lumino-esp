@@ -20,6 +20,17 @@ All the message are divided into two groups `unicast` messages and `multicast` m
 |`update`|`unicast`|`unicast`|`multicast`|
 |`delete`|`unicast`|`unicast`|`multicast`|
 
+The following properties should be defined for the messages
+
+|Message type|Request|Response|Notification|
+|---------|:-------:|:--------:|:------------:|
+|`get`|`sender`|`sender`,`receiver`|`sender`,`receiver`|
+|`create`|`sender`|`sender`,`receiver`|`sender`|
+|`update`|`sender`|`sender`,`receiver`|`sender`|
+|`delete`|`sender`|`sender`,`receiver`|`sender`|
+
+When a service sends a `request` message in has to specify itself as the `sender`. In this way `receiver` field is automatically populated when the service which processes the `request` creates a `unicast` `response` or `notification` message.
+
 The message queue processing (message pump):
 1. The message is crated by a service and added to the message queue.
 2. All the services with the message handler registered in the message pump are sequentially notified about the new message in the queue.

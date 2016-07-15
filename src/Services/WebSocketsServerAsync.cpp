@@ -2,16 +2,23 @@
 
 #include <Core/Memory.hpp>
 #include <Core/Logger.hpp>
+#include <Core/IMessage.hpp>
 
 using namespace Core;
 using namespace Services;
 
-WebSocketsServerAsync::WebSocketsServerAsync(int port) :
-  server(make_unique<WebSocketsServer>(port)) {
+WebSocketsServerAsync::WebSocketsServerAsync(int port,
+  std::shared_ptr<const Json::ISerializationService> serializer) :
+  server(make_unique<WebSocketsServer>(port)), serializer(serializer) {
   server->begin();
 
-  //eventQueue->addBroadcastListener(onEventQueueBroadcast);
-  //eventQueue->addUnicastListener("webSocketsServerAsync", onEventQueueMessage);
+  //sender = eventQueue.addSender(
+  //  "webSocketsServerAsync",
+  //  onResponse,
+  //  onNotification);
+  //eventQueue->addBroadcastListener(onBroadcastMessage);
+  //eventQueue->addUnicastListener("webSocketsServerAsync", onUnicastMessage);
+  //eventQueue->addResourceListener("/resource", onResourceMessage)
 
   using namespace std::placeholders;
   server->onEvent(std::bind(&WebSocketsServerAsync::onSocketEvent, this,
@@ -25,18 +32,24 @@ WebSocketsServerAsync::~WebSocketsServerAsync() {
 void
 WebSocketsServerAsync::onSocketEvent(uint8_t num,
   WStype_t type, uint8_t * payload, size_t length) {
-  if (type == WStype_TEXT) {
-    Logger::message((char*)payload);
+
+  if (type != WStype_TEXT)
+    return;
+
+  std::unique_ptr<IEntity> entity;
+  auto statusResult = serializer->deserialize((char*)payload, entity);
+  if (statusResult->isOk()) {
+    if (entity->is<IMessage>()) {
+//      message.addTag("fromClient", num);
+      std::unique_ptr<IMessage> message(std::move(entity)->dynamicCast<IMessage>());
+      statusResult = sender->send(message);
+    } else {
+      statusResult = StatusResult::BadRequest("Type Connection expected.");
+    }
   }
-/*
-  if (type == WStype_TEXT) {
-    // client - num, text - payload
-    message = new Message();
-    message.source = "webSocketsServerAsync";
-    message.tags.add("client", num);
-    messageQueue.sendMessage(message);
-  }*/
+  sendResponse(httpRequest, *statusResult);
 }
+
 /*
 void
 WebSocketsServerAsync::onEventQueueBroadcast(message) {

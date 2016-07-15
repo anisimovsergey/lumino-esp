@@ -16,6 +16,10 @@ class IEntity {
     virtual ~IEntity();
     virtual String getTypeId() const = 0;
 
+    template<typename T> bool is() const {
+      return (getTypeId() == T::getStaticTypeId());
+    }
+
     template<typename T> T* dynamicCast() {
       if (getTypeId() == T::getStaticTypeId())
         return (T*)(this);
