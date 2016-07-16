@@ -17,7 +17,7 @@ template <class T> class HttpSender : public IHttpSender {
   public:
     // From IHttpSender
     virtual String getTypeId() const override {
-      return T::getStaticTypeId();
+      return T::TypeId;
     }
 
     virtual std::unique_ptr<Core::StatusResult> getResponse(

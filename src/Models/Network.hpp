@@ -7,15 +7,14 @@
 #ifndef MODELS_NETWORK_HPP
 #define MODELS_NETWORK_HPP
 
-#include "Core/Entity.hpp"
+#include "Core/IEntity.hpp"
 
 namespace Models {
 
-class Network : public Core::Entity<Network> {
+class Network : public Core::IEntity {
+  TYPE_INFO(Network, Core::IEntity, "network")
   public:
     Network(String ssid, int rssi, int encryptionType);
-
-    static String  getStaticTypeId() { return "network"; }
 
     String  getSsid() const { return ssid; };
     int     getRssi() const { return rssi; };

@@ -15,13 +15,6 @@ namespace Core {
 
 template <class T> class List : public IList {
   public:
-    static String getStaticTypeId() { return "list"; }
-
-    // From IEntity
-    String getTypeId() const override {
-      return getStaticTypeId();
-    }
-
     // From IList
     virtual std::unique_ptr<Core::StatusResult> add(
       const IEntity& item) const override {

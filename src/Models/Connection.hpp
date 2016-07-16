@@ -7,11 +7,12 @@
 #ifndef MODELS_CONNECTION_HPP
 #define MODELS_CONNECTION_HPP
 
-#include "Core/Entity.hpp"
+#include "Core/IEntity.hpp"
 
 namespace Models {
 
-class Connection : public Core::Entity<Connection> {
+class Connection : public Core::IEntity {
+  TYPE_INFO(Connection, Core::IEntity, "connection")
   public:
     Connection(
       String  networkSsid,
@@ -22,8 +23,6 @@ class Connection : public Core::Entity<Connection> {
       String  networkSsid,
       String  networkPassword
     );
-
-    static String  getStaticTypeId() { return "connection"; }
 
     String  getNetworkSsid() const { return networkSsid; };
     String  getNetworkPassword() const { return networkPassword; };

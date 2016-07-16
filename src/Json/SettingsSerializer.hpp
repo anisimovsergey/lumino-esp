@@ -16,7 +16,7 @@ class SettingsSerializer : public Serializer<Models::Settings> {
   public:
     // From ISerializer
     virtual String getTypeId() const override {
-      return Models::Settings::getStaticTypeId();
+      return Models::Settings::TypeId;
     }
 
   protected:

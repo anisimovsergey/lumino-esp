@@ -16,7 +16,7 @@ class StatusResultSerializer : public Serializer<Core::StatusResult> {
   public:
     // From ISerializer
     virtual String getTypeId() const override {
-      return Core::StatusResult::getStaticTypeId();
+      return Core::StatusResult::TypeId;
     }
 
   protected:

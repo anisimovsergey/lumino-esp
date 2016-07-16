@@ -11,25 +11,41 @@
 
 namespace Core {
 
+// The class type identifier, should be unique at least within an inheritance hierarchy
+#define TYPE_INFO(Class, SuperClass, ClassTypeId) \
+public: \
+  static constexpr const char* TypeId = ClassTypeId; \
+  \
+  virtual const char* getTypeId() const override { return TypeId; } \
+  static  bool        isType(String typeId) { \
+    return (typeId == ClassTypeId || SuperClass::isType(typeId)); \
+  }
+
 class IEntity {
   public:
     virtual ~IEntity();
-    virtual String getTypeId() const = 0;
+    virtual const char* getTypeId() const = 0;
 
-    template<typename T> bool is() const {
-      return (getTypeId() == T::getStaticTypeId());
+    static bool isType(String typeId) {
+      // All entities are of IEntity type
+      return true;
     }
 
-    template<typename T> T* dynamicCast() {
-      if (getTypeId() == T::getStaticTypeId())
-        return (T*)(this);
+    template<typename T> bool is() const {
+      auto thisType = getTypeId();
+      return T::isType(thisType);
+    }
+
+    template<typename T> T* cast() {
+      if (is<T>())
+        return static_cast<T>(this);
 
       return nullptr;
     }
 
-    template<typename T> const T* dynamicCast() const {
-      if (getTypeId() == T::getStaticTypeId())
-        return (T*)(this);
+    template<typename T> const T* cast() const {
+      if (is<T>())
+        return static_cast<T>(this);
 
       return nullptr;
     }

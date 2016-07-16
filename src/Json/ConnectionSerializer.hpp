@@ -16,7 +16,7 @@ class ConnectionSerializer : public Serializer<Models::Connection> {
   public:
     // From ISerializer
     virtual String getTypeId() const override {
-      return Models::Connection::getStaticTypeId();
+      return Models::Connection::TypeId;
     }
 
   protected:

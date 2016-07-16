@@ -37,6 +37,7 @@ private:
 };
 
 class IMessage : public IEntity {
+  TYPE_INFO(IMessage, IEntity, "message")
   public:
     virtual ~IMessage();
 
@@ -46,9 +47,11 @@ class IMessage : public IEntity {
 };
 
 class Request : public IMessage {
+  TYPE_INFO(Request, IMessage, "request")
   public:
     const IEntity& getContent();
 };
+
 /*
 class Response : public IMessage {
   public:

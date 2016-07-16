@@ -16,7 +16,7 @@ class NetworkSerializer : public Serializer<Models::Network> {
   public:
     // From ISerializer
     virtual String getTypeId() const override {
-      return Models::Network::getStaticTypeId();
+      return Models::Network::TypeId;
     }
 
   protected:

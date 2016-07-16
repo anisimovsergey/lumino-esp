@@ -15,6 +15,7 @@
 namespace Core {
 
 class IList : public IEntity {
+  TYPE_INFO(IList, IEntity, "list")
   public:
     virtual ~IList();
 

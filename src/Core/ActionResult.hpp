@@ -7,7 +7,7 @@
 #ifndef CORE_ACTION_RESULT_HPP
 #define CORE_ACTION_RESULT_HPP
 
-#include "Entity.hpp"
+#include "IEntity.hpp"
 #include "StatusCode.hpp"
 #include "Core/Memory.hpp"
 
@@ -16,46 +16,36 @@
 namespace Core {
 
 class IActionResult : public IEntity {
+  TYPE_INFO(ActionResult, IEntity, "result")
   public:
     virtual ~IActionResult();
 
     virtual StatusCode getStatusCode() const = 0;
 };
 
-template<class T>
-class ActionResult : public IActionResult {
+class RedirectResult : public IActionResult {
+  TYPE_INFO(RedirectResult, IActionResult, "actionResult")
   public:
-    // From IEntity
-    virtual String getTypeId() const override {
-      return T::getStaticTypeId();
+    static std::unique_ptr<RedirectResult> ToRoute(String route);
+
+    RedirectResult(String route) : route(route) {
     }
+
+    virtual StatusCode getStatusCode() const override {
+      return StatusCode::Redirect;
+    }
+
+    String getRoute() const {
+      return route;
+    }
+
+  private:
+    const String route;
 };
 
-class RedirectResult : public ActionResult<RedirectResult> {
-public:
-  static String getStaticTypeId() { return "redirectResult"; }
-
-  static std::unique_ptr<RedirectResult> ToRoute(String route);
-
-  RedirectResult(String route) : route(route) {
-  }
-
-  virtual StatusCode getStatusCode() const override {
-    return StatusCode::Redirect;
-  }
-
-  String getRoute() const {
-    return route;
-  }
-
-private:
-  const String route;
-};
-
-class StatusResult : public ActionResult<StatusResult> {
+class StatusResult : public IActionResult {
+  TYPE_INFO(StatusResult, IActionResult, "statusResult")
   public:
-    static String  getStaticTypeId() { return "statusResult"; }
-
     static std::unique_ptr<StatusResult> OK();
     static std::unique_ptr<StatusResult> Conflict(String message);
     static std::unique_ptr<StatusResult> BadRequest(String message);
@@ -104,10 +94,9 @@ class StatusResult : public ActionResult<StatusResult> {
 };
 
 
-class ObjectResult : public ActionResult<ObjectResult> {
+class ObjectResult : public IActionResult {
+  TYPE_INFO(ObjectResult, IActionResult, "objectResult")
   public:
-    static String  getStaticTypeId() { return "objectResult"; }
-
     static std::unique_ptr<ObjectResult> OK(std::unique_ptr<IEntity> entity) {
       return make_unique<ObjectResult>(
         StatusCode::OK,

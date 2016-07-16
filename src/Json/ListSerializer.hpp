@@ -16,7 +16,7 @@ class ListSerializer : public Serializer<Core::IList> {
   public:
     // From ISerializer
     virtual String getTypeId() const override {
-      return Core::List<class T>::getStaticTypeId();
+      return Core::IList::TypeId;
     }
 
   protected:

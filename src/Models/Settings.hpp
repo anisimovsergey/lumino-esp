@@ -7,17 +7,16 @@
 #ifndef MODELS_SETTINGS_HPP
 #define MODELS_SETTINGS_HPP
 
-#include "Core/Entity.hpp"
+#include "Core/IEntity.hpp"
 
 namespace Models {
 
-class Settings : public Core::Entity<Settings> {
+class Settings : public Core::IEntity {
+  TYPE_INFO(Settings, Core::IEntity, "settings")
   public:
     Settings(
       String  deviceName
     );
-
-    static String  getStaticTypeId() { return "settings"; }
 
     String      getDeviceName() const { return deviceName; };
 

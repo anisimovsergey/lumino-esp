@@ -41,13 +41,13 @@ WebSocketsServerAsync::onSocketEvent(uint8_t num,
   if (statusResult->isOk()) {
     if (entity->is<IMessage>()) {
 //      message.addTag("fromClient", num);
-      std::unique_ptr<IMessage> message(std::move(entity)->dynamicCast<IMessage>());
-      statusResult = sender->send(message);
+//      std::unique_ptr<IMessage> message(std::move(entity)->dynamicCast<IMessage>());
+      //statusResult = sender->send(message);
     } else {
       statusResult = StatusResult::BadRequest("Type Connection expected.");
     }
   }
-  sendResponse(httpRequest, *statusResult);
+  //sendResponse(httpRequest, *statusResult);
 }
 
 /*
