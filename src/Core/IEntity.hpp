@@ -31,21 +31,21 @@ class IEntity {
       return true;
     }
 
-    template<typename T> bool is() const {
+    template<class T> bool is() const {
       auto thisType = getTypeId();
       return T::isType(thisType);
     }
 
-    template<typename T> T* cast() {
+    template<class T> T* cast() {
       if (is<T>())
-        return static_cast<T>(this);
+        return static_cast<T*>(this);
 
       return nullptr;
     }
 
-    template<typename T> const T* cast() const {
+    template<class T> const T* cast() const {
       if (is<T>())
-        return static_cast<T>(this);
+        return static_cast<T*>(this);
 
       return nullptr;
     }

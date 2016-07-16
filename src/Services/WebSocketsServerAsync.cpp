@@ -8,14 +8,15 @@ using namespace Core;
 using namespace Services;
 
 WebSocketsServerAsync::WebSocketsServerAsync(int port,
+  std::shared_ptr<IMessageQueue> messageQueue,
   std::shared_ptr<const Json::ISerializationService> serializer) :
-  server(make_unique<WebSocketsServer>(port)), serializer(serializer) {
+  server(make_unique<WebSocketsServer>(port)), messageQueue(messageQueue),
+  serializer(serializer) {
   server->begin();
 
-  //sender = eventQueue.addSender(
-  //  "webSocketsServerAsync",
-  //  onResponse,
-  //  onNotification);
+  sender = eventQueue.addSender("webSocketsServerAsync",
+    onResponse,
+    onNotification);
   //eventQueue->addBroadcastListener(onBroadcastMessage);
   //eventQueue->addUnicastListener("webSocketsServerAsync", onUnicastMessage);
   //eventQueue->addResourceListener("/resource", onResourceMessage)
@@ -39,9 +40,9 @@ WebSocketsServerAsync::onSocketEvent(uint8_t num,
   std::unique_ptr<IEntity> entity;
   auto statusResult = serializer->deserialize((char*)payload, entity);
   if (statusResult->isOk()) {
-    if (entity->is<IMessage>()) {
-//      message.addTag("fromClient", num);
-//      std::unique_ptr<IMessage> message(std::move(entity)->dynamicCast<IMessage>());
+    if (entity->is<Message>()) {
+      std::unique_ptr<Message> message(std::move(entity)->cast<Message>());
+      message->addTag("fromClient", String(num));
       //statusResult = sender->send(message);
     } else {
       statusResult = StatusResult::BadRequest("Type Connection expected.");

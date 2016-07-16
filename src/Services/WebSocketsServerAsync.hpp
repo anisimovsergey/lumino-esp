@@ -8,6 +8,7 @@
 #define SERVICES_WEBSOCKETS_SERVER_HPP
 
 #include "Core/ILoopedService.hpp"
+#include "Core/IMessageQueue.hpp"
 #include "Json/ISerializationService.hpp"
 
 #include <WebSocketsServer.h>
@@ -19,6 +20,7 @@ namespace Services {
 class WebSocketsServerAsync : public Core::ILoopedService {
   public:
     WebSocketsServerAsync(int port,
+      std::shared_ptr<Core::IMessageQueue> messageQueue,
       std::shared_ptr<const Json::ISerializationService> serializer);
     ~WebSocketsServerAsync();
 
@@ -27,6 +29,7 @@ class WebSocketsServerAsync : public Core::ILoopedService {
 
   private:
     std::unique_ptr<WebSocketsServer> server;
+    std::shared_ptr<Core::IMessageQueue> messageQueue;
     std::shared_ptr<const Json::ISerializationService> serializer;
 
     void onSocketEvent(uint8_t num, WStype_t type, uint8_t * payload,

@@ -10,6 +10,9 @@
 #include "IEntity.hpp"
 #include "ActionResult.hpp"
 
+#include <list>
+#include <tuple>
+
 namespace Core {
 
 class MessageType {
@@ -36,18 +39,24 @@ private:
   String  id;
 };
 
-class IMessage : public IEntity {
+class Message : public IEntity {
   TYPE_INFO(IMessage, IEntity, "message")
   public:
-    virtual ~IMessage();
+    Message(MessageType messageType, String resource);
 
-    MessageType getMessageType();
-    String getResource();
-    String getTag(String tag);
+    MessageType   getMessageType() { return messageType; }
+    String        getResource() { return resource; }
+    void          addTag(String tag, String value);
+    String        getTag(String tag);
+
+  private:
+    MessageType messageType;
+    String resource;
+    std::list<std::tuple<String, String>> tags;
 };
 
-class Request : public IMessage {
-  TYPE_INFO(Request, IMessage, "request")
+class Request : public Message {
+  TYPE_INFO(Request, Message, "request")
   public:
     const IEntity& getContent();
 };
