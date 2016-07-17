@@ -17,11 +17,7 @@ WebSocketsServerAsync::WebSocketsServerAsync(int port,
   serializer(serializer) {
   server->begin();
 
-  messageSender = messageQueue->addSender(SenderId,
-    std::bind(&WebSocketsServerAsync::onResponse, this),
-    std::bind(&WebSocketsServerAsync::onNotification, this));
-  messageQueue->addBroadcastListener(
-    std::bind(&WebSocketsServerAsync::onBroadcastMessage, this));
+  messageQueue->addMessageReceiver(SenderId, this);
 
   using namespace std::placeholders;
   server->onEvent(std::bind(&WebSocketsServerAsync::onSocketEvent, this,
@@ -30,28 +26,6 @@ WebSocketsServerAsync::WebSocketsServerAsync(int port,
 
 WebSocketsServerAsync::~WebSocketsServerAsync() {
 
-}
-
-template<class Derived, class Base, class Del>
-std::unique_ptr<Derived, Del>
-dynamic_unique_ptr_cast( std::unique_ptr<Base, Del>&& p )
-{
-   if (Derived *result = Derived::cast(p.get())){
-        p.release();
-        return std::unique_ptr<Derived, Del>(result, std::move(p.get_deleter()));
-    }
-    return std::unique_ptr<Derived, Del>(nullptr, p.get_deleter());
-}
-
-template<class Derived, class Base, class Del>
-std::shared_ptr<Derived>
-dynamic_shared_ptr_cast( std::unique_ptr<Base, Del>&& p )
-{
-   if (Derived *result = Derived::cast(p.get())){
-        p.release();
-        return std::shared_ptr<Derived>(result);
-    }
-    return std::shared_ptr<Derived>(nullptr);
 }
 
 void
@@ -65,10 +39,10 @@ WebSocketsServerAsync::onSocketEvent(uint8_t num,
   std::shared_ptr<Request> request;
   auto statusResult = serializer->deserialize((char*)payload, entity);
   if (statusResult->isOk()) {
-    request = dynamic_shared_ptr_cast<Request>(std::move(entity));
+    request = dynamic_cast_to_shared<Request>(std::move(entity));
     if (request) {
       request->addTag(FromClientTag, String(num));
-      statusResult = messageSender->send(request);
+      statusResult = messageQueue->send(SenderId, request);
     }
   } else {
     statusResult = StatusResult::BadRequest("Type """ +
@@ -105,10 +79,22 @@ WebSocketsServerAsync::sendResponse(uint8_t num,
   server->sendTXT(num, json);
 }
 
-
 void
-WebSocketsServerAsync::onResponse() {
+WebSocketsServerAsync::onResponse(std::shared_ptr<Response> response) {
 
+  String json;
+  auto status = serializer->serialize(*response, json);
+  if (!status->isOk()) {
+    Logger::error("Unbale to seraile the response.");
+    return;
+  }
+
+  auto clientNumStr = response->getTag(FromClientTag);
+  if (clientNumStr != "") {
+    server->sendTXT(clientNumStr.toInt(), json);
+  } else {
+    // TODO : log error
+  }
 }
 
 void
@@ -117,7 +103,7 @@ WebSocketsServerAsync::onNotification() {
 }
 
 void
-WebSocketsServerAsync::onBroadcastMessage() {
+WebSocketsServerAsync::onBroadcast() {
 
 }
 

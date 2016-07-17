@@ -18,32 +18,26 @@
 
 namespace Core {
 
-class IMessageSender  {
-  public:
-    virtual ~IMessageSender();
+class IMessageReceiver {
+public:
+  virtual ~IMessageReceiver();
 
-    virtual std::unique_ptr<StatusResult>
-      send(std::shared_ptr<Message> message) = 0;
+  virtual void onResponse(std::shared_ptr<Response> response) = 0;
+  virtual void onNotification() = 0;
+  virtual void onBroadcast() = 0;
 };
 
 class IMessageQueue : public ILoopedService {
   public:
     virtual ~IMessageQueue();
 
-    typedef std::function<void()> TAction;
-    virtual void post(TAction action) = 0;
+    virtual void post(std::function<void()> action) = 0;
 
-    typedef std::function<void()> OnResponseHandler;
-    typedef std::function<void()> OnNotificationHandler;
-    typedef std::function<void()> OnBroadcastMessageHandler;
+    virtual std::unique_ptr<StatusResult> send(
+      String senderId, std::shared_ptr<Message> message) = 0;
 
-    virtual std::unique_ptr<IMessageSender> addSender(
-      String senderId,
-      OnResponseHandler onResponseHandler,
-      OnNotificationHandler onNotificationHandler) = 0;
-
-    virtual void addBroadcastListener(
-      OnBroadcastMessageHandler onBroadcastMessageHandler) = 0;
+    virtual void addMessageReceiver(
+      String receiverId, IMessageReceiver* receiver) = 0;
 };
 
 }

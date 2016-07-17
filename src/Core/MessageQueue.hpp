@@ -10,15 +10,10 @@
 #include "IMessageQueue.hpp"
 
 #include <queue>
+#include <list>
+#include <tuple>
 
 namespace Core {
-
-class MessageSender : public IMessageSender {
-
-  virtual std::unique_ptr<StatusResult>
-    send(std::shared_ptr<Message> message) override;
-
-};
 
 class MessageQueue : public IMessageQueue {
   public:
@@ -26,21 +21,20 @@ class MessageQueue : public IMessageQueue {
     virtual void loop() override;
 
     // From IMessageQueue
-    virtual void post(TAction action) override;
-    //virtual void postMessage() override;
-    //virtual std::unique_ptr<EventHandler>subscribe();
-    //virtual void unsubcribe(std::unique_ptr<EventHandler>)
+    virtual void post(std::function<void()> action) override;
 
-    virtual std::unique_ptr<IMessageSender> addSender(
-      String senderId,
-      OnResponseHandler onResponseHandler,
-      OnNotificationHandler onNotificationHandler) override;
+    virtual std::unique_ptr<StatusResult> send(
+      String senderId, std::shared_ptr<Message> message) override;
 
-    virtual void addBroadcastListener(
-      OnBroadcastMessageHandler onBroadcastMessageHandler) override;
+    virtual void addMessageReceiver(
+      String receiverId, IMessageReceiver* receiver) override;
 
   private:
-    std::queue<TAction> actions;
+    std::queue<std::function<void()>> actions; // TODO : this should be removed ASAP
+    std::list<std::shared_ptr<Message>> messages;
+    std::list<std::tuple<String, IMessageReceiver*>> receivers;
+
+    IMessageReceiver* getMessageReceiver(String receiverId);
 };
 
 }

@@ -14,6 +14,8 @@
 #include "Json/SettingsSerializer.hpp"
 #include "Json/ConnectionSerializer.hpp"
 #include "Json/SerializationContextFactory.hpp"
+#include "Json/RequestSerializer.hpp"
+#include "Json/ResponseSerializer.hpp"
 
 #include <FS.h>
 #include <Adafruit_NeoPixel.h>
@@ -62,6 +64,10 @@ void setup(void){
     std::make_shared<SettingsSerializer>());
   serializationService->addSerializer(
     std::make_shared<ConnectionSerializer>());
+  serializationService->addSerializer(
+    std::make_shared<RequestSerializer>());
+  serializationService->addSerializer(
+    std::make_shared<ResponseSerializer>());
 
   // Registering senders
   Logger::message("Registering services");
