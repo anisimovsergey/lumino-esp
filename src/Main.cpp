@@ -48,7 +48,7 @@ void setup(void){
     std::make_shared<HttpServerAsync>(80, serializationService, wifiManager));
   Logger::message("Creating creating Web Sockets server");
   auto webSocketsServerAsync(
-    std::make_shared<WebSocketsServerAsync>(81, serializationService));
+    std::make_shared<WebSocketsServerAsync>(81, messageQueue, serializationService));
 
   // Registering serializers
   Logger::message("Registering serializers");

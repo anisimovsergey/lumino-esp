@@ -15,11 +15,15 @@ namespace Core {
 #define TYPE_INFO(Class, SuperClass, ClassTypeId) \
 public: \
   static constexpr const char* TypeId = ClassTypeId; \
-  \
   virtual const char* getTypeId() const override { return TypeId; } \
   static  bool        isType(String typeId) { \
     return (typeId == ClassTypeId || SuperClass::isType(typeId)); \
-  }
+  } \
+  static Class* cast(Core::IEntity* entity) { \
+    if (entity->is<Class>()) \
+      return static_cast<Class*>(entity); \
+    return nullptr; \
+  } \
 
 class IEntity {
   public:
@@ -31,19 +35,19 @@ class IEntity {
       return true;
     }
 
-    template<class T> bool is() const {
+    template<typename T> bool is() const {
       auto thisType = getTypeId();
       return T::isType(thisType);
     }
 
-    template<class T> T* cast() {
+    template<typename T> T* cast() {
       if (is<T>())
         return static_cast<T*>(this);
 
       return nullptr;
     }
 
-    template<class T> const T* cast() const {
+    template<typename T> const T* cast() const {
       if (is<T>())
         return static_cast<T*>(this);
 

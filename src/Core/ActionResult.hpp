@@ -16,7 +16,7 @@
 namespace Core {
 
 class IActionResult : public IEntity {
-  TYPE_INFO(ActionResult, IEntity, "result")
+  TYPE_INFO(IActionResult, IEntity, "result")
   public:
     virtual ~IActionResult();
 
