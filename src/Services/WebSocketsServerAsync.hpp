@@ -31,9 +31,18 @@ class WebSocketsServerAsync : public Core::ILoopedService {
     std::unique_ptr<WebSocketsServer> server;
     std::shared_ptr<Core::IMessageQueue> messageQueue;
     std::shared_ptr<const Json::ISerializationService> serializer;
+    std::unique_ptr<Core::IMessageSender> messageSender;
 
     void onSocketEvent(uint8_t num, WStype_t type, uint8_t * payload,
       size_t length);
+
+    void sendResponse(uint8_t num,
+      std::unique_ptr<Core::StatusResult>&& result,
+      const Core::Request* request);
+
+    void onResponse();
+    void onNotification();
+    void onBroadcastMessage();
 };
 
 }

@@ -13,7 +13,14 @@
 
 namespace Core {
 
-class MessageQueue : public Core::IMessageQueue {
+class MessageSender : public IMessageSender {
+
+  virtual std::unique_ptr<StatusResult>
+    send(std::shared_ptr<Message> message) override;
+
+};
+
+class MessageQueue : public IMessageQueue {
   public:
     // From ILoopedService
     virtual void loop() override;
@@ -24,6 +31,13 @@ class MessageQueue : public Core::IMessageQueue {
     //virtual std::unique_ptr<EventHandler>subscribe();
     //virtual void unsubcribe(std::unique_ptr<EventHandler>)
 
+    virtual std::unique_ptr<IMessageSender> addSender(
+      String senderId,
+      OnResponseHandler onResponseHandler,
+      OnNotificationHandler onNotificationHandler) override;
+
+    virtual void addBroadcastListener(
+      OnBroadcastMessageHandler onBroadcastMessageHandler) override;
 
   private:
     std::queue<TAction> actions;

@@ -12,11 +12,13 @@
 
 #include <list>
 #include <tuple>
+#include <memory>
 
 namespace Core {
 
 class MessageType {
-
+public:
+  static const MessageType Unknown;
   static const MessageType Get;
   static const MessageType Create;
   static const MessageType Update;
@@ -40,14 +42,14 @@ private:
 };
 
 class Message : public IEntity {
-  TYPE_INFO(IMessage, IEntity, "message")
+  TYPE_INFO(Message, IEntity, "message")
   public:
     Message(MessageType messageType, String resource);
 
-    MessageType   getMessageType() { return messageType; }
-    String        getResource() { return resource; }
+    MessageType   getMessageType() const { return messageType; }
+    String        getResource() const { return resource; }
     void          addTag(String tag, String value);
-    String        getTag(String tag);
+    String        getTag(String tag) const;
 
   private:
     MessageType messageType;
@@ -59,6 +61,24 @@ class Request : public Message {
   TYPE_INFO(Request, Message, "request")
   public:
     const IEntity& getContent();
+};
+
+class Response : public IEntity {
+  TYPE_INFO(Response, IEntity, "response")
+  public:
+    Response(std::unique_ptr<StatusResult> result);
+
+    Response(std::unique_ptr<StatusResult> result,
+             MessageType messageType, String resource);
+
+    MessageType   getMessageType() const { return messageType; }
+    String        getResource() const { return resource; }
+    const StatusResult& getResult() const { return *result; }
+
+  private:
+    MessageType messageType;
+    String resource;
+    std::unique_ptr<StatusResult> result;
 };
 
 /*
