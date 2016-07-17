@@ -48,6 +48,26 @@ SerializationContext::getBoolValue(const String& key, bool& value) {
 }
 
 std::unique_ptr<Core::StatusResult>
+SerializationContext::getEntity(const String& key, std::unique_ptr<Core::IEntity>& entity) {
+
+  auto jsonVal = jsonObject[key];
+  if (!jsonVal.success())
+    return StatusResult::BadRequest("Key """ + key + """ is not defined.");
+
+  if (!jsonVal.is<JsonObject>())
+    return StatusResult::BadRequest("Value for key """ + key + """ should be a JSON object.");
+
+  auto& nestedObject = jsonVal.asObject();
+  SerializationContext context(serializationService, jsonBuffer, nestedObject);
+  auto result = serializationService.deserialize(context, entity);
+  if (!result->isOk()) {
+      return StatusResult::InternalServerError(
+        "Unable to deserialize a nested entity.", std::move(result));
+  }
+  return StatusResult::OK();
+}
+
+std::unique_ptr<Core::StatusResult>
 SerializationContext::setValue(const String& key, const String& value) {
   jsonObject[key] = value;
   return StatusResult::OK();

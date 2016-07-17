@@ -86,10 +86,13 @@ WebSocketsServerAsync::sendResponse(uint8_t num,
 
   std::unique_ptr<Response> response;
   if (request != nullptr) {
-    response = make_unique<Response>(std::move(result),
-      request->getMessageType(), request->getResource());
+    response = make_unique<Response>(
+      request->getActionType(),
+      request->getResource(),
+      std::move(result));
   } else {
-    response = make_unique<Response>(std::move(result));
+    response = make_unique<Response>(
+      ActionType::Unknown, "", std::move(result));
   }
 
   String json;

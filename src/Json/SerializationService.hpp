@@ -34,6 +34,10 @@ class SerializationService : public ISerializationService {
       const String& json,
       std::unique_ptr<Core::IEntity>& entity) const override;
 
+    virtual std::unique_ptr<Core::StatusResult> deserialize(
+      ISerializationContext& context,
+      std::unique_ptr<Core::IEntity>& entity) const override;
+
     // Methods
     void addSerializer(
       std::shared_ptr<const ISerializer> serializer);

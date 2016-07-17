@@ -55,8 +55,16 @@ SerializationService::deserialize(
   if (!actionResult->isOk())
     return actionResult;
 
+  return deserialize(*context, entity);
+}
+
+std::unique_ptr<Core::StatusResult>
+SerializationService::deserialize(
+  ISerializationContext& context,
+  std::unique_ptr<Core::IEntity>& entity) const {
+
   String typeId;
-  actionResult = context->getStringValue(TYPE_FIELD, typeId);
+  auto actionResult = context.getStringValue(TYPE_FIELD, typeId);
   if (!actionResult->isOk())
     return actionResult;
 
@@ -65,7 +73,7 @@ SerializationService::deserialize(
     return StatusResult::BadRequest("Unable to find serializer for type """ +
       typeId + """.");
 
-  return serializer->deserialize(entity, *context);
+  return serializer->deserialize(entity, context);
 }
 
 void

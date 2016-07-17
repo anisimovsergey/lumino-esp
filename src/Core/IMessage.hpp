@@ -16,26 +16,38 @@
 
 namespace Core {
 
-class MessageType {
+class ActionType {
 public:
-  static const MessageType Unknown;
-  static const MessageType Get;
-  static const MessageType Create;
-  static const MessageType Update;
-  static const MessageType Delete;
+  static const ActionType Unknown;
+  static const ActionType Get;
+  static const ActionType Create;
+  static const ActionType Update;
+  static const ActionType Delete;
 
   String  getId() const { return id; }
 
-  bool operator==(const MessageType& other) const {
+  bool operator==(const ActionType& other) const {
     return id == other.id;
   }
 
-  bool operator!=(const MessageType& other) const {
+  bool operator!=(const ActionType& other) const {
     return !(*this == other);
   }
 
+  static ActionType getById(String id) {
+    if (id == Get.getId())
+      return ActionType::Get;
+    if (id == Get.getId())
+      return ActionType::Update;
+    if (id == Get.getId())
+      return ActionType::Create;
+    if (id == Get.getId())
+      return ActionType::Delete;
+    return ActionType::Unknown;
+  }
+
 private:
-  MessageType(String id) : id(id) {
+  ActionType(String id) : id(id) {
   }
 
   String  id;
@@ -44,15 +56,16 @@ private:
 class Message : public IEntity {
   TYPE_INFO(Message, IEntity, "message")
   public:
-    Message(MessageType messageType, String resource);
-
-    MessageType   getMessageType() const { return messageType; }
+    ActionType    getActionType() const { return actionType; }
     String        getResource() const { return resource; }
     void          addTag(String tag, String value);
     String        getTag(String tag) const;
 
+  protected:
+    Message(ActionType actionType, String resource);
+
   private:
-    MessageType messageType;
+    ActionType actionType;
     String resource;
     std::list<std::tuple<String, String>> tags;
 };
@@ -60,38 +73,35 @@ class Message : public IEntity {
 class Request : public Message {
   TYPE_INFO(Request, Message, "request")
   public:
-    const IEntity& getContent();
+    Request(ActionType actionType, String resource,
+      std::unique_ptr<IEntity> content);
+
+    const IEntity* getContent() { return content.get(); };
+
+  private:
+    std::unique_ptr<IEntity> content;
+
 };
 
-class Response : public IEntity {
+class Response : public Message {
   TYPE_INFO(Response, IEntity, "response")
   public:
-    Response(std::unique_ptr<StatusResult> result);
+    Response(ActionType actionType, String resource,
+      std::unique_ptr<StatusResult> result);
 
-    Response(std::unique_ptr<StatusResult> result,
-             MessageType messageType, String resource);
-
-    MessageType   getMessageType() const { return messageType; }
-    String        getResource() const { return resource; }
     const StatusResult& getResult() const { return *result; }
 
   private:
-    MessageType messageType;
-    String resource;
     std::unique_ptr<StatusResult> result;
 };
 
 /*
-class Response : public IMessage {
-  public:
-    const IActionResult& getResult();
-};
-
 class Notification : public IMessage {
   public:
     const IActionResult& getResult();
 };
 */
+
 }
 
 #endif /* end of include guard: CORE_I_MESSAGE_HPP */

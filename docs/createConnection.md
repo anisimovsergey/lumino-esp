@@ -3,7 +3,7 @@ Request
 ```json
 {
   "type": "request",
-  "message": "create",
+  "action": "create",
   "resource": "/connection",
   "content" : {
     "type": "connection",
@@ -16,7 +16,7 @@ Message accepted response
 ```json
 {
   "type": "response",
-  "message": "create",
+  "action": "create",
   "resource": "/connection",
   "result": {
     "type": "statusResult",
@@ -28,7 +28,7 @@ Message processed notification
 ```json
 {
   "type": "notification",
-  "message": "create",
+  "action": "create",
   "resource": "/connection",
   "result": {
     "type": "statusResult",

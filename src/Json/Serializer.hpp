@@ -16,6 +16,10 @@ namespace Json {
 template <class T> class Serializer : public ISerializer {
   public:
     // From ISerializer
+    virtual String getTypeId() const override {
+      return T::TypeId;
+    }
+    
     virtual std::unique_ptr<Core::StatusResult> serialize(
       const Core::IEntity& entity,
       ISerializationContext& context) const override {

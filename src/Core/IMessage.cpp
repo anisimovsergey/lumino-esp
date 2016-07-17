@@ -2,14 +2,14 @@
 
 using namespace Core;
 
-const MessageType MessageType::Unknown = MessageType("unknown");
-const MessageType MessageType::Get = MessageType("get");
-const MessageType MessageType::Create = MessageType("create");
-const MessageType MessageType::Update = MessageType("update");
-const MessageType MessageType::Delete = MessageType("delete");
+const ActionType ActionType::Unknown = ActionType("unknown");
+const ActionType ActionType::Get = ActionType("get");
+const ActionType ActionType::Create = ActionType("create");
+const ActionType ActionType::Update = ActionType("update");
+const ActionType ActionType::Delete = ActionType("delete");
 
-Message::Message(MessageType messageType, String resource) :
-  messageType(messageType), resource(resource) {
+Message::Message(ActionType actionType, String resource) :
+  actionType(actionType), resource(resource) {
 }
 
 void
@@ -26,13 +26,14 @@ Message::getTag(String tag) const {
     return "";
 }
 
-Response::Response(std::unique_ptr<Core::StatusResult> result) :
-  messageType(MessageType::Unknown), resource(""), result(std::move(result)) {
+Request::Request(ActionType actionType, String resource,
+  std::unique_ptr<IEntity> content) : Message(actionType, resource),
+  content(std::move(content)) {
 
 }
 
-Response::Response(std::unique_ptr<Core::StatusResult> result,
-         MessageType messageType, String resource) :
-         messageType(messageType), resource(resource), result(std::move(result)) {
+Response::Response(ActionType actionType, String resource,
+  std::unique_ptr<StatusResult> result) : Message(actionType, resource),
+  result(std::move(result)) {
 
 }
