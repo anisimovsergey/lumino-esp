@@ -31,8 +31,8 @@ class IEntity {
     virtual const char* getTypeId() const = 0;
 
     static bool isType(String typeId) {
-      // All entities are of IEntity type
-      return true;
+      // TODO : Quite controversial 
+      return false;
     }
 
     template<typename T> bool is() const {

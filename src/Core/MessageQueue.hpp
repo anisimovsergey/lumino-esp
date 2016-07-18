@@ -31,7 +31,7 @@ class MessageQueue : public IMessageQueue {
 
   private:
     std::queue<std::function<void()>> actions; // TODO : this should be removed ASAP
-    std::list<std::shared_ptr<Message>> messages;
+    std::queue<std::shared_ptr<Message>> messages;
     std::list<std::tuple<String, IMessageReceiver*>> receivers;
 
     IMessageReceiver* getMessageReceiver(String receiverId);

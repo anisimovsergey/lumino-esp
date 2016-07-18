@@ -1,6 +1,7 @@
 #include "MessageQueue.hpp"
 
 #include "Memory.hpp"
+#include "Logger.hpp"
 
 using namespace Core;
 
@@ -13,10 +14,12 @@ MessageQueue::loop() {
   }
   while (!messages.empty())
   {
+    Logger::message("Message queue is not empty");
     auto message = messages.front();
 
     auto request = dynamic_cast_to_shared<Request>(message);
     if (request) {
+      Logger::message("Processing request");
       // Insert code here for finding a processor
       // IF the message is a Request and unable to find a processor for this message
       // THEN send response to the sender
@@ -33,19 +36,25 @@ MessageQueue::loop() {
       response->addTag("receiver", request->getTag("sender"));
       // The sender is the message queue, move it to const
       response->addTag("sender", "messageQueue");
-      messages.push_back(response);
+      messages.push(response);
+    } else {
+      Logger::message("It's not a request");
     }
     auto response = dynamic_cast_to_shared<Response>(message);
     if (response) {
+      Logger::message("Processing response");
       // Try to find a receiver for this message.
       auto receiver = getMessageReceiver(response->getTag("receiver"));
       if (receiver) {
         receiver->onResponse(response);
       }
       // If can't find, just log, we can't do much the sender is gone.
+    } else {
+      Logger::message("It's not a response");
     }
-
-    messages.pop_front();
+    Logger::message("Removing message from the queue");
+    messages.pop();
+    Logger::message("Removed.");
   }
 }
 
@@ -58,7 +67,7 @@ std::unique_ptr<StatusResult>
 MessageQueue::send(
   String senderId, std::shared_ptr<Message> message) {
   message->addTag("sender", senderId);
-  messages.push_back(message);
+  messages.push(message);
   return StatusResult::OK();
 }
 

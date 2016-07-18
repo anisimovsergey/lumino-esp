@@ -34,9 +34,11 @@ RequestSerializer::deserialize(
     return result;
 
   std::unique_ptr<Core::IEntity> content;
-  result = context.getEntity(FIELD_CONTENT, content);
-  if (!result->isOk())
-    return result;
+  if (context.hasKey(FIELD_CONTENT)) {
+    result = context.getEntity(FIELD_CONTENT, content);
+    if (!result->isOk())
+      return result;
+  }
 
   request = make_unique<Request>(actionType, resource, std::move(content));
   return StatusResult::OK();

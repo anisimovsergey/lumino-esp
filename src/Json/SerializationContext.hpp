@@ -26,12 +26,14 @@ class SerializationContext : public ISerializationContext {
     // From ISerializationContext
     String toString() const override;
 
+    virtual bool hasKey(const String& key) override;
+
     virtual std::unique_ptr<Core::StatusResult>
       getStringValue(const String& key, String& value) override;
     virtual std::unique_ptr<Core::StatusResult>
       getBoolValue(const String& key, bool& value) override;
     virtual std::unique_ptr<Core::StatusResult>
-      getEntity(const String& key, std::unique_ptr<Core::IEntity>& entity) override;      
+      getEntity(const String& key, std::unique_ptr<Core::IEntity>& entity) override;
 
     virtual std::unique_ptr<Core::StatusResult>
       setValue(const String& key, const String& value) override;

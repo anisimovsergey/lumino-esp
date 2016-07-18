@@ -31,29 +31,29 @@ void setup(void){
   SPIFFS.begin();
 
   // Creating services
-  Logger::message("Creating message queue");
+  Logger::message("Creating the message queue...");
   auto messageQueue(std::make_shared<MessageQueue>());
-  Logger::message("Creating display");
+  Logger::message("Creating the display..");
   auto display(std::make_shared<Display>());
-  Logger::message("Creating wifi manager");
+  Logger::message("Creating the wifi manager...");
   auto wifiManager(std::make_shared<WiFiManager>(messageQueue));
   wifiManager->initialize();
 
-  Logger::message("Creating context factory");
+  Logger::message("Creating the context factory...");
   auto contextFactory(
     std::make_shared<SerializationContextFactory>());
-  Logger::message("Creating serialization service");
+  Logger::message("Creating the serialization service...");
   auto serializationService(
     std::make_shared<SerializationService>(contextFactory));
-  Logger::message("Creating creating HTTP server");
+  Logger::message("Creating the creating HTTP server...");
   auto httpServerAsync(
     std::make_shared<HttpServerAsync>(80, serializationService, wifiManager));
-  Logger::message("Creating creating Web Sockets server");
+  Logger::message("Creating creating Web Sockets server...");
   auto webSocketsServerAsync(
     std::make_shared<WebSocketsServerAsync>(81, messageQueue, serializationService));
 
   // Registering serializers
-  Logger::message("Registering serializers");
+  Logger::message("Registering serializers...");
   serializationService->addSerializer(
     std::make_shared<StatusResultSerializer>());
   serializationService->addSerializer(
@@ -70,7 +70,7 @@ void setup(void){
     std::make_shared<ResponseSerializer>());
 
   // Registering senders
-  Logger::message("Registering services");
+  Logger::message("Registering services...");
   httpServerAsync->addHttpSender(
     std::make_shared<ObjectResultSender>(serializationService));
   httpServerAsync->addHttpSender(
@@ -78,16 +78,18 @@ void setup(void){
   httpServerAsync->addHttpSender(
     std::make_shared<RedirectResultSender>());
 
-  Logger::message("Starting http server");
+  Logger::message("Starting http server...");
   httpServerAsync->start();
-  Logger::message("Starting websocket server server");
+  Logger::message("Starting websocket server server...");
   webSocketsServerAsync->start();
 
   // Adding servers to the loop
+  Logger::message("Adding services to the loop...");
   loopedServices.push_back(messageQueue);
   loopedServices.push_back(httpServerAsync);
   loopedServices.push_back(wifiManager);
   loopedServices.push_back(webSocketsServerAsync);
+  Logger::message("Initialization finished.");
 }
 
 void loop(void){

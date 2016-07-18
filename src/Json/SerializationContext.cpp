@@ -19,6 +19,11 @@ SerializationContext::toString() const {
   return str;
 }
 
+bool
+SerializationContext::hasKey(const String& key) {
+  return jsonObject[key].success();
+}
+
 std::unique_ptr<Core::StatusResult>
 SerializationContext::getStringValue(const String& key, String& value) {
 

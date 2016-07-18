@@ -43,10 +43,10 @@ WebSocketsServerAsync::onSocketEvent(uint8_t num,
     if (request) {
       request->addTag(FromClientTag, String(num));
       statusResult = messageQueue->send(SenderId, request);
+    } else {
+      statusResult = StatusResult::BadRequest("Type '" +
+        String(Request::TypeId) + "' was expected.");
     }
-  } else {
-    statusResult = StatusResult::BadRequest("Type """ +
-      String(Request::TypeId) + """ was expected.");
   }
   if (!statusResult->isOk()) {
     sendResponse(num, std::move(statusResult), request.get());
@@ -81,7 +81,7 @@ WebSocketsServerAsync::sendResponse(uint8_t num,
 
 void
 WebSocketsServerAsync::onResponse(std::shared_ptr<Response> response) {
-
+  Logger::error("Sending response.");
   String json;
   auto status = serializer->serialize(*response, json);
   if (!status->isOk()) {
@@ -95,6 +95,7 @@ WebSocketsServerAsync::onResponse(std::shared_ptr<Response> response) {
   } else {
     // TODO : log error
   }
+  Logger::error("Response sent.");
 }
 
 void
