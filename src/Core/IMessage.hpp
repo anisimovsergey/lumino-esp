@@ -37,11 +37,11 @@ public:
   static ActionType getById(String id) {
     if (id == Get.getId())
       return ActionType::Get;
-    if (id == Get.getId())
+    if (id == Update.getId())
       return ActionType::Update;
-    if (id == Get.getId())
+    if (id == Create.getId())
       return ActionType::Create;
-    if (id == Get.getId())
+    if (id == Delete.getId())
       return ActionType::Delete;
     return ActionType::Unknown;
   }

@@ -20,10 +20,13 @@ MessageQueue::loop() {
     auto request = dynamic_cast_to_shared<Request>(message);
     if (request) {
       Logger::message("Processing request");
-      // Insert code here for finding a processor
-      // IF the message is a Request and unable to find a processor for this message
-      // THEN send response to the sender
-      auto result = StatusResult::NotFound("Unable to find a processor for this type of request.");
+      std::unique_ptr<StatusResult> result;
+      auto receiver = getMessageReceiver(*request);
+      if (receiver) {
+        result = receiver->onRequest(request);
+      } else {
+        result = StatusResult::NotFound("Unable to find a processor for this type of request.");
+      }
       auto response = std::make_shared<Response>(
         request->getActionType(),
         request->getResource(),
@@ -34,8 +37,8 @@ MessageQueue::loop() {
       response->addTag("fromClient", request->getTag("fromClient"));
       // Send back to the sender
       response->addTag("receiver", request->getTag("sender"));
-      // The sender is the message queue, move it to const
-      response->addTag("sender", "messageQueue");
+      // TODO: Set a proper sender or "messageQueue"
+      // response->addTag("sender", "messageQueue");
       messages.push(response);
     } else {
       Logger::message("It's not a request");
@@ -44,9 +47,9 @@ MessageQueue::loop() {
     if (response) {
       Logger::message("Processing response");
       // Try to find a receiver for this message.
-      auto receiver = getMessageReceiver(response->getTag("receiver"));
-      if (receiver) {
-        receiver->onResponse(response);
+      auto sender = getMessageSender(response->getTag("receiver"));
+      if (sender) {
+        sender->onResponse(response);
       }
       // If can't find, just log, we can't do much the sender is gone.
     } else {
@@ -72,17 +75,31 @@ MessageQueue::send(
 }
 
 void
-MessageQueue::addMessageReceiver(
-  String receiverId, IMessageReceiver* receiver) {
-
-  receivers.push_back(std::make_tuple(receiverId, receiver));
+MessageQueue::addMessageSender(
+  std::shared_ptr<IMessageSender> sender) {
+  senders.push_back(sender);
 }
 
-IMessageReceiver*
-MessageQueue::getMessageReceiver(String receiverId) {
-  for(auto tuple: receivers) {
-    if (std::get<0>(tuple) == receiverId)
-      return std::get<1>(tuple);
+void
+MessageQueue::addMessageReceiver(std::shared_ptr<IMessageReceiver> receiver) {
+  receivers.push_back(receiver);
+}
+
+std::shared_ptr<IMessageSender>
+MessageQueue::getMessageSender(String senderId) {
+  for(auto sender: senders) {
+    if (sender->getSenderId() == senderId)
+      return sender;
+  }
+  return nullptr;
+}
+
+std::shared_ptr<IMessageReceiver>
+MessageQueue::getMessageReceiver(const Request& request) {
+  for(auto receiver: receivers) {
+    if (receiver->getActionType() == request.getActionType() &&
+        receiver->getResource() == request.getResource())
+      return receiver;
   }
   return nullptr;
 }

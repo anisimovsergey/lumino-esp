@@ -22,8 +22,34 @@ class IMessageSender {
 public:
   virtual ~IMessageSender();
 
+  virtual String getSenderId() = 0;
+
   virtual void onResponse(std::shared_ptr<Response> response) = 0;
   virtual void onNotification(std::shared_ptr<Notification> notification) = 0;
+};
+
+class MessageSender : public IMessageSender {
+public:
+  MessageSender(String senderId,
+    std::function<void(std::shared_ptr<Response>)> responseHandler,
+    std::function<void(std::shared_ptr<Notification>)> notificationHandler) :
+    senderId(senderId), responseHandler(responseHandler), notificationHandler(notificationHandler) {
+  }
+
+  virtual String getSenderId() override { return senderId; };
+
+  virtual void onResponse(std::shared_ptr<Response> response) override {
+    responseHandler(response);
+  }
+
+  virtual void onNotification(std::shared_ptr<Notification> notification) override {
+    notificationHandler(notification);
+  }
+
+private:
+  String senderId;
+  std::function<void(std::shared_ptr<Response>)> responseHandler;
+  std::function<void(std::shared_ptr<Notification>)> notificationHandler;
 };
 
 class IMessageListener {
@@ -40,7 +66,7 @@ public:
   virtual ActionType getActionType() = 0;
   virtual String getResource() = 0;
 
-  virtual void onRequest(std::shared_ptr<Request> request) = 0;
+  virtual std::unique_ptr<StatusResult> onRequest(std::shared_ptr<Request> request) = 0;
 };
 
 class MessageReceiver : public IMessageReceiver {
@@ -59,64 +85,66 @@ private:
 
 class GetMessageReceiver : public MessageReceiver {
 public:
-  GetMessageReceiver(String resource, std::function<void(std::shared_ptr<Request>)> handler) :
+  GetMessageReceiver(String resource, std::function<std::unique_ptr<StatusResult>(std::shared_ptr<Request>)> handler) :
     MessageReceiver(ActionType::Get, resource), handler(handler) {
   }
 
-  virtual void onRequest(std::shared_ptr<Request> request) override {
-    handler(request);
+  virtual std::unique_ptr<StatusResult> onRequest(std::shared_ptr<Request> request) override {
+    return handler(request);
   }
 
 private:
-  std::function<void(std::shared_ptr<Request>)> handler;
+  std::function<std::unique_ptr<StatusResult>(std::shared_ptr<Request>)> handler;
 };
 
 class DeleteMessageReceiver : public MessageReceiver {
 public:
-  DeleteMessageReceiver(String resource, std::function<void(std::shared_ptr<Request>)> handler) :
+  DeleteMessageReceiver(String resource, std::function<std::unique_ptr<StatusResult>(std::shared_ptr<Request>)> handler) :
     MessageReceiver(ActionType::Delete, resource), handler(handler) {
   }
 
-  virtual void onRequest(std::shared_ptr<Request> request) override {
-    handler(request);
+  virtual std::unique_ptr<StatusResult> onRequest(std::shared_ptr<Request> request) override {
+    return handler(request);
   }
 
 private:
-  std::function<void(std::shared_ptr<Request>)> handler;
+  std::function<std::unique_ptr<StatusResult>(std::shared_ptr<Request>)> handler;
 };
 
 template<class T>
 class CreateMessageReceiver : public MessageReceiver {
 public:
-  CreateMessageReceiver(String resource, std::function<void(std::shared_ptr<Request>, T*)> handler) :
+  CreateMessageReceiver(String resource, std::function<std::unique_ptr<StatusResult>(std::shared_ptr<Request>, const T&)> handler) :
     MessageReceiver(ActionType::Create, resource), handler(handler) {
   }
 
-  virtual void onRequest(std::shared_ptr<Request> request) override {
+  virtual std::unique_ptr<StatusResult> onRequest(std::shared_ptr<Request> request) override {
     auto content = T::cast(request->getContent());
     if (content)
-      handler(request);
+      return handler(request, *content);
+    return StatusResult::InternalServerError("Expeceted content of '" + String(T::TypeId) + "' type.");
   }
 
 private:
-  std::function<void(std::shared_ptr<Request>, T*)> handler;
+  std::function<std::unique_ptr<StatusResult>(std::shared_ptr<Request>, const T&)> handler;
 };
 
 template<class T>
 class UpdateMessageReceiver : public MessageReceiver {
 public:
-  UpdateMessageReceiver(String resource, std::function<void(std::shared_ptr<Request>, T*)> handler) :
+  UpdateMessageReceiver(String resource, std::function<std::unique_ptr<StatusResult>(std::shared_ptr<Request>, const T&)> handler) :
     MessageReceiver(ActionType::Update, resource), handler(handler) {
   }
 
-  virtual void onRequest(std::shared_ptr<Request> request) override {
+  virtual std::unique_ptr<StatusResult> onRequest(std::shared_ptr<Request> request) override {
     auto content = T::cast(request->getContent());
     if (content)
-      handler(request);
+      return handler(request, *content);
+    return StatusResult::InternalServerError("Expeceted content of '" + String(T::TypeId) + "' type.");
   }
 
 private:
-  std::function<void(std::shared_ptr<Request>, T*)> handler;
+  std::function<std::unique_ptr<StatusResult>(std::shared_ptr<Request>, const T&)> handler;
 };
 
 class IMessageQueue : public ILoopedService {
@@ -128,8 +156,11 @@ class IMessageQueue : public ILoopedService {
     virtual std::unique_ptr<StatusResult> send(
       String senderId, std::shared_ptr<Message> message) = 0;
 
+    virtual void addMessageSender(
+      std::shared_ptr<IMessageSender> sender) = 0;
+
     virtual void addMessageReceiver(
-      String receiverId, IMessageReceiver* receiver) = 0;
+      std::shared_ptr<IMessageReceiver> receiver) = 0;
 };
 
 }

@@ -26,15 +26,17 @@ class MessageQueue : public IMessageQueue {
     virtual std::unique_ptr<StatusResult> send(
       String senderId, std::shared_ptr<Message> message) override;
 
-    virtual void addMessageReceiver(
-      String receiverId, IMessageReceiver* receiver) override;
+   virtual void addMessageSender(std::shared_ptr<IMessageSender> sender) override;
+   virtual void addMessageReceiver(std::shared_ptr<IMessageReceiver> receiver) override;
 
   private:
     std::queue<std::function<void()>> actions; // TODO : this should be removed ASAP
     std::queue<std::shared_ptr<Message>> messages;
-    std::list<std::tuple<String, IMessageReceiver*>> receivers;
+    std::list<std::shared_ptr<IMessageSender>> senders;
+    std::list<std::shared_ptr<IMessageReceiver>> receivers;
 
-    IMessageReceiver* getMessageReceiver(String receiverId);
+    std::shared_ptr<IMessageSender> getMessageSender(String senderId);
+    std::shared_ptr<IMessageReceiver> getMessageReceiver(const Request& request);
 };
 
 }

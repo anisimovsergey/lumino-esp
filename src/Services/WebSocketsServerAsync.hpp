@@ -17,7 +17,7 @@
 
 namespace Services {
 
-class WebSocketsServerAsync : public Core::ILoopedService, public Core::IMessageReceiver {
+class WebSocketsServerAsync : public Core::ILoopedService {
   public:
     WebSocketsServerAsync(int port,
       std::shared_ptr<Core::IMessageQueue> messageQueue,
@@ -39,9 +39,8 @@ class WebSocketsServerAsync : public Core::ILoopedService, public Core::IMessage
       std::unique_ptr<Core::StatusResult>&& result,
       const Core::Request* request);
 
-    virtual void onResponse(std::shared_ptr<Core::Response> response) override;
-    virtual void onNotification() override;
-    virtual void onBroadcast() override;
+    void onResponse(std::shared_ptr<Core::Response> response);
+    void onNotification(std::shared_ptr<Core::Notification> notification);
 };
 
 }

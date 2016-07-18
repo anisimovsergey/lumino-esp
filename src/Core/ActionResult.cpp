@@ -11,6 +11,11 @@ StatusResult::OK() {
 }
 
 std::unique_ptr<StatusResult>
+StatusResult::Accepted() {
+  return make_unique<StatusResult>(StatusCode::Accepted);
+}
+
+std::unique_ptr<StatusResult>
 StatusResult::Conflict(String message) {
   return make_unique<StatusResult>(StatusCode::Conflict, message);
 }

@@ -7,10 +7,22 @@
 using namespace Core;
 using namespace Models;
 using namespace Services;
+using namespace std::placeholders;
 
 WiFiManager::WiFiManager(std::shared_ptr<Core::IMessageQueue> messageQueue) :
   dnsServer(make_unique<DNSServer>()), messageQueue(messageQueue) {
   deviceName = "esp8266fs";
+
+  // Adding message handlers
+  auto onGetConnectionHandler = std::make_shared<GetMessageReceiver>("/connection",
+    std::bind(&WiFiManager::onGetConnection, this, _1));
+  messageQueue->addMessageReceiver(onGetConnectionHandler);
+  auto onCreateConnectionHandler = std::make_shared<CreateMessageReceiver<Connection>>("/connection",
+    std::bind(&WiFiManager::onCreateConnection, this, _1, _2));
+  messageQueue->addMessageReceiver(onCreateConnectionHandler);
+  auto onDeleteConnectionHandler = std::make_shared<DeleteMessageReceiver>("/connection",
+    std::bind(&WiFiManager::onDeleteConnection, this, _1));
+  messageQueue->addMessageReceiver(onDeleteConnectionHandler);
 }
 
 WiFiManager::~WiFiManager() {
@@ -81,55 +93,51 @@ WiFiManager::stopSoftAP() {
   WiFi.softAPdisconnect();
 }
 
-/*
-std::unique_ptr<IActionResult>
-WiFiManager::onCreateConnection(const CreateConnectionMessage& message) {
-
-  auto result = connect(message->getConnection());
-
-  if (!result->isOk())
-    return StatusResult::InternalServerError("Unable to create the connection.",
-      std::move(result));
-
-  return RedirectResult::ToRoute(message->getConnectionUrl());
-}
-
-std::unique_ptr<IActionResult>
-WiFiManager::onGetConnection() {
+std::unique_ptr<Core::StatusResult>
+WiFiManager::onGetConnection(std::shared_ptr<Core::Request> request) {
 
   if (!hasConnection())
     return StatusResult::NotFound("The connection doesn't exist.");
 
+/*
+  TODO: Send as a unicast notification wiht the object
   return ObjectResult::OK(
     make_unique<Connection>(
       getNetwork(),
       isConnected()
     ));
+*/
+
+  return StatusResult::Accepted();
 }
 
-std::unique_ptr<IActionResult>
-WiFiManager::onDeleteConnection() {
+std::unique_ptr<Core::StatusResult>
+WiFiManager::onCreateConnection(std::shared_ptr<Core::Request> request,
+  const Models::Connection& connection) {
+
+  auto result = connect(connection.getNetworkSsid(), connection.getNetworkPassword());
+  if (!result->isOk())
+    return StatusResult::InternalServerError("Unable to create the connection.",
+      std::move(result));
+
+  // TODO: Send a brodacast notification with a redirect using attributes
+  // return RedirectResult::ToRoute(message->getConnectionUrl());
+  return StatusResult::Accepted();
+}
+
+std::unique_ptr<Core::StatusResult>
+WiFiManager::onDeleteConnection(std::shared_ptr<Core::Request> request) {
 
   auto result = disconnect();
   if (!result->isOk())
     return StatusResult::InternalServerError("Unable to delete the connection.",
       std::move(result));
 
-  return StatusResult::OK();
+  // TODO: Send a brodacast notification
+  return StatusResult::Accepted();
 }
 
-std::unique_ptr<IActionResult>
-WiFiManager::onGetWiFiNetworks() const {
-
-  auto scanStatus = WiFi.scanComplete();
-  if (scanStatus != WIFI_SCAN_RUNNING && scanStatus < 0) {
-    // Scan networks asynchronously
-    WiFi.scanNetworks(true);
-    auto message = StatusResult::OK("WiFi networks scanning is started.");
-    messageQueue->addMessage(message);
-  }
-}
-
+/*
 void
 WiFiManager::onScanComplete() {
 

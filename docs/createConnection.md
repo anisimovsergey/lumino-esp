@@ -7,8 +7,8 @@ Request
   "resource": "/connection",
   "content" : {
     "type": "connection",
-    "ssid": "network SSID",
-    "password": "password"
+    "wifi_network": "network SSID",
+    "wifi_password": "password"
   }
 }
 ```

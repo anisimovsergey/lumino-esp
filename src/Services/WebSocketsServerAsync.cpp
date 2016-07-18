@@ -6,6 +6,7 @@
 
 using namespace Core;
 using namespace Services;
+using namespace std::placeholders;
 
 const char* SenderId = "webSocketsServerAsync";
 const char* FromClientTag = "fromClient";
@@ -17,9 +18,12 @@ WebSocketsServerAsync::WebSocketsServerAsync(int port,
   serializer(serializer) {
   server->begin();
 
-  messageQueue->addMessageReceiver(SenderId, this);
+  auto messageSender = std::make_shared<MessageSender>(SenderId,
+    std::bind(&WebSocketsServerAsync::onResponse, this, _1),
+    std::bind(&WebSocketsServerAsync::onNotification, this, _1));
+    
+  messageQueue->addMessageSender(messageSender);
 
-  using namespace std::placeholders;
   server->onEvent(std::bind(&WebSocketsServerAsync::onSocketEvent, this,
     _1, _2, _3, _4));
 }
@@ -99,15 +103,9 @@ WebSocketsServerAsync::onResponse(std::shared_ptr<Response> response) {
 }
 
 void
-WebSocketsServerAsync::onNotification() {
+WebSocketsServerAsync::onNotification(std::shared_ptr<Core::Notification> notification) {
 
 }
-
-void
-WebSocketsServerAsync::onBroadcast() {
-
-}
-
 
 /*
 void

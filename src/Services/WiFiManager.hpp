@@ -11,6 +11,7 @@
 #include "IDisplay.hpp"
 #include "Core/ILoopedService.hpp"
 #include "Core/IMessageQueue.hpp"
+#include "Models/Connection.hpp"
 
 #include <DNSServer.h>
 
@@ -41,6 +42,15 @@ class WiFiManager : public IWiFiManager, public Core::ILoopedService {
     std::unique_ptr<DNSServer> dnsServer;
     std::shared_ptr<Core::IMessageQueue> messageQueue;
     String  deviceName;
+
+    // Message handling
+    std::unique_ptr<Core::StatusResult> onGetConnection(
+      std::shared_ptr<Core::Request> request);
+    std::unique_ptr<Core::StatusResult> onCreateConnection(
+      std::shared_ptr<Core::Request> request,
+      const Models::Connection& connection);
+    std::unique_ptr<Core::StatusResult> onDeleteConnection(
+      std::shared_ptr<Core::Request> request);
 
     void    startSoftAP();
     void    stopSoftAP();

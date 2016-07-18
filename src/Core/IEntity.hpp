@@ -24,6 +24,11 @@ public: \
       return static_cast<Class*>(entity); \
     return nullptr; \
   } \
+  static const Class* cast(const Core::IEntity* entity) { \
+    if (entity->is<Class>()) \
+      return static_cast<const Class*>(entity); \
+    return nullptr; \
+  } \
 
 class IEntity {
   public:
@@ -31,7 +36,7 @@ class IEntity {
     virtual const char* getTypeId() const = 0;
 
     static bool isType(String typeId) {
-      // TODO : Quite controversial 
+      // TODO : Quite controversial
       return false;
     }
 
