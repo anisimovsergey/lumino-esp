@@ -59,6 +59,18 @@ public:
   virtual void onBroadcast(std::shared_ptr<Notification> notification) = 0;
 };
 
+class MessageListener : public IMessageListener {
+public:
+  MessageListener(std::function<void(std::shared_ptr<Notification>)> broadcastHandler) : broadcastHandler(broadcastHandler) {
+  }
+
+  virtual void onBroadcast(std::shared_ptr<Notification> notification) override {
+    broadcastHandler(notification);
+  }
+private:
+  std::function<void(std::shared_ptr<Notification>)> broadcastHandler;
+};
+
 class IMessageReceiver {
 public:
   virtual ~IMessageReceiver();
@@ -151,16 +163,23 @@ class IMessageQueue : public ILoopedService {
   public:
     virtual ~IMessageQueue();
 
-    virtual void post(std::function<void()> action) = 0;
-
     virtual std::unique_ptr<StatusResult> send(
       String senderId, std::shared_ptr<Message> message) = 0;
+
+    virtual std::unique_ptr<StatusResult> notify(
+      String receiverId, std::shared_ptr<Notification> notification) = 0;
+
+    virtual std::unique_ptr<StatusResult> broadcast(
+      std::shared_ptr<Notification> notification) = 0;
 
     virtual void addMessageSender(
       std::shared_ptr<IMessageSender> sender) = 0;
 
     virtual void addMessageReceiver(
       std::shared_ptr<IMessageReceiver> receiver) = 0;
+
+    virtual void addMessageListener(
+      std::shared_ptr<IMessageListener> listener) = 0;
 };
 
 }

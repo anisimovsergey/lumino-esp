@@ -11,8 +11,18 @@ StatusResult::OK() {
 }
 
 std::unique_ptr<StatusResult>
+StatusResult::Created(String message) {
+  return make_unique<StatusResult>(StatusCode::Created, message);
+}
+
+std::unique_ptr<StatusResult>
 StatusResult::Accepted() {
   return make_unique<StatusResult>(StatusCode::Accepted);
+}
+
+std::unique_ptr<StatusResult>
+StatusResult::NoContent(String message) {
+  return make_unique<StatusResult>(StatusCode::NoContent, message);
 }
 
 std::unique_ptr<StatusResult>

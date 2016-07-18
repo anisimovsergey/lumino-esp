@@ -47,7 +47,9 @@ class StatusResult : public IActionResult {
   TYPE_INFO(StatusResult, IActionResult, "statusResult")
   public:
     static std::unique_ptr<StatusResult> OK();
+    static std::unique_ptr<StatusResult> Created(String message);
     static std::unique_ptr<StatusResult> Accepted();
+    static std::unique_ptr<StatusResult> NoContent(String message);
     static std::unique_ptr<StatusResult> Conflict(String message);
     static std::unique_ptr<StatusResult> BadRequest(String message);
     static std::unique_ptr<StatusResult> BadRequest(String message,
@@ -113,7 +115,7 @@ class ObjectResult : public IActionResult {
       return statusCode;
     }
 
-    const IEntity& getEntity() const {
+    const IEntity& getObject() const {
       return *entity;
     }
 

@@ -99,15 +99,18 @@ WiFiManager::onGetConnection(std::shared_ptr<Core::Request> request) {
   if (!hasConnection())
     return StatusResult::NotFound("The connection doesn't exist.");
 
-/*
-  TODO: Send as a unicast notification wiht the object
-  return ObjectResult::OK(
-    make_unique<Connection>(
-      getNetwork(),
-      isConnected()
-    ));
-*/
-
+  auto notification = std::make_shared<Notification>(
+    request->getActionType(),
+    request->getResource(),
+    ObjectResult::OK(
+      make_unique<Connection>(
+        getNetwork(),
+        isConnected()
+      ))
+  );
+  notification->addTag("fromClient", request->getTag("fromClient"));
+  notification->addTag("receiver", request->getTag("sender"));
+  messageQueue->notify(request->getTag("sender"), notification);
   return StatusResult::Accepted();
 }
 
@@ -120,8 +123,15 @@ WiFiManager::onCreateConnection(std::shared_ptr<Core::Request> request,
     return StatusResult::InternalServerError("Unable to create the connection.",
       std::move(result));
 
-  // TODO: Send a brodacast notification with a redirect using attributes
-  // return RedirectResult::ToRoute(message->getConnectionUrl());
+/*
+  auto notification = std::make_shared<Notification>(
+    request->getActionType(),
+    request->getResource(),
+    StatusResult::Created("Connection was deleted.")
+  );
+  notification->addTag("fromClient", request->getTag("fromClient"));
+  notification->addTag("receiver", request->getTag("sender"));
+  messageQueue->broadcast(notification);*/
   return StatusResult::Accepted();
 }
 
@@ -133,7 +143,14 @@ WiFiManager::onDeleteConnection(std::shared_ptr<Core::Request> request) {
     return StatusResult::InternalServerError("Unable to delete the connection.",
       std::move(result));
 
-  // TODO: Send a brodacast notification
+    /*
+  auto notification = std::make_shared<Notification>(
+    request->getActionType(),
+    request->getResource(),
+    StatusResult::NoContent("Connection was deleted.")
+  );
+  messageQueue->broadcast(notification);
+  */
   return StatusResult::Accepted();
 }
 

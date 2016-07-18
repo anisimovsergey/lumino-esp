@@ -100,7 +100,7 @@ class Notification : public Message {
     Notification(ActionType actionType, String resource,
       std::unique_ptr<IEntity> result);
 
-    const IEntity* getResult() { return result.get(); };
+    const IEntity& getResult() const { return *result; };
 
   private:
     std::unique_ptr<IEntity> result;

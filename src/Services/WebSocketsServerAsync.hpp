@@ -41,6 +41,7 @@ class WebSocketsServerAsync : public Core::ILoopedService {
 
     void onResponse(std::shared_ptr<Core::Response> response);
     void onNotification(std::shared_ptr<Core::Notification> notification);
+    void onBroadcast(std::shared_ptr<Core::Notification> notification);
 };
 
 }

@@ -32,10 +32,7 @@ Message processed notification
   "resource": "/connection",
   "result": {
     "type": "statusResult",
-    "code": 302,
-    "attributes" : {
-      "location": "/connection"
-    }
+    "code": 201,
   }
 }
 ```

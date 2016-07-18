@@ -17,10 +17,11 @@ ObjectResultSender::getResponse(
 
   String json;
   int    code = objectResult.getStatusCode().getCode();
+  /*
   auto status = serializationService->serialize(objectResult.getEntity(), json);
   if (!status->isOk())
     return status;
-
+  */
   response = request.createResponse(code, "text/json", json);
   return StatusResult::OK();
 }

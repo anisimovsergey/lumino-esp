@@ -7,11 +7,6 @@ using namespace Core;
 
 void
 MessageQueue::loop() {
-  while (!actions.empty())
-  {
-    actions.front()();
-    actions.pop();
-  }
   while (!messages.empty())
   {
     Logger::message("Message queue is not empty");
@@ -40,8 +35,6 @@ MessageQueue::loop() {
       // TODO: Set a proper sender or "messageQueue"
       // response->addTag("sender", "messageQueue");
       messages.push(response);
-    } else {
-      Logger::message("It's not a request");
     }
     auto response = dynamic_cast_to_shared<Response>(message);
     if (response) {
@@ -52,18 +45,25 @@ MessageQueue::loop() {
         sender->onResponse(response);
       }
       // If can't find, just log, we can't do much the sender is gone.
-    } else {
-      Logger::message("It's not a response");
     }
-    Logger::message("Removing message from the queue");
+    auto notification = dynamic_cast_to_shared<Notification>(message);
+    if (notification) {
+      Logger::message("Processing notification");
+      auto receiverId = notification->getTag("receiver");
+      if (receiverId != "") {
+        Logger::message("Receiver id " + receiverId);
+        auto sender = getMessageSender(receiverId);
+        if (sender) {
+          sender->onNotification(notification);
+        }
+      } else {
+        for(auto listener: listeners) {
+          return listener->onBroadcast(notification);
+        }
+      }
+    }
     messages.pop();
-    Logger::message("Removed.");
   }
-}
-
-void
-MessageQueue::post(std::function<void()> action) {
-    actions.push(action);
 }
 
 std::unique_ptr<StatusResult>
@@ -74,15 +74,34 @@ MessageQueue::send(
   return StatusResult::OK();
 }
 
+std::unique_ptr<StatusResult>
+MessageQueue::notify(
+  String receiverId, std::shared_ptr<Notification> notification) {
+  notification->addTag("receiver", receiverId);
+  messages.push(notification);
+  return StatusResult::OK();
+}
+
+std::unique_ptr<StatusResult>
+MessageQueue::broadcast(
+  std::shared_ptr<Notification> notification) {
+  messages.push(notification);
+  return StatusResult::OK();
+}
+
 void
-MessageQueue::addMessageSender(
-  std::shared_ptr<IMessageSender> sender) {
+MessageQueue::addMessageSender(std::shared_ptr<IMessageSender> sender) {
   senders.push_back(sender);
 }
 
 void
 MessageQueue::addMessageReceiver(std::shared_ptr<IMessageReceiver> receiver) {
   receivers.push_back(receiver);
+}
+
+void
+MessageQueue::addMessageListener(std::shared_ptr<IMessageListener> listener) {
+  listeners.push_back(listener);
 }
 
 std::shared_ptr<IMessageSender>

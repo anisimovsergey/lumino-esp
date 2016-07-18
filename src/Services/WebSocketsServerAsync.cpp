@@ -21,8 +21,11 @@ WebSocketsServerAsync::WebSocketsServerAsync(int port,
   auto messageSender = std::make_shared<MessageSender>(SenderId,
     std::bind(&WebSocketsServerAsync::onResponse, this, _1),
     std::bind(&WebSocketsServerAsync::onNotification, this, _1));
-    
   messageQueue->addMessageSender(messageSender);
+
+  auto messageListener = std::make_shared<MessageListener>(
+    std::bind(&WebSocketsServerAsync::onBroadcast, this, _1));
+  messageQueue->addMessageListener(messageListener);
 
   server->onEvent(std::bind(&WebSocketsServerAsync::onSocketEvent, this,
     _1, _2, _3, _4));
@@ -85,7 +88,6 @@ WebSocketsServerAsync::sendResponse(uint8_t num,
 
 void
 WebSocketsServerAsync::onResponse(std::shared_ptr<Response> response) {
-  Logger::error("Sending response.");
   String json;
   auto status = serializer->serialize(*response, json);
   if (!status->isOk()) {
@@ -99,25 +101,35 @@ WebSocketsServerAsync::onResponse(std::shared_ptr<Response> response) {
   } else {
     // TODO : log error
   }
-  Logger::error("Response sent.");
 }
 
 void
 WebSocketsServerAsync::onNotification(std::shared_ptr<Core::Notification> notification) {
+  String json;
+  auto status = serializer->serialize(*notification, json);
+  if (!status->isOk()) {
+    serializer->serialize(*status, json);
+    Logger::error("Unbale to seraile the response. " + json);
+    return;
+  }
 
+  auto clientNumStr = notification->getTag(FromClientTag);
+  Logger::error("clientNumStr" + clientNumStr);
+  if (clientNumStr != "") {
+    server->sendTXT(clientNumStr.toInt(), json);
+  } else {
+    // TODO : log error
+  }
 }
 
-/*
 void
-WebSocketsServerAsync::onEventQueueBroadcast(message) {
-  serializedMessage = serialize(message);
-  server->broadcastTXT(serializedMessage);
-}
+WebSocketsServerAsync::onBroadcast(std::shared_ptr<Core::Notification> notification) {
+  String json;
+  auto status = serializer->serialize(*notification, json);
+  if (!status->isOk()) {
+    Logger::error("Unbale to seraile the response.");
+    return;
+  }
 
-void
-WebSocketsServerAsync::onEventQueueMessage(message) {
-  client = message.tags.get("client");
-  serializedMessage = serialize(message);
-  server->sendTXT(serializedMessage);
+  server->broadcastTXT(json);
 }
-*/

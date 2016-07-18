@@ -3,6 +3,10 @@
 using namespace Core;
 
 IMessageSender::~IMessageSender() {
+
+}
+
+IMessageListener::~IMessageListener() {
   
 }
 
