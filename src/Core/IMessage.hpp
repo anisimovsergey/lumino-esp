@@ -80,11 +80,10 @@ class Request : public Message {
 
   private:
     std::unique_ptr<IEntity> content;
-
 };
 
 class Response : public Message {
-  TYPE_INFO(Response, IEntity, "response")
+  TYPE_INFO(Response, Message, "response")
   public:
     Response(ActionType actionType, String resource,
       std::unique_ptr<StatusResult> result);
@@ -95,12 +94,17 @@ class Response : public Message {
     std::unique_ptr<StatusResult> result;
 };
 
-/*
-class Notification : public IMessage {
+class Notification : public Message {
+  TYPE_INFO(Notification, Message, "notification")
   public:
-    const IActionResult& getResult();
+    Notification(ActionType actionType, String resource,
+      std::unique_ptr<IEntity> result);
+
+    const IEntity* getResult() { return result.get(); };
+
+  private:
+    std::unique_ptr<IEntity> result;
 };
-*/
 
 }
 

@@ -18,13 +18,105 @@
 
 namespace Core {
 
+class IMessageSender {
+public:
+  virtual ~IMessageSender();
+
+  virtual void onResponse(std::shared_ptr<Response> response) = 0;
+  virtual void onNotification(std::shared_ptr<Notification> notification) = 0;
+};
+
+class IMessageListener {
+public:
+  ~IMessageListener();
+
+  virtual void onBroadcast(std::shared_ptr<Notification> notification) = 0;
+};
+
 class IMessageReceiver {
 public:
   virtual ~IMessageReceiver();
 
-  virtual void onResponse(std::shared_ptr<Response> response) = 0;
-  virtual void onNotification() = 0;
-  virtual void onBroadcast() = 0;
+  virtual ActionType getActionType() = 0;
+  virtual String getResource() = 0;
+
+  virtual void onRequest(std::shared_ptr<Request> request) = 0;
+};
+
+class MessageReceiver : public IMessageReceiver {
+protected:
+  MessageReceiver(ActionType actionType, String resource) :
+    actionType(actionType), resource(resource) {
+  }
+
+  virtual ActionType getActionType() override { return actionType; }
+  virtual String getResource() override { return resource; }
+
+private:
+  ActionType actionType;
+  String resource;
+};
+
+class GetMessageReceiver : public MessageReceiver {
+public:
+  GetMessageReceiver(String resource, std::function<void(std::shared_ptr<Request>)> handler) :
+    MessageReceiver(ActionType::Get, resource), handler(handler) {
+  }
+
+  virtual void onRequest(std::shared_ptr<Request> request) override {
+    handler(request);
+  }
+
+private:
+  std::function<void(std::shared_ptr<Request>)> handler;
+};
+
+class DeleteMessageReceiver : public MessageReceiver {
+public:
+  DeleteMessageReceiver(String resource, std::function<void(std::shared_ptr<Request>)> handler) :
+    MessageReceiver(ActionType::Delete, resource), handler(handler) {
+  }
+
+  virtual void onRequest(std::shared_ptr<Request> request) override {
+    handler(request);
+  }
+
+private:
+  std::function<void(std::shared_ptr<Request>)> handler;
+};
+
+template<class T>
+class CreateMessageReceiver : public MessageReceiver {
+public:
+  CreateMessageReceiver(String resource, std::function<void(std::shared_ptr<Request>, T*)> handler) :
+    MessageReceiver(ActionType::Create, resource), handler(handler) {
+  }
+
+  virtual void onRequest(std::shared_ptr<Request> request) override {
+    auto content = T::cast(request->getContent());
+    if (content)
+      handler(request);
+  }
+
+private:
+  std::function<void(std::shared_ptr<Request>, T*)> handler;
+};
+
+template<class T>
+class UpdateMessageReceiver : public MessageReceiver {
+public:
+  UpdateMessageReceiver(String resource, std::function<void(std::shared_ptr<Request>, T*)> handler) :
+    MessageReceiver(ActionType::Update, resource), handler(handler) {
+  }
+
+  virtual void onRequest(std::shared_ptr<Request> request) override {
+    auto content = T::cast(request->getContent());
+    if (content)
+      handler(request);
+  }
+
+private:
+  std::function<void(std::shared_ptr<Request>, T*)> handler;
 };
 
 class IMessageQueue : public ILoopedService {

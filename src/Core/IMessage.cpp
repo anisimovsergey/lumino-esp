@@ -37,3 +37,9 @@ Response::Response(ActionType actionType, String resource,
   result(std::move(result)) {
 
 }
+
+Notification::Notification(ActionType actionType, String resource,
+  std::unique_ptr<IEntity> result) : Message(actionType, resource),
+  result(std::move(result)) {
+
+}
