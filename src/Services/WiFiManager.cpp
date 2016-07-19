@@ -123,15 +123,13 @@ WiFiManager::onCreateConnection(std::shared_ptr<Core::Request> request,
     return StatusResult::InternalServerError("Unable to create the connection.",
       std::move(result));
 
-/*
   auto notification = std::make_shared<Notification>(
     request->getActionType(),
     request->getResource(),
-    StatusResult::Created("Connection was deleted.")
+    StatusResult::Created("Connection was creater.")
   );
-  notification->addTag("fromClient", request->getTag("fromClient"));
-  notification->addTag("receiver", request->getTag("sender"));
-  messageQueue->broadcast(notification);*/
+  notification->addTag("sender", "WiFiManager");
+  messageQueue->broadcast(notification);
   return StatusResult::Accepted();
 }
 
@@ -143,14 +141,13 @@ WiFiManager::onDeleteConnection(std::shared_ptr<Core::Request> request) {
     return StatusResult::InternalServerError("Unable to delete the connection.",
       std::move(result));
 
-    /*
   auto notification = std::make_shared<Notification>(
     request->getActionType(),
     request->getResource(),
     StatusResult::NoContent("Connection was deleted.")
   );
+  notification->addTag("sender", "WiFiManager");
   messageQueue->broadcast(notification);
-  */
   return StatusResult::Accepted();
 }
 
