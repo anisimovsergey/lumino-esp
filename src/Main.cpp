@@ -3,9 +3,6 @@
 #include "Services/Display.hpp"
 #include "Services/HttpServerAsync.hpp"
 #include "Services/WiFiManager.hpp"
-#include "Services/ObjectResultSender.hpp"
-#include "Services/StatusResultSender.hpp"
-#include "Services/RedirectResultSender.hpp"
 #include "Services/WebSocketsServerAsync.hpp"
 #include "Json/SerializationService.hpp"
 #include "Json/StatusResultSerializer.hpp"
@@ -49,7 +46,7 @@ void setup(void){
     std::make_shared<SerializationService>(contextFactory));
   Logger::message("Creating the creating HTTP server...");
   auto httpServerAsync(
-    std::make_shared<HttpServerAsync>(80, serializationService, wifiManager));
+    std::make_shared<HttpServerAsync>(80, wifiManager));
   Logger::message("Creating creating Web Sockets server...");
   auto webSocketsServerAsync(
     std::make_shared<WebSocketsServerAsync>(81, messageQueue, serializationService));
@@ -75,15 +72,6 @@ void setup(void){
     std::make_shared<NotificationSerializer>());
   serializationService->addSerializer(
     std::make_shared<ObjectResultSerializer>());
-
-  // Registering senders
-  Logger::message("Registering services...");
-  httpServerAsync->addHttpSender(
-    std::make_shared<ObjectResultSender>(serializationService));
-  httpServerAsync->addHttpSender(
-    std::make_shared<StatusResultSender>(serializationService));
-  httpServerAsync->addHttpSender(
-    std::make_shared<RedirectResultSender>());
 
   Logger::message("Starting http server...");
   httpServerAsync->start();
