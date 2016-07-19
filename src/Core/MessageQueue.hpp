@@ -15,8 +15,6 @@
 
 namespace Core {
 
-class MessageComparer;
-
 class MessageQueue : public IMessageQueue {
   public:
     // From ILoopedService
@@ -26,8 +24,9 @@ class MessageQueue : public IMessageQueue {
     virtual std::unique_ptr<StatusResult> send(
       String senderId, std::shared_ptr<Message> message) override;
     virtual std::unique_ptr<StatusResult> notify(
-      String receiverId, std::shared_ptr<Notification> notification) override;
+      const Request& request, std::shared_ptr<Notification> notification) override;
     virtual std::unique_ptr<StatusResult> broadcast(
+      String sender,
       std::shared_ptr<Notification> notification) override;
     virtual void addMessageSender(
       std::shared_ptr<IMessageSender> sender) override;
@@ -37,17 +36,16 @@ class MessageQueue : public IMessageQueue {
       std::shared_ptr<IMessageListener> listener) override;
 
   private:
-    class MessageComparer
-    {
-      bool reverse;
-    public:
-      bool operator() (const std::shared_ptr<Message>& lhs, const std::shared_ptr<Message>&rhs) const
-      {
-        return (lhs->getPriority() > rhs->getPriority());
-      }
+    class MessageComparer {
+        bool reverse;
+      public:
+        bool operator() (const std::shared_ptr<Message>& lhs, const std::shared_ptr<Message>&rhs) const
+        {
+          return (lhs->getPriority() > rhs->getPriority());
+        }
     };
 
-    std::priority_queue<std::shared_ptr<Message>, std::vector<std::shared_ptr<Message>, MessageComparer> messages;
+    std::priority_queue<std::shared_ptr<Message>, std::vector<std::shared_ptr<Message>>, MessageComparer> messages;
     std::list<std::shared_ptr<IMessageSender>> senders;
     std::list<std::shared_ptr<IMessageReceiver>> receivers;
     std::list<std::shared_ptr<IMessageListener>> listeners;

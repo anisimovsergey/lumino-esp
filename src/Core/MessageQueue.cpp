@@ -10,7 +10,7 @@ MessageQueue::loop() {
   while (!messages.empty())
   {
     Logger::message("Message queue is not empty");
-    auto message = messages.front();
+    auto message = messages.top();
 
     auto request = dynamic_cast_to_shared<Request>(message);
     if (request) {
@@ -77,17 +77,20 @@ MessageQueue::send(
 
 std::unique_ptr<StatusResult>
 MessageQueue::notify(
-  String receiverId, std::shared_ptr<Notification> notification) {
-  Logger::message("Notification sent back to " + receiverId);
-  notification->addTag("receiver", receiverId);
+  const Request& request, std::shared_ptr<Notification> notification) {
+  Logger::message("Notification sent");
+  notification->addTag("fromClient", request.getTag("fromClient"));
+  notification->addTag("receiver", request.getTag("sender"));
   messages.push(notification);
   return StatusResult::OK();
 }
 
 std::unique_ptr<StatusResult>
 MessageQueue::broadcast(
+  String sender,
   std::shared_ptr<Notification> notification) {
   Logger::message("Notification broadcasted.");
+  notification->addTag("sender", sender);
   messages.push(notification);
   return StatusResult::OK();
 }

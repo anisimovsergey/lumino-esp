@@ -167,9 +167,10 @@ class IMessageQueue : public ILoopedService {
       String senderId, std::shared_ptr<Message> message) = 0;
 
     virtual std::unique_ptr<StatusResult> notify(
-      String receiverId, std::shared_ptr<Notification> notification) = 0;
+      const Request& request, std::shared_ptr<Notification> notification) = 0;
 
     virtual std::unique_ptr<StatusResult> broadcast(
+      String sender,
       std::shared_ptr<Notification> notification) = 0;
 
     virtual void addMessageSender(

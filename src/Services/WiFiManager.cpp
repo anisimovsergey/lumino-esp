@@ -9,18 +9,20 @@ using namespace Models;
 using namespace Services;
 using namespace std::placeholders;
 
+static const String ConnectionResource = "/connection";
+
 WiFiManager::WiFiManager(std::shared_ptr<Core::IMessageQueue> messageQueue) :
   dnsServer(make_unique<DNSServer>()), messageQueue(messageQueue) {
   deviceName = "esp8266fs";
 
   // Adding message handlers
-  auto onGetConnectionHandler = std::make_shared<GetMessageReceiver>("/connection",
+  auto onGetConnectionHandler = std::make_shared<GetMessageReceiver>(ConnectionResource,
     std::bind(&WiFiManager::onGetConnection, this, _1));
   messageQueue->addMessageReceiver(onGetConnectionHandler);
-  auto onCreateConnectionHandler = std::make_shared<CreateMessageReceiver<Connection>>("/connection",
+  auto onCreateConnectionHandler = std::make_shared<CreateMessageReceiver<Connection>>(ConnectionResource,
     std::bind(&WiFiManager::onCreateConnection, this, _1, _2));
   messageQueue->addMessageReceiver(onCreateConnectionHandler);
-  auto onDeleteConnectionHandler = std::make_shared<DeleteMessageReceiver>("/connection",
+  auto onDeleteConnectionHandler = std::make_shared<DeleteMessageReceiver>(ConnectionResource,
     std::bind(&WiFiManager::onDeleteConnection, this, _1));
   messageQueue->addMessageReceiver(onDeleteConnectionHandler);
 }
@@ -96,21 +98,23 @@ WiFiManager::stopSoftAP() {
 std::unique_ptr<Core::StatusResult>
 WiFiManager::onGetConnection(std::shared_ptr<Core::Request> request) {
 
-  if (!hasConnection())
-    return StatusResult::NotFound("The connection doesn't exist.");
-
-  auto notification = std::make_shared<Notification>(
-    request->getActionType(),
-    request->getResource(),
-    ObjectResult::OK(
+  std::unique_ptr<Core::IActionResult> actionResult;
+  if (hasConnection()) {
+    actionResult = ObjectResult::OK(
       make_unique<Connection>(
         getNetwork(),
         isConnected()
-      ))
+      ));
+  } else {
+    actionResult = StatusResult::NotFound("The connection doesn't exist.");
+  }
+
+  auto notification = std::make_shared<Notification>(
+    ActionType::Get,
+    ConnectionResource,
+    std::move(actionResult)
   );
-  notification->addTag("fromClient", request->getTag("fromClient"));
-  notification->addTag("receiver", request->getTag("sender"));
-  messageQueue->notify(request->getTag("sender"), notification);
+  messageQueue->notify(*request, notification);
   return StatusResult::Accepted();
 }
 
@@ -118,22 +122,25 @@ std::unique_ptr<Core::StatusResult>
 WiFiManager::onCreateConnection(std::shared_ptr<Core::Request> request,
   const Models::Connection& connection) {
 
+  std::unique_ptr<Core::IActionResult> actionResult;
   auto result = connect(connection.getNetworkSsid(), connection.getNetworkPassword());
-  if (!result->isOk())
-    return StatusResult::InternalServerError("Unable to create the connection.",
-      std::move(result));
-
-  auto notification = std::make_shared<Notification>(
-    request->getActionType(),
-    request->getResource(),
-    ObjectResult::Created(
+  if (result->isOk()) {
+    actionResult = ObjectResult::Created(
       make_unique<Connection>(
         getNetwork(),
         isConnected()
-    ))
+    ));
+  } else {
+    actionResult = StatusResult::InternalServerError("Unable to create the connection.",
+      std::move(result));
+  }
+
+  auto notification = std::make_shared<Notification>(
+    ActionType::Create,
+    ConnectionResource,
+    std::move(actionResult)
   );
-  notification->addTag("sender", "WiFiManager");
-  messageQueue->broadcast(notification);
+  messageQueue->broadcast("WiFiManager", notification);
   return StatusResult::Accepted();
 }
 
@@ -141,17 +148,19 @@ std::unique_ptr<Core::StatusResult>
 WiFiManager::onDeleteConnection(std::shared_ptr<Core::Request> request) {
 
   auto result = disconnect();
-  if (!result->isOk())
-    return StatusResult::InternalServerError("Unable to delete the connection.",
+  if (result->isOk()) {
+    result = StatusResult::NoContent("Connection was deleted.");
+  } else {
+    result = StatusResult::InternalServerError("Unable to delete the connection.",
       std::move(result));
+  }
 
   auto notification = std::make_shared<Notification>(
-    request->getActionType(),
-    request->getResource(),
-    StatusResult::NoContent("Connection was deleted.")
+    ActionType::Delete,
+    ConnectionResource,
+    std::move(result)
   );
-  notification->addTag("sender", "WiFiManager");
-  messageQueue->broadcast(notification);
+  messageQueue->broadcast("WiFiManager", notification);
   return StatusResult::Accepted();
 }
 
