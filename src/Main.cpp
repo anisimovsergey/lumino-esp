@@ -53,6 +53,7 @@ void setup(void){
   Logger::message("Creating creating Web Sockets server...");
   auto webSocketsServerAsync(
     std::make_shared<WebSocketsServerAsync>(81, messageQueue, serializationService));
+  httpServerAsync->server->addHandler(webSocketsServerAsync->server.get());
 
   // Registering serializers
   Logger::message("Registering serializers...");
@@ -73,7 +74,7 @@ void setup(void){
   serializationService->addSerializer(
     std::make_shared<NotificationSerializer>());
   serializationService->addSerializer(
-    std::make_shared<ObjectResultSerializer>());    
+    std::make_shared<ObjectResultSerializer>());
 
   // Registering senders
   Logger::message("Registering services...");

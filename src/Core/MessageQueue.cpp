@@ -58,7 +58,7 @@ MessageQueue::loop() {
         }
       } else {
         for(auto listener: listeners) {
-          return listener->onBroadcast(notification);
+          listener->onBroadcast(notification);
         }
       }
     }
@@ -69,6 +69,7 @@ MessageQueue::loop() {
 std::unique_ptr<StatusResult>
 MessageQueue::send(
   String senderId, std::shared_ptr<Message> message) {
+  Logger::message("Message sent from " + senderId);
   message->addTag("sender", senderId);
   messages.push(message);
   return StatusResult::OK();
@@ -77,6 +78,7 @@ MessageQueue::send(
 std::unique_ptr<StatusResult>
 MessageQueue::notify(
   String receiverId, std::shared_ptr<Notification> notification) {
+  Logger::message("Notification sent back to " + receiverId);
   notification->addTag("receiver", receiverId);
   messages.push(notification);
   return StatusResult::OK();
@@ -85,6 +87,7 @@ MessageQueue::notify(
 std::unique_ptr<StatusResult>
 MessageQueue::broadcast(
   std::shared_ptr<Notification> notification) {
+  Logger::message("Notification broadcasted.");
   messages.push(notification);
   return StatusResult::OK();
 }

@@ -4,7 +4,7 @@ Request
 {
   "type": "request",
   "action": "delete",
-  "resource": "/connection",
+  "resource": "/connection"
 }
 ```
 Message accepted response

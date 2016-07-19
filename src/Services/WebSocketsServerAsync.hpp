@@ -11,7 +11,7 @@
 #include "Core/IMessageQueue.hpp"
 #include "Json/ISerializationService.hpp"
 
-#include <WebSocketsServer.h>
+#include "ESPAsyncWebServer.h"
 
 #include <memory>
 
@@ -25,17 +25,18 @@ class WebSocketsServerAsync : public Core::ILoopedService {
     ~WebSocketsServerAsync();
 
     void start() {};
-    void loop() override { server->loop(); };
+    void loop() override { };
 
+  
+    std::unique_ptr<AsyncWebSocket> server;
   private:
-    std::unique_ptr<WebSocketsServer> server;
     std::shared_ptr<Core::IMessageQueue> messageQueue;
     std::shared_ptr<const Json::ISerializationService> serializer;
 
-    void onSocketEvent(uint8_t num, WStype_t type, uint8_t * payload,
-      size_t length);
+    void onSocketEvent(AsyncWebSocket * server, AsyncWebSocketClient * client,
+      AwsEventType type, void * arg, uint8_t *data, size_t len);
 
-    void sendResponse(uint8_t num,
+    void sendResponse(uint32_t num,
       std::unique_ptr<Core::StatusResult>&& result,
       const Core::Request* request);
 

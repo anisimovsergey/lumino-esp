@@ -55,8 +55,9 @@ class HttpServerAsync : public IHttpServer, public Core::ILoopedService {
 
     void loop() override {};
 
-  private:
+
     std::unique_ptr<AsyncWebServer> server;
+  private:    
     std::list<std::shared_ptr<IHttpController>> controllers;
     std::list<std::shared_ptr<IHttpSender>> senders;
     std::shared_ptr<const Json::ISerializationService>  serializationService;

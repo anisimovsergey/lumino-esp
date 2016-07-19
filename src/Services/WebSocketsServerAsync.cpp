@@ -14,9 +14,8 @@ const char* FromClientTag = "fromClient";
 WebSocketsServerAsync::WebSocketsServerAsync(int port,
   std::shared_ptr<IMessageQueue> messageQueue,
   std::shared_ptr<const Json::ISerializationService> serializer) :
-  server(make_unique<WebSocketsServer>(port)), messageQueue(messageQueue),
+  server(make_unique<AsyncWebSocket>("/ws")), messageQueue(messageQueue),
   serializer(serializer) {
-  server->begin();
 
   auto messageSender = std::make_shared<MessageSender>(SenderId,
     std::bind(&WebSocketsServerAsync::onResponse, this, _1),
@@ -28,7 +27,7 @@ WebSocketsServerAsync::WebSocketsServerAsync(int port,
   messageQueue->addMessageListener(messageListener);
 
   server->onEvent(std::bind(&WebSocketsServerAsync::onSocketEvent, this,
-    _1, _2, _3, _4));
+    _1, _2, _3, _4, _5, _6));
 }
 
 WebSocketsServerAsync::~WebSocketsServerAsync() {
@@ -36,19 +35,30 @@ WebSocketsServerAsync::~WebSocketsServerAsync() {
 }
 
 void
-WebSocketsServerAsync::onSocketEvent(uint8_t num,
-  WStype_t type, uint8_t * payload, size_t length) {
+WebSocketsServerAsync::onSocketEvent(AsyncWebSocket* server,
+  AsyncWebSocketClient* client, AwsEventType type, void * arg,
+  uint8_t *data, size_t len) {
 
-  if (type != WStype_TEXT)
+  if (type != WS_EVT_DATA)
     return;
+
+  AwsFrameInfo * info = (AwsFrameInfo*)arg;
+  if (!(info->final && info->index == 0 && info->len == len))
+    return;
+
+  if (info->opcode != WS_TEXT)
+    return;
+
+  data[len] = 0;
+  String text((char*)data);
 
   std::unique_ptr<IEntity> entity;
   std::shared_ptr<Request> request;
-  auto statusResult = serializer->deserialize((char*)payload, entity);
+  auto statusResult = serializer->deserialize(text, entity);
   if (statusResult->isOk()) {
     request = dynamic_cast_to_shared<Request>(std::move(entity));
     if (request) {
-      request->addTag(FromClientTag, String(num));
+      request->addTag(FromClientTag, String(client->id()));
       statusResult = messageQueue->send(SenderId, request);
     } else {
       statusResult = StatusResult::BadRequest("Type '" +
@@ -56,12 +66,12 @@ WebSocketsServerAsync::onSocketEvent(uint8_t num,
     }
   }
   if (!statusResult->isOk()) {
-    sendResponse(num, std::move(statusResult), request.get());
+    sendResponse(client->id(), std::move(statusResult), request.get());
   }
 }
 
 void
-WebSocketsServerAsync::sendResponse(uint8_t num,
+WebSocketsServerAsync::sendResponse(uint32_t num,
   std::unique_ptr<Core::StatusResult>&& result,
   const Core::Request* request) {
 
@@ -83,7 +93,7 @@ WebSocketsServerAsync::sendResponse(uint8_t num,
     return;
   }
 
-  server->sendTXT(num, json);
+  server->text(num, json);
 }
 
 void
@@ -97,7 +107,7 @@ WebSocketsServerAsync::onResponse(std::shared_ptr<Response> response) {
 
   auto clientNumStr = response->getTag(FromClientTag);
   if (clientNumStr != "") {
-    server->sendTXT(clientNumStr.toInt(), json);
+    server->text(clientNumStr.toInt(), json);
   } else {
     // TODO : log error
   }
@@ -116,7 +126,7 @@ WebSocketsServerAsync::onNotification(std::shared_ptr<Core::Notification> notifi
   auto clientNumStr = notification->getTag(FromClientTag);
   Logger::error("clientNumStr" + clientNumStr);
   if (clientNumStr != "") {
-    server->sendTXT(clientNumStr.toInt(), json);
+    server->text(clientNumStr.toInt(), json);
   } else {
     // TODO : log error
   }
@@ -131,5 +141,5 @@ WebSocketsServerAsync::onBroadcast(std::shared_ptr<Core::Notification> notificat
     return;
   }
 
-  server->broadcastTXT(json);
+  server->textAll(json);
 }
