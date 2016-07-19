@@ -9,13 +9,13 @@ using namespace Models;
 using namespace Services;
 using namespace std::placeholders;
 
+static const String SenderId = "WiFiManager";
 static const String ConnectionResource = "/connection";
 
 WiFiManager::WiFiManager(std::shared_ptr<Core::IMessageQueue> messageQueue) :
   dnsServer(make_unique<DNSServer>()), messageQueue(messageQueue) {
   deviceName = "esp8266fs";
 
-  // Adding message handlers
   auto onGetConnectionHandler = std::make_shared<GetMessageReceiver>(ConnectionResource,
     std::bind(&WiFiManager::onGetConnection, this, _1));
   messageQueue->addMessageReceiver(onGetConnectionHandler);
@@ -25,13 +25,42 @@ WiFiManager::WiFiManager(std::shared_ptr<Core::IMessageQueue> messageQueue) :
   auto onDeleteConnectionHandler = std::make_shared<DeleteMessageReceiver>(ConnectionResource,
     std::bind(&WiFiManager::onDeleteConnection, this, _1));
   messageQueue->addMessageReceiver(onDeleteConnectionHandler);
+
+  disconnected = WiFi.onStationModeDisconnected([=](const WiFiEventStationModeDisconnected&) {
+    auto notification = std::make_shared<Notification>(
+      ActionType::Update,
+      ConnectionResource,
+      ObjectResult::OK(
+        make_unique<Connection>(
+          getNetwork(),
+          isConnected()
+        )
+      )
+    );
+    messageQueue->broadcast(SenderId, notification);
+  });
+  gotIP = WiFi.onStationModeGotIP([=](const WiFiEventStationModeGotIP&) {
+    Logger::message("Creating notification");
+    auto notification = std::make_shared<Notification>(
+      ActionType::Update,
+      ConnectionResource,
+      ObjectResult::OK(
+        make_unique<Connection>(
+          getNetwork(),
+          isConnected()
+        )
+      )
+    );
+    Logger::message("Sending notification");
+    messageQueue->broadcast(SenderId, notification);
+  });
 }
 
 WiFiManager::~WiFiManager() {
 }
 
 void
-WiFiManager::initialize() {
+WiFiManager::start() {
   WiFi.mode(WIFI_STA);
   WiFi.hostname(deviceName.c_str());
   startSoftAP();
@@ -84,10 +113,9 @@ WiFiManager::disconnect() {
 
 void
 WiFiManager::startSoftAP() {
-  WiFi.softAP(deviceName.c_str());
-  delay(500);
+  auto ipAddress = WiFi.softAP(deviceName.c_str());
   dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
-  dnsServer->start(53, "*", WiFi.softAPIP());
+  dnsServer->start(53, "*", ipAddress);
 }
 
 void
@@ -140,7 +168,7 @@ WiFiManager::onCreateConnection(std::shared_ptr<Core::Request> request,
     ConnectionResource,
     std::move(actionResult)
   );
-  messageQueue->broadcast("WiFiManager", notification);
+  messageQueue->broadcast(SenderId, notification);
   return StatusResult::Accepted();
 }
 
@@ -160,29 +188,6 @@ WiFiManager::onDeleteConnection(std::shared_ptr<Core::Request> request) {
     ConnectionResource,
     std::move(result)
   );
-  messageQueue->broadcast("WiFiManager", notification);
+  messageQueue->broadcast(SenderId, notification);
   return StatusResult::Accepted();
 }
-
-/*
-void
-WiFiManager::onScanComplete() {
-
-  Message message;
-  auto networksCount = WiFi.scanComplete();
-  if (networksCount >= 0) {
-    auto networks = make_unique<List<Network>>();
-    for (int networkNum = 0; networkNum < networksCount; networkNum++) {
-      String ssid = WiFi.SSID(networkNum);
-      int rssi = WiFi.RSSI(networkNum);
-      int encryptionType = WiFi.encryptionType(networkNum);
-      networks->add(Network(ssid, rssi, encryptionType));
-    }
-    WiFi.scanDelete();
-    message = ObjectResult::OK(std::move(networks));
-  } else {
-    message = StatusResult::InternalServerError("Unable to scan WiFi networks.");
-  }
-  messageQueue->addMessage(message);
-}
-*/

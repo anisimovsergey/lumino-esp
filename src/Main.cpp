@@ -36,7 +36,6 @@ void setup(void){
   auto display(std::make_shared<Display>());
   Logger::message("Creating the wifi manager...");
   auto wifiManager(std::make_shared<WiFiManager>(messageQueue));
-  wifiManager->initialize();
 
   Logger::message("Creating the context factory...");
   auto contextFactory(
@@ -73,6 +72,8 @@ void setup(void){
   serializationService->addSerializer(
     std::make_shared<ObjectResultSerializer>());
 
+  Logger::message("Starting wifi manager...");
+  wifiManager->start();
   Logger::message("Starting http server...");
   httpServerAsync->start();
   Logger::message("Starting websocket server server...");

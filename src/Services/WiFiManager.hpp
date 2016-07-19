@@ -14,6 +14,7 @@
 #include "Models/Connection.hpp"
 
 #include <DNSServer.h>
+#include <ESP8266WiFi.h>
 
 #include <memory>
 
@@ -24,7 +25,7 @@ class WiFiManager : public IWiFiManager, public Core::ILoopedService {
     WiFiManager(std::shared_ptr<Core::IMessageQueue> messageQueue);
     ~WiFiManager();
 
-    void    initialize();
+    void    start();
 
     String  getDeviceName() const override;
     bool    hasConnection() const override;
@@ -51,6 +52,10 @@ class WiFiManager : public IWiFiManager, public Core::ILoopedService {
       const Models::Connection& connection);
     std::unique_ptr<Core::StatusResult> onDeleteConnection(
       std::shared_ptr<Core::Request> request);
+
+    WiFiEventHandler connected;
+    WiFiEventHandler disconnected;
+    WiFiEventHandler gotIP;
 
     void    startSoftAP();
     void    stopSoftAP();

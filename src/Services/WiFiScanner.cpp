@@ -31,5 +31,26 @@ WiFiScanner::onGetWiFiNetworks() {
 
 void
 WiFiScanner::onScanCompleted() {
+  /*
+  void
+  WiFiManager::onScanComplete() {
 
+    Message message;
+    auto networksCount = WiFi.scanComplete();
+    if (networksCount >= 0) {
+      auto networks = make_unique<List<Network>>();
+      for (int networkNum = 0; networkNum < networksCount; networkNum++) {
+        String ssid = WiFi.SSID(networkNum);
+        int rssi = WiFi.RSSI(networkNum);
+        int encryptionType = WiFi.encryptionType(networkNum);
+        networks->add(Network(ssid, rssi, encryptionType));
+      }
+      WiFi.scanDelete();
+      message = ObjectResult::OK(std::move(networks));
+    } else {
+      message = StatusResult::InternalServerError("Unable to scan WiFi networks.");
+    }
+    messageQueue->addMessage(message);
+  }
+  */
 }
