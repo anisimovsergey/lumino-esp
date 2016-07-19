@@ -11,9 +11,11 @@
 
 #include <queue>
 #include <list>
-#include <tuple>
+#include <vector>
 
 namespace Core {
+
+class MessageComparer;
 
 class MessageQueue : public IMessageQueue {
   public:
@@ -35,7 +37,17 @@ class MessageQueue : public IMessageQueue {
       std::shared_ptr<IMessageListener> listener) override;
 
   private:
-    std::queue<std::shared_ptr<Message>> messages;
+    class MessageComparer
+    {
+      bool reverse;
+    public:
+      bool operator() (const std::shared_ptr<Message>& lhs, const std::shared_ptr<Message>&rhs) const
+      {
+        return (lhs->getPriority() > rhs->getPriority());
+      }
+    };
+
+    std::priority_queue<std::shared_ptr<Message>, std::vector<std::shared_ptr<Message>, MessageComparer> messages;
     std::list<std::shared_ptr<IMessageSender>> senders;
     std::list<std::shared_ptr<IMessageReceiver>> receivers;
     std::list<std::shared_ptr<IMessageListener>> listeners;

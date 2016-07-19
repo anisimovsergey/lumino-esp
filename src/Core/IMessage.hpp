@@ -56,17 +56,21 @@ private:
 class Message : public IEntity {
   TYPE_INFO(Message, IEntity, "message")
   public:
+    enum class Priority {High, Mid, Low};
+
     ActionType    getActionType() const { return actionType; }
     String        getResource() const { return resource; }
     void          addTag(String tag, String value);
     String        getTag(String tag) const;
+    Priority      getPriority() const { return priority; }
 
   protected:
-    Message(ActionType actionType, String resource);
+    Message(ActionType actionType, String resource, Priority priority);
 
   private:
     ActionType actionType;
     String resource;
+    Priority priority;
     std::list<std::tuple<String, String>> tags;
 };
 
