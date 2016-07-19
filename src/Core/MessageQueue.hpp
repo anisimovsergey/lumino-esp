@@ -21,37 +21,37 @@ class MessageQueue : public IMessageQueue {
     virtual void loop() override;
 
     // From IMessageQueue
-    virtual std::unique_ptr<StatusResult> send(
-      String senderId, std::shared_ptr<Message> message) override;
-    virtual std::unique_ptr<StatusResult> notify(
-      const Request& request, std::shared_ptr<Notification> notification) override;
-    virtual std::unique_ptr<StatusResult> broadcast(
+    virtual StatusResult::Unique send(
+      String senderId, Message::Shared message) override;
+    virtual StatusResult::Unique notify(
+      const Request& request, Notification::Shared notification) override;
+    virtual StatusResult::Unique broadcast(
       String sender,
-      std::shared_ptr<Notification> notification) override;
+      Notification::Shared notification) override;
     virtual void addMessageSender(
-      std::shared_ptr<IMessageSender> sender) override;
+      IMessageSender::Shared sender) override;
     virtual void addMessageReceiver(
-      std::shared_ptr<IMessageReceiver> receiver) override;
+      IMessageReceiver::Shared receiver) override;
     virtual void addMessageListener(
-      std::shared_ptr<IMessageListener> listener) override;
+      IMessageListener::Shared listener) override;
 
   private:
     class MessageComparer {
         bool reverse;
       public:
-        bool operator() (const std::shared_ptr<Message>& lhs, const std::shared_ptr<Message>&rhs) const
+        bool operator() (const Message::Shared& lhs, const Message::Shared&rhs) const
         {
           return (lhs->getPriority() > rhs->getPriority());
         }
     };
 
-    std::priority_queue<std::shared_ptr<Message>, std::vector<std::shared_ptr<Message>>, MessageComparer> messages;
-    std::list<std::shared_ptr<IMessageSender>> senders;
-    std::list<std::shared_ptr<IMessageReceiver>> receivers;
-    std::list<std::shared_ptr<IMessageListener>> listeners;
+    std::priority_queue<Message::Shared, std::vector<Message::Shared>, MessageComparer> messages;
+    std::list<IMessageSender::Shared> senders;
+    std::list<IMessageReceiver::Shared> receivers;
+    std::list<IMessageListener::Shared> listeners;
 
-    std::shared_ptr<IMessageSender> getMessageSender(String senderId);
-    std::shared_ptr<IMessageReceiver> getMessageReceiver(const Request& request);
+    IMessageSender::Shared getMessageSender(String senderId);
+    IMessageReceiver::Shared getMessageReceiver(const Request& request);
 };
 
 }

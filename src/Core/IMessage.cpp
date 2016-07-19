@@ -27,19 +27,19 @@ Message::getTag(String tag) const {
 }
 
 Request::Request(ActionType actionType, String resource,
-  std::unique_ptr<IEntity> content) : Message(actionType, resource, Priority::High),
+  IEntity::Unique content) : Message(actionType, resource, Priority::High),
   content(std::move(content)) {
 
 }
 
 Response::Response(ActionType actionType, String resource,
-  std::unique_ptr<StatusResult> result) : Message(actionType, resource, Priority::Mid),
+  StatusResult::Unique result) : Message(actionType, resource, Priority::Mid),
   result(std::move(result)) {
 
 }
 
 Notification::Notification(ActionType actionType, String resource,
-  std::unique_ptr<IEntity> result) : Message(actionType, resource, Priority::Low),
+  IEntity::Unique result) : Message(actionType, resource, Priority::Low),
   result(std::move(result)) {
 
 }

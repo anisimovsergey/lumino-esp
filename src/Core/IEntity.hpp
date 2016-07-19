@@ -8,55 +8,52 @@
 #define CORE_I_ENTITY_HPP
 
 #include <WString.h>
+#include <memory>
 
 namespace Core {
 
-// The class type identifier, should be unique at least within an inheritance hierarchy
+#define TYPE_PTRS(Class) \
+public: \
+  typedef std::shared_ptr<Class> Shared; \
+  typedef std::unique_ptr<Class> Unique; \
+  \
+  template <typename... Args> \
+  static Unique makeUnique(Args&&... args) { \
+    return Unique(new Class(std::forward<Args>(args)...)); \
+  } \
+
 #define TYPE_INFO(Class, SuperClass, ClassTypeId) \
 public: \
+  TYPE_PTRS(Class) \
+  \
   static constexpr const char* TypeId = ClassTypeId; \
+  \
   virtual const char* getTypeId() const override { return TypeId; } \
+  \
   static  bool        isType(String typeId) { \
     return (typeId == ClassTypeId || SuperClass::isType(typeId)); \
   } \
+  \
   static Class* cast(Core::IEntity* entity) { \
-    if (entity->is<Class>()) \
+    if (Class::isType(entity->getTypeId())) \
       return static_cast<Class*>(entity); \
     return nullptr; \
   } \
+  \
   static const Class* cast(const Core::IEntity* entity) { \
-    if (entity->is<Class>()) \
+    if (Class::isType(entity->getTypeId())) \
       return static_cast<const Class*>(entity); \
     return nullptr; \
   } \
 
 class IEntity {
+  TYPE_PTRS(IEntity)
   public:
     virtual ~IEntity();
     virtual const char* getTypeId() const = 0;
 
     static bool isType(String typeId) {
-      // TODO : Quite controversial
       return false;
-    }
-
-    template<typename T> bool is() const {
-      auto thisType = getTypeId();
-      return T::isType(thisType);
-    }
-
-    template<typename T> T* cast() {
-      if (is<T>())
-        return static_cast<T*>(this);
-
-      return nullptr;
-    }
-
-    template<typename T> const T* cast() const {
-      if (is<T>())
-        return static_cast<T*>(this);
-
-      return nullptr;
     }
 };
 

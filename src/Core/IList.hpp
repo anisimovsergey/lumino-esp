@@ -19,12 +19,12 @@ class IList : public IEntity {
   public:
     virtual ~IList();
 
-    typedef std::function<std::unique_ptr<Core::StatusResult>
+    typedef std::function<Core::StatusResult::Unique
       (const IEntity& item)> ForEachFunction;
 
-    virtual std::unique_ptr<Core::StatusResult> add(
+    virtual Core::StatusResult::Unique add(
       const IEntity& item) const = 0;
-    virtual std::unique_ptr<Core::StatusResult> forEach(
+    virtual Core::StatusResult::Unique forEach(
       ForEachFunction func) const = 0;
 };
 

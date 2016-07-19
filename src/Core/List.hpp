@@ -16,27 +16,27 @@ namespace Core {
 template <class T> class List : public IList {
   public:
     // From IList
-    virtual std::unique_ptr<Core::StatusResult> add(
+    virtual Core::StatusResult::Unique add(
       const IEntity& item) const override {
       return add((const T&)item);
     }
 
-    virtual std::unique_ptr<Core::StatusResult>
+    virtual Core::StatusResult::Unique
       forEach(ForEachFunction func) const override {
       return forEach([&](const T& element) {
         return func(element);
       });
     };
 
-    std::unique_ptr<Core::StatusResult> add(const T& value) {
+    Core::StatusResult::Unique add(const T& value) {
       elements.push_back(value);
       return Core::StatusResult::OK();
     };
 
-    typedef std::function<std::unique_ptr<Core::StatusResult>
+    typedef std::function<Core::StatusResult::Unique
       (const T& item)> ForEachFunctionTyped;
 
-    std::unique_ptr<Core::StatusResult> forEach(
+    Core::StatusResult::Unique forEach(
       ForEachFunctionTyped func) const {
         for (auto iterator = elements.begin(), end = elements.end();
              iterator != end; ++iterator) {

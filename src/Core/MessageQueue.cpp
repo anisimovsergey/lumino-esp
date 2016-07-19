@@ -15,7 +15,7 @@ MessageQueue::loop() {
     auto request = dynamic_cast_to_shared<Request>(message);
     if (request) {
       Logger::message("Processing request");
-      std::unique_ptr<StatusResult> result;
+      StatusResult::Unique result;
       auto receiver = getMessageReceiver(*request);
       if (receiver) {
         result = receiver->onRequest(request);
@@ -66,18 +66,18 @@ MessageQueue::loop() {
   }
 }
 
-std::unique_ptr<StatusResult>
+StatusResult::Unique
 MessageQueue::send(
-  String senderId, std::shared_ptr<Message> message) {
+  String senderId, Message::Shared message) {
   Logger::message("Message sent from " + senderId);
   message->addTag("sender", senderId);
   messages.push(message);
   return StatusResult::OK();
 }
 
-std::unique_ptr<StatusResult>
+StatusResult::Unique
 MessageQueue::notify(
-  const Request& request, std::shared_ptr<Notification> notification) {
+  const Request& request, Notification::Shared notification) {
   Logger::message("Notification sent");
   notification->addTag("fromClient", request.getTag("fromClient"));
   notification->addTag("receiver", request.getTag("sender"));
@@ -85,10 +85,10 @@ MessageQueue::notify(
   return StatusResult::OK();
 }
 
-std::unique_ptr<StatusResult>
+StatusResult::Unique
 MessageQueue::broadcast(
   String sender,
-  std::shared_ptr<Notification> notification) {
+  Notification::Shared notification) {
   Logger::message("Notification broadcasted.");
   notification->addTag("sender", sender);
   messages.push(notification);
@@ -96,21 +96,21 @@ MessageQueue::broadcast(
 }
 
 void
-MessageQueue::addMessageSender(std::shared_ptr<IMessageSender> sender) {
+MessageQueue::addMessageSender(IMessageSender::Shared sender) {
   senders.push_back(sender);
 }
 
 void
-MessageQueue::addMessageReceiver(std::shared_ptr<IMessageReceiver> receiver) {
+MessageQueue::addMessageReceiver(IMessageReceiver::Shared receiver) {
   receivers.push_back(receiver);
 }
 
 void
-MessageQueue::addMessageListener(std::shared_ptr<IMessageListener> listener) {
+MessageQueue::addMessageListener(IMessageListener::Shared listener) {
   listeners.push_back(listener);
 }
 
-std::shared_ptr<IMessageSender>
+IMessageSender::Shared
 MessageQueue::getMessageSender(String senderId) {
   for(auto sender: senders) {
     if (sender->getSenderId() == senderId)
@@ -119,7 +119,7 @@ MessageQueue::getMessageSender(String senderId) {
   return nullptr;
 }
 
-std::shared_ptr<IMessageReceiver>
+IMessageReceiver::Shared
 MessageQueue::getMessageReceiver(const Request& request) {
   for(auto receiver: receivers) {
     if (receiver->getActionType() == request.getActionType() &&

@@ -41,7 +41,7 @@ template< class Derived, class Base>
 std::shared_ptr<Derived>
 dynamic_cast_to_shared(const std::shared_ptr<Base>& r) noexcept
 {
-    if (auto p = std::shared_ptr<Derived>::element_type::cast(r.get())) {
+    if (auto p = Derived::Shared::element_type::cast(r.get())) {
         return std::shared_ptr<Derived>(r, p);
     } else {
         return std::shared_ptr<Derived>();

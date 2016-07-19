@@ -78,36 +78,36 @@ class Request : public Message {
   TYPE_INFO(Request, Message, "request")
   public:
     Request(ActionType actionType, String resource,
-      std::unique_ptr<IEntity> content);
+      IEntity::Unique content);
 
     const IEntity* getContent() { return content.get(); };
 
   private:
-    std::unique_ptr<IEntity> content;
+    IEntity::Unique content;
 };
 
 class Response : public Message {
   TYPE_INFO(Response, Message, "response")
   public:
     Response(ActionType actionType, String resource,
-      std::unique_ptr<StatusResult> result);
+      StatusResult::Unique result);
 
     const StatusResult& getResult() const { return *result; }
 
   private:
-    std::unique_ptr<StatusResult> result;
+    StatusResult::Unique result;
 };
 
 class Notification : public Message {
   TYPE_INFO(Notification, Message, "notification")
   public:
     Notification(ActionType actionType, String resource,
-      std::unique_ptr<IEntity> result);
+      IEntity::Unique result);
 
     const IEntity& getResult() const { return *result; };
 
   private:
-    std::unique_ptr<IEntity> result;
+    IEntity::Unique result;
 };
 
 }

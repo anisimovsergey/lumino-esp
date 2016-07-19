@@ -19,66 +19,69 @@
 namespace Core {
 
 class IMessageSender {
+TYPE_PTRS(IMessageSender)
 public:
   virtual ~IMessageSender();
 
   virtual String getSenderId() = 0;
 
-  virtual void onResponse(std::shared_ptr<Response> response) = 0;
-  virtual void onNotification(std::shared_ptr<Notification> notification) = 0;
+  virtual void onResponse(Response::Shared response) = 0;
+  virtual void onNotification(Notification::Shared notification) = 0;
 };
 
 class MessageSender : public IMessageSender {
 public:
   MessageSender(String senderId,
-    std::function<void(std::shared_ptr<Response>)> responseHandler,
-    std::function<void(std::shared_ptr<Notification>)> notificationHandler) :
+    std::function<void(Response::Shared)> responseHandler,
+    std::function<void(Notification::Shared)> notificationHandler) :
     senderId(senderId), responseHandler(responseHandler), notificationHandler(notificationHandler) {
   }
 
   virtual String getSenderId() override { return senderId; };
 
-  virtual void onResponse(std::shared_ptr<Response> response) override {
+  virtual void onResponse(Response::Shared response) override {
     responseHandler(response);
   }
 
-  virtual void onNotification(std::shared_ptr<Notification> notification) override {
+  virtual void onNotification(Notification::Shared notification) override {
     notificationHandler(notification);
   }
 
 private:
   String senderId;
-  std::function<void(std::shared_ptr<Response>)> responseHandler;
-  std::function<void(std::shared_ptr<Notification>)> notificationHandler;
+  std::function<void(Response::Shared)> responseHandler;
+  std::function<void(Notification::Shared)> notificationHandler;
 };
 
 class IMessageListener {
+TYPE_PTRS(IMessageListener)
 public:
   ~IMessageListener();
 
-  virtual void onBroadcast(std::shared_ptr<Notification> notification) = 0;
+  virtual void onBroadcast(Notification::Shared notification) = 0;
 };
 
 class MessageListener : public IMessageListener {
 public:
-  MessageListener(std::function<void(std::shared_ptr<Notification>)> broadcastHandler) : broadcastHandler(broadcastHandler) {
+  MessageListener(std::function<void(Notification::Shared)> broadcastHandler) : broadcastHandler(broadcastHandler) {
   }
 
-  virtual void onBroadcast(std::shared_ptr<Notification> notification) override {
+  virtual void onBroadcast(Notification::Shared notification) override {
     broadcastHandler(notification);
   }
 private:
-  std::function<void(std::shared_ptr<Notification>)> broadcastHandler;
+  std::function<void(Notification::Shared)> broadcastHandler;
 };
 
 class IMessageReceiver {
+TYPE_PTRS(IMessageReceiver)
 public:
   virtual ~IMessageReceiver();
 
   virtual ActionType getActionType() = 0;
   virtual String getResource() = 0;
 
-  virtual std::unique_ptr<StatusResult> onRequest(std::shared_ptr<Request> request) = 0;
+  virtual StatusResult::Unique onRequest(Request::Shared request) = 0;
 };
 
 class MessageReceiver : public IMessageReceiver {
@@ -97,40 +100,40 @@ private:
 
 class GetMessageReceiver : public MessageReceiver {
 public:
-  GetMessageReceiver(String resource, std::function<std::unique_ptr<StatusResult>(std::shared_ptr<Request>)> handler) :
+  GetMessageReceiver(String resource, std::function<StatusResult::Unique(Request::Shared)> handler) :
     MessageReceiver(ActionType::Get, resource), handler(handler) {
   }
 
-  virtual std::unique_ptr<StatusResult> onRequest(std::shared_ptr<Request> request) override {
+  virtual StatusResult::Unique onRequest(Request::Shared request) override {
     return handler(request);
   }
 
 private:
-  std::function<std::unique_ptr<StatusResult>(std::shared_ptr<Request>)> handler;
+  std::function<StatusResult::Unique(Request::Shared)> handler;
 };
 
 class DeleteMessageReceiver : public MessageReceiver {
 public:
-  DeleteMessageReceiver(String resource, std::function<std::unique_ptr<StatusResult>(std::shared_ptr<Request>)> handler) :
+  DeleteMessageReceiver(String resource, std::function<StatusResult::Unique(Request::Shared)> handler) :
     MessageReceiver(ActionType::Delete, resource), handler(handler) {
   }
 
-  virtual std::unique_ptr<StatusResult> onRequest(std::shared_ptr<Request> request) override {
+  virtual StatusResult::Unique onRequest(Request::Shared request) override {
     return handler(request);
   }
 
 private:
-  std::function<std::unique_ptr<StatusResult>(std::shared_ptr<Request>)> handler;
+  std::function<StatusResult::Unique(Request::Shared)> handler;
 };
 
 template<class T>
 class CreateMessageReceiver : public MessageReceiver {
 public:
-  CreateMessageReceiver(String resource, std::function<std::unique_ptr<StatusResult>(std::shared_ptr<Request>, const T&)> handler) :
+  CreateMessageReceiver(String resource, std::function<StatusResult::Unique(Request::Shared, const T&)> handler) :
     MessageReceiver(ActionType::Create, resource), handler(handler) {
   }
 
-  virtual std::unique_ptr<StatusResult> onRequest(std::shared_ptr<Request> request) override {
+  virtual StatusResult::Unique onRequest(Request::Shared request) override {
     auto content = T::cast(request->getContent());
     if (content)
       return handler(request, *content);
@@ -138,17 +141,17 @@ public:
   }
 
 private:
-  std::function<std::unique_ptr<StatusResult>(std::shared_ptr<Request>, const T&)> handler;
+  std::function<StatusResult::Unique(Request::Shared, const T&)> handler;
 };
 
 template<class T>
 class UpdateMessageReceiver : public MessageReceiver {
 public:
-  UpdateMessageReceiver(String resource, std::function<std::unique_ptr<StatusResult>(std::shared_ptr<Request>, const T&)> handler) :
+  UpdateMessageReceiver(String resource, std::function<StatusResult::Unique(Request::Shared, const T&)> handler) :
     MessageReceiver(ActionType::Update, resource), handler(handler) {
   }
 
-  virtual std::unique_ptr<StatusResult> onRequest(std::shared_ptr<Request> request) override {
+  virtual StatusResult::Unique onRequest(Request::Shared request) override {
     auto content = T::cast(request->getContent());
     if (content)
       return handler(request, *content);
@@ -156,31 +159,31 @@ public:
   }
 
 private:
-  std::function<std::unique_ptr<StatusResult>(std::shared_ptr<Request>, const T&)> handler;
+  std::function<StatusResult::Unique(Request::Shared, const T&)> handler;
 };
 
 class IMessageQueue : public ILoopedService {
   public:
     virtual ~IMessageQueue();
 
-    virtual std::unique_ptr<StatusResult> send(
-      String senderId, std::shared_ptr<Message> message) = 0;
+    virtual StatusResult::Unique send(
+      String senderId, Message::Shared message) = 0;
 
-    virtual std::unique_ptr<StatusResult> notify(
-      const Request& request, std::shared_ptr<Notification> notification) = 0;
+    virtual StatusResult::Unique notify(
+      const Request& request, Notification::Shared notification) = 0;
 
-    virtual std::unique_ptr<StatusResult> broadcast(
+    virtual StatusResult::Unique broadcast(
       String sender,
-      std::shared_ptr<Notification> notification) = 0;
+      Notification::Shared notification) = 0;
 
     virtual void addMessageSender(
-      std::shared_ptr<IMessageSender> sender) = 0;
+      IMessageSender::Shared sender) = 0;
 
     virtual void addMessageReceiver(
-      std::shared_ptr<IMessageReceiver> receiver) = 0;
+      IMessageReceiver::Shared receiver) = 0;
 
     virtual void addMessageListener(
-      std::shared_ptr<IMessageListener> listener) = 0;
+      IMessageListener::Shared listener) = 0;
 };
 
 }

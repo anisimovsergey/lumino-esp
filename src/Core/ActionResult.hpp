@@ -26,7 +26,7 @@ class IActionResult : public IEntity {
 class RedirectResult : public IActionResult {
   TYPE_INFO(RedirectResult, IActionResult, "actionResult")
   public:
-    static std::unique_ptr<RedirectResult> ToRoute(String route);
+    static RedirectResult::Unique ToRoute(String route);
 
     RedirectResult(String route) : route(route) {
     }
@@ -46,20 +46,20 @@ class RedirectResult : public IActionResult {
 class StatusResult : public IActionResult {
   TYPE_INFO(StatusResult, IActionResult, "statusResult")
   public:
-    static std::unique_ptr<StatusResult> OK();
-    static std::unique_ptr<StatusResult> Created(String message);
-    static std::unique_ptr<StatusResult> Accepted();
-    static std::unique_ptr<StatusResult> NoContent(String message);
-    static std::unique_ptr<StatusResult> Conflict(String message);
-    static std::unique_ptr<StatusResult> BadRequest(String message);
-    static std::unique_ptr<StatusResult> BadRequest(String message,
-      std::unique_ptr<StatusResult> innerResult);
-    static std::unique_ptr<StatusResult> NotFound(String message);
-    static std::unique_ptr<StatusResult> InternalServerError(String message);
-    static std::unique_ptr<StatusResult> InternalServerError(String message,
-      std::unique_ptr<StatusResult> innerResult);
-    static std::unique_ptr<StatusResult> NotImplemented();
-    static std::unique_ptr<StatusResult> NotImplemented(String message);
+    static StatusResult::Unique OK();
+    static StatusResult::Unique Created(String message);
+    static StatusResult::Unique Accepted();
+    static StatusResult::Unique NoContent(String message);
+    static StatusResult::Unique Conflict(String message);
+    static StatusResult::Unique BadRequest(String message);
+    static StatusResult::Unique BadRequest(String message,
+      StatusResult::Unique innerResult);
+    static StatusResult::Unique NotFound(String message);
+    static StatusResult::Unique InternalServerError(String message);
+    static StatusResult::Unique InternalServerError(String message,
+      StatusResult::Unique innerResult);
+    static StatusResult::Unique NotImplemented();
+    static StatusResult::Unique NotImplemented(String message);
 
     StatusResult(const StatusCode& statusCode) :
       statusCode(statusCode), message(statusCode.getText()) {
@@ -68,7 +68,7 @@ class StatusResult : public IActionResult {
       statusCode(statusCode), message(message) {
     }
     StatusResult(const StatusCode& statusCode, String message,
-      std::unique_ptr<StatusResult> innerResult) :
+      StatusResult::Unique innerResult) :
       statusCode(statusCode), message(message),
       innerResult(std::move(innerResult)) {
     }
@@ -93,25 +93,25 @@ class StatusResult : public IActionResult {
   private:
     const StatusCode statusCode;
     const String message;
-    const std::unique_ptr<StatusResult> innerResult;
+    const StatusResult::Unique innerResult;
 };
 
 
 class ObjectResult : public IActionResult {
   TYPE_INFO(ObjectResult, IActionResult, "objectResult")
   public:
-    static std::unique_ptr<ObjectResult> OK(std::unique_ptr<IEntity> entity) {
-      return make_unique<ObjectResult>(
+    static ObjectResult::Unique OK(IEntity::Unique entity) {
+      return ObjectResult::makeUnique(
         StatusCode::OK,
         std::move(entity));
     }
-    static std::unique_ptr<ObjectResult> Created(std::unique_ptr<IEntity> entity) {
-      return make_unique<ObjectResult>(
+    static ObjectResult::Unique Created(IEntity::Unique entity) {
+      return ObjectResult::makeUnique(
         StatusCode::Created,
         std::move(entity));
     }
 
-    ObjectResult(const StatusCode& statusCode, std::unique_ptr<IEntity> entity) :
+    ObjectResult(const StatusCode& statusCode, IEntity::Unique entity) :
       statusCode(statusCode), entity(std::move(entity)) {
     }
 
@@ -126,7 +126,7 @@ class ObjectResult : public IActionResult {
 
   private:
     const StatusCode statusCode;
-    const std::unique_ptr<IEntity> entity;
+    const IEntity::Unique entity;
 };
 
 }

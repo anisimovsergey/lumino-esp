@@ -5,69 +5,69 @@ using namespace Core;
 IActionResult::~IActionResult() {
 }
 
-std::unique_ptr<StatusResult>
+StatusResult::Unique
 StatusResult::OK() {
-  return make_unique<StatusResult>(StatusCode::OK);
+  return StatusResult::makeUnique(StatusCode::OK);
 }
 
-std::unique_ptr<StatusResult>
+StatusResult::Unique
 StatusResult::Created(String message) {
-  return make_unique<StatusResult>(StatusCode::Created, message);
+  return StatusResult::makeUnique(StatusCode::Created, message);
 }
 
-std::unique_ptr<StatusResult>
+StatusResult::Unique
 StatusResult::Accepted() {
-  return make_unique<StatusResult>(StatusCode::Accepted);
+  return StatusResult::makeUnique(StatusCode::Accepted);
 }
 
-std::unique_ptr<StatusResult>
+StatusResult::Unique
 StatusResult::NoContent(String message) {
-  return make_unique<StatusResult>(StatusCode::NoContent, message);
+  return StatusResult::makeUnique(StatusCode::NoContent, message);
 }
 
-std::unique_ptr<StatusResult>
+StatusResult::Unique
 StatusResult::Conflict(String message) {
-  return make_unique<StatusResult>(StatusCode::Conflict, message);
+  return StatusResult::makeUnique(StatusCode::Conflict, message);
 }
 
-std::unique_ptr<StatusResult>
+StatusResult::Unique
 StatusResult::BadRequest(String message) {
-  return make_unique<StatusResult>(StatusCode::BadRequest, message);
+  return StatusResult::makeUnique(StatusCode::BadRequest, message);
 }
 
-std::unique_ptr<StatusResult>
+StatusResult::Unique
 StatusResult::BadRequest(String message,
-  std::unique_ptr<StatusResult> innerResult) {
-  return make_unique<StatusResult>(StatusCode::BadRequest, message, std::move(innerResult));
+  StatusResult::Unique innerResult) {
+  return StatusResult::makeUnique(StatusCode::BadRequest, message, std::move(innerResult));
 }
 
-std::unique_ptr<StatusResult>
+StatusResult::Unique
 StatusResult::NotFound(String message) {
-  return make_unique<StatusResult>(StatusCode::NotFound, message);
+  return StatusResult::makeUnique(StatusCode::NotFound, message);
 }
 
-std::unique_ptr<StatusResult>
+StatusResult::Unique
 StatusResult::InternalServerError(String message) {
-  return make_unique<StatusResult>(StatusCode::InternalServerError, message);
+  return StatusResult::makeUnique(StatusCode::InternalServerError, message);
 }
 
-std::unique_ptr<StatusResult>
+StatusResult::Unique
 StatusResult::InternalServerError(String message,
-  std::unique_ptr<StatusResult> innerResult) {
-  return make_unique<StatusResult>(StatusCode::InternalServerError, message, std::move(innerResult));
+  StatusResult::Unique innerResult) {
+  return StatusResult::makeUnique(StatusCode::InternalServerError, message, std::move(innerResult));
 }
 
-std::unique_ptr<StatusResult>
+StatusResult::Unique
 StatusResult::NotImplemented() {
   return NotImplemented("Not implemented.");
 }
 
-std::unique_ptr<StatusResult>
+StatusResult::Unique
 StatusResult::NotImplemented(String message) {
-  return make_unique<StatusResult>(StatusCode::NotImplemented, message);
+  return StatusResult::makeUnique(StatusCode::NotImplemented, message);
 }
 
-std::unique_ptr<RedirectResult>
+RedirectResult::Unique
 RedirectResult::ToRoute(String route) {
-  return make_unique<RedirectResult>(route);
+  return RedirectResult::makeUnique(route);
 }
