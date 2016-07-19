@@ -13,12 +13,6 @@
 namespace Json {
 
 class ListSerializer : public Serializer<Core::IList> {
-  public:
-    // From ISerializer
-    virtual String getTypeId() const override {
-      return Core::IList::TypeId;
-    }
-
   protected:
     // From Serializer
     virtual std::unique_ptr<Core::StatusResult> serialize(

@@ -13,12 +13,6 @@
 namespace Json {
 
 class RequestSerializer : public Serializer<Core::Request> {
-  public:
-    // From ISerializer
-    virtual String getTypeId() const override {
-      return Core::Request::TypeId;
-    }
-
   protected:
     // From Serializer
     virtual std::unique_ptr<Core::StatusResult> serialize(

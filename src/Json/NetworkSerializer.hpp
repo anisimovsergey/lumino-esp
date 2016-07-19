@@ -13,12 +13,6 @@
 namespace Json {
 
 class NetworkSerializer : public Serializer<Models::Network> {
-  public:
-    // From ISerializer
-    virtual String getTypeId() const override {
-      return Models::Network::TypeId;
-    }
-
   protected:
     // From Serializer
     virtual std::unique_ptr<Core::StatusResult> serialize(

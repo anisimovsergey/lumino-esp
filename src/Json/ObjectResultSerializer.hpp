@@ -13,13 +13,6 @@
 namespace Json {
 
 class ObjectResultSerializer : public Serializer<Core::ObjectResult> {
-  public:
-    // From ISerializer
-    // TODO: Remove these methods from all the serializers
-    virtual String getTypeId() const override {
-      return Core::ObjectResult::TypeId;
-    }
-
   protected:
     // From Serializer
     virtual std::unique_ptr<Core::StatusResult> serialize(

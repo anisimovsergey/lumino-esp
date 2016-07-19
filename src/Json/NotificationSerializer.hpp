@@ -13,13 +13,6 @@
 namespace Json {
 
 class NotificationSerializer : public Serializer<Core::Notification> {
-  public:
-    // From ISerializer
-    // TODO: Remove these methods from all the serializers
-    virtual String getTypeId() const override {
-      return Core::Notification::TypeId;
-    }
-
   protected:
     // From Serializer
     virtual std::unique_ptr<Core::StatusResult> serialize(
