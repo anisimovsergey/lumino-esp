@@ -17,6 +17,7 @@
 namespace Json {
 
 class SerializationContext : public ISerializationContext {
+  TYPE_PTRS(SerializationContext)
   public:
     SerializationContext(
       const ISerializationService& serializationService,

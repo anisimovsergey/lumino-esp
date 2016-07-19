@@ -36,15 +36,13 @@ template <class T> class List : public IList {
     typedef std::function<Core::StatusResult::Unique
       (const T& item)> ForEachFunctionTyped;
 
-    Core::StatusResult::Unique forEach(
-      ForEachFunctionTyped func) const {
-        for (auto iterator = elements.begin(), end = elements.end();
-             iterator != end; ++iterator) {
-          auto result = func(*iterator);
-          if (!result->isOk())
-            return result;
-        }
-        return Core::StatusResult::OK();
+    Core::StatusResult::Unique forEach(ForEachFunctionTyped func) const {
+      for(auto element: elements) {
+        auto result = func(element);
+        if (!result->isOk())
+          return result;
+      }
+      return Core::StatusResult::OK();
     };
 
   private:

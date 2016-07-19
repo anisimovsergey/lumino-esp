@@ -56,7 +56,7 @@ WebSocketsServerAsync::onSocketEvent(AsyncWebSocket* server,
   std::shared_ptr<Request> request;
   auto statusResult = serializer->deserialize(text, entity);
   if (statusResult->isOk()) {
-    request = dynamic_cast_to_shared<Request>(std::move(entity));
+    request = castToShared<Request>(std::move(entity));
     if (request) {
       request->addTag(FromClientTag, String(client->id()));
       statusResult = messageQueue->send(SenderId, request);
@@ -77,12 +77,12 @@ WebSocketsServerAsync::sendResponse(uint32_t num,
 
   std::unique_ptr<Response> response;
   if (request != nullptr) {
-    response = make_unique<Response>(
+    response = Response::makeUnique(
       request->getActionType(),
       request->getResource(),
       std::move(result));
   } else {
-    response = make_unique<Response>(
+    response = Response::makeUnique(
       ActionType::Unknown, "", std::move(result));
   }
 

@@ -17,21 +17,21 @@ std::unique_ptr<T> make_unique(Args&&... args) {
 
 template<class Derived, class Base, class Del>
 std::unique_ptr<Derived, Del>
-dynamic_cast_to_unique(std::unique_ptr<Base, Del>&& p)
+castToUnique(std::unique_ptr<Base, Del>&& base)
 {
-   if (auto result = Derived::cast(p.get())){
-        p.release();
-        return std::unique_ptr<Derived, Del>(result, std::move(p.get_deleter()));
+   if (auto result = Derived::cast(base.get())){
+        base.release();
+        return std::unique_ptr<Derived, Del>(result, std::move(base.get_deleter()));
     }
-    return std::unique_ptr<Derived, Del>(nullptr, p.get_deleter());
+    return std::unique_ptr<Derived, Del>(nullptr, base.get_deleter());
 }
 
 template<class Derived, class Base, class Del>
 std::shared_ptr<Derived>
-dynamic_cast_to_shared(std::unique_ptr<Base, Del>&& p)
+castToShared(std::unique_ptr<Base, Del>&& base)
 {
-   if (auto result = Derived::cast(p.get())){
-        p.release();
+   if (auto result = Derived::cast(base.get())){
+        base.release();
         return std::shared_ptr<Derived>(result);
     }
     return std::shared_ptr<Derived>();
@@ -39,10 +39,10 @@ dynamic_cast_to_shared(std::unique_ptr<Base, Del>&& p)
 
 template< class Derived, class Base>
 std::shared_ptr<Derived>
-dynamic_cast_to_shared(const std::shared_ptr<Base>& r) noexcept
+castToShared(const std::shared_ptr<Base>& base) noexcept
 {
-    if (auto p = Derived::Shared::element_type::cast(r.get())) {
-        return std::shared_ptr<Derived>(r, p);
+    if (auto p = Derived::Shared::element_type::cast(base.get())) {
+        return std::shared_ptr<Derived>(base, p);
     } else {
         return std::shared_ptr<Derived>();
     }

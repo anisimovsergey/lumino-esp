@@ -39,8 +39,6 @@ ConnectionSerializer::deserialize(
   if (!result->isOk())
     return result;
 
-  connection = make_unique<Connection>(
-    networkSsid, networkPassword
-  );
+  connection = Connection::makeUnique(networkSsid, networkPassword);
   return StatusResult::OK();
 }

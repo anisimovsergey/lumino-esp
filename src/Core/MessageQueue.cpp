@@ -12,7 +12,7 @@ MessageQueue::loop() {
     Logger::message("Message queue is not empty");
     auto message = messages.top();
 
-    auto request = dynamic_cast_to_shared<Request>(message);
+    auto request = castToShared<Request>(message);
     if (request) {
       Logger::message("Processing request");
       StatusResult::Unique result;
@@ -36,7 +36,7 @@ MessageQueue::loop() {
       // response->addTag("sender", "messageQueue");
       messages.push(response);
     }
-    auto response = dynamic_cast_to_shared<Response>(message);
+    auto response = castToShared<Response>(message);
     if (response) {
       Logger::message("Processing response");
       // Try to find a receiver for this message.
@@ -46,7 +46,7 @@ MessageQueue::loop() {
       }
       // If can't find, just log, we can't do much the sender is gone.
     }
-    auto notification = dynamic_cast_to_shared<Notification>(message);
+    auto notification = castToShared<Notification>(message);
     if (notification) {
       Logger::message("Processing notification");
       auto receiverId = notification->getTag("receiver");

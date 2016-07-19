@@ -26,6 +26,6 @@ SettingsSerializer::deserialize(
   if (!result->isOk())
     return result;
 
-  settings = make_unique<Models::Settings>(deviceName);
+  settings = Models::Settings::makeUnique(deviceName);
   return StatusResult::OK();
 }

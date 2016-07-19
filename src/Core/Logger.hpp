@@ -18,9 +18,6 @@ class Logger {
     static void message(const String& message);
     static void warning(const String& message);
     static void error(const String& message);
-
-    static void progress();
-    static void newLine();
 };
 
 }

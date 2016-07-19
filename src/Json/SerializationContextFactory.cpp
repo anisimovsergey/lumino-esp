@@ -16,7 +16,7 @@ SerializationContextFactory::create(
     std::make_shared<DynamicJsonBuffer>());
   JsonObject& jsonObject = jsonBuffer->createObject();
 
-  context = make_unique<SerializationContext>(
+  context = SerializationContext::makeUnique(
     serializationService,
     jsonBuffer,
     jsonObject);
@@ -34,7 +34,7 @@ SerializationContextFactory::create(
   if (!jsonObject.success())
     return StatusResult::BadRequest("Incorrect JSON format.");
 
-  context = make_unique<SerializationContext>(
+  context = SerializationContext::makeUnique(
     serializationService,
     jsonBuffer,
     jsonObject);

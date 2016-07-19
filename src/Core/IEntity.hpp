@@ -46,6 +46,7 @@ public: \
     return nullptr; \
   } \
 
+
 class IEntity {
   TYPE_PTRS(IEntity)
   public:
