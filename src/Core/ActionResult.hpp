@@ -105,6 +105,11 @@ class ObjectResult : public IActionResult {
         StatusCode::OK,
         std::move(entity));
     }
+    static std::unique_ptr<ObjectResult> Created(std::unique_ptr<IEntity> entity) {
+      return make_unique<ObjectResult>(
+        StatusCode::Created,
+        std::move(entity));
+    }
 
     ObjectResult(const StatusCode& statusCode, std::unique_ptr<IEntity> entity) :
       statusCode(statusCode), entity(std::move(entity)) {

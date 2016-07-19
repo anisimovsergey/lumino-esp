@@ -126,7 +126,11 @@ WiFiManager::onCreateConnection(std::shared_ptr<Core::Request> request,
   auto notification = std::make_shared<Notification>(
     request->getActionType(),
     request->getResource(),
-    StatusResult::Created("Connection was creater.")
+    ObjectResult::Created(
+      make_unique<Connection>(
+        getNetwork(),
+        isConnected()
+    ))
   );
   notification->addTag("sender", "WiFiManager");
   messageQueue->broadcast(notification);
