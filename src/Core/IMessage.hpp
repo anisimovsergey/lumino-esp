@@ -77,7 +77,7 @@ class Message : public IEntity {
 class Request : public Message {
   TYPE_INFO(Request, Message, "request")
   public:
-    Request(ActionType actionType, String resource);    
+    Request(ActionType actionType, String resource);
     Request(ActionType actionType, String resource,
       IEntity::Unique content);
 
@@ -92,6 +92,18 @@ class Response : public Message {
   public:
     Response(ActionType actionType, String resource,
       StatusResult::Unique result);
+
+    static Response::Shared createFor(const Request&      request,
+                                     StatusResult::Unique result) {
+      auto response = std::make_shared<Response>(
+             request.getActionType(),
+             request.getResource(),
+             std::move(result));
+      response->addTag("fromClient", request.getTag("fromClient"));
+      // TODO: Define sender!
+      response->addTag("receiver", request.getTag("sender"));
+      return response;
+    }
 
     const StatusResult& getResult() const { return *result; }
 

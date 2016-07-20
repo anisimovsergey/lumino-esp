@@ -29,10 +29,12 @@ WiFiManager::WiFiManager(std::shared_ptr<Core::IMessageQueue> messageQueue) :
   messageQueue->addMessageReceiver(onDeleteConnectionHandler);
 
   connectedEventHandler = WiFi.onStationModeGotIP([=](const WiFiEventStationModeGotIP&) {
+    Logger::message("connected..");
     onConnected();
   });
 
   disconnectedEventHandler = WiFi.onStationModeDisconnected([=](const WiFiEventStationModeDisconnected&) {
+    Logger::message("disconnected..");
     onDisconnected();
   });
 }
@@ -64,7 +66,7 @@ WiFiManager::getNetwork() const {
 
 bool
 WiFiManager::isConnected() const {
-  return (WiFi.status() == WL_CONNECTED);
+  return WiFi.isConnected();
 }
 
 std::unique_ptr<Core::StatusResult>

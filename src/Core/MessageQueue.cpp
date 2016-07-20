@@ -9,54 +9,42 @@ void
 MessageQueue::loop() {
   while (!messages.empty())
   {
-    Logger::message("Message queue is not empty");
     auto message = messages.top();
-
     auto request = castToShared<Request>(message);
     if (request) {
-      Logger::message("Processing request");
+      Logger::message("Processing a request from '" + request->getTag("sender") + "'");
       StatusResult::Unique result;
       auto receiver = getMessageReceiver(*request);
       if (receiver) {
         result = receiver->onRequest(request);
       } else {
-        result = StatusResult::NotFound("Unable to find a processor for this type of request.");
+        result = StatusResult::NotFound("Unable to find a receiver.");
       }
-      auto response = std::make_shared<Response>(
-        request->getActionType(),
-        request->getResource(),
-        std::move(result)
-      );
-      // Copy all tags
-      // TODO: Move it to the constructor, the next line should be generic!
-      response->addTag("fromClient", request->getTag("fromClient"));
-      // Send back to the sender
-      response->addTag("receiver", request->getTag("sender"));
-      // TODO: Set a proper sender or "messageQueue"
-      // response->addTag("sender", "messageQueue");
+      auto response = Response::createFor(*request, std::move(result));
       messages.push(response);
     }
     auto response = castToShared<Response>(message);
     if (response) {
-      Logger::message("Processing response");
-      // Try to find a receiver for this message.
-      auto sender = getMessageSender(response->getTag("receiver"));
+      auto receiver = response->getTag("receiver");
+      Logger::message("Processing a response for '" + receiver + "'");
+      auto sender = getMessageSender(receiver);
       if (sender) {
         sender->onResponse(response);
+      } else {
+        Logger::error("Unable to find receiver '" + receiver + "'");
       }
-      // If can't find, just log, we can't do much the sender is gone.
     }
     auto notification = castToShared<Notification>(message);
     if (notification) {
-      Logger::message("Processing notification");
-      auto receiverId = notification->getTag("receiver");
-      if (receiverId != "") {
-        Logger::message("Receiver id " + receiverId);
-        auto sender = getMessageSender(receiverId);
+      auto receiver = notification->getTag("receiver");
+      if (receiver != "") {
+        Logger::message("Processing a notification for '" + receiver + "'");
+        auto sender = getMessageSender(receiver);
         if (sender) {
           sender->onNotification(notification);
         }
       } else {
+        Logger::message("Processing a broadcast notification");
         for(auto listener: listeners) {
           listener->onBroadcast(notification);
         }
@@ -68,17 +56,15 @@ MessageQueue::loop() {
 
 StatusResult::Unique
 MessageQueue::send(
-  String senderId, Message::Shared message) {
-  Logger::message("Message sent from " + senderId);
-  message->addTag("sender", senderId);
-  messages.push(message);
+  String senderId, Request::Shared request) {
+  request->addTag("sender", senderId);
+  messages.push(request);
   return StatusResult::OK();
 }
 
 StatusResult::Unique
 MessageQueue::notify(
   const Request& request, Notification::Shared notification) {
-  Logger::message("Notification sent");
   notification->addTag("fromClient", request.getTag("fromClient"));
   notification->addTag("receiver", request.getTag("sender"));
   messages.push(notification);
@@ -89,7 +75,6 @@ StatusResult::Unique
 MessageQueue::broadcast(
   String sender,
   Notification::Shared notification) {
-  Logger::message("Notification broadcasted.");
   notification->addTag("sender", sender);
   messages.push(notification);
   return StatusResult::OK();

@@ -21,19 +21,20 @@ class MessageQueue : public IMessageQueue {
     virtual void loop() override;
 
     // From IMessageQueue
-    virtual StatusResult::Unique send(
-      String senderId, Message::Shared message) override;
-    virtual StatusResult::Unique notify(
-      const Request& request, Notification::Shared notification) override;
-    virtual StatusResult::Unique broadcast(
-      String sender,
-      Notification::Shared notification) override;
-    virtual void addMessageSender(
-      IMessageSender::Shared sender) override;
-    virtual void addMessageReceiver(
-      IMessageReceiver::Shared receiver) override;
-    virtual void addMessageListener(
-      IMessageListener::Shared listener) override;
+    virtual StatusResult::Unique send(String                  senderId,
+                                      Request::Shared         request) override;
+
+    virtual StatusResult::Unique notify(const Request&        request,
+                                        Notification::Shared  notification) override;
+
+    virtual StatusResult::Unique broadcast(String             sender,
+                                        Notification::Shared  notification) override;
+
+    virtual void addMessageSender(IMessageSender::Shared sender) override;
+
+    virtual void addMessageReceiver(IMessageReceiver::Shared receiver) override;
+    
+    virtual void addMessageListener(IMessageListener::Shared listener) override;
 
   private:
     class MessageComparer {

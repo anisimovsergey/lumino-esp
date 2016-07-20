@@ -167,7 +167,7 @@ class IMessageQueue : public ILoopedService {
     virtual ~IMessageQueue();
 
     virtual StatusResult::Unique send(
-      String senderId, Message::Shared message) = 0;
+      String senderId, Request::Shared request) = 0;
 
     virtual StatusResult::Unique notify(
       const Request& request, Notification::Shared notification) = 0;
