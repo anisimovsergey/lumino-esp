@@ -2,8 +2,7 @@
 
 using namespace Core;
 
-IActionResult::~IActionResult() {
-}
+IActionResult::~IActionResult() {}
 
 StatusResult::Unique
 StatusResult::OK() {
@@ -36,9 +35,10 @@ StatusResult::BadRequest(String message) {
 }
 
 StatusResult::Unique
-StatusResult::BadRequest(String message,
-  StatusResult::Unique innerResult) {
-  return StatusResult::makeUnique(StatusCode::BadRequest, message, std::move(innerResult));
+StatusResult::BadRequest(String               message,
+                         StatusResult::Unique innerResult) {
+  return StatusResult::makeUnique(StatusCode::BadRequest, message,
+                                  std::move(innerResult));
 }
 
 StatusResult::Unique
@@ -52,9 +52,11 @@ StatusResult::InternalServerError(String message) {
 }
 
 StatusResult::Unique
-StatusResult::InternalServerError(String message,
-  StatusResult::Unique innerResult) {
-  return StatusResult::makeUnique(StatusCode::InternalServerError, message, std::move(innerResult));
+StatusResult::InternalServerError(String               message,
+                                  StatusResult::Unique innerResult) {
+  return StatusResult::makeUnique(StatusCode::InternalServerError,
+                                  message,
+                                  std::move(innerResult));
 }
 
 StatusResult::Unique

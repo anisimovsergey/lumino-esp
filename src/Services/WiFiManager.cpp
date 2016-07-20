@@ -26,33 +26,12 @@ WiFiManager::WiFiManager(std::shared_ptr<Core::IMessageQueue> messageQueue) :
     std::bind(&WiFiManager::onDeleteConnection, this, _1));
   messageQueue->addMessageReceiver(onDeleteConnectionHandler);
 
-  disconnected = WiFi.onStationModeDisconnected([=](const WiFiEventStationModeDisconnected&) {
-    auto notification = std::make_shared<Notification>(
-      ActionType::Update,
-      ConnectionResource,
-      ObjectResult::OK(
-        make_unique<Connection>(
-          getNetwork(),
-          isConnected()
-        )
-      )
-    );
-    messageQueue->broadcast(SenderId, notification);
+  connectedEventHandler = WiFi.onStationModeGotIP([=](const WiFiEventStationModeGotIP&) {
+    onConnected();
   });
-  gotIP = WiFi.onStationModeGotIP([=](const WiFiEventStationModeGotIP&) {
-    Logger::message("Creating notification");
-    auto notification = std::make_shared<Notification>(
-      ActionType::Update,
-      ConnectionResource,
-      ObjectResult::OK(
-        make_unique<Connection>(
-          getNetwork(),
-          isConnected()
-        )
-      )
-    );
-    Logger::message("Sending notification");
-    messageQueue->broadcast(SenderId, notification);
+
+  disconnectedEventHandler = WiFi.onStationModeDisconnected([=](const WiFiEventStationModeDisconnected&) {
+    onDisconnected();
   });
 }
 
@@ -96,11 +75,6 @@ WiFiManager::connect(String network, String password) {
   return StatusResult::OK();
 }
 
-void
-WiFiManager::loop() {
-  dnsServer->processNextRequest();
-}
-
 std::unique_ptr<Core::StatusResult>
 WiFiManager::disconnect() {
 
@@ -112,15 +86,8 @@ WiFiManager::disconnect() {
 }
 
 void
-WiFiManager::startSoftAP() {
-  auto ipAddress = WiFi.softAP(deviceName.c_str());
-  dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
-  dnsServer->start(53, "*", ipAddress);
-}
-
-void
-WiFiManager::stopSoftAP() {
-  WiFi.softAPdisconnect();
+WiFiManager::loop() {
+  dnsServer->processNextRequest();
 }
 
 std::unique_ptr<Core::StatusResult>
@@ -176,18 +143,65 @@ std::unique_ptr<Core::StatusResult>
 WiFiManager::onDeleteConnection(std::shared_ptr<Core::Request> request) {
 
   auto result = disconnect();
-  if (result->isOk()) {
-    result = StatusResult::NoContent("Connection was deleted.");
-  } else {
-    result = StatusResult::InternalServerError("Unable to delete the connection.",
-      std::move(result));
+  if (!result->isOk()) {
+    auto notification = std::make_shared<Notification>(
+      ActionType::Delete,
+      ConnectionResource,
+      StatusResult::InternalServerError("Unable to delete the connection.",
+        std::move(result))
+    );
+    messageQueue->broadcast(SenderId, notification);
   }
 
+  return StatusResult::Accepted();
+}
+
+void
+WiFiManager::onConnected() {
   auto notification = std::make_shared<Notification>(
-    ActionType::Delete,
+    ActionType::Update,
     ConnectionResource,
-    std::move(result)
+    ObjectResult::OK(
+      make_unique<Connection>(
+        getNetwork(),
+        isConnected()
+      )
+    )
   );
   messageQueue->broadcast(SenderId, notification);
-  return StatusResult::Accepted();
+}
+
+void
+WiFiManager::onDisconnected() {
+  auto notification = std::make_shared<Notification>(
+    ActionType::Update,
+    ConnectionResource,
+    ObjectResult::OK(
+      make_unique<Connection>(
+        getNetwork(),
+        isConnected()
+      )
+    )
+  );
+  messageQueue->broadcast(SenderId, notification);
+  if (!hasConnection()) {
+    auto notification = std::make_shared<Notification>(
+      ActionType::Delete,
+      ConnectionResource,
+      StatusResult::NoContent("Connection was deleted.")
+    );
+    messageQueue->broadcast(SenderId, notification);
+  }
+}
+
+void
+WiFiManager::startSoftAP() {
+  auto ipAddress = WiFi.softAP(deviceName.c_str());
+  dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
+  dnsServer->start(53, "*", ipAddress);
+}
+
+void
+WiFiManager::stopSoftAP() {
+  WiFi.softAPdisconnect();
 }

@@ -1,4 +1,5 @@
 // Copyright Sergey Anisimov 2016-2017
+
 // MIT License
 //
 // Moikot
@@ -19,49 +20,45 @@
 #include <memory>
 
 namespace Services {
-
-class WiFiManager : public IWiFiManager, public Core::ILoopedService {
+  class WiFiManager : public IWiFiManager, public Core::ILoopedService {
   public:
-    WiFiManager(std::shared_ptr<Core::IMessageQueue> messageQueue);
+    WiFiManager(std::shared_ptr<Core::IMessageQueue>messageQueue);
     ~WiFiManager();
 
-    void    start();
+    void   start();
 
-    String  getDeviceName() const override;
-    bool    hasConnection() const override;
-    String  getNetwork() const override;
-    bool    isConnected() const override;
+    String getDeviceName() const override;
+    bool   hasConnection() const override;
+    String getNetwork() const override;
+    bool   isConnected() const override;
 
-    std::unique_ptr<Core::StatusResult>
-      connect(String network, String password) override;
-    std::unique_ptr<Core::StatusResult>
-      disconnect() override;
-
-    void loop() override;
+    Core::StatusResult::Unique connect(String network, String password) override;
+    Core::StatusResult::Unique disconnect() override;
+    void   loop() override;
 
   private:
     std::unique_ptr<DNSServer> dnsServer;
     std::shared_ptr<Core::IMessageQueue> messageQueue;
-    String  deviceName;
+    WiFiEventHandler connectedEventHandler;
+    WiFiEventHandler disconnectedEventHandler;
+    String deviceName;
 
     // Message handling
-    std::unique_ptr<Core::StatusResult> onGetConnection(
-      std::shared_ptr<Core::Request> request);
-    std::unique_ptr<Core::StatusResult> onCreateConnection(
-      std::shared_ptr<Core::Request> request,
-      const Models::Connection& connection);
-    std::unique_ptr<Core::StatusResult> onDeleteConnection(
-      std::shared_ptr<Core::Request> request);
+    std::unique_ptr<Core::StatusResult>onGetConnection(
+      std::shared_ptr<Core::Request>request);
+    std::unique_ptr<Core::StatusResult>onCreateConnection(
+      std::shared_ptr<Core::Request>request,
+      const Models::Connection    & connection);
+    std::unique_ptr<Core::StatusResult>onDeleteConnection(
+      std::shared_ptr<Core::Request>request);
 
-    WiFiEventHandler connected;
-    WiFiEventHandler disconnected;
-    WiFiEventHandler gotIP;
+    // Events handling
+    void onConnected();
+    void onDisconnected();
 
-    void    startSoftAP();
-    void    stopSoftAP();
-    void    updateDisplay();
-};
-
+    void startSoftAP();
+    void stopSoftAP();
+  };
 }
 
 #endif /* end of include guard: SERVICES_WIFIMANAGER_HPP */
