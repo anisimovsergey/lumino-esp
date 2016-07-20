@@ -9,6 +9,7 @@
 
 #include "IDisplay.hpp"
 #include "Core/ILoopedService.hpp"
+#include "Core/IMessageQueue.hpp"
 
 #include <memory>
 
@@ -18,7 +19,7 @@ namespace Services {
 
 class Display : public IDisplay, public Core::ILoopedService  {
   public:
-    Display();
+    Display(std::shared_ptr<Core::IMessageQueue> messageQueue);
 
     // From IDisplay
     virtual void showSigh(const DisplaySign& sign) override;
@@ -27,9 +28,12 @@ class Display : public IDisplay, public Core::ILoopedService  {
     virtual void loop() override;
 
   private:
+    std::shared_ptr<Core::IMessageQueue> messageQueue;
     DisplaySign currentSign;
     std::unique_ptr<Adafruit_NeoPixel> pixels;
     void colorWipe(uint32_t color);
+
+    void onBroadcast(Core::Notification::Shared notification);
 };
 
 }

@@ -22,7 +22,7 @@
 namespace Services {
   class WiFiManager : public IWiFiManager, public Core::ILoopedService {
   public:
-    WiFiManager(std::shared_ptr<Core::IMessageQueue>messageQueue);
+    WiFiManager(std::shared_ptr<Core::IMessageQueue> messageQueue);
     ~WiFiManager();
 
     void   start();
@@ -48,7 +48,7 @@ namespace Services {
       std::shared_ptr<Core::Request>request);
     std::unique_ptr<Core::StatusResult>onCreateConnection(
       std::shared_ptr<Core::Request>request,
-      const Models::Connection    & connection);
+      const Models::Connection& connection);
     std::unique_ptr<Core::StatusResult>onDeleteConnection(
       std::shared_ptr<Core::Request>request);
 

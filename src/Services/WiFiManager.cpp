@@ -142,53 +142,53 @@ WiFiManager::onCreateConnection(std::shared_ptr<Core::Request> request,
 std::unique_ptr<Core::StatusResult>
 WiFiManager::onDeleteConnection(std::shared_ptr<Core::Request> request) {
 
+  std::unique_ptr<Core::IActionResult> actionResult;
   auto result = disconnect();
-  if (!result->isOk()) {
-    auto notification = std::make_shared<Notification>(
-      ActionType::Delete,
-      ConnectionResource,
-      StatusResult::InternalServerError("Unable to delete the connection.",
-        std::move(result))
-    );
-    messageQueue->broadcast(SenderId, notification);
+  if (result->isOk()) {
+    actionResult = StatusResult::NoContent("Connection was deleted.");
+  } else {
+    actionResult = StatusResult::InternalServerError("Unable to delete the connection.",
+        std::move(result));
   }
 
+  auto notification = std::make_shared<Notification>(
+    ActionType::Delete,
+    ConnectionResource,
+    std::move(actionResult)
+  );
+  messageQueue->broadcast(SenderId, notification);
   return StatusResult::Accepted();
 }
 
 void
 WiFiManager::onConnected() {
-  auto notification = std::make_shared<Notification>(
-    ActionType::Update,
-    ConnectionResource,
-    ObjectResult::OK(
-      make_unique<Connection>(
-        getNetwork(),
-        isConnected()
+  if (hasConnection()) {
+    auto notification = std::make_shared<Notification>(
+      ActionType::Update,
+      ConnectionResource,
+      ObjectResult::OK(
+        make_unique<Connection>(
+          getNetwork(),
+          isConnected()
+        )
       )
-    )
-  );
-  messageQueue->broadcast(SenderId, notification);
+    );
+    messageQueue->broadcast(SenderId, notification);
+  }
 }
 
 void
 WiFiManager::onDisconnected() {
-  auto notification = std::make_shared<Notification>(
-    ActionType::Update,
-    ConnectionResource,
-    ObjectResult::OK(
-      make_unique<Connection>(
-        getNetwork(),
-        isConnected()
-      )
-    )
-  );
-  messageQueue->broadcast(SenderId, notification);
-  if (!hasConnection()) {
+  if (hasConnection()) {
     auto notification = std::make_shared<Notification>(
-      ActionType::Delete,
+      ActionType::Update,
       ConnectionResource,
-      StatusResult::NoContent("Connection was deleted.")
+      ObjectResult::OK(
+        make_unique<Connection>(
+          getNetwork(),
+          isConnected()
+        )
+      )
     );
     messageQueue->broadcast(SenderId, notification);
   }

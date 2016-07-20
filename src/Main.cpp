@@ -33,7 +33,7 @@ void setup(void){
   Logger::message("Creating the message queue...");
   auto messageQueue(std::make_shared<MessageQueue>());
   Logger::message("Creating the display..");
-  auto display(std::make_shared<Display>());
+  auto display(std::make_shared<Display>(messageQueue));
   Logger::message("Creating the wifi manager...");
   auto wifiManager(std::make_shared<WiFiManager>(messageQueue));
 
@@ -81,6 +81,7 @@ void setup(void){
 
   // Adding servers to the loop
   Logger::message("Adding services to the loop...");
+  loopedServices.push_back(display);
   loopedServices.push_back(messageQueue);
   loopedServices.push_back(httpServerAsync);
   loopedServices.push_back(wifiManager);
