@@ -77,6 +77,7 @@ class Message : public IEntity {
 class Request : public Message {
   TYPE_INFO(Request, Message, "request")
   public:
+    Request(ActionType actionType, String resource);    
     Request(ActionType actionType, String resource,
       IEntity::Unique content);
 

@@ -26,6 +26,11 @@ Message::getTag(String tag) const {
     return "";
 }
 
+Request::Request(ActionType actionType, String resource) :
+ Message(actionType, resource, Priority::High) {
+
+}
+
 Request::Request(ActionType actionType, String resource,
   IEntity::Unique content) : Message(actionType, resource, Priority::High),
   content(std::move(content)) {

@@ -8,8 +8,10 @@ using namespace Core;
 using namespace Services;
 using namespace std::placeholders;
 
-const char* SenderId = "webSocketsServerAsync";
-const char* FromClientTag = "fromClient";
+namespace {
+  const char* SenderId = "WebSocketsServerAsync";
+  const char* FromClientTag = "fromClient";
+}
 
 WebSocketsServerAsync::WebSocketsServerAsync(int port,
   std::shared_ptr<IMessageQueue> messageQueue,

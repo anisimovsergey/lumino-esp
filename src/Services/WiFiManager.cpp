@@ -9,8 +9,10 @@ using namespace Models;
 using namespace Services;
 using namespace std::placeholders;
 
-static const String SenderId = "WiFiManager";
-static const String ConnectionResource = "/connection";
+namespace {
+  static const String SenderId = "WiFiManager";
+  static const String ConnectionResource = "/connection";
+}
 
 WiFiManager::WiFiManager(std::shared_ptr<Core::IMessageQueue> messageQueue) :
   dnsServer(make_unique<DNSServer>()), messageQueue(messageQueue) {
