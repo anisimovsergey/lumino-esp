@@ -63,8 +63,15 @@ MessageQueue::send(
 }
 
 StatusResult::Unique
-MessageQueue::notify(
-  const Request& request, Notification::Shared notification) {
+MessageQueue::replyTo(
+  const Request& request, IActionResult::Unique  result) {
+
+  auto notification = Notification::makeShared(
+    request.getActionType(),
+    request.getResource(),
+    std::move(result)
+  );
+
   notification->addTag("fromClient", request.getTag("fromClient"));
   notification->addTag("receiver", request.getTag("sender"));
   messages.push(notification);

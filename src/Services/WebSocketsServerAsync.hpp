@@ -27,7 +27,6 @@ class WebSocketsServerAsync : public Core::ILoopedService {
     void start() {};
     void loop() override { };
 
-  
     std::unique_ptr<AsyncWebSocket> server;
   private:
     std::shared_ptr<Core::IMessageQueue> messageQueue;
@@ -40,6 +39,7 @@ class WebSocketsServerAsync : public Core::ILoopedService {
       std::unique_ptr<Core::StatusResult>&& result,
       const Core::Request* request);
 
+    void sendResponse(const Core::Message& message, String& text);
     void onResponse(std::shared_ptr<Core::Response> response);
     void onNotification(std::shared_ptr<Core::Notification> notification);
     void onBroadcast(std::shared_ptr<Core::Notification> notification);

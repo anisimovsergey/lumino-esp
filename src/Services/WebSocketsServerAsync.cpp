@@ -90,28 +90,36 @@ WebSocketsServerAsync::sendResponse(uint32_t num,
 
   String json;
   auto status = serializer->serialize(*response, json);
-  if (!status->isOk()) {
+  if (status->isOk()) {
+    server->text(num, json);
+  } else {
     Logger::error("Unbale to seraile the response.");
-    return;
   }
+}
 
-  server->text(num, json);
+void
+WebSocketsServerAsync::sendResponse(const Core::Message& message, String& text) {
+  auto clientNumStr = message.getTag(FromClientTag);
+  if (clientNumStr.length() == 0) {
+    auto clientNum = clientNumStr.toInt();
+    if (server->hasClient(clientNum)) {
+      server->text(clientNumStr.toInt(), text);
+    } else {
+      Logger::error("Client + '" + clientNumStr + "' does not exist.");
+    }
+  } else {
+    Logger::error("Client is not specified.");
+  }
 }
 
 void
 WebSocketsServerAsync::onResponse(std::shared_ptr<Response> response) {
   String json;
   auto status = serializer->serialize(*response, json);
-  if (!status->isOk()) {
-    Logger::error("Unbale to seraile the response.");
-    return;
-  }
-
-  auto clientNumStr = response->getTag(FromClientTag);
-  if (clientNumStr != "") {
-    server->text(clientNumStr.toInt(), json);
+  if (status->isOk()) {
+    sendResponse(*response, json);
   } else {
-    // TODO : log error
+    Logger::error("Unbale to seraile the response.");
   }
 }
 
@@ -119,18 +127,10 @@ void
 WebSocketsServerAsync::onNotification(std::shared_ptr<Core::Notification> notification) {
   String json;
   auto status = serializer->serialize(*notification, json);
-  if (!status->isOk()) {
-    serializer->serialize(*status, json);
-    Logger::error("Unbale to seraile the response. " + json);
-    return;
-  }
-
-  auto clientNumStr = notification->getTag(FromClientTag);
-  Logger::error("clientNumStr" + clientNumStr);
-  if (clientNumStr != "") {
-    server->text(clientNumStr.toInt(), json);
+  if (status->isOk()) {
+    sendResponse(*notification, json);
   } else {
-    // TODO : log error
+    Logger::error("Unbale to seraile the notification.");
   }
 }
 
@@ -138,10 +138,9 @@ void
 WebSocketsServerAsync::onBroadcast(std::shared_ptr<Core::Notification> notification) {
   String json;
   auto status = serializer->serialize(*notification, json);
-  if (!status->isOk()) {
-    Logger::error("Unbale to seraile the response.");
-    return;
+  if (status->isOk()) {
+    server->textAll(json);
+  } else {
+    Logger::error("Unbale to seraile the notification.");
   }
-
-  server->textAll(json);
 }

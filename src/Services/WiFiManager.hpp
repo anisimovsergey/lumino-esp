@@ -43,6 +43,8 @@ namespace Services {
     WiFiEventHandler disconnectedEventHandler;
     String deviceName;
 
+    Models::Connection::Unique createConnection();
+
     // Message handling
     std::unique_ptr<Core::StatusResult>onGetConnection(
       std::shared_ptr<Core::Request>request);

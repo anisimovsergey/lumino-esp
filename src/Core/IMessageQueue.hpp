@@ -166,24 +166,24 @@ class IMessageQueue : public ILoopedService {
   public:
     virtual ~IMessageQueue();
 
-    virtual StatusResult::Unique send(
-      String senderId, Request::Shared request) = 0;
+    virtual StatusResult::Unique      send(const String&            sender,
+                                           Request::Shared          request) = 0;
 
-    virtual StatusResult::Unique notify(
-      const Request& request, Notification::Shared notification) = 0;
+    virtual StatusResult::Unique   replyTo(const Request&           request,
+                                           IActionResult::Unique    result) = 0;
 
-    virtual StatusResult::Unique broadcast(
-      String sender,
-      Notification::Shared notification) = 0;
+    virtual StatusResult::Unique broadcast(const String&            sender,
+                                           const Request&           request,
+                                           IActionResult::Unique    result) = 0;
 
-    virtual void addMessageSender(
-      IMessageSender::Shared sender) = 0;
+    virtual StatusResult::Unique broadcast(const String&            sender,
+                                           Notification::Shared     notification) = 0;
 
-    virtual void addMessageReceiver(
-      IMessageReceiver::Shared receiver) = 0;
+    virtual void          addMessageSender(IMessageSender::Shared   sender) = 0;
 
-    virtual void addMessageListener(
-      IMessageListener::Shared listener) = 0;
+    virtual void        addMessageReceiver(IMessageReceiver::Shared receiver) = 0;
+
+    virtual void        addMessageListener(IMessageListener::Shared listener) = 0;
 };
 
 }

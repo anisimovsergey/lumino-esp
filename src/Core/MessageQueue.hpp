@@ -24,8 +24,8 @@ class MessageQueue : public IMessageQueue {
     virtual StatusResult::Unique send(String                  senderId,
                                       Request::Shared         request) override;
 
-    virtual StatusResult::Unique notify(const Request&        request,
-                                        Notification::Shared  notification) override;
+    virtual StatusResult::Unique replyTo(const Request&         request,
+                                         IActionResult::Unique  result) override;
 
     virtual StatusResult::Unique broadcast(String             sender,
                                         Notification::Shared  notification) override;
@@ -33,7 +33,7 @@ class MessageQueue : public IMessageQueue {
     virtual void addMessageSender(IMessageSender::Shared sender) override;
 
     virtual void addMessageReceiver(IMessageReceiver::Shared receiver) override;
-    
+
     virtual void addMessageListener(IMessageListener::Shared listener) override;
 
   private:

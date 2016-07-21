@@ -79,7 +79,7 @@ Display::onNotification(std::shared_ptr<Core::Notification> notification) {
         else
           colorWipe(pixels->Color(25, 0, 0, 0));
       }
-    } 
+    }
     auto statusResult = StatusResult::cast(&notification->getResult());
     if (statusResult) {
       if (statusResult->getStatusCode() == StatusCode::NotFound) {

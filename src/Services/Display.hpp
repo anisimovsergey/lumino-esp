@@ -32,7 +32,7 @@ class Display : public IDisplay, public Core::ILoopedService  {
     DisplaySign currentSign;
     std::unique_ptr<Adafruit_NeoPixel> pixels;
     void colorWipe(uint32_t color);
-    
+
     void onResponse(std::shared_ptr<Core::Response> response);
     void onNotification(std::shared_ptr<Core::Notification> notification);
     void onBroadcast(Core::Notification::Shared notification);

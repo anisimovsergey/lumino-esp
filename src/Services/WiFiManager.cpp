@@ -94,26 +94,22 @@ WiFiManager::loop() {
   dnsServer->processNextRequest();
 }
 
+Models::Connection::Unique
+WiFiManager::createConnection() {
+  return Connection::makeUnique(getNetwork(), isConnected());
+}
+
 std::unique_ptr<Core::StatusResult>
 WiFiManager::onGetConnection(std::shared_ptr<Core::Request> request) {
 
   std::unique_ptr<Core::IActionResult> actionResult;
   if (hasConnection()) {
-    actionResult = ObjectResult::OK(
-      make_unique<Connection>(
-        getNetwork(),
-        isConnected()
-      ));
+    actionResult = ObjectResult::OK(createConnection());
   } else {
     actionResult = StatusResult::NotFound("The connection doesn't exist.");
   }
 
-  auto notification = std::make_shared<Notification>(
-    ActionType::Get,
-    ConnectionResource,
-    std::move(actionResult)
-  );
-  messageQueue->notify(*request, notification);
+  messageQueue->replyTo(*request, std::move(actionResult), SenderId);
   return StatusResult::Accepted();
 }
 
@@ -124,17 +120,15 @@ WiFiManager::onCreateConnection(std::shared_ptr<Core::Request> request,
   std::unique_ptr<Core::IActionResult> actionResult;
   auto result = connect(connection.getNetworkSsid(), connection.getNetworkPassword());
   if (result->isOk()) {
-    actionResult = ObjectResult::Created(
-      make_unique<Connection>(
-        getNetwork(),
-        isConnected()
-    ));
+    actionResult = ObjectResult::Created(createConnection());
   } else {
     actionResult = StatusResult::InternalServerError("Unable to create the connection.",
       std::move(result));
   }
 
-  auto notification = std::make_shared<Notification>(
+  Notification::create(*request, std::move(actionResult), SenderId);
+
+  auto notification = Notification::makeShared(
     ActionType::Create,
     ConnectionResource,
     std::move(actionResult)
@@ -155,7 +149,7 @@ WiFiManager::onDeleteConnection(std::shared_ptr<Core::Request> request) {
         std::move(result));
   }
 
-  auto notification = std::make_shared<Notification>(
+  auto notification = Notification::makeShared(
     ActionType::Delete,
     ConnectionResource,
     std::move(actionResult)
@@ -167,15 +161,10 @@ WiFiManager::onDeleteConnection(std::shared_ptr<Core::Request> request) {
 void
 WiFiManager::onConnected() {
   if (hasConnection()) {
-    auto notification = std::make_shared<Notification>(
+    auto notification = Notification::makeShared(
       ActionType::Update,
       ConnectionResource,
-      ObjectResult::OK(
-        make_unique<Connection>(
-          getNetwork(),
-          isConnected()
-        )
-      )
+      ObjectResult::OK(createConnection())
     );
     messageQueue->broadcast(SenderId, notification);
   }
@@ -184,15 +173,10 @@ WiFiManager::onConnected() {
 void
 WiFiManager::onDisconnected() {
   if (hasConnection()) {
-    auto notification = std::make_shared<Notification>(
+    auto notification = Notification::makeShared(
       ActionType::Update,
       ConnectionResource,
-      ObjectResult::OK(
-        make_unique<Connection>(
-          getNetwork(),
-          isConnected()
-        )
-      )
+      ObjectResult::OK(createConnection())
     );
     messageQueue->broadcast(SenderId, notification);
   }

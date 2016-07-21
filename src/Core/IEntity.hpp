@@ -21,6 +21,10 @@ public: \
   static Unique makeUnique(Args&&... args) { \
     return Unique(new Class(std::forward<Args>(args)...)); \
   } \
+  template <typename... Args> \
+  static Shared makeShared(Args&&... args) { \
+    return std::make_shared<Class>(std::forward<Args>(args)...); \
+  } \
 
 #define TYPE_INFO(Class, SuperClass, ClassTypeId) \
 public: \
