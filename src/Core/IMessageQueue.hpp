@@ -162,9 +162,73 @@ private:
   std::function<StatusResult::Unique(Request::Shared, const T&)> handler;
 };
 
+class QueueClient {
+  TYPE_PTRS(QueueClient)
+  public:
+    QueueClient(String clientId);
+
+    String getId();
+
+    void onResponse(const Response& response);
+    void onNotification(const Notification& notification);
+
+    void setOnResponse(std::function<void(const Response&)> onResponse);
+    void setOnNotification(std::function<void(const Notification&)> onNotification);
+
+  private:
+    String clientId;
+    std::function<void(const Response&)> onResponseHandler;
+    std::function<void(const Notification&)> onNotificationHandler;
+};
+
+template <class T>
+class QueueResourceClient : public QueueClient {
+  TYPE_PTRS(QueueResourceClient)
+  public:
+    QueueResourceClient(String clientId);
+
+    void getResource();
+    void createResource(const T& resource);
+    void updateResource(const T& resource);
+    void deleteResource();
+
+    void setOnGetResponse(std::function<void(const Response&)> onGetResponse);
+    void setOnCreateResponse(std::function<void(const Response&)> onCreateResponse);
+    void setOnUpdateResponse(std::function<void(const Response&)> onCreateResponse);
+    void setOnDeleteResponse(std::function<void(const Response&)> onCreateResponse);
+
+    void setOnGetNotification(std::function<void(const T&)> onGetNotification);
+    void setOnCreateNotification(std::function<void(const T&)> onCreateNotification);
+    void setOnUpdateNotification(std::function<void(const T&)> onCreateNotification);
+    void setOnDeleteNotification(std::function<void()> onCreateNotification);
+
+  private:
+    String clientId;
+    std::function<void(const Response&)> onResponseHandler;
+    std::function<void(const Notification&)> onNotificationHandler;
+};
+
+class QueueController {
+  TYPE_PTRS(QueueController)
+  public:
+    QueueController(String controllerId);
+
+    String getResource();
+    StatusResult::Unique onRequest(const Request& request);
+
+  private:
+    String controllerId;
+};
+
 class IMessageQueue : public ILoopedService {
   public:
     virtual ~IMessageQueue();
+
+    // TODO : They should return StatusResult and fail if there is another
+    // client or controller with the same id. Ideally the id should be passed
+    // as a parameter to add... methods
+    virtual void addClient(QueueClient::Shared client) = 0;
+    virtual void addController(QueueController::Shared controller) = 0;
 
     virtual StatusResult::Unique      send(const String&            sender,
                                            Request::Shared          request) = 0;

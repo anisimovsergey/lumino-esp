@@ -19,17 +19,6 @@ WebSocketsServerAsync::WebSocketsServerAsync(int port,
   server(make_unique<AsyncWebSocket>("/ws")), messageQueue(messageQueue),
   serializer(serializer) {
 
-/*
-  auto messageSender = std::make_shared<MessageSender>(SenderId,
-    std::bind(&WebSocketsServerAsync::onResponse, this, _1),
-    std::bind(&WebSocketsServerAsync::onNotification, this, _1));
-  messageQueue->addMessageSender(messageSender);
-
-  auto messageListener = std::make_shared<MessageListener>(
-    std::bind(&WebSocketsServerAsync::onBroadcast, this, _1));
-  messageQueue->addMessageListener(messageListener);
-  */
-
   server->onEvent(std::bind(&WebSocketsServerAsync::onSocketEvent, this,
     _1, _2, _3, _4, _5, _6));
 }
@@ -39,35 +28,63 @@ WebSocketsServerAsync::~WebSocketsServerAsync() {
 }
 
 void
+WebSocketsServerAsync::sendResult(AsyncWebSocketClient* client,
+  const Core::StatusResult& result) {
+  String json;
+  auto status = serializer->serialize(result, json);
+  if (status->isOk()) {
+    client->text(json);
+  } else {
+    Logger::error("Unbale to seraile the response.");
+  }
+}
+
+void
 WebSocketsServerAsync::onSocketEvent(AsyncWebSocket* server,
   AsyncWebSocketClient* client, AwsEventType type, void * arg,
   uint8_t *data, size_t len) {
-
-  if (type == WS_EVT_CONNECT) {
-    auto queueClinet = WebSocketQueueClient::makeShared(client);
-    messageQueue->addClient(queueClinet);
-    clients.push_back(queueClinet);
+  switch (type) {
+    case WS_EVT_CONNECT:
+      onClientConnected(client);
+    case WS_EVT_DISCONNECT:
+      onClientDisconnected(client);
+    case WS_EVT_DATA: {
+      AwsFrameInfo * info = (AwsFrameInfo*)arg;
+      if (!(info->final && info->index == 0 && info->len == len) ||
+          info->opcode != WS_TEXT)
+        return;
+      data[len] = 0;
+      onTextReceived(client, (char*)data);
+    }
+    default:
+      break;
   }
+}
 
-  if (type == WS_EVT_DISCONNECT) {
-    auto queueClient = findQueueClient(client);
-    if (queueClient)
-      cleants.remove(queueClient);
+void
+WebSocketsServerAsync::onClientConnected(AsyncWebSocketClient* client) {
+  auto queueClinet = QueueClient::makeShared("WebSocketsServer/" + String(client->id()));
+  queueClinet->setOnResponse([=](const Response& response){
+    onResponse(client, response);
+  });
+  queueClinet->setOnNotification([=](const Notification& notification){
+    onNotification(client, response);
+  });
+  messageQueue->addClient(queueClinet);
+  clients.push_back(queueClinet);
+}
+
+void
+WebSocketsServerAsync::onClientDisconnected(AsyncWebSocketClient* client) {
+  auto queueClient = findQueueClient(client);
+  if (queueClient) {
+    messageQueue->removeClient(queueClient);
+    cleants.remove(queueClient);
   }
+}
 
-  if (type != WS_EVT_DATA)
-    return;
-
-  AwsFrameInfo * info = (AwsFrameInfo*)arg;
-  if (!(info->final && info->index == 0 && info->len == len))
-    return;
-
-  if (info->opcode != WS_TEXT)
-    return;
-
-  data[len] = 0;
-  String text((char*)data);
-
+void
+WebSocketsServerAsync::onTextReceived(AsyncWebSocketClient* client, const String& text) {
   std::unique_ptr<IEntity> entity;
   std::shared_ptr<Request> request;
   auto statusResult = serializer->deserialize(text, entity);
@@ -79,72 +96,33 @@ WebSocketsServerAsync::onSocketEvent(AsyncWebSocket* server,
         statusResult = queueClient.send(request);
       else
         statusResult = StatusResult::InternalServerError(
-          "Unable to find queue client '" + client->id() +"'.");
+          "Unable to find queue client '" + String(client->id()) +"'.");
     } else {
       statusResult = StatusResult::BadRequest(
         "Type '" + String(Request::TypeId) + "' was expected.");
     }
   }
   if (!statusResult->isOk()) {
-    sendResponse(client->id(), *statusResult);
-  }
+    sendResult(client, *statusResult);
 }
 
 void
-WebSocketsServerAsync::sendResponse(uint32_t num,
-  const Core::StatusResult& result) {
-  String json;
-  auto status = serializer->serialize(result, json);
-  if (status->isOk()) {
-    server->text(num, json);
-  } else {
-    Logger::error("Unbale to seraile the response.");
-  }
-}
-
-void
-WebSocketsServerAsync::sendResponse(const Core::Message& message, String& text) {
-  auto clientNumStr = message.getTag(FromClientTag);
-  if (clientNumStr.length() == 0) {
-    auto clientNum = clientNumStr.toInt();
-    if (server->hasClient(clientNum)) {
-      server->text(clientNumStr.toInt(), text);
-    } else {
-      Logger::error("Client + '" + clientNumStr + "' does not exist.");
-    }
-  } else {
-    Logger::error("Client is not specified.");
-  }
-}
-
-void
-WebSocketsServerAsync::onResponse(std::shared_ptr<Response> response) {
+WebSocketsServerAsync::onResponse(AsyncWebSocketClient* client, const Response& response) {
   String json;
   auto status = serializer->serialize(*response, json);
   if (status->isOk()) {
-    sendResponse(*response, json);
+    client->text(json);
   } else {
     Logger::error("Unbale to seraile the response.");
   }
 }
 
 void
-WebSocketsServerAsync::onNotification(std::shared_ptr<Core::Notification> notification) {
+WebSocketsServerAsync::onNotification(AsyncWebSocketClient* client, const Notification& notification) {
   String json;
   auto status = serializer->serialize(*notification, json);
   if (status->isOk()) {
-    sendResponse(*notification, json);
-  } else {
-    Logger::error("Unbale to seraile the notification.");
-  }
-}
-
-void
-WebSocketsServerAsync::onBroadcast(std::shared_ptr<Core::Notification> notification) {
-  String json;
-  auto status = serializer->serialize(*notification, json);
-  if (status->isOk()) {
-    server->textAll(json);
+    client->text(json);
   } else {
     Logger::error("Unbale to seraile the notification.");
   }

@@ -10,6 +10,7 @@
 #include "IDisplay.hpp"
 #include "Core/ILoopedService.hpp"
 #include "Core/IMessageQueue.hpp"
+#include "Models/Connection.hpp"
 
 #include <memory>
 
@@ -29,13 +30,16 @@ class Display : public IDisplay, public Core::ILoopedService  {
 
   private:
     std::shared_ptr<Core::IMessageQueue> messageQueue;
-    DisplaySign currentSign;
     std::unique_ptr<Adafruit_NeoPixel> pixels;
-    void colorWipe(uint32_t color);
 
-    void onResponse(std::shared_ptr<Core::Response> response);
-    void onNotification(std::shared_ptr<Core::Notification> notification);
-    void onBroadcast(Core::Notification::Shared notification);
+    void colorWipe(uint32_t color);
+    void updateConnectionStatus(const Models::Connection& connection);
+
+    // Events
+    void onConnectionGetNotification(const Models::Connection& connection);
+    void onConnectionCreateNotification(const Models::Connection& connection);
+    void onConnectionUpdateNotification(const Models::Connection& connection);
+    void onConnectionDeleteNotification();
 };
 
 }

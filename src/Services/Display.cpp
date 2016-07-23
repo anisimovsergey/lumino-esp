@@ -19,33 +19,27 @@ namespace {
   const char* ConnectionResource = "/connection";
 }
 
-Display::Display(std::shared_ptr<Core::IMessageQueue> messageQueue) :
+Display::Display(std::shared_ptr<IMessageQueue> messageQueue) :
   messageQueue(messageQueue),
-  currentSign(DisplaySign::Undefined),
   pixels(make_unique<Adafruit_NeoPixel>(PIXEL_COUNT, PIXEL_PIN, PIXEL_TYPE)) {
+
   pixels->begin();
-  colorWipe(pixels->Color(0, 0, 0)); // Initialize all pixels to 'off'
 
-  auto messageSender = std::make_shared<MessageSender>(SenderId,
-    std::bind(&Display::onResponse, this, _1),
-    std::bind(&Display::onNotification, this, _1));
-  messageQueue->addMessageSender(messageSender);
+  colorWipe(pixels->Color(0, 0, 0));
 
-  auto reqiest = std::make_shared<Request>(ActionType::Get, ConnectionResource);
-  messageQueue->send(SenderId, reqiest);
-}
+  auto client = QueueResourceClient<Connection>::makeShared(SenderId);
 
-void
-Display::showSigh(const DisplaySign& sign) {
-  if (sign == currentSign)
-    return;
+  client->setOnGetNotification(
+    std::bind(&Display::onConnectionGetNotification, this, _1));
+  client->setOnCreateNotification(
+    std::bind(&Display::onConnectionCreateNotification, this, _1));
+  client->setOnUpdateNotification(
+    std::bind(&Display::onConnectionUpdateNotification, this, _1));
+  client->setOnDeleteNotification(
+    std::bind(&Display::onConnectionDeleteNotification, this));;
 
-  if (sign == DisplaySign::Connected)
-    colorWipe(pixels->Color(0, 0, 0, 0));
-  if (sign == DisplaySign::Disconnected)
-    colorWipe(pixels->Color(25, 0, 0, 0));
-
-  currentSign = sign;
+  messageQueue->addClient(client);
+  client->getResource();
 }
 
 void
@@ -62,69 +56,38 @@ Display::colorWipe(uint32_t color) {
 }
 
 void
-Display::onResponse(std::shared_ptr<Core::Response> response) {
-
+Display::updateConnectionStatus(const Connection& connection) {
+  if (connection.getIsConnected())
+    colorWipe(pixels->Color(0, 25, 0, 0));
+  else
+    colorWipe(pixels->Color(25, 0, 0, 0));
 }
 
 void
-Display::onNotification(std::shared_ptr<Core::Notification> notification) {
-  if (notification->getActionType() == ActionType::Get &&
-    notification->getResource() == ConnectionResource) {
-    auto objectResult = ObjectResult::cast(&notification->getResult());
-    if (objectResult) {
-      auto connection = Connection::cast(&objectResult->getObject());
-      if (connection) {
-        if (connection->getIsConnected())
-          colorWipe(pixels->Color(0, 25, 0, 0));
-        else
-          colorWipe(pixels->Color(25, 0, 0, 0));
-      }
+Display::onConnectionGetNotification(const StatusResult&   const Connection* connection) {
+  if (statusResult.isOk()) {
+    updateConnectionStatus(connection);
+  } else {
+    if (statusResult.getStatusCode() == StatusCode::NotFound) {
+      colorWipe(pixels->Color(0, 0, 0, 0));
+    } else {
+      // TODO: Error
+      colorWipe(pixels->Color(0, 0, 0, 25));
     }
-    auto statusResult = StatusResult::cast(&notification->getResult());
-    if (statusResult) {
-      if (statusResult->getStatusCode() == StatusCode::NotFound) {
-        colorWipe(pixels->Color(0, 0, 0, 0));
-      }
-    }
-    auto messageListener = std::make_shared<MessageListener>(
-      std::bind(&Display::onBroadcast, this, _1));
-    messageQueue->addMessageListener(messageListener);
   }
 }
 
 void
-Display::onBroadcast(Notification::Shared notification) {
-  if (notification->getActionType() == ActionType::Update &&
-      notification->getResource() == ConnectionResource) {
-    auto objectResult = ObjectResult::cast(&notification->getResult());
-    if (objectResult) {
-      auto connection = Connection::cast(&objectResult->getObject());
-      if (connection) {
-        if (connection->getIsConnected())
-          colorWipe(pixels->Color(0, 25, 0, 0));
-        else
-          colorWipe(pixels->Color(25, 0, 0, 0));
-      }
-    }
-  } else if (notification->getActionType() == ActionType::Create &&
-             notification->getResource() == ConnectionResource) {
-     auto objectResult = ObjectResult::cast(&notification->getResult());
-     if (objectResult) {
-       auto connection = Connection::cast(&objectResult->getObject());
-       if (connection) {
-         if (connection->getIsConnected())
-           colorWipe(pixels->Color(0, 25, 0, 0));
-         else
-           colorWipe(pixels->Color(25, 0, 0, 0));
-       }
-     }
-  } else if (notification->getActionType() == ActionType::Delete &&
-             notification->getResource() == ConnectionResource) {
-     auto statusResult = StatusResult::cast(&notification->getResult());
-     if (statusResult) {
-       if (statusResult->getStatusCode() == StatusCode::NoContent) {
-         colorWipe(pixels->Color(0, 0, 0, 0));
-       }
-     }
-  }
+Display::onConnectionCreateNotification(const Connection& connection) {
+  updateConnectionStatus(connection);
+}
+
+void
+Display::onConnectionUpdateNotification(const Connection& connection) {
+  updateConnectionStatus(connection);
+}
+
+void
+Display::onConnectionDeleteNotification() {
+  colorWipe(pixels->Color(0, 0, 0, 0));
 }

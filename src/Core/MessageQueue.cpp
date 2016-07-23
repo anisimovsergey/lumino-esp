@@ -14,9 +14,9 @@ MessageQueue::loop() {
     if (request) {
       Logger::message("Processing a request from '" + request->getTag("sender") + "'");
       StatusResult::Unique result;
-      auto receiver = getMessageReceiver(*request);
-      if (receiver) {
-        result = receiver->onRequest(request);
+      auto controller = getController(*request);
+      if (controller) {
+        result = controller->onRequest(*request);
       } else {
         result = StatusResult::NotFound("Unable to find a receiver.");
       }
@@ -27,9 +27,9 @@ MessageQueue::loop() {
     if (response) {
       auto receiver = response->getTag("receiver");
       Logger::message("Processing a response for '" + receiver + "'");
-      auto sender = getMessageSender(receiver);
-      if (sender) {
-        sender->onResponse(response);
+      auto client = getClient(receiver);
+      if (client) {
+        client->onResponse(*response);
       } else {
         Logger::error("Unable to find receiver '" + receiver + "'");
       }
@@ -39,14 +39,14 @@ MessageQueue::loop() {
       auto receiver = notification->getTag("receiver");
       if (receiver != "") {
         Logger::message("Processing a notification for '" + receiver + "'");
-        auto sender = getMessageSender(receiver);
-        if (sender) {
-          sender->onNotification(notification);
+        auto client = getClient(receiver);
+        if (client) {
+          client->onNotification(*notification);
         }
       } else {
         Logger::message("Processing a broadcast notification");
-        for(auto listener: listeners) {
-          listener->onBroadcast(notification);
+        for(auto client: clients) {
+          client->onNotification(*notification);
         }
       }
     }
@@ -54,69 +54,30 @@ MessageQueue::loop() {
   }
 }
 
-StatusResult::Unique
-MessageQueue::send(
-  String senderId, Request::Shared request) {
-  request->addTag("sender", senderId);
-  messages.push(request);
-  return StatusResult::OK();
-}
-
-StatusResult::Unique
-MessageQueue::replyTo(
-  const Request& request, IActionResult::Unique  result) {
-
-  auto notification = Notification::makeShared(
-    request.getActionType(),
-    request.getResource(),
-    std::move(result)
-  );
-
-  notification->addTag("fromClient", request.getTag("fromClient"));
-  notification->addTag("receiver", request.getTag("sender"));
-  messages.push(notification);
-  return StatusResult::OK();
-}
-
-StatusResult::Unique
-MessageQueue::broadcast(
-  String sender,
-  Notification::Shared notification) {
-  notification->addTag("sender", sender);
-  messages.push(notification);
-  return StatusResult::OK();
+void
+MessageQueue::addClient(QueueClient::Shared client) {
+  clients.push_back(client);
 }
 
 void
-MessageQueue::addMessageSender(IMessageSender::Shared sender) {
-  senders.push_back(sender);
+MessageQueue::addController(QueueController::Shared controller) {
+  controllers.push_back(controller);
 }
 
-void
-MessageQueue::addMessageReceiver(IMessageReceiver::Shared receiver) {
-  receivers.push_back(receiver);
-}
-
-void
-MessageQueue::addMessageListener(IMessageListener::Shared listener) {
-  listeners.push_back(listener);
-}
-
-IMessageSender::Shared
-MessageQueue::getMessageSender(String senderId) {
-  for(auto sender: senders) {
-    if (sender->getSenderId() == senderId)
-      return sender;
+QueueClient::Shared
+MessageQueue::getClient(String clientId) {
+  for(auto client: clients) {
+    if (client->getId() == clientId)
+      return client;
   }
   return nullptr;
 }
 
-IMessageReceiver::Shared
-MessageQueue::getMessageReceiver(const Request& request) {
-  for(auto receiver: receivers) {
-    if (receiver->getActionType() == request.getActionType() &&
-        receiver->getResource() == request.getResource())
-      return receiver;
+QueueController::Shared
+MessageQueue::getController(const Request& request) {
+  for(auto controller: controllers) {
+    if (controller->getResource() == request.getResource())
+      return controller;
   }
   return nullptr;
 }

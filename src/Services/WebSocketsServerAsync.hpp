@@ -14,6 +14,7 @@
 #include "ESPAsyncWebServer.h"
 
 #include <memory>
+#include <list>
 
 namespace Services {
 
@@ -21,7 +22,7 @@ class WebSocketsServerAsync : public Core::ILoopedService {
   public:
     WebSocketsServerAsync(int port,
       std::shared_ptr<Core::IMessageQueue> messageQueue,
-      std::shared_ptr<const Json::ISerializationService> serializer);
+      std::shared_ptr<Json::ISerializationService> serializer);
     ~WebSocketsServerAsync();
 
     void start() {};
@@ -30,19 +31,21 @@ class WebSocketsServerAsync : public Core::ILoopedService {
     std::unique_ptr<AsyncWebSocket> server;
   private:
     std::shared_ptr<Core::IMessageQueue> messageQueue;
-    std::shared_ptr<const Json::ISerializationService> serializer;
+    std::shared_ptr<Json::ISerializationService> serializer;
+    std::list<Core::QueueClient::Shared> queueClients;
 
-    void onSocketEvent(AsyncWebSocket * server, AsyncWebSocketClient * client,
-      AwsEventType type, void * arg, uint8_t *data, size_t len);
+    void onSocketEvent(AsyncWebSocket* server, AsyncWebSocketClient* client,
+      AwsEventType type, void* arg, uint8_t *data, size_t len);
 
-    void sendResponse(uint32_t num,
-      std::unique_ptr<Core::StatusResult>&& result,
-      const Core::Request* request);
+    Core::QueueClient* findQueueClient(AsyncWebSocketClient* client);
+    void sendResult(AsyncWebSocketClient* client, const Core::StatusResult& result);
 
-    void sendResponse(const Core::Message& message, String& text);
-    void onResponse(std::shared_ptr<Core::Response> response);
-    void onNotification(std::shared_ptr<Core::Notification> notification);
-    void onBroadcast(std::shared_ptr<Core::Notification> notification);
+    // Events
+    void onClientConnected(AsyncWebSocketClient* client);
+    void onClientDisconnected(AsyncWebSocketClient* client);
+    void onTextReceived(AsyncWebSocketClient* client, const String& text);
+    void onResponse(AsyncWebSocketClient* client, const Core::Response& response);
+    void onNotification(AsyncWebSocketClient* client, const Core::Notification& notification);
 };
 
 }

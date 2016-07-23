@@ -12,6 +12,7 @@
 #include <queue>
 #include <list>
 #include <vector>
+#include <functional>
 
 namespace Core {
 
@@ -21,20 +22,8 @@ class MessageQueue : public IMessageQueue {
     virtual void loop() override;
 
     // From IMessageQueue
-    virtual StatusResult::Unique send(String                  senderId,
-                                      Request::Shared         request) override;
-
-    virtual StatusResult::Unique replyTo(const Request&         request,
-                                         IActionResult::Unique  result) override;
-
-    virtual StatusResult::Unique broadcast(String             sender,
-                                        Notification::Shared  notification) override;
-
-    virtual void addMessageSender(IMessageSender::Shared sender) override;
-
-    virtual void addMessageReceiver(IMessageReceiver::Shared receiver) override;
-
-    virtual void addMessageListener(IMessageListener::Shared listener) override;
+    virtual void addClient(QueueClient::Shared client) override;
+    virtual void addController(QueueController::Shared controller) override;
 
   private:
     class MessageComparer {
@@ -47,12 +36,11 @@ class MessageQueue : public IMessageQueue {
     };
 
     std::priority_queue<Message::Shared, std::vector<Message::Shared>, MessageComparer> messages;
-    std::list<IMessageSender::Shared> senders;
-    std::list<IMessageReceiver::Shared> receivers;
-    std::list<IMessageListener::Shared> listeners;
+    std::list<QueueClient::Shared> clients;
+    std::list<QueueController::Shared> controllers;
 
-    IMessageSender::Shared getMessageSender(String senderId);
-    IMessageReceiver::Shared getMessageReceiver(const Request& request);
+    QueueClient::Shared getClient(String clientId);
+    QueueController::Shared getController(const Request& request);
 };
 
 }
