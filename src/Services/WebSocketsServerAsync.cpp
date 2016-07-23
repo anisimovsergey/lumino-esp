@@ -19,6 +19,7 @@ WebSocketsServerAsync::WebSocketsServerAsync(int port,
   server(make_unique<AsyncWebSocket>("/ws")), messageQueue(messageQueue),
   serializer(serializer) {
 
+/*
   auto messageSender = std::make_shared<MessageSender>(SenderId,
     std::bind(&WebSocketsServerAsync::onResponse, this, _1),
     std::bind(&WebSocketsServerAsync::onNotification, this, _1));
@@ -27,6 +28,7 @@ WebSocketsServerAsync::WebSocketsServerAsync(int port,
   auto messageListener = std::make_shared<MessageListener>(
     std::bind(&WebSocketsServerAsync::onBroadcast, this, _1));
   messageQueue->addMessageListener(messageListener);
+  */
 
   server->onEvent(std::bind(&WebSocketsServerAsync::onSocketEvent, this,
     _1, _2, _3, _4, _5, _6));
@@ -40,6 +42,18 @@ void
 WebSocketsServerAsync::onSocketEvent(AsyncWebSocket* server,
   AsyncWebSocketClient* client, AwsEventType type, void * arg,
   uint8_t *data, size_t len) {
+
+  if (type == WS_EVT_CONNECT) {
+    auto queueClinet = WebSocketQueueClient::makeShared(client);
+    messageQueue->addClient(queueClinet);
+    clients.push_back(queueClinet);
+  }
+
+  if (type == WS_EVT_DISCONNECT) {
+    auto queueClient = findQueueClient(client);
+    if (queueClient)
+      cleants.remove(queueClient);
+  }
 
   if (type != WS_EVT_DATA)
     return;
@@ -60,36 +74,27 @@ WebSocketsServerAsync::onSocketEvent(AsyncWebSocket* server,
   if (statusResult->isOk()) {
     request = castToShared<Request>(std::move(entity));
     if (request) {
-      request->addTag(FromClientTag, String(client->id()));
-      statusResult = messageQueue->send(SenderId, request);
+      auto queueClient = findQueueClient(client);
+      if (queueClient)
+        statusResult = queueClient.send(request);
+      else
+        statusResult = StatusResult::InternalServerError(
+          "Unable to find queue client '" + client->id() +"'.");
     } else {
-      statusResult = StatusResult::BadRequest("Type '" +
-        String(Request::TypeId) + "' was expected.");
+      statusResult = StatusResult::BadRequest(
+        "Type '" + String(Request::TypeId) + "' was expected.");
     }
   }
   if (!statusResult->isOk()) {
-    sendResponse(client->id(), std::move(statusResult), request.get());
+    sendResponse(client->id(), *statusResult);
   }
 }
 
 void
 WebSocketsServerAsync::sendResponse(uint32_t num,
-  std::unique_ptr<Core::StatusResult>&& result,
-  const Core::Request* request) {
-
-  std::unique_ptr<Response> response;
-  if (request != nullptr) {
-    response = Response::makeUnique(
-      request->getActionType(),
-      request->getResource(),
-      std::move(result));
-  } else {
-    response = Response::makeUnique(
-      ActionType::Unknown, "", std::move(result));
-  }
-
+  const Core::StatusResult& result) {
   String json;
-  auto status = serializer->serialize(*response, json);
+  auto status = serializer->serialize(result, json);
   if (status->isOk()) {
     server->text(num, json);
   } else {
