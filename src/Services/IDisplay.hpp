@@ -14,8 +14,6 @@ namespace Services {
 class IDisplay {
   public:
     virtual ~IDisplay();
-
-    virtual void showSigh(const DisplaySign& sign) = 0;
 };
 
 }

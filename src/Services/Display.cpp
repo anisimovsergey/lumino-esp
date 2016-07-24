@@ -16,7 +16,6 @@ using namespace std::placeholders;
 
 namespace {
   const char* SenderId = "Display";
-  const char* ConnectionResource = "/connection";
 }
 
 Display::Display(std::shared_ptr<IMessageQueue> messageQueue) :
@@ -27,8 +26,11 @@ Display::Display(std::shared_ptr<IMessageQueue> messageQueue) :
 
   colorWipe(pixels->Color(0, 0, 0));
 
-  auto client = QueueResourceClient<Connection>::makeShared(SenderId);
+  auto queueClient = messageQueue->createClient(SenderId);
+  client = QueueResourceClient<Connection>::makeUnique(queueClient);
 
+  client->setOnGetResponse(
+    std::bind(&Display::onConnectionGetResponse, this, _1));
   client->setOnGetNotification(
     std::bind(&Display::onConnectionGetNotification, this, _1));
   client->setOnCreateNotification(
@@ -38,7 +40,6 @@ Display::Display(std::shared_ptr<IMessageQueue> messageQueue) :
   client->setOnDeleteNotification(
     std::bind(&Display::onConnectionDeleteNotification, this));;
 
-  messageQueue->addClient(client);
   client->getResource();
 }
 
@@ -64,17 +65,17 @@ Display::updateConnectionStatus(const Connection& connection) {
 }
 
 void
-Display::onConnectionGetNotification(const ActionResult&   const Connection* connection) {
-  if (statusResult.isOk()) {
-    updateConnectionStatus(connection);
+Display::onConnectionGetResponse(const Core::Response& result) {
+  if (result.getResult().getStatusCode() == StatusCode::NotFound) {
+    colorWipe(pixels->Color(0, 0, 0, 0));
   } else {
-    if (statusResult.getStatusCode() == StatusCode::NotFound) {
-      colorWipe(pixels->Color(0, 0, 0, 0));
-    } else {
-      // TODO: Error
-      colorWipe(pixels->Color(0, 0, 0, 25));
-    }
+    colorWipe(pixels->Color(0, 0, 0, 25));
   }
+}
+
+void
+Display::onConnectionGetNotification(const Connection& connection) {
+  updateConnectionStatus(connection);
 }
 
 void

@@ -8,14 +8,9 @@ using namespace Core;
 using namespace Services;
 using namespace std::placeholders;
 
-namespace {
-  const char* SenderId = "WebSocketsServerAsync";
-  const char* FromClientTag = "fromClient";
-}
-
 WebSocketsServerAsync::WebSocketsServerAsync(int port,
   std::shared_ptr<IMessageQueue> messageQueue,
-  std::shared_ptr<const Json::ISerializationService> serializer) :
+  std::shared_ptr<Json::ISerializationService> serializer) :
   server(make_unique<AsyncWebSocket>("/ws")), messageQueue(messageQueue),
   serializer(serializer) {
 
@@ -61,17 +56,32 @@ WebSocketsServerAsync::onSocketEvent(AsyncWebSocket* server,
   }
 }
 
+String
+WebSocketsServerAsync::getClientId(AsyncWebSocketClient* client) {
+  return "WebSocketsServer/" + String(client->id());
+}
+
+Core::QueueClient::Shared
+WebSocketsServerAsync::findQueueClient(AsyncWebSocketClient* client) {
+  auto clientId = getClientId(client);
+  for(auto client: queueClients) {
+    if (client->getId() == clientId)
+      return client;
+  }
+  return nullptr;
+}
+
 void
 WebSocketsServerAsync::onClientConnected(AsyncWebSocketClient* client) {
-  auto queueClinet = QueueClient::makeShared("WebSocketsServer/" + String(client->id()));
+  auto clientId = getClientId(client);
+  auto queueClinet = messageQueue->createClient(clientId);
   queueClinet->setOnResponse([=](const Response& response){
     onResponse(client, response);
   });
   queueClinet->setOnNotification([=](const Notification& notification){
-    onNotification(client, response);
+    onNotification(client, notification);
   });
-  messageQueue->addClient(queueClinet);
-  clients.push_back(queueClinet);
+  queueClients.push_back(queueClinet);
 }
 
 void
@@ -79,7 +89,7 @@ WebSocketsServerAsync::onClientDisconnected(AsyncWebSocketClient* client) {
   auto queueClient = findQueueClient(client);
   if (queueClient) {
     messageQueue->removeClient(queueClient);
-    cleants.remove(queueClient);
+    queueClients.remove(queueClient);
   }
 }
 
@@ -93,7 +103,7 @@ WebSocketsServerAsync::onTextReceived(AsyncWebSocketClient* client, const String
     if (request) {
       auto queueClient = findQueueClient(client);
       if (queueClient)
-        statusResult = queueClient.send(request);
+        statusResult = queueClient->sendMessage(request);
       else
         statusResult = StatusResult::InternalServerError(
           "Unable to find queue client '" + String(client->id()) +"'.");
@@ -104,12 +114,13 @@ WebSocketsServerAsync::onTextReceived(AsyncWebSocketClient* client, const String
   }
   if (!statusResult->isOk()) {
     sendResult(client, *statusResult);
+  }
 }
 
 void
 WebSocketsServerAsync::onResponse(AsyncWebSocketClient* client, const Response& response) {
   String json;
-  auto status = serializer->serialize(*response, json);
+  auto status = serializer->serialize(response, json);
   if (status->isOk()) {
     client->text(json);
   } else {
@@ -120,7 +131,7 @@ WebSocketsServerAsync::onResponse(AsyncWebSocketClient* client, const Response& 
 void
 WebSocketsServerAsync::onNotification(AsyncWebSocketClient* client, const Notification& notification) {
   String json;
-  auto status = serializer->serialize(*notification, json);
+  auto status = serializer->serialize(notification, json);
   if (status->isOk()) {
     client->text(json);
   } else {

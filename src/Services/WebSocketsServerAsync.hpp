@@ -37,7 +37,8 @@ class WebSocketsServerAsync : public Core::ILoopedService {
     void onSocketEvent(AsyncWebSocket* server, AsyncWebSocketClient* client,
       AwsEventType type, void* arg, uint8_t *data, size_t len);
 
-    Core::QueueClient* findQueueClient(AsyncWebSocketClient* client);
+    String getClientId(AsyncWebSocketClient* client);
+    Core::QueueClient::Shared findQueueClient(AsyncWebSocketClient* client);
     void sendResult(AsyncWebSocketClient* client, const Core::StatusResult& result);
 
     // Events

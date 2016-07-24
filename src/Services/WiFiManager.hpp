@@ -12,6 +12,7 @@
 #include "IDisplay.hpp"
 #include "Core/ILoopedService.hpp"
 #include "Core/IMessageQueue.hpp"
+#include "Core/QueueResourceController.hpp"
 #include "Models/Connection.hpp"
 
 #include <DNSServer.h>
@@ -41,18 +42,15 @@ namespace Services {
     std::shared_ptr<Core::IMessageQueue> messageQueue;
     WiFiEventHandler connectedEventHandler;
     WiFiEventHandler disconnectedEventHandler;
+    Core::QueueResourceController<Models::Connection>::Shared controller;
     String deviceName;
 
     Models::Connection::Unique createConnectionObject();
 
     // Message handling
-    std::unique_ptr<Core::StatusResult>onGetConnection(
-      std::shared_ptr<Core::Request>request);
-    std::unique_ptr<Core::StatusResult>onCreateConnection(
-      std::shared_ptr<Core::Request>request,
-      const Models::Connection& connection);
-    std::unique_ptr<Core::StatusResult>onDeleteConnection(
-      std::shared_ptr<Core::Request>request);
+    Core::IActionResult::Unique onGetConnection();
+    Core::StatusResult::Unique onCreateConnection(const Models::Connection& connection);
+    Core::StatusResult::Unique onDeleteConnection();
 
     // Events handling
     void onConnected();

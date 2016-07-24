@@ -7,22 +7,10 @@ Request
   "resource": "/connection"
 }
 ```
-Message accepted response
+Response (successful)
 ```json
 {
   "type": "response",
-  "action": "get",
-  "resource": "/connection",
-  "result": {
-    "type": "statusResult",
-    "code": 202
-  }
-}
-```
-Message processed notification
-```json
-{
-  "type": "notification",
   "action": "get",
   "resource": "/connection",
   "result": {
@@ -32,6 +20,19 @@ Message processed notification
       "network": "network name",
       "isConnected": true
     }
+  }
+}
+```
+Response (error)
+```json
+{
+  "type": "response",
+  "action": "get",
+  "resource": "/connection",
+  "result": {
+    "type": "statusResult",
+    "code": 404,
+    "text": "NotFound"
   }
 }
 ```

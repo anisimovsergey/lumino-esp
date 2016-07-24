@@ -5,6 +5,12 @@
 
 using namespace Core;
 
+MessageQueue::MessageQueue() {
+}
+
+MessageQueue::~MessageQueue() {
+}
+
 void
 MessageQueue::loop() {
   while (!messages.empty())
@@ -16,9 +22,9 @@ MessageQueue::loop() {
       StatusResult::Unique result;
       auto controller = getController(*request);
       if (controller) {
-        result = controller->onRequest(*request);
+        result = controller->processRequest(*request);
       } else {
-        result = StatusResult::NotFound("Unable to find a receiver.");
+        result = StatusResult::NotFound("Unable to find a controller.");
       }
       auto response = Response::createFor(*request, std::move(result));
       messages.push(response);
@@ -31,7 +37,7 @@ MessageQueue::loop() {
       if (client) {
         client->onResponse(*response);
       } else {
-        Logger::error("Unable to find receiver '" + receiver + "'");
+        Logger::error("Unable to find client '" + receiver + "'");
       }
     }
     auto notification = castToShared<Notification>(message);
@@ -54,14 +60,34 @@ MessageQueue::loop() {
   }
 }
 
-void
-MessageQueue::addClient(QueueClient::Shared client) {
+StatusResult::Unique
+MessageQueue::sendMessage(Message::Shared message) {
+  messages.push(message);
+  return StatusResult::OK();
+}
+
+QueueClient::Shared
+MessageQueue::createClient(String clientId) {
+  auto client = QueueClient::makeShared(clientId, *this);
   clients.push_back(client);
+  return client;
+}
+
+QueueController::Shared
+MessageQueue::createController(String controllerId) {
+  auto controller = QueueController::makeShared(controllerId, *this);
+  controllers.push_back(controller);
+  return controller;
 }
 
 void
-MessageQueue::addController(QueueController::Shared controller) {
-  controllers.push_back(controller);
+MessageQueue::removeClient(QueueClient::Shared client) {
+  clients.remove(client);
+}
+
+void
+MessageQueue::removeController(QueueController::Shared controller) {
+  controllers.remove(controller);
 }
 
 QueueClient::Shared
@@ -76,7 +102,7 @@ MessageQueue::getClient(String clientId) {
 QueueController::Shared
 MessageQueue::getController(const Request& request) {
   for(auto controller: controllers) {
-    if (controller->getResource() == request.getResource())
+    if (controller->canProcessRequest(request))
       return controller;
   }
   return nullptr;

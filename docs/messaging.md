@@ -15,7 +15,7 @@ All the message are divided into two groups, `unicast` messages and `multicast` 
 
 |Message type|Request|Response|Notification|
 |---------|:-------:|:--------:|:------------:|
-|`get`|`unicast`|`unicast`|`unicast`|
+|`get`|`unicast`|`unicast`||
 |`create`|`unicast`|`unicast`|`multicast`|
 |`update`|`unicast`|`unicast`|`multicast`|
 |`delete`|`unicast`|`unicast`|`multicast`|
@@ -24,7 +24,7 @@ The following properties should be defined for the messages
 
 |Message type|Request|Response|Notification|
 |---------|:-------:|:--------:|:------------:|
-|`get`|`sender`|`sender`,`receiver`|`sender`,`receiver`|
+|`get`|`sender`|`sender`,`receiver`||
 |`create`|`sender`|`sender`,`receiver`|`sender`|
 |`update`|`sender`|`sender`,`receiver`|`sender`|
 |`delete`|`sender`|`sender`,`receiver`|`sender`|

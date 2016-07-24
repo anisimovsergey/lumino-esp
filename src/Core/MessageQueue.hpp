@@ -18,12 +18,19 @@ namespace Core {
 
 class MessageQueue : public IMessageQueue {
   public:
+    MessageQueue();
+    ~MessageQueue();
+    
     // From ILoopedService
     virtual void loop() override;
 
     // From IMessageQueue
-    virtual void addClient(QueueClient::Shared client) override;
-    virtual void addController(QueueController::Shared controller) override;
+    virtual StatusResult::Unique sendMessage(Message::Shared message) override;
+
+    virtual QueueClient::Shared createClient(String clinetId) override;
+    virtual void removeClient(QueueClient::Shared client) override;
+    virtual QueueController::Shared createController(String controllerId) override;
+    virtual void removeController(QueueController::Shared controller) override;
 
   private:
     class MessageComparer {
