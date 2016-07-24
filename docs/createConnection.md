@@ -12,7 +12,7 @@ Request
   }
 }
 ```
-Message accepted response
+Response
 ```json
 {
   "type": "response",
@@ -20,19 +20,24 @@ Message accepted response
   "resource": "/connection",
   "result": {
     "type": "statusResult",
-    "code": 202
+    "code": 201,
+    "text": "Created"
   }
 }
 ```
-Message processed notification
+Notification
 ```json
 {
   "type": "notification",
   "action": "create",
   "resource": "/connection",
   "result": {
-    "type": "statusResult",
-    "code": 201,
+    "type": "objectResult",
+    "object" : {
+      "type": "connection",
+      "network": "network name",
+      "isConnected": true
+    }
   }
 }
 ```

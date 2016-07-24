@@ -11,7 +11,7 @@ All the messages are processed asynchronously and the message immediate response
 ## Internal message processing
 All the messages are added to the message queue and processed in FIFO order. The message prioritization is not supported.
 
-All the message are divided into two groups `unicast` messages and `multicast` messages.
+All the message are divided into two groups, `unicast` messages and `multicast` messages.
 
 |Message type|Request|Response|Notification|
 |---------|:-------:|:--------:|:------------:|

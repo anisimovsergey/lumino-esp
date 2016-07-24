@@ -64,7 +64,7 @@ Display::updateConnectionStatus(const Connection& connection) {
 }
 
 void
-Display::onConnectionGetNotification(const StatusResult&   const Connection* connection) {
+Display::onConnectionGetNotification(const ActionResult&   const Connection* connection) {
   if (statusResult.isOk()) {
     updateConnectionStatus(connection);
   } else {

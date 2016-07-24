@@ -7,7 +7,7 @@ Request
   "resource": "/connection"
 }
 ```
-Message accepted response
+Response
 ```json
 {
   "type": "response",
@@ -15,11 +15,12 @@ Message accepted response
   "resource": "/connection",
   "result": {
     "type": "statusResult",
-    "code": 202
+    "code": 204,
+    "text": "NoContent"
   }
 }
 ```
-Message processed notification
+Notification
 ```json
 {
   "type": "notification",
@@ -28,6 +29,7 @@ Message processed notification
   "result": {
     "type": "statusResult",
     "code": 204,
+    "text": "NoContent"
   }
 }
 ```

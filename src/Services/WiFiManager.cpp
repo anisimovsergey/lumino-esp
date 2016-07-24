@@ -95,7 +95,7 @@ WiFiManager::loop() {
 }
 
 Models::Connection::Unique
-WiFiManager::createConnection() {
+WiFiManager::createConnectionObject() {
   return Connection::makeUnique(getNetwork(), isConnected());
 }
 
@@ -120,20 +120,14 @@ WiFiManager::onCreateConnection(std::shared_ptr<Core::Request> request,
   std::unique_ptr<Core::IActionResult> actionResult;
   auto result = connect(connection.getNetworkSsid(), connection.getNetworkPassword());
   if (result->isOk()) {
-    actionResult = ObjectResult::Created(createConnection());
+    auto objectResult = ObjectResult::Created(createConnectionObject());
+    controller->sendCreateNotification(std::move(objectResult));
+    result = StatusResult::Created("the connection was created.");
   } else {
     actionResult = StatusResult::InternalServerError("Unable to create the connection.",
       std::move(result));
   }
-
-  Notification::create(*request, std::move(actionResult), SenderId);
-
-  auto notification = Notification::makeShared(
-    ActionType::Create,
-    ConnectionResource,
-    std::move(actionResult)
-  );
-  messageQueue->broadcast(SenderId, notification);
+  messageQueue->sendCreateResponse(std::move(result));
   return StatusResult::Accepted();
 }
 
@@ -143,7 +137,7 @@ WiFiManager::onDeleteConnection(std::shared_ptr<Core::Request> request) {
   std::unique_ptr<Core::IActionResult> actionResult;
   auto result = disconnect();
   if (result->isOk()) {
-    actionResult = StatusResult::NoContent("Connection was deleted.");
+    actionResult = StatusResult::NoContent("The connection was deleted.");
   } else {
     actionResult = StatusResult::InternalServerError("Unable to delete the connection.",
         std::move(result));
