@@ -18,41 +18,17 @@ MessageQueue::loop() {
     auto message = messages.top();
     auto request = castToShared<Request>(message);
     if (request) {
-      Logger::message("Processing a request from '" + request->getTag("sender") + "'");
-      StatusResult::Unique result;
-      auto controller = getController(*request);
-      if (controller) {
-        result = controller->processRequest(*request);
+      processRequest(*request);
+    } else {
+      auto response = castToShared<Response>(message);
+      if (response) {
+        processResponse(*response);
       } else {
-        result = StatusResult::NotFound("Unable to find a controller.");
-      }
-      auto response = Response::createFor(*request, std::move(result));
-      messages.push(response);
-    }
-    auto response = castToShared<Response>(message);
-    if (response) {
-      auto receiver = response->getTag("receiver");
-      Logger::message("Processing a response for '" + receiver + "'");
-      auto client = getClient(receiver);
-      if (client) {
-        client->onResponse(*response);
-      } else {
-        Logger::error("Unable to find client '" + receiver + "'");
-      }
-    }
-    auto notification = castToShared<Notification>(message);
-    if (notification) {
-      auto receiver = notification->getTag("receiver");
-      if (receiver != "") {
-        Logger::message("Processing a notification for '" + receiver + "'");
-        auto client = getClient(receiver);
-        if (client) {
-          client->onNotification(*notification);
-        }
-      } else {
-        Logger::message("Processing a broadcast notification");
-        for(auto client: clients) {
-          client->onNotification(*notification);
+        auto notification = castToShared<Notification>(message);
+        if (notification) {
+          processNotification(*notification);
+        } else {
+          Logger::error("Unknown message type '" + String(message->getTypeId()) + "'.");
         }
       }
     }
@@ -90,6 +66,42 @@ MessageQueue::removeController(QueueController::Shared controller) {
   controllers.remove(controller);
 }
 
+void
+MessageQueue::processRequest(const Request& request) {
+  Logger::message("Processing a request from '" + request.getTag("sender") + "'");
+  IActionResult::Unique result;
+  auto controller = getControllerFor(request);
+  if (controller) {
+    result = controller->processRequest(request);
+  } else {
+    result = StatusResult::NotFound("Unable to find a controller.");
+  }
+  auto response = createResponseFor(request, std::move(result));
+  messages.push(response);
+}
+
+void
+MessageQueue::processResponse(const Response& response) {
+  auto sender = response.getTag("sender");
+  auto receiver = response.getTag("receiver");
+  Logger::message("Processing a response from '" + sender + "' to '" + receiver + "'");
+  auto client = getClient(receiver);
+  if (client) {
+    client->onResponse(response);
+  } else {
+    Logger::error("Unable to find client '" + receiver + "'");
+  }
+}
+
+void
+MessageQueue::processNotification(const Notification& notification) {
+  auto sender = notification.getTag("sender");
+  Logger::message("Broadcating a notification from '" + sender + "'.");
+  for(auto client: clients) {
+    client->onNotification(notification);
+  }
+}
+
 QueueClient::Shared
 MessageQueue::getClient(String clientId) {
   for(auto client: clients) {
@@ -100,10 +112,19 @@ MessageQueue::getClient(String clientId) {
 }
 
 QueueController::Shared
-MessageQueue::getController(const Request& request) {
+MessageQueue::getControllerFor(const Request& request) {
   for(auto controller: controllers) {
     if (controller->canProcessRequest(request))
       return controller;
   }
   return nullptr;
+}
+
+Response::Shared
+MessageQueue::createResponseFor(const Request& request, IActionResult::Unique result) {
+  auto response = Response::makeShared(request.getActionType(),
+                                       request.getResource(),
+                                       std::move(result));
+  response->addTag("receiver", request.getTag("sender"));
+  return response;
 }

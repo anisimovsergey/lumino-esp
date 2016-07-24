@@ -16,29 +16,12 @@ class QueueResourceClient {
   TYPE_PTRS(QueueResourceClient)
   typedef typename T::Unique TUnique;
   public:
-    QueueResourceClient(QueueClient::Shared queueClient) :
-      queueClient(queueClient), typeId(T::TypeId)     {
-    }
+    QueueResourceClient(QueueClient::Shared queueClient);
 
-    StatusResult::Unique getResource() {
-      auto request = Request::makeShared(ActionType::Get, typeId);
-      return queueClient->sendMessage(request);
-    }
-
-    StatusResult::Unique createResource(TUnique resource) {
-      auto request = Request::makeShared(ActionType::Create, typeId, resource);
-      return queueClient->sendMessage(request);
-    }
-
-    StatusResult::Unique updateResource(TUnique resource) {
-      auto request = Request::makeShared(ActionType::Update, typeId, resource);
-      return queueClient->sendMessage(request);
-    }
-
-    StatusResult::Unique deleteResource() {
-      auto request = Request::makeShared(ActionType::Delete, typeId);
-      return queueClient->sendMessage(request);
-    }
+    StatusResult::Unique getResource();
+    StatusResult::Unique createResource(TUnique resource);
+    StatusResult::Unique updateResource(TUnique resource);
+    StatusResult::Unique deleteResource();
 
     void setOnGetResponse(std::function<void(const Response&)> onGetResponse) {
       onGetResponseHandler = onGetResponse;
@@ -53,9 +36,6 @@ class QueueResourceClient {
       onDeleteResponseHandler = onDeleteResponse;
     }
 
-    void setOnGetNotification(std::function<void(const T&)> onGetNotification) {
-      onGetNotificationHandler = onGetNotification;
-    }
     void setOnCreateNotification(std::function<void(const T&)> onCreateNotification) {
       onCreateNotificationHandler = onCreateNotification;
     }
@@ -73,12 +53,15 @@ class QueueResourceClient {
     std::function<void(const Response&)> onCreateResponseHandler;
     std::function<void(const Response&)> onUpdateResponseHandler;
     std::function<void(const Response&)> onDeleteResponseHandler;
-    std::function<void(const T&)> onGetNotificationHandler;
     std::function<void(const T&)> onCreateNotificationHandler;
     std::function<void(const T&)> onUpdateNotificationHandler;
     std::function<void()> onDeleteNotificationHandler;
+
+    void onResponse(const Response& response);
+    void onNotification(const Notification& notification);
 };
 
 }
 
+#include "QueueResourceClient.ipp"
 #endif /* end of include guard: CORE_QUEUE_RESOURCE_CLIENT_HPP */

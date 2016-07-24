@@ -20,6 +20,10 @@ class QueueResourceController {
   public:
     QueueResourceController(QueueController::Shared queueController) :
       queueController(queueController), typeId(T::TypeId) {
+      queueController->setCanProcessRequest(
+        std::bind(&QueueResourceController<T>::canProcessReqiest, this, std::placeholders::_1));
+      queueController->setProcessRequest(
+        std::bind(&QueueResourceController<T>::processRequest, this, std::placeholders::_1));
     }
 
     void setOnGetRequestHandler(std::function<Core::IActionResult::Unique()> onGetRequestHandler) {
@@ -47,6 +51,7 @@ class QueueResourceController {
       auto request = Notification::makeShared(ActionType::Delete, typeId, StatusResult::NoContent("Resource was deleted"));
       queueController->broadcastNotification(request);
     }
+
   private:
     QueueController::Shared queueController;
     String typeId;
@@ -54,6 +59,46 @@ class QueueResourceController {
     std::function<Core::StatusResult::Unique(const T&)> onCreateRequestHandler;
     std::function<Core::StatusResult::Unique(const T&)> onUpdateRequestHandler;
     std::function<Core::StatusResult::Unique()> onDeleteRequestHandler;
+
+    bool canProcessReqiest(const Request& request) {
+      return (request.getTag("receiver") == queueController->getId() &&
+              request.getResource() == typeId);
+    }
+
+    IActionResult::Unique processRequest(const Request& request) {
+      if (request.getActionType() == ActionType::Get) {
+        if (onGetRequestHandler)
+          return onGetRequestHandler();
+        return StatusResult::NotImplemented();
+      }
+      if (request.getActionType() == ActionType::Create) {
+        if (onCreateRequestHandler) {
+          auto object = T::cast(request.getContent());
+          if (object)
+            return onCreateRequestHandler(*object);
+          else
+            return StatusResult::BadRequest("Expeceted content of '" + String(T::TypeId) + "' type.");
+        }
+        return StatusResult::NotImplemented();
+      }
+      if (request.getActionType() == ActionType::Update) {
+        if (onUpdateRequestHandler) {
+          auto object = T::cast(request.getContent());
+          if (object)
+            return onUpdateRequestHandler(*object);
+          else
+            return StatusResult::BadRequest("Expeceted content of '" + String(T::TypeId) + "' type.");
+        }
+        return StatusResult::NotImplemented();
+      }
+      if (request.getActionType() == ActionType::Delete) {
+        if (onDeleteRequestHandler) {
+          return onDeleteRequestHandler();
+        }
+        return StatusResult::NotImplemented();
+      }
+      return StatusResult::NotImplemented("Request action type is not supported.");
+    }
 };
 
 }

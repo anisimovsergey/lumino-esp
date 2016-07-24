@@ -5,7 +5,7 @@ using namespace Json;
 
 #define FIELD_ACTION "action"
 #define FIELD_RESOURCE "resource"
-#define FIELD_RESULT "result"
+#define FIELD_CONTENT "content"
 
 std::unique_ptr<Core::StatusResult>
 NotificationSerializer::serialize(
@@ -20,7 +20,7 @@ NotificationSerializer::serialize(
   if (!result->isOk())
     return result;
 
-  result = context.setValue(FIELD_RESULT, notification.getResult());
+  result = context.setValue(FIELD_CONTENT, notification.getContent());
   if (!result->isOk())
     return result;
 

@@ -81,7 +81,7 @@ class Request : public Message {
     Request(ActionType actionType, String resource,
       IEntity::Unique content);
 
-    const IEntity* getContent() { return content.get(); };
+    const IEntity* getContent() const { return content.get(); };
 
   private:
     IEntity::Unique content;
@@ -91,24 +91,12 @@ class Response : public Message {
   TYPE_INFO(Response, Message, "response")
   public:
     Response(ActionType actionType, String resource,
-      StatusResult::Unique result);
+      IActionResult::Unique result);
 
-    static Response::Shared createFor(const Request&      request,
-                                     StatusResult::Unique result) {
-      auto response = std::make_shared<Response>(
-             request.getActionType(),
-             request.getResource(),
-             std::move(result));
-      response->addTag("fromClient", request.getTag("fromClient"));
-      // TODO: Define sender!
-      response->addTag("receiver", request.getTag("sender"));
-      return response;
-    }
-
-    const StatusResult& getResult() const { return *result; }
+    const IActionResult& getResult() const { return *result; }
 
   private:
-    StatusResult::Unique result;
+    IActionResult::Unique result;
 };
 
 class Notification : public Message {
@@ -117,7 +105,7 @@ class Notification : public Message {
     Notification(ActionType actionType, String resource,
       IEntity::Unique result);
 
-    const IEntity& getResult() const { return *result; };
+    const IEntity* getContent() const { return result.get(); };
 
   private:
     IEntity::Unique result;

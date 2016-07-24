@@ -20,7 +20,7 @@ class MessageQueue : public IMessageQueue {
   public:
     MessageQueue();
     ~MessageQueue();
-    
+
     // From ILoopedService
     virtual void loop() override;
 
@@ -46,8 +46,13 @@ class MessageQueue : public IMessageQueue {
     std::list<QueueClient::Shared> clients;
     std::list<QueueController::Shared> controllers;
 
-    QueueClient::Shared getClient(String clientId);
-    QueueController::Shared getController(const Request& request);
+    void processRequest(const Request& request);
+    void processResponse(const Response& response);
+    void processNotification(const Notification& notification);
+
+    QueueClient::Shared     getClient(String clientId);
+    QueueController::Shared getControllerFor(const Request& request);
+    Response::Shared        createResponseFor(const Request& request, IActionResult::Unique result);
 };
 
 }

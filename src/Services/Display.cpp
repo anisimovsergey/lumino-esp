@@ -31,8 +31,6 @@ Display::Display(std::shared_ptr<IMessageQueue> messageQueue) :
 
   client->setOnGetResponse(
     std::bind(&Display::onConnectionGetResponse, this, _1));
-  client->setOnGetNotification(
-    std::bind(&Display::onConnectionGetNotification, this, _1));
   client->setOnCreateNotification(
     std::bind(&Display::onConnectionCreateNotification, this, _1));
   client->setOnUpdateNotification(
@@ -71,11 +69,6 @@ Display::onConnectionGetResponse(const Core::Response& result) {
   } else {
     colorWipe(pixels->Color(0, 0, 0, 25));
   }
-}
-
-void
-Display::onConnectionGetNotification(const Connection& connection) {
-  updateConnectionStatus(connection);
 }
 
 void

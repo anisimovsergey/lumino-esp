@@ -38,7 +38,7 @@ Request::Request(ActionType actionType, String resource,
 }
 
 Response::Response(ActionType actionType, String resource,
-  StatusResult::Unique result) : Message(actionType, resource, Priority::Mid),
+  IActionResult::Unique result) : Message(actionType, resource, Priority::Mid),
   result(std::move(result)) {
 
 }

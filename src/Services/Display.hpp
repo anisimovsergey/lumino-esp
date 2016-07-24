@@ -36,7 +36,6 @@ class Display : public IDisplay, public Core::ILoopedService  {
 
     // Events
     void onConnectionGetResponse(const Core::Response& result);
-    void onConnectionGetNotification(const Models::Connection& connection);
     void onConnectionCreateNotification(const Models::Connection& connection);
     void onConnectionUpdateNotification(const Models::Connection& connection);
     void onConnectionDeleteNotification();

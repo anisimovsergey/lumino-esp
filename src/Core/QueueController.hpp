@@ -21,16 +21,16 @@ class QueueController {
   public:
     QueueController(String controllerId, IMessageQueue& messageQueue);
 
+    String getId() { return controllerId; }
     StatusResult::Unique broadcastNotification(Notification::Shared notification);
 
     bool canProcessRequest(const Request& request);
-    StatusResult::Unique processRequest(const Request& request);
+    IActionResult::Unique processRequest(const Request& request);
 
     void setCanProcessRequest(std::function<bool(const Request&)> canProcessRequestHandler) {
       this->canProcessRequestHandler = canProcessRequestHandler;
     }
-
-    void processRequest(std::function<StatusResult::Unique(const Request&)> processRequest) {
+    void setProcessRequest(std::function<IActionResult::Unique(const Request&)> processRequest) {
       this->processRequestHandler = processRequestHandler;
     }
 
@@ -38,7 +38,7 @@ class QueueController {
     String controllerId;
     IMessageQueue& messageQueue;
     std::function<bool(const Request&)> canProcessRequestHandler;
-    std::function<StatusResult::Unique(const Request&)> processRequestHandler;
+    std::function<IActionResult::Unique(const Request&)> processRequestHandler;
 };
 
 }
