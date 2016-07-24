@@ -86,7 +86,7 @@ void setup(void){
   loopedServices.push_back(httpServerAsync);
   loopedServices.push_back(wifiManager);
   loopedServices.push_back(webSocketsServerAsync);
-  Logger::message("Initialization finished.");
+  Logger::message("Initialization finished, free heap size " + String(ESP.getFreeHeap()) + " bytes.");
 }
 
 void loop(void){
