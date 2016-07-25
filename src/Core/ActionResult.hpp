@@ -25,28 +25,6 @@ public:
   virtual StatusCode getStatusCode() const = 0;
 };
 
-class RedirectResult : public IActionResult {
-  TYPE_INFO(RedirectResult, IActionResult, "actionResult")
-
-public:
-
-  static RedirectResult::Unique ToRoute(String route);
-
-  RedirectResult(String route) : route(route) {}
-
-  virtual StatusCode getStatusCode() const override {
-    return StatusCode::Redirect;
-  }
-
-  String getRoute() const {
-    return route;
-  }
-
-private:
-
-  const String route;
-};
-
 class StatusResult : public IActionResult {
   TYPE_INFO(StatusResult, IActionResult, "statusResult")
 
@@ -67,8 +45,7 @@ public:
   static StatusResult::Unique NotImplemented();
   static StatusResult::Unique NotImplemented(String message);
 
-  StatusResult(const StatusCode& statusCode) : statusCode(statusCode), message(
-      statusCode.getText()) {}
+  StatusResult(const StatusCode& statusCode) : statusCode(statusCode) {}
 
   StatusResult(const StatusCode& statusCode, String message) : statusCode(
       statusCode), message(message) {}

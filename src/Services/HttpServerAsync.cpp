@@ -43,7 +43,7 @@ HttpServerAsync::start() {
     if (isIntercepted(request)) {
       redirectToSelf(request);
     } else {
-      request->send(StatusCode::NotFound.getCode());
+      request->send((int)StatusCode::NotFound);
     }
   });
   server->begin();

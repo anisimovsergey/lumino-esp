@@ -68,8 +68,3 @@ StatusResult::Unique
 StatusResult::NotImplemented(String message) {
   return StatusResult::makeUnique(StatusCode::NotImplemented, message);
 }
-
-RedirectResult::Unique
-RedirectResult::ToRoute(String route) {
-  return RedirectResult::makeUnique(route);
-}
