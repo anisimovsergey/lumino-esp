@@ -98,27 +98,49 @@ void
 MessageQueue::processNotification(const Notification& notification) {
   auto sender = notification.getTag("sender");
   Logger::message("Broadcating a notification from '" + sender + "'.");
+  std::list<QueueClient::Shared> deletedClients;
   for(auto client: clients) {
-    client->onNotification(notification);
+    if (!client.unique()) {
+	    client->onNotification(notification);
+    } else {
+      deletedClients.push_back(client);
+    }
+  }
+  for(auto client: deletedClients) {
+    clients.remove(client);
   }
 }
 
 QueueClient::Shared
 MessageQueue::getClient(String clientId) {
+  QueueClient::Shared queueClient;
   for(auto client: clients) {
-    if (client->getId() == clientId)
-      return client;
+    if (client->getId() == clientId) {
+      queueClient = client;
+      break;
+    }
   }
-  return nullptr;
+  if (queueClient && queueClient.unique()) {
+    clients.remove(queueClient);
+    return nullptr;
+  }
+  return queueClient;
 }
 
 QueueController::Shared
 MessageQueue::getControllerFor(const Request& request) {
+  QueueController::Shared queueController;
   for(auto controller: controllers) {
-    if (controller->canProcessRequest(request))
-      return controller;
+    if (controller->canProcessRequest(request)) {
+      queueController = controller;
+      break;
+    }
   }
-  return nullptr;
+  if (queueController && queueController.unique()) {
+    controllers.remove(queueController);
+    return nullptr;
+  }
+  return queueController;
 }
 
 Response::Shared

@@ -11,7 +11,7 @@ using namespace std::placeholders;
 WebSocketsServerAsync::WebSocketsServerAsync(
   std::shared_ptr<IMessageQueue> messageQueue,
   std::shared_ptr<Json::ISerializationService> serializer) :
-  server(make_unique<AsyncWebSocket>("/ws")), messageQueue(messageQueue),
+  server(makeUnique<AsyncWebSocket>("/ws")), messageQueue(messageQueue),
   serializer(serializer) {
 
   server->onEvent(std::bind(&WebSocketsServerAsync::onSocketEvent, this,
@@ -95,7 +95,7 @@ WebSocketsServerAsync::onClientDisconnected(AsyncWebSocketClient* client) {
     queueClients.remove(queueClient);
     Logger::message("Client '" + queueClient->getId() + "' disconnected.");
   } else {
-    Logger::message("Client '" + getClientId(client) + "' not found.");
+    Logger::error("Client '" + getClientId(client) + "' not found.");
   }
 }
 

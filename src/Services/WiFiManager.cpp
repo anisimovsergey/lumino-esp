@@ -18,7 +18,7 @@ namespace {
 }
 
 WiFiManager::WiFiManager(std::shared_ptr<Core::IMessageQueue> messageQueue) :
-  dnsServer(make_unique<DNSServer>()), messageQueue(messageQueue) {
+  dnsServer(makeUnique<DNSServer>()), messageQueue(messageQueue) {
   deviceName = "esp8266fs";
 
   auto queueController = messageQueue->createController(SenderId);

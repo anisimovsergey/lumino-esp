@@ -16,6 +16,7 @@ namespace Core {
 public: \
   typedef std::shared_ptr<Class> Shared; \
   typedef std::unique_ptr<Class> Unique; \
+  typedef std::weak_ptr<Class> Weak; \
   \
   template <typename... Args> \
   static Unique makeUnique(Args&&... args) { \

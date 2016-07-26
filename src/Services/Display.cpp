@@ -20,7 +20,7 @@ namespace {
 
 Display::Display(std::shared_ptr<IMessageQueue> messageQueue) :
   messageQueue(messageQueue),
-  pixels(make_unique<Adafruit_NeoPixel>(PIXEL_COUNT, PIXEL_PIN, PIXEL_TYPE)) {
+  pixels(makeUnique<Adafruit_NeoPixel>(PIXEL_COUNT, PIXEL_PIN, PIXEL_TYPE)) {
 
   pixels->begin();
 
