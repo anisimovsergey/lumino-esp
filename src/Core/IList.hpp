@@ -8,7 +8,7 @@
 #define CORE_I_LIST_HPP
 
 #include "IEntity.hpp"
-#include "Core/ActionResult.hpp"
+#include "StatusResult.hpp"
 
 #include <functional>
 
@@ -19,7 +19,7 @@ class IList : public IEntity {
   public:
     virtual ~IList();
 
-    typedef std::function<Core::StatusResult::Unique
+    typedef std::function<StatusResult::Unique
       (const IEntity& item)> ForEachFunction;
 
     virtual Core::StatusResult::Unique add(

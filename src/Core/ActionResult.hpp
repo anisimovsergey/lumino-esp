@@ -10,111 +10,15 @@
 
 #include "IEntity.hpp"
 #include "StatusCode.hpp"
-#include "Core/Memory.hpp"
-
-#include <memory>
 
 namespace Core {
-class IActionResult : public IEntity {
-  TYPE_INFO(IActionResult, IEntity, "result")
 
+class ActionResult : public IEntity {
+TYPE_INFO(ActionResult, IEntity, "actionResult")
 public:
-
-  virtual ~IActionResult();
-
   virtual StatusCode getStatusCode() const = 0;
 };
 
-class StatusResult : public IActionResult {
-  TYPE_INFO(StatusResult, IActionResult, "statusResult")
-
-public:
-
-  static StatusResult::Unique OK();
-  static StatusResult::Unique Created(String message);
-  static StatusResult::Unique Accepted();
-  static StatusResult::Unique NoContent(String message);
-  static StatusResult::Unique Conflict(String message);
-  static StatusResult::Unique BadRequest(String message);
-  static StatusResult::Unique BadRequest(String               message,
-                                         StatusResult::Unique innerResult);
-  static StatusResult::Unique NotFound(String message);
-  static StatusResult::Unique InternalServerError(String message);
-  static StatusResult::Unique InternalServerError(String               message,
-                                                  StatusResult::Unique innerResult);
-  static StatusResult::Unique NotImplemented();
-  static StatusResult::Unique NotImplemented(String message);
-
-  StatusResult(const StatusCode& statusCode) : statusCode(statusCode) {}
-
-  StatusResult(const StatusCode& statusCode, String message) : statusCode(
-      statusCode), message(message) {}
-
-  StatusResult(const StatusCode   & statusCode,
-               String               message,
-               StatusResult::Unique innerResult) : statusCode(statusCode),
-    message(message),
-    innerResult(std::move(innerResult)) {}
-
-  // From IActionResult
-  virtual StatusCode getStatusCode() const override {
-    return statusCode;
-  }
-
-  bool isOk() const {
-    return getStatusCode() == StatusCode::OK;
-  }
-
-  String getMessage() const {
-    return message;
-  }
-
-  const StatusResult* getInnerReuslt() const {
-    return innerResult.get();
-  }
-
-private:
-
-  const StatusCode statusCode;
-  const String     message;
-  const StatusResult::Unique innerResult;
-};
-
-
-class ObjectResult : public IActionResult {
-  TYPE_INFO(ObjectResult, IActionResult, "objectResult")
-
-public:
-
-  static ObjectResult::Unique OK(IEntity::Unique entity) {
-    return ObjectResult::makeUnique(
-      StatusCode::OK,
-      std::move(entity));
-  }
-
-  static ObjectResult::Unique Created(IEntity::Unique entity) {
-    return ObjectResult::makeUnique(
-      StatusCode::Created,
-      std::move(entity));
-  }
-
-  ObjectResult(const StatusCode& statusCode, IEntity::Unique entity) :
-    statusCode(statusCode), entity(std::move(entity)) {}
-
-  // From IActionResult
-  virtual StatusCode getStatusCode() const override {
-    return statusCode;
-  }
-
-  const IEntity& getObject() const {
-    return *entity;
-  }
-
-private:
-
-  const StatusCode statusCode;
-  const IEntity::Unique entity;
-};
 }
 
 #endif /* end of include guard: CORE_ACTION_RESULT_HPP */

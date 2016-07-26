@@ -91,12 +91,12 @@ class Response : public Message {
   TYPE_INFO(Response, Message, "response")
   public:
     Response(ActionType actionType, String resource,
-      IActionResult::Unique result);
+      ActionResult::Unique result);
 
-    const IActionResult& getResult() const { return *result; }
+    const ActionResult& getResult() const { return *result; }
 
   private:
-    IActionResult::Unique result;
+    ActionResult::Unique result;
 };
 
 class Notification : public Message {

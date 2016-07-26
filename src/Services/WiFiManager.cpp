@@ -1,6 +1,8 @@
 #include "WiFiManager.hpp"
 #include "Core/Logger.hpp"
 #include "Core/Utils.hpp"
+#include "Core/Memory.hpp"
+#include "Core/ObjectResult.hpp"
 #include "Models/Connection.hpp"
 
 #include <ESP8266WiFi.h>
@@ -102,7 +104,7 @@ WiFiManager::createConnectionObject() {
   return Connection::makeUnique(getNetwork(), isConnected());
 }
 
-IActionResult::Unique
+ActionResult::Unique
 WiFiManager::onGetConnection() {
   if (hasConnection()) {
     return ObjectResult::OK(createConnectionObject());

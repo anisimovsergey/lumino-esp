@@ -7,7 +7,7 @@
 #ifndef CORE_QUEUE_CLIENT_HPP
 #define CORE_QUEUE_CLIENT_HPP
 
-#include "ActionResult.hpp"
+#include "StatusResult.hpp"
 #include "IMessage.hpp"
 
 #include <functional>

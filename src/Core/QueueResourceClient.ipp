@@ -8,6 +8,7 @@
 #define CORE_QUEUE_RESOURCE_CLIENT_IPP
 
 #include "Core/Logger.hpp"
+#include "Core/ObjectResult.hpp"
 
 namespace Core {
 

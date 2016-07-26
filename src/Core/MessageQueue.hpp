@@ -53,7 +53,7 @@ class MessageQueue : public IMessageQueue {
     QueueClient::Shared     getClient(String clientId);
     QueueController::Shared getControllerFor(const Request& request);
     Response::Shared        createResponseFor(const Request& request,
-      IActionResult::Unique result, const QueueController* controller);
+      ActionResult::Unique result, const QueueController* controller);
 };
 
 }

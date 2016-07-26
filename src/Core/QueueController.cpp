@@ -21,7 +21,7 @@ QueueController::canProcessRequest(const Request& request) {
   return false;
 }
 
-IActionResult::Unique
+ActionResult::Unique
 QueueController::processRequest(const Request& request) {
   if (processRequestHandler)
     return processRequestHandler(request);

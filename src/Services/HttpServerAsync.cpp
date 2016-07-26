@@ -1,5 +1,6 @@
 #include "HttpServerAsync.hpp"
 
+#include "Core/Memory.hpp"
 #include "Core/Utils.hpp"
 
 #include <Hash.h>

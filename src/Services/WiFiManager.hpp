@@ -48,7 +48,7 @@ namespace Services {
     Models::Connection::Unique createConnectionObject();
 
     // Message handling
-    Core::IActionResult::Unique onGetConnection();
+    Core::ActionResult::Unique onGetConnection();
     Core::StatusResult::Unique onCreateConnection(const Models::Connection& connection);
     Core::StatusResult::Unique onDeleteConnection();
 

@@ -27,7 +27,7 @@ class QueueResourceController {
         std::bind(&QueueResourceController<T>::processRequest, this, std::placeholders::_1));
     }
 
-    void setOnGetRequestHandler(std::function<Core::IActionResult::Unique()> onGetRequestHandler) {
+    void setOnGetRequestHandler(std::function<Core::ActionResult::Unique()> onGetRequestHandler) {
       this->onGetRequestHandler = onGetRequestHandler;
     }
     void setOnCreateRequestHandler(std::function<Core::StatusResult::Unique(const T&)> onCreateRequestHandler) {
@@ -56,7 +56,7 @@ class QueueResourceController {
   private:
     QueueController::Shared queueController;
     String typeId;
-    std::function<Core::IActionResult::Unique()> onGetRequestHandler;
+    std::function<Core::ActionResult::Unique()> onGetRequestHandler;
     std::function<Core::StatusResult::Unique(const T&)> onCreateRequestHandler;
     std::function<Core::StatusResult::Unique(const T&)> onUpdateRequestHandler;
     std::function<Core::StatusResult::Unique()> onDeleteRequestHandler;
@@ -65,7 +65,7 @@ class QueueResourceController {
       return (request.getResource() == typeId);
     }
 
-    IActionResult::Unique processRequest(const Request& request) {
+    ActionResult::Unique processRequest(const Request& request) {
       if (request.getActionType() == ActionType::Get) {
         if (onGetRequestHandler) {
           return onGetRequestHandler();

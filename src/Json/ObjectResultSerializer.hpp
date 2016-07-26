@@ -8,6 +8,7 @@
 #define JSON_OBJECT_RESULT_SERIALIZER_HPP
 
 #include "Serializer.hpp"
+#include "Core/ObjectResult.hpp"
 #include "Core/IMessage.hpp"
 
 namespace Json {
