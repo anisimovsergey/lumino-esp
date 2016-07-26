@@ -29,10 +29,10 @@ SerializationContext::getStringValue(const String& key, String& value) {
 
   auto jsonVal = jsonObject[key];
   if (!jsonVal.success())
-    return StatusResult::BadRequest("Key """ + key + """ is not defined.");
+    return StatusResult::makeUnique(StatusCode::BadRequest, "Key """ + key + """ is not defined.");
 
   if (!jsonVal.is<const char*>())
-    return StatusResult::BadRequest("Value for key """ + key + """ should be a string.");
+    return StatusResult::makeUnique(StatusCode::BadRequest, "Value for key """ + key + """ should be a string.");
 
   value = (const char*)jsonVal;
   return StatusResult::OK();
@@ -43,10 +43,10 @@ SerializationContext::getBoolValue(const String& key, bool& value) {
 
   auto jsonVal = jsonObject[key];
   if (!jsonVal.success())
-    return StatusResult::BadRequest("Key """ + key + """ is not defined.");
+    return StatusResult::makeUnique(StatusCode::BadRequest, "Key """ + key + """ is not defined.");
 
   if (!jsonVal.is<bool>())
-    return StatusResult::BadRequest("Value for key """ + key + """ should be a boolean.");
+    return StatusResult::makeUnique(StatusCode::BadRequest, "Value for key """ + key + """ should be a boolean.");
 
   value = (bool)jsonVal;
   return StatusResult::OK();
@@ -57,17 +57,17 @@ SerializationContext::getEntity(const String& key, std::unique_ptr<Core::IEntity
 
   auto jsonVal = jsonObject[key];
   if (!jsonVal.success())
-    return StatusResult::BadRequest("Key """ + key + """ is not defined.");
+    return StatusResult::makeUnique(StatusCode::BadRequest, "Key """ + key + """ is not defined.");
 
   if (!jsonVal.is<JsonObject>())
-    return StatusResult::BadRequest("Value for key """ + key + """ should be a JSON object.");
+    return StatusResult::makeUnique(StatusCode::BadRequest, "Value for key """ + key + """ should be a JSON object.");
 
   auto& nestedObject = jsonVal.asObject();
   SerializationContext context(serializationService, jsonBuffer, nestedObject);
   auto result = serializationService.deserialize(context, entity);
   if (!result->isOk()) {
-      return StatusResult::InternalServerError(
-        "Unable to deserialize a nested entity.", std::move(result));
+    return StatusResult::makeUnique(StatusCode::InternalServerError,
+      "Unable to deserialize a nested entity.", std::move(result));
   }
   return StatusResult::OK();
 }
@@ -98,8 +98,8 @@ SerializationContext::setValue(const String& key, const IList& list) {
     SerializationContext context(serializationService, jsonBuffer, nestedObject);
     auto result = serializationService.serialize(element, context);
     if (!result->isOk()) {
-        return StatusResult::InternalServerError(
-          "Unable to serialize an element of the list.", std::move(result));
+      return StatusResult::makeUnique(StatusCode::InternalServerError,
+        "Unable to serialize an element of the list.", std::move(result));
     }
     return StatusResult::OK();
   });
@@ -111,7 +111,7 @@ SerializationContext::setValue(const String& key, const Core::IEntity& entity) {
   SerializationContext context(serializationService, jsonBuffer, nestedObject);
   auto result = serializationService.serialize(entity, context);
   if (!result->isOk()) {
-      return StatusResult::InternalServerError(
+      return StatusResult::makeUnique(StatusCode::InternalServerError,
         "Unable to serialize a nested entity.", std::move(result));
   }
   return StatusResult::OK();

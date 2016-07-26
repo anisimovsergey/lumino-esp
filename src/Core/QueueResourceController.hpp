@@ -49,7 +49,8 @@ class QueueResourceController {
       queueController->broadcastNotification(notification);
     }
     void sendDeleteNotification() {
-      auto request = Notification::makeShared(ActionType::Delete, typeId, StatusResult::NoContent("Resource was deleted"));
+      auto request = Notification::makeShared(ActionType::Delete, typeId,
+        StatusResult::makeUnique(StatusCode::NoContent, "Resource was deleted"));
       queueController->broadcastNotification(request);
     }
 
@@ -77,7 +78,7 @@ class QueueResourceController {
           auto object = T::cast(request.getContent());
           if (object)
             return onCreateRequestHandler(*object);
-          return StatusResult::BadRequest("Expeceted content of '" + String(T::TypeId) + "' type.");
+          return StatusResult::makeUnique(StatusCode::BadRequest, "Expeceted content of '" + String(T::TypeId) + "' type.");
         }
         return StatusResult::NotImplemented();
       }
@@ -86,7 +87,7 @@ class QueueResourceController {
           auto object = T::cast(request.getContent());
           if (object)
             return onUpdateRequestHandler(*object);
-          return StatusResult::BadRequest("Expeceted content of '" + String(T::TypeId) + "' type.");
+          return StatusResult::makeUnique(StatusCode::BadRequest, "Expeceted content of '" + String(T::TypeId) + "' type.");
         }
         return StatusResult::NotImplemented();
       }
@@ -95,7 +96,7 @@ class QueueResourceController {
           return onDeleteRequestHandler();
         return StatusResult::NotImplemented();
       }
-      return StatusResult::NotImplemented("Request action type is not supported.");
+      return StatusResult::makeUnique(StatusCode::NotImplemented, "Request action type is not supported.");
     }
 };
 

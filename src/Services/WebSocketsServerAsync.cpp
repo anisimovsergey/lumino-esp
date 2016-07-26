@@ -108,13 +108,14 @@ WebSocketsServerAsync::onTextReceived(AsyncWebSocketClient* client, const String
     request = castToShared<Request>(std::move(entity));
     if (request) {
       auto queueClient = findQueueClient(client);
-      if (queueClient)
+      if (queueClient) {
         statusResult = queueClient->sendMessage(request);
-      else
-        statusResult = StatusResult::InternalServerError(
-          "Unable to find queue client '" + String(client->id()) +"'.");
+      } else {
+        statusResult = StatusResult::makeUnique(StatusCode::InternalServerError,
+          "Unable to find queue client '" + String(client->id()) + "'.");
+      }
     } else {
-      statusResult = StatusResult::BadRequest(
+      statusResult = StatusResult::makeUnique(StatusCode::BadRequest,
         "Type '" + String(Request::TypeId) + "' was expected.");
     }
   }

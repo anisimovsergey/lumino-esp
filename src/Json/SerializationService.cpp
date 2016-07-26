@@ -37,10 +37,10 @@ SerializationService::serialize (
 
   String typeId = entity.getTypeId();
   auto serializer = getSerialzier(typeId);
-  if (!serializer)
-    return StatusResult::BadRequest(
+  if (!serializer) {
+    return StatusResult::makeUnique(StatusCode::BadRequest,
       "Unable to find a serializer for type """ + typeId + """.");
-
+  }
   context.setValue(TYPE_FIELD, typeId);
   return serializer->serialize(entity, context);
 }
@@ -69,10 +69,10 @@ SerializationService::deserialize(
     return actionResult;
 
   auto serializer = getSerialzier(typeId);
-  if (!serializer)
-    return StatusResult::BadRequest("Unable to find serializer for type """ +
-      typeId + """.");
-
+  if (!serializer) {
+    return StatusResult::makeUnique(StatusCode::BadRequest,
+      "Unable to find serializer for type """ + typeId + """.");
+  }
   return serializer->deserialize(entity, context);
 }
 

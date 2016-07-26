@@ -78,7 +78,7 @@ std::unique_ptr<Core::StatusResult>
 WiFiManager::connect(String network, String password) {
 
   if (isConnected())
-    return StatusResult::Conflict("The connection already exists.");
+    return StatusResult::makeUnique(StatusCode::Conflict, "The connection already exists.");
 
   WiFi.begin(network.c_str(), password.c_str());
   return StatusResult::OK();
@@ -88,7 +88,7 @@ std::unique_ptr<Core::StatusResult>
 WiFiManager::disconnect() {
 
   if (!hasConnection())
-    return StatusResult::Conflict("The connection doesn't exist.");
+    return StatusResult::makeUnique(StatusCode::Conflict, "The connection doesn't exist.");
 
   WiFi.disconnect();
   return StatusResult::OK();
@@ -107,9 +107,9 @@ WiFiManager::createConnectionObject() {
 ActionResult::Unique
 WiFiManager::onGetConnection() {
   if (hasConnection()) {
-    return ObjectResult::OK(createConnectionObject());
+    return ObjectResult::makeUnique(StatusCode::OK, createConnectionObject());
   } else {
-    return StatusResult::NotFound("The connection doesn't exist.");
+    return StatusResult::makeUnique(StatusCode::NotFound, "The connection doesn't exist.");
   }
 }
 
@@ -118,12 +118,12 @@ WiFiManager::onCreateConnection(const Models::Connection& connection) {
 
   auto result = connect(connection.getNetworkSsid(), connection.getNetworkPassword());
   if (!result->isOk()) {
-    return StatusResult::InternalServerError("Unable to create the connection.",
-      std::move(result));
+    return StatusResult::makeUnique(StatusCode::InternalServerError,
+      "Unable to create the connection.", std::move(result));
   }
 
   controller->sendCreateNotification(createConnectionObject());
-  return StatusResult::Created("the connection was created.");
+  return StatusResult::makeUnique(StatusCode::Created, "The connection was created.");
 }
 
 StatusResult::Unique
@@ -131,12 +131,12 @@ WiFiManager::onDeleteConnection() {
 
   auto result = disconnect();
   if (!result->isOk()) {
-    return StatusResult::InternalServerError("Unable to delete the connection.",
-      std::move(result));
+    return StatusResult::makeUnique(StatusCode::InternalServerError,
+      "Unable to delete the connection.", std::move(result));
   }
 
   controller->sendDeleteNotification();
-  return StatusResult::NoContent("The connection was deleted.");
+  return StatusResult::makeUnique(StatusCode::NoContent, "The connection was created.");
 }
 
 void

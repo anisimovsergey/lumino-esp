@@ -16,23 +16,9 @@ class ObjectResult : public ActionResult {
   TYPE_INFO(ObjectResult, ActionResult, "objectResult")
 
 public:
-
-  static ObjectResult::Unique OK(IEntity::Unique entity) {
-    return ObjectResult::makeUnique(
-      StatusCode::OK,
-      std::move(entity));
-  }
-
-  static ObjectResult::Unique Created(IEntity::Unique entity) {
-    return ObjectResult::makeUnique(
-      StatusCode::Created,
-      std::move(entity));
-  }
-
-  ObjectResult(const StatusCode& statusCode, IEntity::Unique entity) :
+  ObjectResult(StatusCode statusCode, IEntity::Unique entity) :
     statusCode(statusCode), entity(std::move(entity)) {}
 
-  // From ActionResult
   virtual StatusCode getStatusCode() const override {
     return statusCode;
   }
@@ -42,7 +28,6 @@ public:
   }
 
 private:
-
   const StatusCode statusCode;
   const IEntity::Unique entity;
 };

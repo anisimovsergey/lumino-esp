@@ -75,7 +75,7 @@ MessageQueue::processRequest(const Request& request) {
     result = controller->processRequest(request);
   } else {
     Logger::error("Unable to find a controller.");
-    result = StatusResult::NotFound("Unable to find a controller.");
+    result = StatusResult::makeUnique(StatusCode::NotFound, "Unable to find a controller.");
   }
   auto response = createResponseFor(request, std::move(result), controller.get());
   messages.push(response);

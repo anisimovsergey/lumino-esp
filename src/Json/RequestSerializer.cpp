@@ -26,7 +26,8 @@ RequestSerializer::deserialize(
 
   ActionType actionType = ActionType::getById(actionTypeStr);
   if (actionType == ActionType::Unknown)
-    return StatusResult::BadRequest("Action type '" + actionTypeStr + "' is not supported.");
+    return StatusResult::makeUnique(StatusCode::BadRequest,
+      "Action type '" + actionTypeStr + "' is not supported.");
 
   String resource;
   result = context.getStringValue(FIELD_RESOURCE, resource);

@@ -50,16 +50,15 @@ public: \
     return nullptr; \
   } \
 
-
 class IEntity {
-  TYPE_PTRS(IEntity)
-  public:
-    virtual ~IEntity();
-    virtual const char* getTypeId() const = 0;
+TYPE_PTRS(IEntity)
+public:
+  virtual ~IEntity();
+  virtual const char* getTypeId() const = 0;
 
-    static bool isType(String typeId) {
-      return false;
-    }
+  static bool isType(String typeId) {
+    return false;
+  }
 };
 
 }
