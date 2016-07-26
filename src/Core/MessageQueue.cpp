@@ -16,23 +16,23 @@ MessageQueue::loop() {
   while (!messages.empty())
   {
     auto message = messages.top();
+    messages.pop();
     auto request = castToShared<Request>(message);
     if (request) {
       processRequest(*request);
-    } else {
-      auto response = castToShared<Response>(message);
-      if (response) {
-        processResponse(*response);
-      } else {
-        auto notification = castToShared<Notification>(message);
-        if (notification) {
-          processNotification(*notification);
-        } else {
-          Logger::error("Unknown message type '" + String(message->getTypeId()) + "'.");
-        }
-      }
+      continue;
     }
-    messages.pop();
+    auto response = castToShared<Response>(message);
+    if (response) {
+      processResponse(*response);
+      continue;
+    }
+    auto notification = castToShared<Notification>(message);
+    if (notification) {
+      processNotification(*notification);
+      continue;
+    }
+    Logger::error("Unknown message type '" + String(message->getTypeId()) + "'.");
   }
 }
 
@@ -74,9 +74,10 @@ MessageQueue::processRequest(const Request& request) {
   if (controller) {
     result = controller->processRequest(request);
   } else {
+    Logger::error("Unable to find a controller.");
     result = StatusResult::NotFound("Unable to find a controller.");
   }
-  auto response = createResponseFor(request, std::move(result));
+  auto response = createResponseFor(request, std::move(result), controller.get());
   messages.push(response);
 }
 
@@ -121,10 +122,15 @@ MessageQueue::getControllerFor(const Request& request) {
 }
 
 Response::Shared
-MessageQueue::createResponseFor(const Request& request, IActionResult::Unique result) {
+MessageQueue::createResponseFor(const Request& request,
+  IActionResult::Unique result, const QueueController* controller) {
   auto response = Response::makeShared(request.getActionType(),
                                        request.getResource(),
                                        std::move(result));
   response->addTag("receiver", request.getTag("sender"));
+  if (controller)
+    response->addTag("sender", controller->getId());
+  else
+    response->addTag("sender", "messageQueue");
   return response;
 }

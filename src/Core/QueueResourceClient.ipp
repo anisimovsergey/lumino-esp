@@ -52,16 +52,31 @@ QueueResourceClient<T>::deleteResource() {
 template <typename T>
 void
 QueueResourceClient<T>::onResponse(const Response& response) {
-  if (response.getActionType() == ActionType::Get) {
-    if (onGetResponseHandler)
-      onGetResponseHandler(response);
-  } else if (response.getActionType() == ActionType::Create) {
+  auto actionType = response.getActionType();
+  if (actionType == ActionType::Get) {
+    auto status = StatusResult::cast(&response.getResult());
+    if (status && onGetStatusResponseHandler) {
+      onGetStatusResponseHandler(*status);
+    } else {
+      auto objectResult = ObjectResult::cast(&response.getResult());
+      if (objectResult) {
+        auto object = T::cast(&objectResult->getObject());
+        if (object) {
+          onGetObjectResponseHandler(*object);
+        } else {
+          Logger::error("Unexpected type of object '" + String(objectResult->getObject().getTypeId()) + "'.");
+        }
+      } else {
+        Logger::error("Unknown type of result '" + String(response.getResult().getTypeId()) + "'.");
+      }
+    }
+  } else if (actionType == ActionType::Create) {
     if (onCreateResponseHandler)
       onCreateResponseHandler(response);
-  } else if (response.getActionType() == ActionType::Update) {
+  } else if (actionType == ActionType::Update) {
     if (onUpdateResponseHandler)
       onUpdateResponseHandler(response);
-  } else if (response.getActionType() == ActionType::Delete) {
+  } else if (actionType == ActionType::Delete) {
     if (onDeleteResponseHandler)
       onDeleteResponseHandler(response);
   }

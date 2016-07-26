@@ -20,9 +20,12 @@ NotificationSerializer::serialize(
   if (!result->isOk())
     return result;
 
-  result = context.setValue(FIELD_CONTENT, notification.getContent());
-  if (!result->isOk())
-    return result;
+  auto content = notification.getContent();
+  if (content) {
+    result = context.setValue(FIELD_CONTENT, *content);
+    if (!result->isOk())
+      return result;
+  }
 
   return StatusResult::OK();
 }

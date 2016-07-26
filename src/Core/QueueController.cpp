@@ -25,5 +25,5 @@ IActionResult::Unique
 QueueController::processRequest(const Request& request) {
   if (processRequestHandler)
     return processRequestHandler(request);
-  StatusResult::NotImplemented();
+  return StatusResult::NotImplemented();
 }

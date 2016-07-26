@@ -20,7 +20,7 @@ namespace Services {
 
 class WebSocketsServerAsync : public Core::ILoopedService {
   public:
-    WebSocketsServerAsync(int port,
+    WebSocketsServerAsync(
       std::shared_ptr<Core::IMessageQueue> messageQueue,
       std::shared_ptr<Json::ISerializationService> serializer);
     ~WebSocketsServerAsync();

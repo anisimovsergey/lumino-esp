@@ -8,7 +8,7 @@ using namespace Core;
 using namespace Services;
 using namespace std::placeholders;
 
-WebSocketsServerAsync::WebSocketsServerAsync(int port,
+WebSocketsServerAsync::WebSocketsServerAsync(
   std::shared_ptr<IMessageQueue> messageQueue,
   std::shared_ptr<Json::ISerializationService> serializer) :
   server(make_unique<AsyncWebSocket>("/ws")), messageQueue(messageQueue),
@@ -19,7 +19,6 @@ WebSocketsServerAsync::WebSocketsServerAsync(int port,
 }
 
 WebSocketsServerAsync::~WebSocketsServerAsync() {
-
 }
 
 void
@@ -41,8 +40,10 @@ WebSocketsServerAsync::onSocketEvent(AsyncWebSocket* server,
   switch (type) {
     case WS_EVT_CONNECT:
       onClientConnected(client);
+      break;
     case WS_EVT_DISCONNECT:
       onClientDisconnected(client);
+      break;
     case WS_EVT_DATA: {
       AwsFrameInfo * info = (AwsFrameInfo*)arg;
       if (!(info->final && info->index == 0 && info->len == len) ||
@@ -50,6 +51,7 @@ WebSocketsServerAsync::onSocketEvent(AsyncWebSocket* server,
         return;
       data[len] = 0;
       onTextReceived(client, (char*)data);
+      break;
     }
     default:
       break;
@@ -82,6 +84,7 @@ WebSocketsServerAsync::onClientConnected(AsyncWebSocketClient* client) {
     onNotification(client, notification);
   });
   queueClients.push_back(queueClinet);
+  Logger::message("Client '" + clientId + "' connected.");
 }
 
 void
@@ -90,6 +93,9 @@ WebSocketsServerAsync::onClientDisconnected(AsyncWebSocketClient* client) {
   if (queueClient) {
     messageQueue->removeClient(queueClient);
     queueClients.remove(queueClient);
+    Logger::message("Client '" + queueClient->getId() + "' disconnected.");
+  } else {
+    Logger::message("Client '" + getClientId(client) + "' not found.");
   }
 }
 

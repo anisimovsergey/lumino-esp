@@ -29,8 +29,10 @@ Display::Display(std::shared_ptr<IMessageQueue> messageQueue) :
   auto queueClient = messageQueue->createClient(SenderId);
   client = QueueResourceClient<Connection>::makeUnique(queueClient);
 
-  client->setOnGetResponse(
-    std::bind(&Display::onConnectionGetResponse, this, _1));
+  client->setOnGetStatusResponse(
+    std::bind(&Display::onConnectionGetStatusResponse, this, _1));
+  client->setOnGetObjectResponse(
+    std::bind(&Display::onConnectionGetObjectResponse, this, _1));
   client->setOnCreateNotification(
     std::bind(&Display::onConnectionCreateNotification, this, _1));
   client->setOnUpdateNotification(
@@ -63,12 +65,17 @@ Display::updateConnectionStatus(const Connection& connection) {
 }
 
 void
-Display::onConnectionGetResponse(const Core::Response& result) {
-  if (result.getResult().getStatusCode() == StatusCode::NotFound) {
+Display::onConnectionGetStatusResponse(const Core::StatusResult& status) {
+  if (status.getStatusCode() == StatusCode::NotFound) {
     colorWipe(pixels->Color(0, 0, 0, 0));
   } else {
     colorWipe(pixels->Color(0, 0, 0, 25));
   }
+}
+
+void
+Display::onConnectionGetObjectResponse(const Connection& connection) {
+  updateConnectionStatus(connection);
 }
 
 void

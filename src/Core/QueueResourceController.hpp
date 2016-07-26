@@ -8,6 +8,7 @@
 #define CORE_QUEUE_RESOURCE_CONTROLLER_HPP
 
 #include "QueueController.hpp"
+#include "Logger.hpp"
 
 namespace Core {
 
@@ -61,14 +62,14 @@ class QueueResourceController {
     std::function<Core::StatusResult::Unique()> onDeleteRequestHandler;
 
     bool canProcessReqiest(const Request& request) {
-      return (request.getTag("receiver") == queueController->getId() &&
-              request.getResource() == typeId);
+      return (request.getResource() == typeId);
     }
 
     IActionResult::Unique processRequest(const Request& request) {
       if (request.getActionType() == ActionType::Get) {
-        if (onGetRequestHandler)
+        if (onGetRequestHandler) {
           return onGetRequestHandler();
+        }
         return StatusResult::NotImplemented();
       }
       if (request.getActionType() == ActionType::Create) {
@@ -76,8 +77,7 @@ class QueueResourceController {
           auto object = T::cast(request.getContent());
           if (object)
             return onCreateRequestHandler(*object);
-          else
-            return StatusResult::BadRequest("Expeceted content of '" + String(T::TypeId) + "' type.");
+          return StatusResult::BadRequest("Expeceted content of '" + String(T::TypeId) + "' type.");
         }
         return StatusResult::NotImplemented();
       }
@@ -86,15 +86,13 @@ class QueueResourceController {
           auto object = T::cast(request.getContent());
           if (object)
             return onUpdateRequestHandler(*object);
-          else
-            return StatusResult::BadRequest("Expeceted content of '" + String(T::TypeId) + "' type.");
+          return StatusResult::BadRequest("Expeceted content of '" + String(T::TypeId) + "' type.");
         }
         return StatusResult::NotImplemented();
       }
       if (request.getActionType() == ActionType::Delete) {
-        if (onDeleteRequestHandler) {
+        if (onDeleteRequestHandler)
           return onDeleteRequestHandler();
-        }
         return StatusResult::NotImplemented();
       }
       return StatusResult::NotImplemented("Request action type is not supported.");

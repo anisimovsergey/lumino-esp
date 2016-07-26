@@ -23,8 +23,11 @@ class QueueResourceClient {
     StatusResult::Unique updateResource(TUnique resource);
     StatusResult::Unique deleteResource();
 
-    void setOnGetResponse(std::function<void(const Response&)> onGetResponse) {
-      onGetResponseHandler = onGetResponse;
+    void setOnGetStatusResponse(std::function<void(const StatusResult&)> onGetStatusResponse) {
+      onGetStatusResponseHandler = onGetStatusResponse;
+    }
+    void setOnGetObjectResponse(std::function<void(const T&)> onGetObjectResponse) {
+      onGetObjectResponseHandler = onGetObjectResponse;
     }
     void setOnCreateResponse(std::function<void(const Response&)> onCreateResponse) {
       onCreateResponseHandler = onCreateResponse;
@@ -49,7 +52,8 @@ class QueueResourceClient {
   private:
     QueueClient::Shared queueClient;
     String typeId;
-    std::function<void(const Response&)> onGetResponseHandler;
+    std::function<void(const StatusResult&)> onGetStatusResponseHandler;
+    std::function<void(const T&)> onGetObjectResponseHandler;
     std::function<void(const Response&)> onCreateResponseHandler;
     std::function<void(const Response&)> onUpdateResponseHandler;
     std::function<void(const Response&)> onDeleteResponseHandler;

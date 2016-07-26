@@ -21,7 +21,7 @@ class QueueController {
   public:
     QueueController(String controllerId, IMessageQueue& messageQueue);
 
-    String getId() { return controllerId; }
+    String getId() const { return controllerId; }
     StatusResult::Unique broadcastNotification(Notification::Shared notification);
 
     bool canProcessRequest(const Request& request);
@@ -31,7 +31,7 @@ class QueueController {
       this->canProcessRequestHandler = canProcessRequestHandler;
     }
     void setProcessRequest(std::function<IActionResult::Unique(const Request&)> processRequest) {
-      this->processRequestHandler = processRequestHandler;
+      this->processRequestHandler = processRequest;
     }
 
   private:

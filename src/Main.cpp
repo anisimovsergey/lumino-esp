@@ -36,19 +36,14 @@ void setup(void){
   auto display(std::make_shared<Display>(messageQueue));
   Logger::message("Creating the wifi manager...");
   auto wifiManager(std::make_shared<WiFiManager>(messageQueue));
-
   Logger::message("Creating the context factory...");
-  auto contextFactory(
-    std::make_shared<SerializationContextFactory>());
+  auto contextFactory(std::make_shared<SerializationContextFactory>());
   Logger::message("Creating the serialization service...");
-  auto serializationService(
-    std::make_shared<SerializationService>(contextFactory));
+  auto serializationService(std::make_shared<SerializationService>(contextFactory));
   Logger::message("Creating the creating HTTP server...");
-  auto httpServerAsync(
-    std::make_shared<HttpServerAsync>(80, wifiManager));
+  auto httpServerAsync(std::make_shared<HttpServerAsync>(80, wifiManager));
   Logger::message("Creating creating Web Sockets server...");
-  auto webSocketsServerAsync(
-    std::make_shared<WebSocketsServerAsync>(81, messageQueue, serializationService));
+  auto webSocketsServerAsync(std::make_shared<WebSocketsServerAsync>(messageQueue, serializationService));
   httpServerAsync->server->addHandler(webSocketsServerAsync->server.get());
 
   // Registering serializers
