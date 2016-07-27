@@ -3,7 +3,7 @@
 using namespace Core;
 using namespace Services;
 
-WiFiScanner::WiFiScanner(std::shared_ptr<Core::IMessageQueue> messageQueue) :
+WiFiScanner::WiFiScanner(Core::IMessageQueue::Shared messageQueue) :
   messageQueue(messageQueue) {
 
   scanCompletedHandler = std::make_shared<std::function<void()>>(

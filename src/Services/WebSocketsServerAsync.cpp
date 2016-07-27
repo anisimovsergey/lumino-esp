@@ -9,9 +9,9 @@ using namespace Services;
 using namespace std::placeholders;
 
 WebSocketsServerAsync::WebSocketsServerAsync(
-  std::shared_ptr<IMessageQueue> messageQueue,
-  std::shared_ptr<Json::ISerializationService> serializer) :
-  server(makeUnique<AsyncWebSocket>("/ws")), messageQueue(messageQueue),
+  IMessageQueue::Shared messageQueue,
+  Json::ISerializationService::Shared serializer) :
+  server(Core::makeUnique<AsyncWebSocket>("/ws")), messageQueue(messageQueue),
   serializer(serializer) {
 
   server->onEvent(std::bind(&WebSocketsServerAsync::onSocketEvent, this,
@@ -101,8 +101,8 @@ WebSocketsServerAsync::onClientDisconnected(AsyncWebSocketClient* client) {
 
 void
 WebSocketsServerAsync::onTextReceived(AsyncWebSocketClient* client, const String& text) {
-  std::unique_ptr<IEntity> entity;
-  std::shared_ptr<Request> request;
+  IEntity::Unique entity;
+  Request::Shared request;
   auto statusResult = serializer->deserialize(text, entity);
   if (statusResult->isOk()) {
     request = castToShared<Request>(std::move(entity));

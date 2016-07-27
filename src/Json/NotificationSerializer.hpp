@@ -13,14 +13,15 @@
 namespace Json {
 
 class NotificationSerializer : public Serializer<Core::Notification> {
+  TYPE_PTRS(NotificationSerializer)
   protected:
     // From Serializer
-    virtual std::unique_ptr<Core::StatusResult> serialize(
+    virtual Core::StatusResult::Unique serialize(
       const Core::Notification& notification,
       ISerializationContext& context) const override;
 
-    virtual std::unique_ptr<Core::StatusResult> deserialize(
-      std::unique_ptr<Core::Notification>& notification,
+    virtual Core::StatusResult::Unique deserialize(
+      Core::Notification::Unique& notification,
       ISerializationContext& context) const override;
 };
 

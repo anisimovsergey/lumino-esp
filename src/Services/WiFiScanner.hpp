@@ -16,14 +16,14 @@ namespace Services {
 
 class WiFiScanner  {
   public:
-    WiFiScanner(std::shared_ptr<Core::IMessageQueue> messageQueue);
+    WiFiScanner(Core::IMessageQueue::Shared messageQueue);
     virtual ~WiFiScanner();
 
   private:
     static std::list<std::shared_ptr<std::function<void()>>> scanCompletedHandlers;
     static void notifyScanCompleted();
 
-    std::shared_ptr<Core::IMessageQueue>    messageQueue;
+    Core::IMessageQueue::Shared    messageQueue;
     std::shared_ptr<std::function<void()>>  scanCompletedHandler;
 
     void    onGetWiFiNetworks();

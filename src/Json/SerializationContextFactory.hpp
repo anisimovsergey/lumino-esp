@@ -14,15 +14,16 @@
 namespace Json {
 
 class SerializationContextFactory : public ISerializationContextFactory {
+  TYPE_PTRS(SerializationContextFactory)
   public:
     // From ISerializationContextFactory
-    virtual std::unique_ptr<Core::StatusResult> create(
+    virtual Core::StatusResult::Unique create(
       const ISerializationService& serializationService,
-      std::unique_ptr<ISerializationContext>& context) const override;
+      ISerializationContext::Unique& context) const override;
 
-    virtual std::unique_ptr<Core::StatusResult> create(
+    virtual Core::StatusResult::Unique create(
       const ISerializationService& serializationService, const String& json,
-      std::unique_ptr<ISerializationContext>& context) const override;
+      ISerializationContext::Unique& context) const override;
 };
 
 }

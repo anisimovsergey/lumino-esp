@@ -29,22 +29,22 @@ class SerializationContext : public ISerializationContext {
 
     virtual bool hasKey(const String& key) override;
 
-    virtual std::unique_ptr<Core::StatusResult>
+    virtual Core::StatusResult::Unique
       getStringValue(const String& key, String& value) override;
-    virtual std::unique_ptr<Core::StatusResult>
+    virtual Core::StatusResult::Unique
       getBoolValue(const String& key, bool& value) override;
-    virtual std::unique_ptr<Core::StatusResult>
-      getEntity(const String& key, std::unique_ptr<Core::IEntity>& entity) override;
+    virtual Core::StatusResult::Unique
+      getEntity(const String& key, Core::IEntity::Unique& entity) override;
 
-    virtual std::unique_ptr<Core::StatusResult>
+    virtual Core::StatusResult::Unique
       setValue(const String& key, const String& value) override;
-    virtual std::unique_ptr<Core::StatusResult>
+    virtual Core::StatusResult::Unique
       setValue(const String& key, int value) override;
-    virtual std::unique_ptr<Core::StatusResult>
+    virtual Core::StatusResult::Unique
       setValue(const String& key, bool value) override;
-    virtual std::unique_ptr<Core::StatusResult>
+    virtual Core::StatusResult::Unique
       setValue(const String& key, const Core::IList& list) override;
-    virtual std::unique_ptr<Core::StatusResult>
+    virtual Core::StatusResult::Unique
       setValue(const String& key, const Core::IEntity& entity) override;
 
   private:

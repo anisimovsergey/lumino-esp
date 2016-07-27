@@ -17,6 +17,7 @@
 namespace Core {
 
 class MessageQueue : public IMessageQueue {
+  TYPE_PTRS(MessageQueue)
   public:
     MessageQueue();
     ~MessageQueue();

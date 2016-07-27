@@ -12,12 +12,14 @@
 
 namespace Core {
 
-#define TYPE_PTRS(Class) \
+#define TYPE_P(Class) \
 public: \
   typedef std::shared_ptr<Class> Shared; \
   typedef std::unique_ptr<Class> Unique; \
-  typedef std::weak_ptr<Class> Weak; \
-  \
+
+#define TYPE_PTRS(Class) \
+TYPE_P(Class) \
+public: \
   template <typename... Args> \
   static Unique makeUnique(Args&&... args) { \
     return Unique(new Class(std::forward<Args>(args)...)); \

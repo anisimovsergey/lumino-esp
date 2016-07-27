@@ -17,8 +17,8 @@ namespace {
   static const String ConnectionResource = "/connection";
 }
 
-WiFiManager::WiFiManager(std::shared_ptr<Core::IMessageQueue> messageQueue) :
-  dnsServer(makeUnique<DNSServer>()), messageQueue(messageQueue) {
+WiFiManager::WiFiManager(Core::IMessageQueue::Shared messageQueue) :
+  dnsServer(Core::makeUnique<DNSServer>()), messageQueue(messageQueue) {
   deviceName = "esp8266fs";
 
   auto queueController = messageQueue->createController(SenderId);
@@ -74,7 +74,7 @@ WiFiManager::isConnected() const {
   return WiFi.isConnected();
 }
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 WiFiManager::connect(String network, String password) {
 
   if (isConnected())
@@ -84,7 +84,7 @@ WiFiManager::connect(String network, String password) {
   return StatusResult::OK();
 }
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 WiFiManager::disconnect() {
 
   if (!hasConnection())

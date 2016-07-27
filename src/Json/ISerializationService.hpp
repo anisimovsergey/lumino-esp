@@ -16,24 +16,25 @@
 namespace Json {
 
 class ISerializationService {
+  TYPE_P(ISerializationService)
   public:
     virtual ~ISerializationService();
 
-    virtual std::unique_ptr<Core::StatusResult> serialize(
+    virtual Core::StatusResult::Unique serialize(
       const Core::IEntity& object,
       String& json) const = 0;
 
-    virtual std::unique_ptr<Core::StatusResult> serialize(
+    virtual Core::StatusResult::Unique serialize(
       const Core::IEntity& object,
       ISerializationContext& context) const = 0;
 
-    virtual std::unique_ptr<Core::StatusResult> deserialize(
+    virtual Core::StatusResult::Unique deserialize(
       const String& json,
-      std::unique_ptr<Core::IEntity>& entity) const = 0;
+      Core::IEntity::Unique& entity) const = 0;
 
-    virtual std::unique_ptr<Core::StatusResult> deserialize(
+    virtual Core::StatusResult::Unique deserialize(
       ISerializationContext& context,
-      std::unique_ptr<Core::IEntity>& entity) const = 0;
+      Core::IEntity::Unique& entity) const = 0;
 };
 
 }

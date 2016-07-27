@@ -17,26 +17,27 @@
 namespace Json {
 
 class SerializationService : public ISerializationService {
+  TYPE_PTRS(SerializationService)
   public:
     SerializationService(
       std::shared_ptr<const ISerializationContextFactory> contextFactory);
 
     // From ISerializationService
-    virtual std::unique_ptr<Core::StatusResult> serialize(
+    virtual Core::StatusResult::Unique serialize(
       const Core::IEntity& entity,
       String& json) const override;
 
-    virtual std::unique_ptr<Core::StatusResult> serialize(
+    virtual Core::StatusResult::Unique serialize(
       const Core::IEntity& entity,
       ISerializationContext& context) const override;
 
-    virtual std::unique_ptr<Core::StatusResult> deserialize(
+    virtual Core::StatusResult::Unique deserialize(
       const String& json,
-      std::unique_ptr<Core::IEntity>& entity) const override;
+      Core::IEntity::Unique& entity) const override;
 
-    virtual std::unique_ptr<Core::StatusResult> deserialize(
+    virtual Core::StatusResult::Unique deserialize(
       ISerializationContext& context,
-      std::unique_ptr<Core::IEntity>& entity) const override;
+      Core::IEntity::Unique& entity) const override;
 
     // Methods
     void addSerializer(

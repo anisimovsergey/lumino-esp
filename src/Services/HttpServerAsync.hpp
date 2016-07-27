@@ -20,6 +20,7 @@ class AsyncWebServerRequest;
 namespace Services {
 
 class HttpServerAsync : public Core::ILoopedService {
+  TYPE_PTRS(HttpServerAsync)
   public:
     HttpServerAsync(int port,
       std::shared_ptr<const IWiFiManager> wifiManager);

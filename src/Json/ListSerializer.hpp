@@ -13,14 +13,15 @@
 namespace Json {
 
 class ListSerializer : public Serializer<Core::IList> {
+  TYPE_PTRS(ListSerializer)
   protected:
     // From Serializer
-    virtual std::unique_ptr<Core::StatusResult> serialize(
+    virtual Core::StatusResult::Unique serialize(
       const Core::IList& list,
       ISerializationContext& context) const override;
 
-    virtual std::unique_ptr<Core::StatusResult> deserialize(
-     std::unique_ptr<Core::IList>& list,
+    virtual Core::StatusResult::Unique deserialize(
+     Core::IList::Unique& list,
      ISerializationContext& context) const override;
 };
 

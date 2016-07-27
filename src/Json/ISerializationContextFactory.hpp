@@ -18,13 +18,13 @@ class ISerializationContextFactory {
   public:
     virtual ~ISerializationContextFactory() {}
 
-    virtual std::unique_ptr<Core::StatusResult> create(
+    virtual Core::StatusResult::Unique create(
       const ISerializationService& serializationService,
-      std::unique_ptr<ISerializationContext>& context) const = 0;
+      ISerializationContext::Unique& context) const = 0;
 
-    virtual std::unique_ptr<Core::StatusResult> create(
+    virtual Core::StatusResult::Unique create(
       const ISerializationService& serializationService, const String& json,
-      std::unique_ptr<ISerializationContext>& context) const = 0;
+      ISerializationContext::Unique& context) const = 0;
 };
 
 }

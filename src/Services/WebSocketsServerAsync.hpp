@@ -19,10 +19,11 @@
 namespace Services {
 
 class WebSocketsServerAsync : public Core::ILoopedService {
+  TYPE_PTRS(WebSocketsServerAsync)
   public:
     WebSocketsServerAsync(
-      std::shared_ptr<Core::IMessageQueue> messageQueue,
-      std::shared_ptr<Json::ISerializationService> serializer);
+      Core::IMessageQueue::Shared messageQueue,
+      Json::ISerializationService::Shared serializer);
     ~WebSocketsServerAsync();
 
     void start() {};
@@ -30,8 +31,8 @@ class WebSocketsServerAsync : public Core::ILoopedService {
 
     std::unique_ptr<AsyncWebSocket> server;
   private:
-    std::shared_ptr<Core::IMessageQueue> messageQueue;
-    std::shared_ptr<Json::ISerializationService> serializer;
+    Core::IMessageQueue::Shared messageQueue;
+    Json::ISerializationService::Shared serializer;
     std::list<Core::QueueClient::Shared> queueClients;
 
     void onSocketEvent(AsyncWebSocket* server, AsyncWebSocketClient* client,

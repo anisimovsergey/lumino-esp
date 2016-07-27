@@ -23,7 +23,7 @@ using namespace Core;
 using namespace Json;
 using namespace Services;
 
-std::list<std::shared_ptr<ILoopedService>> loopedServices;
+std::list<ILoopedService::Shared> loopedServices;
 
 void setup(void){
   Logger::initialize();
@@ -31,41 +31,41 @@ void setup(void){
 
   // Creating services
   Logger::message("Creating the message queue...");
-  auto messageQueue(std::make_shared<MessageQueue>());
+  auto messageQueue(MessageQueue::makeShared());
   Logger::message("Creating the display..");
-  auto display(std::make_shared<Display>(messageQueue));
+  auto display(Display::makeShared(messageQueue));
   Logger::message("Creating the wifi manager...");
-  auto wifiManager(std::make_shared<WiFiManager>(messageQueue));
+  auto wifiManager(WiFiManager::makeShared(messageQueue));
   Logger::message("Creating the context factory...");
-  auto contextFactory(std::make_shared<SerializationContextFactory>());
+  auto contextFactory(SerializationContextFactory::makeShared());
   Logger::message("Creating the serialization service...");
-  auto serializationService(std::make_shared<SerializationService>(contextFactory));
+  auto serializationService(SerializationService::makeShared(contextFactory));
   Logger::message("Creating the creating HTTP server...");
-  auto httpServerAsync(std::make_shared<HttpServerAsync>(80, wifiManager));
+  auto httpServerAsync(HttpServerAsync::makeShared(80, wifiManager));
   Logger::message("Creating creating Web Sockets server...");
-  auto webSocketsServerAsync(std::make_shared<WebSocketsServerAsync>(messageQueue, serializationService));
+  auto webSocketsServerAsync(WebSocketsServerAsync::makeShared(messageQueue, serializationService));
   httpServerAsync->server->addHandler(webSocketsServerAsync->server.get());
 
   // Registering serializers
   Logger::message("Registering serializers...");
   serializationService->addSerializer(
-    std::make_shared<StatusResultSerializer>());
+    StatusResultSerializer::makeShared());
   serializationService->addSerializer(
-    std::make_shared<ListSerializer>());
+    ListSerializer::makeShared());
   serializationService->addSerializer(
-    std::make_shared<NetworkSerializer>());
+    NetworkSerializer::makeShared());
   serializationService->addSerializer(
-    std::make_shared<SettingsSerializer>());
+    SettingsSerializer::makeShared());
   serializationService->addSerializer(
-    std::make_shared<ConnectionSerializer>());
+    ConnectionSerializer::makeShared());
   serializationService->addSerializer(
-    std::make_shared<RequestSerializer>());
+    RequestSerializer::makeShared());
   serializationService->addSerializer(
-    std::make_shared<ResponseSerializer>());
+    ResponseSerializer::makeShared());
   serializationService->addSerializer(
-    std::make_shared<NotificationSerializer>());
+    NotificationSerializer::makeShared());
   serializationService->addSerializer(
-    std::make_shared<ObjectResultSerializer>());
+    ObjectResultSerializer::makeShared());
 
   Logger::message("Starting wifi manager...");
   wifiManager->start();

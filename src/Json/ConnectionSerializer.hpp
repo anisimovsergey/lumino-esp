@@ -13,14 +13,15 @@
 namespace Json {
 
 class ConnectionSerializer : public Serializer<Models::Connection> {
+  TYPE_PTRS(ConnectionSerializer)
   protected:
     // From Serializer
-    virtual std::unique_ptr<Core::StatusResult> serialize(
+    virtual Core::StatusResult::Unique serialize(
       const Models::Connection& connection,
       ISerializationContext& context) const override;
 
-    virtual std::unique_ptr<Core::StatusResult> deserialize(
-      std::unique_ptr<Models::Connection>& connection,
+    virtual Core::StatusResult::Unique deserialize(
+      Models::Connection::Unique& connection,
       ISerializationContext& context) const override;
 };
 

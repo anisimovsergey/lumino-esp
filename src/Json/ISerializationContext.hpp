@@ -15,6 +15,7 @@
 namespace Json {
 
 class ISerializationContext {
+  TYPE_PTRS(ISerializationContext)
   public:
     virtual ~ISerializationContext();
 
@@ -22,22 +23,22 @@ class ISerializationContext {
 
     virtual bool hasKey(const String& key) = 0;
 
-    virtual std::unique_ptr<Core::StatusResult>
+    virtual Core::StatusResult::Unique
       getStringValue(const String& key, String& value) = 0;
-    virtual std::unique_ptr<Core::StatusResult>
+    virtual Core::StatusResult::Unique
       getBoolValue(const String& key, bool& value) = 0;
-    virtual std::unique_ptr<Core::StatusResult>
-      getEntity(const String& key, std::unique_ptr<Core::IEntity>& entity) = 0;
+    virtual Core::StatusResult::Unique
+      getEntity(const String& key, Core::IEntity::Unique& entity) = 0;
 
-    virtual std::unique_ptr<Core::StatusResult>
+    virtual Core::StatusResult::Unique
       setValue(const String& key, const String& value) = 0;
-    virtual std::unique_ptr<Core::StatusResult>
+    virtual Core::StatusResult::Unique
       setValue(const String& key, int value) = 0;
-    virtual std::unique_ptr<Core::StatusResult>
+    virtual Core::StatusResult::Unique
       setValue(const String& key, bool value) = 0;
-    virtual std::unique_ptr<Core::StatusResult>
+    virtual Core::StatusResult::Unique
       setValue(const String& key, const Core::IList& list) = 0;
-    virtual std::unique_ptr<Core::StatusResult>
+    virtual Core::StatusResult::Unique
       setValue(const String& key, const Core::IEntity& entity) = 0;
 };
 

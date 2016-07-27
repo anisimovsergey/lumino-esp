@@ -13,7 +13,9 @@
 
 namespace Json {
 
-template <class T> class Serializer : public ISerializer {
+template <typename T>
+class Serializer : public ISerializer {
+  typedef typename T::Unique TUnique;
   public:
     // From ISerializer
     virtual String getTypeId() const override {
@@ -34,10 +36,10 @@ template <class T> class Serializer : public ISerializer {
       return result;
     }
 
-    virtual std::unique_ptr<Core::StatusResult> deserialize(
-      std::unique_ptr<Core::IEntity>& entity,
+    virtual Core::StatusResult::Unique deserialize(
+      Core::IEntity::Unique& entity,
       ISerializationContext& context) const override {
-      std::unique_ptr<T> entityT;
+      TUnique entityT;
       auto result = deserialize(entityT, context);
       if (!result->isOk()) {
         return Core::StatusResult::makeUnique(Core::StatusCode::InternalServerError,
@@ -49,12 +51,12 @@ template <class T> class Serializer : public ISerializer {
     }
 
   protected:
-    virtual std::unique_ptr<Core::StatusResult> serialize(
+    virtual Core::StatusResult::Unique serialize(
       const T& entity,
       ISerializationContext& context) const = 0;
 
-    virtual std::unique_ptr<Core::StatusResult> deserialize(
-      std::unique_ptr<T>& entity,
+    virtual Core::StatusResult::Unique deserialize(
+      TUnique& entity,
       ISerializationContext& context) const = 0;
  };
 

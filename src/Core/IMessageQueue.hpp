@@ -21,7 +21,7 @@
 namespace Core {
 
 class IMessageQueue : public ILoopedService {
-  TYPE_PTRS(IMessageQueue)
+  TYPE_P(IMessageQueue)
   public:
     virtual ~IMessageQueue();
 

@@ -12,12 +12,12 @@ SerializationService::SerializationService(
   contextFactory(contextFactory) {
 }
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 SerializationService::serialize(
   const IEntity& entity,
   String& json) const {
 
-  std::unique_ptr<ISerializationContext> context;
+  ISerializationContext::Unique context;
   auto result = contextFactory->create(*this, context);
   if (!result->isOk())
     return result;
@@ -30,7 +30,7 @@ SerializationService::serialize(
   return StatusResult::OK();
 }
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 SerializationService::serialize (
   const IEntity& entity,
   ISerializationContext& context) const {
@@ -45,12 +45,12 @@ SerializationService::serialize (
   return serializer->serialize(entity, context);
 }
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 SerializationService::deserialize(
   const String& json,
-  std::unique_ptr<Core::IEntity>& entity) const {
+  Core::IEntity::Unique& entity) const {
 
-  std::unique_ptr<ISerializationContext> context;
+  ISerializationContext::Unique context;
   auto actionResult = contextFactory->create(*this, json, context);
   if (!actionResult->isOk())
     return actionResult;
@@ -58,10 +58,10 @@ SerializationService::deserialize(
   return deserialize(*context, entity);
 }
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 SerializationService::deserialize(
   ISerializationContext& context,
-  std::unique_ptr<Core::IEntity>& entity) const {
+  Core::IEntity::Unique& entity) const {
 
   String typeId;
   auto actionResult = context.getStringValue(TYPE_FIELD, typeId);

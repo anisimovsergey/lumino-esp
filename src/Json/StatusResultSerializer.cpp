@@ -7,7 +7,7 @@ using namespace Core;
 #define FIELD_MESSAGE "message"
 #define FIELD_INNER_RESULT "innerResult"
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 StatusResultSerializer::serialize(const StatusResult& statusResult,
                             ISerializationContext& context) const {
 
@@ -29,9 +29,9 @@ StatusResultSerializer::serialize(const StatusResult& statusResult,
   return StatusResult::OK();
 }
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 StatusResultSerializer::deserialize(
-  std::unique_ptr<StatusResult>& statusResult,
+  StatusResult::Unique& statusResult,
   ISerializationContext& context) const {
 
   return StatusResult::NotImplemented();

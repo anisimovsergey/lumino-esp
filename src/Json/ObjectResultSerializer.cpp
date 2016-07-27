@@ -6,7 +6,7 @@ using namespace Json;
 #define FIELD_CODE "code"
 #define FIELD_OBJECT "object"
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 ObjectResultSerializer::serialize(
   const ObjectResult& objectResult,
   ISerializationContext& context) const {
@@ -22,9 +22,9 @@ ObjectResultSerializer::serialize(
   return StatusResult::OK();
 }
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 ObjectResultSerializer::deserialize(
-  std::unique_ptr<ObjectResult>& objectResult,
+  ObjectResult::Unique& objectResult,
   ISerializationContext& context) const {
 
   return StatusResult::NotImplemented();

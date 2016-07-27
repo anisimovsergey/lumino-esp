@@ -13,14 +13,15 @@
 namespace Json {
 
 class SettingsSerializer : public Serializer<Models::Settings> {
+  TYPE_PTRS(SettingsSerializer)
   protected:
     // From Serializer
-    virtual std::unique_ptr<Core::StatusResult> serialize(
+    virtual Core::StatusResult::Unique serialize(
       const Models::Settings& settings,
       ISerializationContext& context) const override;
 
-    virtual std::unique_ptr<Core::StatusResult> deserialize(
-      std::unique_ptr<Models::Settings>& settings,
+    virtual Core::StatusResult::Unique deserialize(
+      Models::Settings::Unique& settings,
       ISerializationContext& context) const override;
 };
 

@@ -20,14 +20,15 @@ class Adafruit_NeoPixel;
 namespace Services {
 
 class Display : public IDisplay, public Core::ILoopedService  {
+  TYPE_PTRS(Display)
   public:
-    Display(std::shared_ptr<Core::IMessageQueue> messageQueue);
+    Display(Core::IMessageQueue::Shared messageQueue);
 
     // From ILoopedService
     virtual void loop() override;
 
   private:
-    std::shared_ptr<Core::IMessageQueue> messageQueue;
+    Core::IMessageQueue::Shared messageQueue;
     std::unique_ptr<Adafruit_NeoPixel> pixels;
     Core::QueueResourceClient<Models::Connection>::Unique client;
 

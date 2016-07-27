@@ -7,16 +7,16 @@ using namespace Json;
 #define FIELD_RESOURCE "resource"
 #define FIELD_CONTENT "content"
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 RequestSerializer::serialize(
   const Request& request,
   ISerializationContext& context) const {
   return StatusResult::NotImplemented();
 }
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 RequestSerializer::deserialize(
-  std::unique_ptr<Request>& request,
+  Request::Unique& request,
   ISerializationContext& context) const {
 
   String actionTypeStr;
@@ -34,7 +34,7 @@ RequestSerializer::deserialize(
   if (!result->isOk())
     return result;
 
-  std::unique_ptr<Core::IEntity> content;
+  Core::IEntity::Unique content;
   if (context.hasKey(FIELD_CONTENT)) {
     result = context.getEntity(FIELD_CONTENT, content);
     if (!result->isOk())

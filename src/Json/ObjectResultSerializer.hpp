@@ -14,14 +14,15 @@
 namespace Json {
 
 class ObjectResultSerializer : public Serializer<Core::ObjectResult> {
+  TYPE_PTRS(ObjectResultSerializer)
   protected:
     // From Serializer
-    virtual std::unique_ptr<Core::StatusResult> serialize(
+    virtual Core::StatusResult::Unique serialize(
       const Core::ObjectResult& objectResult,
       ISerializationContext& context) const override;
 
-    virtual std::unique_ptr<Core::StatusResult> deserialize(
-      std::unique_ptr<Core::ObjectResult>& objectResult,
+    virtual Core::StatusResult::Unique deserialize(
+      Core::ObjectResult::Unique& objectResult,
       ISerializationContext& context) const override;
 };
 

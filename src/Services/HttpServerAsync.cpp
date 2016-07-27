@@ -12,7 +12,7 @@ using namespace Services;
 HttpServerAsync::HttpServerAsync(
   int port,
   std::shared_ptr<const IWiFiManager> wifiManager) :
-  server(makeUnique<AsyncWebServer>(port)),
+  server(Core::makeUnique<AsyncWebServer>(port)),
   wifiManager(wifiManager) {
 }
 

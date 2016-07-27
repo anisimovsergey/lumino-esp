@@ -20,12 +20,12 @@ class ISerializer {
 
     virtual String getTypeId() const = 0;
 
-    virtual std::unique_ptr<Core::StatusResult> serialize(
+    virtual Core::StatusResult::Unique serialize(
       const Core::IEntity& entity,
       ISerializationContext& context) const = 0;
 
-    virtual std::unique_ptr<Core::StatusResult> deserialize(
-      std::unique_ptr<Core::IEntity>& entity,
+    virtual Core::StatusResult::Unique deserialize(
+      Core::IEntity::Unique& entity,
       ISerializationContext& context) const = 0;
 };
 

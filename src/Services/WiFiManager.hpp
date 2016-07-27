@@ -22,8 +22,9 @@
 
 namespace Services {
   class WiFiManager : public IWiFiManager, public Core::ILoopedService {
+    TYPE_PTRS(WiFiManager)
   public:
-    WiFiManager(std::shared_ptr<Core::IMessageQueue> messageQueue);
+    WiFiManager(Core::IMessageQueue::Shared messageQueue);
     ~WiFiManager();
 
     void   start();
@@ -39,7 +40,7 @@ namespace Services {
 
   private:
     std::unique_ptr<DNSServer> dnsServer;
-    std::shared_ptr<Core::IMessageQueue> messageQueue;
+    Core::IMessageQueue::Shared messageQueue;
     WiFiEventHandler connectedEventHandler;
     WiFiEventHandler disconnectedEventHandler;
     Core::QueueResourceController<Models::Connection>::Shared controller;

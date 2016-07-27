@@ -7,7 +7,7 @@ using namespace Json;
 #define FIELD_RESOURCE "resource"
 #define FIELD_RESULT "result"
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 ResponseSerializer::serialize(
   const Response& response,
   ISerializationContext& context) const {
@@ -27,9 +27,9 @@ ResponseSerializer::serialize(
   return StatusResult::OK();
 }
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 ResponseSerializer::deserialize(
-  std::unique_ptr<Response>& response,
+  Response::Unique& response,
   ISerializationContext& context) const {
 
   return StatusResult::NotImplemented();

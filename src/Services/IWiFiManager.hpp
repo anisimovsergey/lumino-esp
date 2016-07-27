@@ -24,9 +24,9 @@ class IWiFiManager {
     virtual String  getNetwork() const = 0;
     virtual bool    isConnected() const = 0;
 
-    virtual std::unique_ptr<Core::StatusResult> connect(
+    virtual Core::StatusResult::Unique connect(
       String network, String password) = 0;
-    virtual std::unique_ptr<Core::StatusResult> disconnect() = 0;
+    virtual Core::StatusResult::Unique disconnect() = 0;
 };
 
 }

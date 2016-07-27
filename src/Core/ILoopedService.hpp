@@ -7,9 +7,12 @@
 #ifndef CORE_I_LOOPED_SERVICE_HPP
 #define CORE_I_LOOPED_SERVICE_HPP
 
+#include "IEntity.hpp"
+
 namespace Core {
 
 class ILoopedService {
+  TYPE_P(ILoopedService)
   public:
       virtual ~ILoopedService();
       virtual void loop() = 0;

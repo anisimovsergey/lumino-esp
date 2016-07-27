@@ -8,7 +8,7 @@ using namespace Models;
 #define FIELD_WIFI_PASSWORD   "wifi_password"
 #define FIELD_CONNECTED       "connected"
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 ConnectionSerializer::serialize(
   const Connection& connection,
   ISerializationContext& context) const {
@@ -24,9 +24,9 @@ ConnectionSerializer::serialize(
   return StatusResult::OK();
 }
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 ConnectionSerializer::deserialize(
-  std::unique_ptr<Models::Connection>& connection,
+  Models::Connection::Unique& connection,
   ISerializationContext& context) const {
 
   String networkSsid;

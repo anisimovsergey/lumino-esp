@@ -9,6 +9,8 @@
 
 #include <memory>
 
+namespace Core {
+
 // A simple implementation of make_unique
 template <typename T, typename... Args>
 std::unique_ptr<T> makeUnique(Args&&... args) {
@@ -46,6 +48,8 @@ castToShared(const std::shared_ptr<Base>& base) noexcept
     } else {
         return std::shared_ptr<Derived>();
     }
+}
+
 }
 
 #endif /* end of include guard: CORE_MEMORY_HPP */

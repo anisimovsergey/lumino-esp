@@ -7,7 +7,7 @@ using namespace Core;
 
 #define FIELD_ELEMENTS "elements"
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 ListSerializer::serialize(
   const IList& list,
   ISerializationContext& context) const {
@@ -19,9 +19,9 @@ ListSerializer::serialize(
   return StatusResult::OK();
 }
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 ListSerializer::deserialize(
-  std::unique_ptr<IList>& list,
+  IList::Unique& list,
   ISerializationContext& context) const {
 
   return StatusResult::NotImplemented();

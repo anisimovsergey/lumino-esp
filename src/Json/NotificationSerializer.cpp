@@ -7,7 +7,7 @@ using namespace Json;
 #define FIELD_RESOURCE "resource"
 #define FIELD_CONTENT "content"
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 NotificationSerializer::serialize(
   const Notification& notification,
   ISerializationContext& context) const {
@@ -30,9 +30,9 @@ NotificationSerializer::serialize(
   return StatusResult::OK();
 }
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 NotificationSerializer::deserialize(
-  std::unique_ptr<Notification>& notification,
+  Notification::Unique& notification,
   ISerializationContext& context) const {
 
   return StatusResult::NotImplemented();

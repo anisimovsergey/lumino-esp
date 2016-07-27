@@ -24,7 +24,7 @@ SerializationContext::hasKey(const String& key) {
   return jsonObject[key].success();
 }
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 SerializationContext::getStringValue(const String& key, String& value) {
 
   auto jsonVal = jsonObject[key];
@@ -38,7 +38,7 @@ SerializationContext::getStringValue(const String& key, String& value) {
   return StatusResult::OK();
 }
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 SerializationContext::getBoolValue(const String& key, bool& value) {
 
   auto jsonVal = jsonObject[key];
@@ -52,8 +52,8 @@ SerializationContext::getBoolValue(const String& key, bool& value) {
   return StatusResult::OK();
 }
 
-std::unique_ptr<Core::StatusResult>
-SerializationContext::getEntity(const String& key, std::unique_ptr<Core::IEntity>& entity) {
+Core::StatusResult::Unique
+SerializationContext::getEntity(const String& key, Core::IEntity::Unique& entity) {
 
   auto jsonVal = jsonObject[key];
   if (!jsonVal.success())
@@ -72,25 +72,25 @@ SerializationContext::getEntity(const String& key, std::unique_ptr<Core::IEntity
   return StatusResult::OK();
 }
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 SerializationContext::setValue(const String& key, const String& value) {
   jsonObject[key] = value;
   return StatusResult::OK();
 }
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 SerializationContext::setValue(const String& key, int value) {
   jsonObject[key] = value;
   return StatusResult::OK();
 }
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 SerializationContext::setValue(const String& key, bool value) {
   jsonObject[key] = value;
   return StatusResult::OK();
 }
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 SerializationContext::setValue(const String& key, const IList& list) {
   auto& array = jsonObject.createNestedArray(key);
   return list.forEach([&](const IEntity& element) {
@@ -105,7 +105,7 @@ SerializationContext::setValue(const String& key, const IList& list) {
   });
 }
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 SerializationContext::setValue(const String& key, const Core::IEntity& entity) {
   auto& nestedObject = jsonObject.createNestedObject(key);
   SerializationContext context(serializationService, jsonBuffer, nestedObject);

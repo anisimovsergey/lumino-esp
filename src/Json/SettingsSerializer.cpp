@@ -6,7 +6,7 @@ using namespace Models;
 
 #define FIELD_NAME "name"
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 SettingsSerializer::serialize(const Settings& settings, ISerializationContext& context) const {
 
   auto result = context.setValue(FIELD_NAME, settings.getDeviceName());
@@ -16,9 +16,9 @@ SettingsSerializer::serialize(const Settings& settings, ISerializationContext& c
   return StatusResult::OK();
 }
 
-std::unique_ptr<Core::StatusResult>
+Core::StatusResult::Unique
 SettingsSerializer::deserialize(
-  std::unique_ptr<Models::Settings>& settings,
+  Models::Settings::Unique& settings,
   ISerializationContext& context) const {
 
   String deviceName;

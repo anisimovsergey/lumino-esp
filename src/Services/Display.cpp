@@ -18,9 +18,9 @@ namespace {
   const char* SenderId = "Display";
 }
 
-Display::Display(std::shared_ptr<IMessageQueue> messageQueue) :
+Display::Display(IMessageQueue::Shared messageQueue) :
   messageQueue(messageQueue),
-  pixels(makeUnique<Adafruit_NeoPixel>(PIXEL_COUNT, PIXEL_PIN, PIXEL_TYPE)) {
+  pixels(Core::makeUnique<Adafruit_NeoPixel>(PIXEL_COUNT, PIXEL_PIN, PIXEL_TYPE)) {
 
   pixels->begin();
 
