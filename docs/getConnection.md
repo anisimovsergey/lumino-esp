@@ -4,7 +4,7 @@ Request
 {
   "type": "request",
   "action": "get",
-  "resource": "/connection"
+  "resource": "connection"
 }
 ```
 Response (successful)
@@ -12,7 +12,7 @@ Response (successful)
 {
   "type": "response",
   "action": "get",
-  "resource": "/connection",
+  "resource": "connection",
   "result": {
     "type": "objectResult",
     "object" : {
@@ -28,7 +28,7 @@ Response (error)
 {
   "type": "response",
   "action": "get",
-  "resource": "/connection",
+  "resource": "connection",
   "result": {
     "type": "statusResult",
     "code": 404,
