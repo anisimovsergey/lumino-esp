@@ -13,7 +13,8 @@
 
 namespace Core {
 
-template <class T> class List : public IList {
+template <class T>
+class List : public IList {
   public:
     // From IList
     virtual Core::StatusResult::Unique add(

@@ -12,16 +12,11 @@ using namespace Models;
 using namespace Services;
 using namespace std::placeholders;
 
-namespace {
-  static const String SenderId = "WiFiManager";
-  static const String ConnectionResource = "/connection";
-}
-
 WiFiManager::WiFiManager(Core::IMessageQueue::Shared messageQueue) :
   dnsServer(Core::makeUnique<DNSServer>()), messageQueue(messageQueue) {
   deviceName = "esp8266fs";
 
-  auto queueController = messageQueue->createController(SenderId);
+  auto queueController = messageQueue->createController("WiFiManager");
   controller = QueueResourceController<Connection>::makeUnique(queueController);
 
   controller->setOnGetRequestHandler(

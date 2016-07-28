@@ -8,6 +8,8 @@
 #define SERVICES_WIFI_SCANNER_HPP
 
 #include "Core/IMessageQueue.hpp"
+#include "Core/QueueResourceController.hpp"
+#include "Models/Networks.hpp"
 
 #include <memory>
 #include <list>
@@ -20,14 +22,11 @@ class WiFiScanner  {
     virtual ~WiFiScanner();
 
   private:
-    static std::list<std::shared_ptr<std::function<void()>>> scanCompletedHandlers;
-    static void notifyScanCompleted();
-
     Core::IMessageQueue::Shared    messageQueue;
-    std::shared_ptr<std::function<void()>>  scanCompletedHandler;
+    Core::QueueResourceController<Models::Networks>::Shared controller;
 
-    void    onGetWiFiNetworks();
-    void    onScanCompleted();
+    Core::ActionResult::Unique onGetNetworks();
+    void    onScanCompleted(int scanCount);
 };
 
 }

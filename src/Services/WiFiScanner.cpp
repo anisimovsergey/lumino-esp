@@ -1,36 +1,34 @@
 #include "WiFiScanner.hpp"
 
+#include <ESP8266WiFi.h>
+
 using namespace Core;
+using namespace Models;
 using namespace Services;
+using namespace std::placeholders;
 
 WiFiScanner::WiFiScanner(Core::IMessageQueue::Shared messageQueue) :
   messageQueue(messageQueue) {
 
-  scanCompletedHandler = std::make_shared<std::function<void()>>(
-    std::bind(&WiFiScanner::onScanCompleted, this));
-  scanCompletedHandlers.push_back(scanCompletedHandler);
+  auto queueController = messageQueue->createController("WiFiScanner");
+  controller = QueueResourceController<Networks>::makeUnique(queueController);
+
+  controller->setOnGetRequestHandler(
+    std::bind(&WiFiScanner::onGetNetworks, this));
 }
 
 WiFiScanner::~WiFiScanner() {
-  scanCompletedHandlers.remove(scanCompletedHandler);
+}
+
+Core::ActionResult::Unique
+WiFiScanner::onGetNetworks() {
+  WiFi.scanNetworksAsync(
+    std::bind(&WiFiScanner::onGetNetworks, this, _1)
+  );
 }
 
 void
-WiFiScanner::notifyScanCompleted() {
-  for (auto iterator = scanCompletedHandlers.begin(),
-       end = scanCompletedHandlers.end();
-       iterator != end; ++iterator) {
-     (**iterator)();
-  }
-}
-
-void
-WiFiScanner::onGetWiFiNetworks() {
-
-}
-
-void
-WiFiScanner::onScanCompleted() {
+WiFiScanner::onScanCompleted(int) {
   /*
   void
   WiFiManager::onScanComplete() {
