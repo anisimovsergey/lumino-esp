@@ -8,6 +8,7 @@
 #define SERVICES_WIFI_SCANNER_HPP
 
 #include "Core/IMessageQueue.hpp"
+#include "Core/ILoopedService.hpp"
 #include "Core/QueueResourceController.hpp"
 #include "Models/Networks.hpp"
 
@@ -16,17 +17,18 @@
 
 namespace Services {
 
-class WiFiScanner  {
+class WiFiScanner : public Core::ILoopedService  {
+  TYPE_PTRS(WiFiScanner)
   public:
     WiFiScanner(Core::IMessageQueue::Shared messageQueue);
-    virtual ~WiFiScanner();
+
+    void loop() {}
 
   private:
     Core::IMessageQueue::Shared    messageQueue;
     Core::QueueResourceController<Models::Networks>::Shared controller;
 
     Core::ActionResult::Unique onGetNetworks();
-    void    onScanCompleted(int scanCount);
 };
 
 }

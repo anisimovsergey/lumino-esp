@@ -22,14 +22,19 @@ WebSocketsServerAsync::~WebSocketsServerAsync() {
 }
 
 void
-WebSocketsServerAsync::sendResult(AsyncWebSocketClient* client,
-  const Core::StatusResult& result) {
+WebSocketsServerAsync::sendToClinet(AsyncWebSocketClient* client,
+  const Core::IEntity& entity) {
   String json;
-  auto status = serializer->serialize(result, json);
+  auto status = serializer->serialize(entity, json);
   if (status->isOk()) {
     client->text(json);
   } else {
-    Logger::error("Unbale to seraile the response.");
+    status = serializer->serialize(*status, json);
+    if (status->isOk())
+      client->text(json);
+    else
+      Logger::error("Unable to seraile the response of type '" +
+        String(status->getTypeId()) + "'.");
   }
 }
 
@@ -120,28 +125,16 @@ WebSocketsServerAsync::onTextReceived(AsyncWebSocketClient* client, const String
     }
   }
   if (!statusResult->isOk()) {
-    sendResult(client, *statusResult);
+    sendToClinet(client, *statusResult);
   }
 }
 
 void
 WebSocketsServerAsync::onResponse(AsyncWebSocketClient* client, const Response& response) {
-  String json;
-  auto status = serializer->serialize(response, json);
-  if (status->isOk()) {
-    client->text(json);
-  } else {
-    Logger::error("Unbale to seraile the response.");
-  }
+  sendToClinet(client, response);
 }
 
 void
 WebSocketsServerAsync::onNotification(AsyncWebSocketClient* client, const Notification& notification) {
-  String json;
-  auto status = serializer->serialize(notification, json);
-  if (status->isOk()) {
-    client->text(json);
-  } else {
-    Logger::error("Unbale to seraile the notification.");
-  }
+  sendToClinet(client, notification);
 }

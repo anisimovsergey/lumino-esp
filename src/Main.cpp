@@ -3,6 +3,7 @@
 #include "Services/Display.hpp"
 #include "Services/HttpServerAsync.hpp"
 #include "Services/WiFiManager.hpp"
+#include "Services/WiFiScanner.hpp"
 #include "Services/WebSocketsServerAsync.hpp"
 #include "Json/SerializationService.hpp"
 #include "Json/StatusResultSerializer.hpp"
@@ -15,6 +16,7 @@
 #include "Json/ResponseSerializer.hpp"
 #include "Json/NotificationSerializer.hpp"
 #include "Json/ObjectResultSerializer.hpp"
+#include "Json/NetworksSerializer.hpp"
 
 #include <FS.h>
 #include <Adafruit_NeoPixel.h>
@@ -36,6 +38,8 @@ void setup(void){
   auto display(Display::makeShared(messageQueue));
   Logger::message("Creating the wifi manager...");
   auto wifiManager(WiFiManager::makeShared(messageQueue));
+  Logger::message("Creating the wifi scanner...");
+  auto wiFiScanner(WiFiScanner::makeShared(messageQueue));
   Logger::message("Creating the context factory...");
   auto contextFactory(SerializationContextFactory::makeShared());
   Logger::message("Creating the serialization service...");
@@ -66,6 +70,8 @@ void setup(void){
     NotificationSerializer::makeShared());
   serializationService->addSerializer(
     ObjectResultSerializer::makeShared());
+  serializationService->addSerializer(
+    NetworksSerializer::makeShared());
 
   Logger::message("Starting wifi manager...");
   wifiManager->start();
@@ -80,6 +86,7 @@ void setup(void){
   loopedServices.push_back(messageQueue);
   loopedServices.push_back(httpServerAsync);
   loopedServices.push_back(wifiManager);
+  loopedServices.push_back(wiFiScanner);
   loopedServices.push_back(webSocketsServerAsync);
   Logger::message("Initialization finished, free heap size " + String(ESP.getFreeHeap()) + " bytes.");
 }
