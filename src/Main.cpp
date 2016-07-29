@@ -16,7 +16,6 @@
 #include "Json/ResponseSerializer.hpp"
 #include "Json/NotificationSerializer.hpp"
 #include "Json/ObjectResultSerializer.hpp"
-#include "Json/NetworksSerializer.hpp"
 
 #include <FS.h>
 #include <Adafruit_NeoPixel.h>
@@ -55,7 +54,7 @@ void setup(void){
   serializationService->addSerializer(
     StatusResultSerializer::makeShared());
   serializationService->addSerializer(
-    ListSerializer::makeShared());
+    ListSerializer<Models::Networks>::makeShared());
   serializationService->addSerializer(
     NetworkSerializer::makeShared());
   serializationService->addSerializer(
@@ -70,9 +69,7 @@ void setup(void){
     NotificationSerializer::makeShared());
   serializationService->addSerializer(
     ObjectResultSerializer::makeShared());
-  serializationService->addSerializer(
-    NetworksSerializer::makeShared());
-
+  
   Logger::message("Starting wifi manager...");
   wifiManager->start();
   Logger::message("Starting http server...");

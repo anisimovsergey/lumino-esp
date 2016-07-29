@@ -12,17 +12,28 @@
 
 namespace Json {
 
-class ListSerializer : public Serializer<Core::IList> {
-  TYPE_PTRS(ListSerializer)
+template<typename T>
+class ListSerializer : public Serializer<T> {
+  TYPE_PTRS(ListSerializer<T>)
+  typedef typename T::Unique TUnique;
   protected:
     // From Serializer
     virtual Core::StatusResult::Unique serialize(
-      const Core::IList& list,
-      ISerializationContext& context) const override;
+      const T& list,
+      ISerializationContext& context) const override {
+
+      auto result = context.setValue("elements", list);
+      if (!result->isOk())
+        return result;
+
+      return Core::StatusResult::OK();
+    }
 
     virtual Core::StatusResult::Unique deserialize(
-     Core::IList::Unique& list,
-     ISerializationContext& context) const override;
+     TUnique& list,
+     ISerializationContext& context) const override {
+       return Core::StatusResult::NotImplemented();
+    }
 };
 
 }
