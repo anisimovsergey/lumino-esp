@@ -3,7 +3,7 @@
 using namespace Models;
 
 Network::Network(
-  String ssid,
+  std::string ssid,
   int rssi,
   int encryptionType) :
   ssid(ssid),

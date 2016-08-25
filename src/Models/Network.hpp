@@ -7,6 +7,7 @@
 #ifndef MODELS_NETWORK_HPP
 #define MODELS_NETWORK_HPP
 
+#include "WString.h"
 #include "Core/IEntity.hpp"
 
 namespace Models {
@@ -14,14 +15,14 @@ namespace Models {
 class Network : public Core::IEntity {
   TYPE_INFO(Network, Core::IEntity, "network")
   public:
-    Network(String ssid, int rssi, int encryptionType);
+    Network(std::string ssid, int rssi, int encryptionType);
 
-    String  getSsid() const { return ssid; };
+    std::string  getSsid() const { return ssid; };
     int     getRssi() const { return rssi; };
     int     getEncryptionType() const { return encryptionType; };
 
   private:
-    String  ssid;
+    std::string  ssid;
     int     rssi;
     int     encryptionType;
 };

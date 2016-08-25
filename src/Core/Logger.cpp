@@ -14,19 +14,19 @@ Logger::initialize() {
 }
 
 void
-Logger::message(const String& message) {
+Logger::message(const std::string& message) {
   DBG_OUTPUT_PORT.print("MESSAGE: ");
-  DBG_OUTPUT_PORT.println(message);
+  DBG_OUTPUT_PORT.println(message.c_str());
 }
 
 void
-Logger::warning(const String& message) {
+Logger::warning(const std::string& message) {
   DBG_OUTPUT_PORT.print("WARNING: ");
-  DBG_OUTPUT_PORT.println(message);
+  DBG_OUTPUT_PORT.println(message.c_str());
 }
 
 void
-Logger::error(const String& message) {
+Logger::error(const std::string& message) {
   DBG_OUTPUT_PORT.print("ERROR: ");
-  DBG_OUTPUT_PORT.println(message);
+  DBG_OUTPUT_PORT.println(message.c_str());
 }

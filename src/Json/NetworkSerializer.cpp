@@ -12,7 +12,7 @@ using namespace Models;
 
 namespace {
 
-String getEncryptionTypeString(int thisType) {
+std::string getEncryptionTypeString(int thisType) {
   switch (thisType) {
     case ENC_TYPE_WEP:
       return "WEP";

@@ -3,7 +3,7 @@
 
 using namespace Core;
 
-QueueController::QueueController(String controllerId, IMessageQueue& messageQueue) :
+QueueController::QueueController(std::string controllerId, IMessageQueue& messageQueue) :
   controllerId(controllerId), messageQueue(messageQueue) {
 
 }

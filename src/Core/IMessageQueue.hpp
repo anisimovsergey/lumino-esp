@@ -27,10 +27,10 @@ class IMessageQueue : public ILoopedService {
 
     virtual StatusResult::Unique sendMessage(Message::Shared message) = 0;
 
-    virtual QueueClient::Shared createClient(String clinetId) = 0;
+    virtual QueueClient::Shared createClient(std::string clinetId) = 0;
     virtual void removeClient(QueueClient::Shared client) = 0;
 
-    virtual QueueController::Shared createController(String controllerId) = 0;
+    virtual QueueController::Shared createController(std::string controllerId) = 0;
     virtual void removeController(QueueController::Shared controller) = 0;
 };
 

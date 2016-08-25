@@ -7,7 +7,7 @@
 #ifndef CORE_LOGGER_HPP
 #define CORE_LOGGER_HPP
 
-#include <WString.h>
+#include <string>
 
 namespace Core {
 
@@ -15,9 +15,9 @@ class Logger {
   public:
     static void initialize();
 
-    static void message(const String& message);
-    static void warning(const String& message);
-    static void error(const String& message);
+    static void message(const std::string& message);
+    static void warning(const std::string& message);
+    static void error(const std::string& message);
 };
 
 }

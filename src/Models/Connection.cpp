@@ -3,15 +3,15 @@
 using namespace Models;
 
 Connection::Connection(
-  String networkSsid,
+  std::string networkSsid,
   bool isConnected) :
   networkSsid(networkSsid),
   isConnected(isConnected) {
 }
 
 Connection::Connection(
-  String networkSsid,
-  String networkPassword) :
+  std::string networkSsid,
+  std::string networkPassword) :
   networkSsid(networkSsid),
   networkPassword(networkPassword) {
 }

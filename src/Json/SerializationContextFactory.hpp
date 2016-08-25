@@ -22,7 +22,7 @@ class SerializationContextFactory : public ISerializationContextFactory {
       ISerializationContext::Unique& context) const override;
 
     virtual Core::StatusResult::Unique create(
-      const ISerializationService& serializationService, const String& json,
+      const ISerializationService& serializationService, const std::string& json,
       ISerializationContext::Unique& context) const override;
 };
 

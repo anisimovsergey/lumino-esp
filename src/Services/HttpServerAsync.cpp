@@ -1,7 +1,6 @@
 #include "HttpServerAsync.hpp"
 
 #include "Core/Memory.hpp"
-#include "Core/Utils.hpp"
 
 #include <Hash.h>
 #include <ESPAsyncWebServer.h>
@@ -19,20 +18,20 @@ HttpServerAsync::HttpServerAsync(
 HttpServerAsync::~HttpServerAsync() {
 }
 
-String
+std::string
 HttpServerAsync::getLocalDomain() {
   return wifiManager->getDeviceName() + ".local";
 }
 
 bool
 HttpServerAsync::isIntercepted(AsyncWebServerRequest *request) {
-  return request->host() != getLocalDomain();
+  return request->host() != getLocalDomain().c_str();
 }
 
 void
 HttpServerAsync::redirectToSelf(AsyncWebServerRequest *request) {
   //HttpRequest httpRequest(*request);
-  //auto route = String("http://") + getLocalDomain();
+  //auto route = std::string("http://") + getLocalDomain();
   //auto redirectResult = RedirectResult::ToRoute(route);
   //sendResponse(httpRequest, *redirectResult);
 }

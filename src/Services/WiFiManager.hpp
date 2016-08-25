@@ -29,12 +29,12 @@ namespace Services {
 
     void   start();
 
-    String getDeviceName() const override;
+    std::string getDeviceName() const override;
     bool   hasConnection() const override;
-    String getNetwork() const override;
+    std::string getNetwork() const override;
     bool   isConnected() const override;
 
-    Core::StatusResult::Unique connect(String network, String password) override;
+    Core::StatusResult::Unique connect(std::string network, std::string password) override;
     Core::StatusResult::Unique disconnect() override;
     void   loop() override;
 
@@ -44,7 +44,7 @@ namespace Services {
     WiFiEventHandler connectedEventHandler;
     WiFiEventHandler disconnectedEventHandler;
     Core::QueueResourceController<Models::Connection>::Shared controller;
-    String deviceName;
+    std::string deviceName;
 
     Models::Connection::Unique createConnectionObject();
 

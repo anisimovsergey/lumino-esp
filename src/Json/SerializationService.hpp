@@ -25,14 +25,14 @@ class SerializationService : public ISerializationService {
     // From ISerializationService
     virtual Core::StatusResult::Unique serialize(
       const Core::IEntity& entity,
-      String& json) const override;
+      std::string& json) const override;
 
     virtual Core::StatusResult::Unique serialize(
       const Core::IEntity& entity,
       ISerializationContext& context) const override;
 
     virtual Core::StatusResult::Unique deserialize(
-      const String& json,
+      const std::string& json,
       Core::IEntity::Unique& entity) const override;
 
     virtual Core::StatusResult::Unique deserialize(
@@ -47,7 +47,7 @@ class SerializationService : public ISerializationService {
     std::shared_ptr<const ISerializationContextFactory>   contextFactory;
     std::list<std::shared_ptr<const ISerializer>>         serializers;
 
-    std::shared_ptr<const ISerializer> getSerialzier(String typeId) const;
+    std::shared_ptr<const ISerializer> getSerialzier(std::string typeId) const;
 };
 
 }

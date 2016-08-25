@@ -19,7 +19,7 @@ RequestSerializer::deserialize(
   Request::Unique& request,
   ISerializationContext& context) const {
 
-  String actionTypeStr;
+  std::string actionTypeStr;
   auto result = context.getStringValue(FIELD_ACTION, actionTypeStr);
   if (!result->isOk())
     return result;
@@ -29,7 +29,7 @@ RequestSerializer::deserialize(
     return StatusResult::makeUnique(StatusCode::BadRequest,
       "Action type '" + actionTypeStr + "' is not supported.");
 
-  String resource;
+  std::string resource;
   result = context.getStringValue(FIELD_RESOURCE, resource);
   if (!result->isOk())
     return result;

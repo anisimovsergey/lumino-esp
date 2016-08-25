@@ -32,7 +32,7 @@ MessageQueue::loop() {
       processNotification(*notification);
       continue;
     }
-    Logger::error("Unknown message type '" + String(message->getTypeId()) + "'.");
+    Logger::error("Unknown message type '" + std::string(message->getTypeId()) + "'.");
   }
 }
 
@@ -43,14 +43,14 @@ MessageQueue::sendMessage(Message::Shared message) {
 }
 
 QueueClient::Shared
-MessageQueue::createClient(String clientId) {
+MessageQueue::createClient(std::string clientId) {
   auto client = QueueClient::makeShared(clientId, *this);
   clients.push_back(client);
   return client;
 }
 
 QueueController::Shared
-MessageQueue::createController(String controllerId) {
+MessageQueue::createController(std::string controllerId) {
   auto controller = QueueController::makeShared(controllerId, *this);
   controllers.push_back(controller);
   return controller;
@@ -112,7 +112,7 @@ MessageQueue::processNotification(const Notification& notification) {
 }
 
 QueueClient::Shared
-MessageQueue::getClient(String clientId) {
+MessageQueue::getClient(std::string clientId) {
   QueueClient::Shared queueClient;
   for(auto client: clients) {
     if (client->getId() == clientId) {

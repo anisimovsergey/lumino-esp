@@ -38,14 +38,14 @@ class WebSocketsServerAsync : public Core::ILoopedService {
     void onSocketEvent(AsyncWebSocket* server, AsyncWebSocketClient* client,
       AwsEventType type, void* arg, uint8_t *data, size_t len);
 
-    String getClientId(AsyncWebSocketClient* client);
+    std::string getClientId(AsyncWebSocketClient* client);
     Core::QueueClient::Shared findQueueClient(AsyncWebSocketClient* client);
     void sendToClinet(AsyncWebSocketClient* client, const Core::IEntity& entity);
 
     // Events
     void onClientConnected(AsyncWebSocketClient* client);
     void onClientDisconnected(AsyncWebSocketClient* client);
-    void onTextReceived(AsyncWebSocketClient* client, const String& text);
+    void onTextReceived(AsyncWebSocketClient* client, const std::string& text);
     void onResponse(AsyncWebSocketClient* client, const Core::Response& response);
     void onNotification(AsyncWebSocketClient* client, const Core::Notification& notification);
 };

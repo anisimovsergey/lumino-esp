@@ -7,7 +7,7 @@
 #ifndef CORE_I_ENTITY_HPP
 #define CORE_I_ENTITY_HPP
 
-#include <WString.h>
+#include <string>
 #include <memory>
 
 namespace Core {
@@ -37,7 +37,7 @@ public: \
   \
   virtual const char* getTypeId() const override { return TypeId; } \
   \
-  static  bool        isType(String typeId) { \
+  static  bool        isType(const std::string& typeId) { \
     return (typeId == ClassTypeId || SuperClass::isType(typeId)); \
   } \
   \
@@ -59,7 +59,7 @@ public:
   virtual ~IEntity();
   virtual const char* getTypeId() const = 0;
 
-  static bool isType(String typeId) {
+  static bool isType(const std::string& typeId) {
     return false;
   }
 };

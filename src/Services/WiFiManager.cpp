@@ -1,6 +1,5 @@
 #include "WiFiManager.hpp"
 #include "Core/Logger.hpp"
-#include "Core/Utils.hpp"
 #include "Core/Memory.hpp"
 #include "Core/ObjectResult.hpp"
 #include "Models/Connection.hpp"
@@ -54,14 +53,14 @@ WiFiManager::hasConnection() const {
   return (WiFi.SSID().length() > 0);
 }
 
-String
+std::string
 WiFiManager::getDeviceName() const {
   return deviceName;
 }
 
-String
+std::string
 WiFiManager::getNetwork() const {
-  return WiFi.SSID();
+  return WiFi.SSID().c_str();
 }
 
 bool
@@ -70,7 +69,7 @@ WiFiManager::isConnected() const {
 }
 
 Core::StatusResult::Unique
-WiFiManager::connect(String network, String password) {
+WiFiManager::connect(std::string network, std::string password) {
 
   if (isConnected())
     return StatusResult::makeUnique(StatusCode::Conflict, "The connection already exists.");

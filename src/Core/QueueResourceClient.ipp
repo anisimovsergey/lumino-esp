@@ -65,10 +65,10 @@ QueueResourceClient<T>::onResponse(const Response& response) {
         if (object) {
           onGetObjectResponseHandler(*object);
         } else {
-          Logger::error("Unexpected type of object '" + String(objectResult->getObject().getTypeId()) + "'.");
+          Logger::error("Unexpected type of object '" + std::string(objectResult->getObject().getTypeId()) + "'.");
         }
       } else {
-        Logger::error("Unknown type of result '" + String(response.getResult().getTypeId()) + "'.");
+        Logger::error("Unknown type of result '" + std::string(response.getResult().getTypeId()) + "'.");
       }
     }
   } else if (actionType == ActionType::Create) {
@@ -92,7 +92,7 @@ QueueResourceClient<T>::onNotification(const Notification& notification) {
       if (object)
         onCreateNotificationHandler(*object);
       else
-        Logger::error("Expeceted content of '" + String(T::TypeId) + "' type.");
+        Logger::error("Expeceted content of '" + std::string(T::TypeId) + "' type.");
     }
   } else if (notification.getActionType() == ActionType::Update) {
     if (onUpdateNotificationHandler) {
@@ -100,7 +100,7 @@ QueueResourceClient<T>::onNotification(const Notification& notification) {
       if (object)
         onUpdateNotificationHandler(*object);
       else
-        Logger::error("Expeceted content of '" + String(T::TypeId) + "' type.");
+        Logger::error("Expeceted content of '" + std::string(T::TypeId) + "' type.");
     }
   } else if (notification.getActionType() == ActionType::Delete) {
     if (onDeleteNotificationHandler)

@@ -34,7 +34,7 @@ class HttpServerAsync : public Core::ILoopedService {
   private:
     std::shared_ptr<const IWiFiManager> wifiManager;
 
-    String  getLocalDomain();
+    std::string  getLocalDomain();
     bool    isIntercepted(AsyncWebServerRequest* request);
     void    redirectToSelf(AsyncWebServerRequest* request);
 };

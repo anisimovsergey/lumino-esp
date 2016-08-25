@@ -10,6 +10,7 @@
 #include "IEntity.hpp"
 #include "ActionResult.hpp"
 
+#include "WString.h"
 #include <list>
 #include <tuple>
 #include <memory>
@@ -24,7 +25,7 @@ public:
   static const ActionType Update;
   static const ActionType Delete;
 
-  String  getId() const { return id; }
+  std::string  getId() const { return id; }
 
   bool operator==(const ActionType& other) const {
     return id == other.id;
@@ -34,7 +35,7 @@ public:
     return !(*this == other);
   }
 
-  static ActionType getById(String id) {
+  static ActionType getById(std::string id) {
     if (id == Get.getId())
       return ActionType::Get;
     if (id == Update.getId())
@@ -47,10 +48,10 @@ public:
   }
 
 private:
-  ActionType(String id) : id(id) {
+  ActionType(const std::string& id) : id(id) {
   }
 
-  String  id;
+  std::string  id;
 };
 
 class Message : public IEntity {
@@ -59,26 +60,26 @@ class Message : public IEntity {
     enum class Priority {High, Mid, Low};
 
     ActionType    getActionType() const { return actionType; }
-    String        getResource() const { return resource; }
-    void          addTag(String tag, String value);
-    String        getTag(String tag) const;
+    std::string        getResource() const { return resource; }
+    void          addTag(std::string tag, std::string value);
+    std::string        getTag(std::string tag) const;
     Priority      getPriority() const { return priority; }
 
   protected:
-    Message(ActionType actionType, String resource, Priority priority);
+    Message(ActionType actionType, std::string resource, Priority priority);
 
   private:
     ActionType actionType;
-    String resource;
+    std::string resource;
     Priority priority;
-    std::list<std::tuple<String, String>> tags;
+    std::list<std::tuple<std::string, std::string>> tags;
 };
 
 class Request : public Message {
   TYPE_INFO(Request, Message, "request")
   public:
-    Request(ActionType actionType, String resource);
-    Request(ActionType actionType, String resource,
+    Request(ActionType actionType, std::string resource);
+    Request(ActionType actionType, std::string resource,
       IEntity::Unique content);
 
     const IEntity* getContent() const { return content.get(); };
@@ -90,7 +91,7 @@ class Request : public Message {
 class Response : public Message {
   TYPE_INFO(Response, Message, "response")
   public:
-    Response(ActionType actionType, String resource,
+    Response(ActionType actionType, std::string resource,
       ActionResult::Unique result);
 
     const ActionResult& getResult() const { return *result; }
@@ -102,7 +103,7 @@ class Response : public Message {
 class Notification : public Message {
   TYPE_INFO(Notification, Message, "notification")
   public:
-    Notification(ActionType actionType, String resource,
+    Notification(ActionType actionType, std::string resource,
       IEntity::Unique result);
 
     const IEntity* getContent() const { return result.get(); };

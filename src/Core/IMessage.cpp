@@ -8,17 +8,17 @@ const ActionType ActionType::Create = ActionType("create");
 const ActionType ActionType::Update = ActionType("update");
 const ActionType ActionType::Delete = ActionType("delete");
 
-Message::Message(ActionType actionType, String resource, Priority priority) :
+Message::Message(ActionType actionType, std::string resource, Priority priority) :
   actionType(actionType), resource(resource), priority(priority) {
 }
 
 void
-Message::addTag(String tag, String value) {
+Message::addTag(std::string tag, std::string value) {
   tags.push_back(std::make_tuple(tag, value));
 }
 
-String
-Message::getTag(String tag) const {
+std::string
+Message::getTag(std::string tag) const {
     for(auto tuple: tags) {
       if (std::get<0>(tuple) == tag)
         return std::get<1>(tuple);
@@ -26,24 +26,24 @@ Message::getTag(String tag) const {
     return "";
 }
 
-Request::Request(ActionType actionType, String resource) :
+Request::Request(ActionType actionType, std::string resource) :
  Message(actionType, resource, Priority::High) {
 
 }
 
-Request::Request(ActionType actionType, String resource,
+Request::Request(ActionType actionType, std::string resource,
   IEntity::Unique content) : Message(actionType, resource, Priority::High),
   content(std::move(content)) {
 
 }
 
-Response::Response(ActionType actionType, String resource,
+Response::Response(ActionType actionType, std::string resource,
   ActionResult::Unique result) : Message(actionType, resource, Priority::Mid),
   result(std::move(result)) {
 
 }
 
-Notification::Notification(ActionType actionType, String resource,
+Notification::Notification(ActionType actionType, std::string resource,
   IEntity::Unique result) : Message(actionType, resource, Priority::Low),
   result(std::move(result)) {
 

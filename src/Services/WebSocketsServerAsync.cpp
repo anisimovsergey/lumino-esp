@@ -3,6 +3,7 @@
 #include <Core/Memory.hpp>
 #include <Core/Logger.hpp>
 #include <Core/IMessage.hpp>
+#include <Core/StringFormat.hpp>
 
 using namespace Core;
 using namespace Services;
@@ -24,17 +25,17 @@ WebSocketsServerAsync::~WebSocketsServerAsync() {
 void
 WebSocketsServerAsync::sendToClinet(AsyncWebSocketClient* client,
   const Core::IEntity& entity) {
-  String json;
+  std::string json;
   auto status = serializer->serialize(entity, json);
   if (status->isOk()) {
-    client->text(json);
+    client->text(json.c_str());
   } else {
     status = serializer->serialize(*status, json);
     if (status->isOk())
-      client->text(json);
+      client->text(json.c_str());
     else
       Logger::error("Unable to seraile the response of type '" +
-        String(status->getTypeId()) + "'.");
+        std::string(status->getTypeId()) + "'.");
   }
 }
 
@@ -63,9 +64,9 @@ WebSocketsServerAsync::onSocketEvent(AsyncWebSocket* server,
   }
 }
 
-String
+std::string
 WebSocketsServerAsync::getClientId(AsyncWebSocketClient* client) {
-  return "WebSocketsServer/" + String(client->id());
+  return "WebSocketsServer/" + toString(client->id());
 }
 
 Core::QueueClient::Shared
@@ -105,7 +106,7 @@ WebSocketsServerAsync::onClientDisconnected(AsyncWebSocketClient* client) {
 }
 
 void
-WebSocketsServerAsync::onTextReceived(AsyncWebSocketClient* client, const String& text) {
+WebSocketsServerAsync::onTextReceived(AsyncWebSocketClient* client, const std::string& text) {
   IEntity::Unique entity;
   Request::Shared request;
   auto statusResult = serializer->deserialize(text, entity);
@@ -117,11 +118,11 @@ WebSocketsServerAsync::onTextReceived(AsyncWebSocketClient* client, const String
         statusResult = queueClient->sendMessage(request);
       } else {
         statusResult = StatusResult::makeUnique(StatusCode::InternalServerError,
-          "Unable to find queue client '" + String(client->id()) + "'.");
+          "Unable to find queue client '" + toString(client->id()) + "'.");
       }
     } else {
       statusResult = StatusResult::makeUnique(StatusCode::BadRequest,
-        "Type '" + String(Request::TypeId) + "' was expected.");
+        "Type '" + std::string(Request::TypeId) + "' was expected.");
     }
   }
   if (!statusResult->isOk()) {

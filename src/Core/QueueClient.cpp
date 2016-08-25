@@ -3,7 +3,7 @@
 
 using namespace Core;
 
-QueueClient::QueueClient(String clientId, IMessageQueue& messageQueue) :
+QueueClient::QueueClient(std::string clientId, IMessageQueue& messageQueue) :
   clientId(clientId), messageQueue(messageQueue) {
 }
 

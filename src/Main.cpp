@@ -1,5 +1,6 @@
 #include "Core/Logger.hpp"
 #include "Core/MessageQueue.hpp"
+#include "Core/StringFormat.hpp"
 #include "Services/Display.hpp"
 #include "Services/HttpServerAsync.hpp"
 #include "Services/WiFiManager.hpp"
@@ -69,7 +70,7 @@ void setup(void){
     NotificationSerializer::makeShared());
   serializationService->addSerializer(
     ObjectResultSerializer::makeShared());
-  
+
   Logger::message("Starting wifi manager...");
   wifiManager->start();
   Logger::message("Starting http server...");
@@ -85,7 +86,7 @@ void setup(void){
   loopedServices.push_back(wifiManager);
   loopedServices.push_back(wiFiScanner);
   loopedServices.push_back(webSocketsServerAsync);
-  Logger::message("Initialization finished, free heap size " + String(ESP.getFreeHeap()) + " bytes.");
+  Logger::message("Initialization finished, free heap size " + toString(ESP.getFreeHeap()) + " bytes.");
 }
 
 void loop(void){

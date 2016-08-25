@@ -21,7 +21,7 @@ SettingsSerializer::deserialize(
   Models::Settings::Unique& settings,
   ISerializationContext& context) const {
 
-  String deviceName;
+  std::string deviceName;
   auto result = context.getStringValue(FIELD_NAME, deviceName);
   if (!result->isOk())
     return result;

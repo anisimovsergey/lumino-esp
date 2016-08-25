@@ -7,6 +7,7 @@
 #ifndef MODELS_SETTINGS_HPP
 #define MODELS_SETTINGS_HPP
 
+#include "WString.h"
 #include "Core/IEntity.hpp"
 
 namespace Models {
@@ -15,13 +16,13 @@ class Settings : public Core::IEntity {
   TYPE_INFO(Settings, Core::IEntity, "settings")
   public:
     Settings(
-      String  deviceName
+      std::string  deviceName
     );
 
-    String      getDeviceName() const { return deviceName; };
+    std::string      getDeviceName() const { return deviceName; };
 
   private:
-    String  deviceName;
+    std::string  deviceName;
 };
 
 }

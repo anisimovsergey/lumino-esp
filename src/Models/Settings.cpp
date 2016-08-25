@@ -3,6 +3,6 @@
 using namespace Models;
 
 Settings::Settings(
-  String deviceName) :
+  std::string deviceName) :
   deviceName(deviceName) {
 }

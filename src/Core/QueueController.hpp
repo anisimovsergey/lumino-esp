@@ -20,9 +20,9 @@ class IMessageQueue;
 class QueueController {
   TYPE_PTRS(QueueController)
   public:
-    QueueController(String controllerId, IMessageQueue& messageQueue);
+    QueueController(std::string controllerId, IMessageQueue& messageQueue);
 
-    String getId() const { return controllerId; }
+    std::string getId() const { return controllerId; }
     StatusResult::Unique broadcastNotification(Notification::Shared notification);
 
     bool canProcessRequest(const Request& request);
@@ -36,7 +36,7 @@ class QueueController {
     }
 
   private:
-    String controllerId;
+    std::string controllerId;
     IMessageQueue& messageQueue;
     std::function<bool(const Request&)> canProcessRequestHandler;
     std::function<ActionResult::Unique(const Request&)> processRequestHandler;

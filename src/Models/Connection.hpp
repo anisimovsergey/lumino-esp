@@ -7,6 +7,7 @@
 #ifndef MODELS_CONNECTION_HPP
 #define MODELS_CONNECTION_HPP
 
+#include "WString.h"
 #include "Core/IEntity.hpp"
 
 namespace Models {
@@ -15,22 +16,22 @@ class Connection : public Core::IEntity {
   TYPE_INFO(Connection, Core::IEntity, "connection")
   public:
     Connection(
-      String  networkSsid,
+      std::string  networkSsid,
       bool    isConnected
     );
 
     Connection(
-      String  networkSsid,
-      String  networkPassword
+      std::string  networkSsid,
+      std::string  networkPassword
     );
 
-    String  getNetworkSsid() const { return networkSsid; };
-    String  getNetworkPassword() const { return networkPassword; };
+    std::string  getNetworkSsid() const { return networkSsid; };
+    std::string  getNetworkPassword() const { return networkPassword; };
     bool    getIsConnected() const { return isConnected; };
 
   private:
-    String  networkSsid;
-    String  networkPassword;
+    std::string  networkSsid;
+    std::string  networkPassword;
     bool    isConnected;
 };
 

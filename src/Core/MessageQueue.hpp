@@ -28,9 +28,9 @@ class MessageQueue : public IMessageQueue {
     // From IMessageQueue
     virtual StatusResult::Unique sendMessage(Message::Shared message) override;
 
-    virtual QueueClient::Shared createClient(String clinetId) override;
+    virtual QueueClient::Shared createClient(std::string clinetId) override;
     virtual void removeClient(QueueClient::Shared client) override;
-    virtual QueueController::Shared createController(String controllerId) override;
+    virtual QueueController::Shared createController(std::string controllerId) override;
     virtual void removeController(QueueController::Shared controller) override;
 
   private:
@@ -51,7 +51,7 @@ class MessageQueue : public IMessageQueue {
     void processResponse(const Response& response);
     void processNotification(const Notification& notification);
 
-    QueueClient::Shared     getClient(String clientId);
+    QueueClient::Shared     getClient(std::string clientId);
     QueueController::Shared getControllerFor(const Request& request);
     Response::Shared        createResponseFor(const Request& request,
       ActionResult::Unique result, const QueueController* controller);

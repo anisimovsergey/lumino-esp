@@ -15,7 +15,7 @@ SerializationService::SerializationService(
 Core::StatusResult::Unique
 SerializationService::serialize(
   const IEntity& entity,
-  String& json) const {
+  std::string& json) const {
 
   ISerializationContext::Unique context;
   auto result = contextFactory->create(*this, context);
@@ -35,7 +35,7 @@ SerializationService::serialize (
   const IEntity& entity,
   ISerializationContext& context) const {
 
-  String typeId = entity.getTypeId();
+  std::string typeId = entity.getTypeId();
   auto serializer = getSerialzier(typeId);
   if (!serializer) {
     return StatusResult::makeUnique(StatusCode::BadRequest,
@@ -47,7 +47,7 @@ SerializationService::serialize (
 
 Core::StatusResult::Unique
 SerializationService::deserialize(
-  const String& json,
+  const std::string& json,
   Core::IEntity::Unique& entity) const {
 
   ISerializationContext::Unique context;
@@ -63,7 +63,7 @@ SerializationService::deserialize(
   ISerializationContext& context,
   Core::IEntity::Unique& entity) const {
 
-  String typeId;
+  std::string typeId;
   auto actionResult = context.getStringValue(TYPE_FIELD, typeId);
   if (!actionResult->isOk())
     return actionResult;
@@ -83,7 +83,7 @@ SerializationService::addSerializer(
 }
 
 std::shared_ptr<const ISerializer>
-SerializationService::getSerialzier(String typeId) const {
+SerializationService::getSerialzier(std::string typeId) const {
 
   auto findIter = std::find_if(serializers.begin(), serializers.end(),
     [&](std::shared_ptr<const ISerializer> serializer){

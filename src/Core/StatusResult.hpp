@@ -18,9 +18,9 @@ public:
   static StatusResult::Unique OK();
   static StatusResult::Unique NotImplemented();
 
-  StatusResult(const StatusCode& statusCode, const String& message);
+  StatusResult(const StatusCode& statusCode, const std::string& message);
 
-  StatusResult(const StatusCode& statusCode, const String& message,
+  StatusResult(const StatusCode& statusCode, const std::string& message,
                StatusResult::Unique innerResult);
 
   virtual StatusCode getStatusCode() const override {
@@ -31,7 +31,7 @@ public:
     return getStatusCode() == StatusCode::OK;
   }
 
-  String getMessage() const {
+  std::string getMessage() const {
     return message;
   }
 
@@ -40,9 +40,9 @@ public:
   }
 
 private:
-  const StatusCode statusCode;
-  const String     message;
-  const StatusResult::Unique innerResult;
+  const StatusCode            statusCode;
+  const std::string           message;
+  const StatusResult::Unique  innerResult;
 };
 
 }

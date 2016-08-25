@@ -19,9 +19,9 @@ class IMessageQueue;
 class QueueClient {
   TYPE_PTRS(QueueClient)
   public:
-    QueueClient(String clientId, IMessageQueue& messageQueue);
+    QueueClient(std::string clientId, IMessageQueue& messageQueue);
 
-    String getId() { return clientId; }
+    std::string getId() { return clientId; }
 
     StatusResult::Unique sendMessage(Message::Shared request);
 
@@ -37,7 +37,7 @@ class QueueClient {
     }
 
   private:
-    String clientId;
+    std::string clientId;
     IMessageQueue& messageQueue;
     std::function<void(const Response&)> onResponseHandler;
     std::function<void(const Notification&)> onNotificationHandler;

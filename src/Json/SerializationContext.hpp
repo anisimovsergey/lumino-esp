@@ -25,27 +25,27 @@ class SerializationContext : public ISerializationContext {
       JsonObject& jsonObject);
 
     // From ISerializationContext
-    String toString() const override;
+    std::string toString() const override;
 
-    virtual bool hasKey(const String& key) override;
-
-    virtual Core::StatusResult::Unique
-      getStringValue(const String& key, String& value) override;
-    virtual Core::StatusResult::Unique
-      getBoolValue(const String& key, bool& value) override;
-    virtual Core::StatusResult::Unique
-      getEntity(const String& key, Core::IEntity::Unique& entity) override;
+    virtual bool hasKey(const std::string& key) override;
 
     virtual Core::StatusResult::Unique
-      setValue(const String& key, const String& value) override;
+      getStringValue(const std::string& key, std::string& value) override;
     virtual Core::StatusResult::Unique
-      setValue(const String& key, int value) override;
+      getBoolValue(const std::string& key, bool& value) override;
     virtual Core::StatusResult::Unique
-      setValue(const String& key, bool value) override;
+      getEntity(const std::string& key, Core::IEntity::Unique& entity) override;
+
     virtual Core::StatusResult::Unique
-      setValue(const String& key, const Core::IList& list) override;
+      setValue(const std::string& key, const std::string& value) override;
     virtual Core::StatusResult::Unique
-      setValue(const String& key, const Core::IEntity& entity) override;
+      setValue(const std::string& key, int value) override;
+    virtual Core::StatusResult::Unique
+      setValue(const std::string& key, bool value) override;
+    virtual Core::StatusResult::Unique
+      setValue(const std::string& key, const Core::IList& list) override;
+    virtual Core::StatusResult::Unique
+      setValue(const std::string& key, const Core::IEntity& entity) override;
 
   private:
     const ISerializationService&              serializationService;

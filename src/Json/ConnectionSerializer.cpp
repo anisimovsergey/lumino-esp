@@ -29,12 +29,12 @@ ConnectionSerializer::deserialize(
   Models::Connection::Unique& connection,
   ISerializationContext& context) const {
 
-  String networkSsid;
+  std::string networkSsid;
   auto result = context.getStringValue(FIELD_WIFI_NETWORK, networkSsid);
   if (!result->isOk())
     return result;
 
-  String networkPassword;
+  std::string networkPassword;
   result = context.getStringValue(FIELD_WIFI_PASSWORD, networkPassword);
   if (!result->isOk())
     return result;

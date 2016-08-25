@@ -23,7 +23,7 @@ class ISerializationContextFactory {
       ISerializationContext::Unique& context) const = 0;
 
     virtual Core::StatusResult::Unique create(
-      const ISerializationService& serializationService, const String& json,
+      const ISerializationService& serializationService, const std::string& json,
       ISerializationContext::Unique& context) const = 0;
 };
 

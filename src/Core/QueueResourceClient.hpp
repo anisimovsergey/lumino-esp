@@ -51,7 +51,7 @@ class QueueResourceClient {
 
   private:
     QueueClient::Shared queueClient;
-    String typeId;
+    std::string typeId;
     std::function<void(const StatusResult&)> onGetStatusResponseHandler;
     std::function<void(const T&)> onGetObjectResponseHandler;
     std::function<void(const Response&)> onCreateResponseHandler;

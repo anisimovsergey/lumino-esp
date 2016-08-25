@@ -56,7 +56,7 @@ class QueueResourceController {
 
   private:
     QueueController::Shared queueController;
-    String typeId;
+    std::string typeId;
     std::function<Core::ActionResult::Unique()> onGetRequestHandler;
     std::function<Core::StatusResult::Unique(const T&)> onCreateRequestHandler;
     std::function<Core::StatusResult::Unique(const T&)> onUpdateRequestHandler;
@@ -78,7 +78,7 @@ class QueueResourceController {
           auto object = T::cast(request.getContent());
           if (object)
             return onCreateRequestHandler(*object);
-          return StatusResult::makeUnique(StatusCode::BadRequest, "Expeceted content of '" + String(T::TypeId) + "' type.");
+          return StatusResult::makeUnique(StatusCode::BadRequest, "Expeceted content of '" + std::string(T::TypeId) + "' type.");
         }
         return StatusResult::NotImplemented();
       }
@@ -87,7 +87,7 @@ class QueueResourceController {
           auto object = T::cast(request.getContent());
           if (object)
             return onUpdateRequestHandler(*object);
-          return StatusResult::makeUnique(StatusCode::BadRequest, "Expeceted content of '" + String(T::TypeId) + "' type.");
+          return StatusResult::makeUnique(StatusCode::BadRequest, "Expeceted content of '" + std::string(T::TypeId) + "' type.");
         }
         return StatusResult::NotImplemented();
       }

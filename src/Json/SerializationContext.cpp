@@ -12,22 +12,22 @@ SerializationContext::SerializationContext(
     jsonObject(jsonObject) {
 }
 
-String
+std::string
 SerializationContext::toString() const {
-  String str;
-  jsonObject.printTo(str);
+  std::string str;
+  //jsonObject.printTo(str);
   return str;
 }
 
 bool
-SerializationContext::hasKey(const String& key) {
-  return jsonObject[key].success();
+SerializationContext::hasKey(const std::string& key) {
+  return jsonObject[key.c_str()].success();
 }
 
 Core::StatusResult::Unique
-SerializationContext::getStringValue(const String& key, String& value) {
+SerializationContext::getStringValue(const std::string& key, std::string& value) {
 
-  auto jsonVal = jsonObject[key];
+  auto jsonVal = jsonObject[key.c_str()];
   if (!jsonVal.success())
     return StatusResult::makeUnique(StatusCode::BadRequest, "Key """ + key + """ is not defined.");
 
@@ -39,9 +39,9 @@ SerializationContext::getStringValue(const String& key, String& value) {
 }
 
 Core::StatusResult::Unique
-SerializationContext::getBoolValue(const String& key, bool& value) {
+SerializationContext::getBoolValue(const std::string& key, bool& value) {
 
-  auto jsonVal = jsonObject[key];
+  auto jsonVal = jsonObject[key.c_str()];
   if (!jsonVal.success())
     return StatusResult::makeUnique(StatusCode::BadRequest, "Key """ + key + """ is not defined.");
 
@@ -53,9 +53,9 @@ SerializationContext::getBoolValue(const String& key, bool& value) {
 }
 
 Core::StatusResult::Unique
-SerializationContext::getEntity(const String& key, Core::IEntity::Unique& entity) {
+SerializationContext::getEntity(const std::string& key, Core::IEntity::Unique& entity) {
 
-  auto jsonVal = jsonObject[key];
+  auto jsonVal = jsonObject[key.c_str()];
   if (!jsonVal.success())
     return StatusResult::makeUnique(StatusCode::BadRequest, "Key """ + key + """ is not defined.");
 
@@ -73,26 +73,26 @@ SerializationContext::getEntity(const String& key, Core::IEntity::Unique& entity
 }
 
 Core::StatusResult::Unique
-SerializationContext::setValue(const String& key, const String& value) {
-  jsonObject[key] = value;
+SerializationContext::setValue(const std::string& key, const std::string& value) {
+  jsonObject[key.c_str()] = value.c_str();
   return StatusResult::OK();
 }
 
 Core::StatusResult::Unique
-SerializationContext::setValue(const String& key, int value) {
-  jsonObject[key] = value;
+SerializationContext::setValue(const std::string& key, int value) {
+  jsonObject[key.c_str()] = value;
   return StatusResult::OK();
 }
 
 Core::StatusResult::Unique
-SerializationContext::setValue(const String& key, bool value) {
-  jsonObject[key] = value;
+SerializationContext::setValue(const std::string& key, bool value) {
+  jsonObject[key.c_str()] = value;
   return StatusResult::OK();
 }
 
 Core::StatusResult::Unique
-SerializationContext::setValue(const String& key, const IList& list) {
-  auto& array = jsonObject.createNestedArray(key);
+SerializationContext::setValue(const std::string& key, const IList& list) {
+  auto& array = jsonObject.createNestedArray(key.c_str());
   return list.forEach([&](const IEntity& element) {
     auto& nestedObject = array.createNestedObject();
     SerializationContext context(serializationService, jsonBuffer, nestedObject);
@@ -106,8 +106,8 @@ SerializationContext::setValue(const String& key, const IList& list) {
 }
 
 Core::StatusResult::Unique
-SerializationContext::setValue(const String& key, const Core::IEntity& entity) {
-  auto& nestedObject = jsonObject.createNestedObject(key);
+SerializationContext::setValue(const std::string& key, const Core::IEntity& entity) {
+  auto& nestedObject = jsonObject.createNestedObject(key.c_str());
   SerializationContext context(serializationService, jsonBuffer, nestedObject);
   auto result = serializationService.serialize(entity, context);
   if (!result->isOk()) {

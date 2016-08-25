@@ -18,7 +18,7 @@ class ISerializer {
   public:
     virtual ~ISerializer();
 
-    virtual String getTypeId() const = 0;
+    virtual std::string getTypeId() const = 0;
 
     virtual Core::StatusResult::Unique serialize(
       const Core::IEntity& entity,

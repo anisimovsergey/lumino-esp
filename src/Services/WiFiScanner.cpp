@@ -28,10 +28,10 @@ WiFiScanner::onGetNetworks() {
   }
   auto networks = Networks::makeUnique();
   for (int networkNum = 0; networkNum < networksCount; networkNum++) {
-    String ssid = WiFi.SSID(networkNum);
+    auto ssid = WiFi.SSID(networkNum);
     int rssi = WiFi.RSSI(networkNum);
     int encryptionType = WiFi.encryptionType(networkNum);
-    networks->add(Network(ssid, rssi, encryptionType));
+    networks->add(Network(ssid.c_str(), rssi, encryptionType));
   }
   WiFi.scanDelete();
   return ObjectResult::makeUnique(StatusCode::OK, std::move(networks));
