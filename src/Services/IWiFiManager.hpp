@@ -19,10 +19,10 @@ class IWiFiManager {
   public:
     virtual ~IWiFiManager();
 
-    virtual std::string  getDeviceName() const = 0;
-    virtual bool    hasConnection() const = 0;
-    virtual std::string  getNetwork() const = 0;
-    virtual bool    isConnected() const = 0;
+    virtual std::string   getDeviceName() const = 0;
+    virtual bool          hasConnection() const = 0;
+    virtual std::string   getNetwork() const = 0;
+    virtual bool          isConnected() const = 0;
 
     virtual Core::StatusResult::Unique connect(
       std::string network, std::string password) = 0;

@@ -130,7 +130,7 @@ WiFiManager::onDeleteConnection() {
   }
 
   controller->sendDeleteNotification();
-  return StatusResult::makeUnique(StatusCode::NoContent, "The connection was created.");
+  return StatusResult::makeUnique(StatusCode::NoContent, "The connection was deleted.");
 }
 
 void
