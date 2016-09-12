@@ -9,7 +9,7 @@
 
 #include "ILoopedService.hpp"
 #include "ActionResult.hpp"
-#include "IMessage.hpp"
+#include "Message.hpp"
 #include "QueueClient.hpp"
 #include "QueueController.hpp"
 
@@ -21,7 +21,7 @@
 namespace Core {
 
 class IMessageQueue : public ILoopedService {
-  TYPE_P(IMessageQueue)
+  TYPE_PTRS(IMessageQueue)
   public:
     virtual ~IMessageQueue();
 

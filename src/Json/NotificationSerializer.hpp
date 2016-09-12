@@ -8,7 +8,7 @@
 #define JSON_NOTIFICATION_SERIALIZER_HPP
 
 #include "Serializer.hpp"
-#include "Core/IMessage.hpp"
+#include "Core/Notification.hpp"
 
 namespace Json {
 

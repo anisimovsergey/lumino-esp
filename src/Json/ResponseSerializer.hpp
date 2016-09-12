@@ -8,7 +8,7 @@
 #define JSON_RESPONSE_SERIALIZER_HPP
 
 #include "Serializer.hpp"
-#include "Core/IMessage.hpp"
+#include "Core/Response.hpp"
 
 namespace Json {
 

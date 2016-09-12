@@ -9,7 +9,8 @@
 
 #include "ActionResult.hpp"
 #include "StatusResult.hpp"
-#include "IMessage.hpp"
+#include "Request.hpp"
+#include "Notification.hpp"
 
 #include <functional>
 

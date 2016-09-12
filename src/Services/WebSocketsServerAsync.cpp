@@ -1,8 +1,9 @@
 #include "WebSocketsServerAsync.hpp"
 
 #include <Core/Memory.hpp>
+#include <Core/Casting.hpp>
 #include <Core/Logger.hpp>
-#include <Core/IMessage.hpp>
+#include <Core/Message.hpp>
 #include <Core/StringFormat.hpp>
 
 using namespace Core;

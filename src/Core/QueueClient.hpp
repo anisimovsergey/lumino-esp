@@ -8,7 +8,9 @@
 #define CORE_QUEUE_CLIENT_HPP
 
 #include "StatusResult.hpp"
-#include "IMessage.hpp"
+#include "Message.hpp"
+#include "Response.hpp"
+#include "Notification.hpp"
 
 #include <functional>
 

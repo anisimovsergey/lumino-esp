@@ -9,7 +9,7 @@
 
 #include "Serializer.hpp"
 #include "Core/ObjectResult.hpp"
-#include "Core/IMessage.hpp"
+#include "Core/ObjectResult.hpp"
 
 namespace Json {
 

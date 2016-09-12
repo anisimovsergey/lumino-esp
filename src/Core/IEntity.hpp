@@ -7,51 +7,9 @@
 #ifndef CORE_I_ENTITY_HPP
 #define CORE_I_ENTITY_HPP
 
-#include <string>
-#include <memory>
+#include "TypeInfo.hpp"
 
 namespace Core {
-
-#define TYPE_P(Class) \
-public: \
-  typedef std::shared_ptr<Class> Shared; \
-  typedef std::unique_ptr<Class> Unique; \
-
-#define TYPE_PTRS(Class) \
-TYPE_P(Class) \
-public: \
-  template <typename... Args> \
-  static Unique makeUnique(Args&&... args) { \
-    return Unique(new Class(std::forward<Args>(args)...)); \
-  } \
-  template <typename... Args> \
-  static Shared makeShared(Args&&... args) { \
-    return std::make_shared<Class>(std::forward<Args>(args)...); \
-  } \
-
-#define TYPE_INFO(Class, SuperClass, ClassTypeId) \
-public: \
-  TYPE_PTRS(Class) \
-  \
-  static constexpr const char* TypeId = ClassTypeId; \
-  \
-  virtual const char* getTypeId() const override { return TypeId; } \
-  \
-  static  bool        isType(const std::string& typeId) { \
-    return (typeId == ClassTypeId || SuperClass::isType(typeId)); \
-  } \
-  \
-  static Class* cast(Core::IEntity* entity) { \
-    if (Class::isType(entity->getTypeId())) \
-      return static_cast<Class*>(entity); \
-    return nullptr; \
-  } \
-  \
-  static const Class* cast(const Core::IEntity* entity) { \
-    if (Class::isType(entity->getTypeId())) \
-      return static_cast<const Class*>(entity); \
-    return nullptr; \
-  } \
 
 class IEntity {
 TYPE_PTRS(IEntity)
