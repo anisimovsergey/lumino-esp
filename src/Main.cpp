@@ -32,22 +32,23 @@ void setup(void){
   SPIFFS.begin();
 
   // Creating services
-  Logger::message("Creating the message queue...");
+  Logger::message("Creating a message queue...");
   auto messageQueue(MessageQueue::makeShared());
-  Logger::message("Creating the display..");
+  Logger::message("Creating a display..");
   auto display(Display::makeShared(messageQueue));
-  Logger::message("Creating the wifi manager...");
+  Logger::message("Creating a wifi manager...");
   auto wifiManager(WiFiManager::makeShared(messageQueue));
-  Logger::message("Creating the wifi scanner...");
+  Logger::message("Creating a wifi scanner...");
   auto wiFiScanner(WiFiScanner::makeShared(messageQueue));
-  Logger::message("Creating the context factory...");
+  Logger::message("Creating a context factory...");
   auto contextFactory(SerializationContextFactory::makeShared());
-  Logger::message("Creating the serialization service...");
+  Logger::message("Creating a serialization service...");
   auto serializationService(SerializationService::makeShared(contextFactory));
-  Logger::message("Creating the creating HTTP server...");
+  Logger::message("Creating an HTTP server...");
   auto httpServerAsync(HttpServerAsync::makeShared(80, wifiManager));
-  Logger::message("Creating creating Web Sockets server...");
+  Logger::message("Creating a Web Sockets server...");
   auto webSocketsServerAsync(WebSocketsServerAsync::makeShared(messageQueue, serializationService));
+  // TODO: Clean this up.
   httpServerAsync->server->addHandler(webSocketsServerAsync->server.get());
 
   // Registering serializers

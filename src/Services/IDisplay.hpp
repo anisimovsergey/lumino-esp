@@ -7,8 +7,6 @@
 #ifndef SERVICES_I_DISPLAY_HPP
 #define SERVICES_I_DISPLAY_HPP
 
-#include "DisplaySign.hpp"
-
 namespace Services {
 
 class IDisplay {
