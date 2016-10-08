@@ -21,14 +21,18 @@ class WiFiScanner : public Core::ILoopedService  {
   TYPE_PTRS(WiFiScanner)
   public:
     WiFiScanner(Core::IMessageQueue::Shared messageQueue);
+    ~WiFiScanner();
 
     void loop() {}
 
   private:
     Core::IMessageQueue::Shared    messageQueue;
     Core::QueueResourceController<Models::Networks>::Shared controller;
-
     Core::ActionResult::Unique onGetNetworks();
+
+    static bool isScanning;
+    static std::list<WiFiScanner*> scanners;
+    static void onScanDone(void* result, int status);
 };
 
 }

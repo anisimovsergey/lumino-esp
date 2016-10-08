@@ -18,7 +18,9 @@ template<typename T>
 class QueueResourceController {
   TYPE_PTRS(QueueResourceController<T>)
   typedef typename T::Unique TUnique;
+
   public:
+
     QueueResourceController(QueueController::Shared queueController) :
       queueController(queueController), typeId(T::TypeId) {
       queueController->setCanProcessRequest(
@@ -30,27 +32,36 @@ class QueueResourceController {
     void setOnGetRequestHandler(std::function<Core::ActionResult::Unique()> onGetRequestHandler) {
       this->onGetRequestHandler = onGetRequestHandler;
     }
+
     void setOnCreateRequestHandler(std::function<Core::StatusResult::Unique(const T&)> onCreateRequestHandler) {
       this->onCreateRequestHandler = onCreateRequestHandler;
     }
+
     void setOnUpdateRequestHandler(std::function<Core::StatusResult::Unique(const T&)> onUpdateRequestHandler) {
       this->onUpdateRequestHandler = onUpdateRequestHandler;
     }
+
     void setOnDeleteRequestHandler(std::function<Core::StatusResult::Unique()> onDeleteRequestHandler) {
       this->onDeleteRequestHandler = onDeleteRequestHandler;
+    }
+
+    void sendGetNotification(Core::ActionResult::Unique&& result) {
+
     }
 
     void sendCreateNotification(TUnique object) {
       auto notification = Notification::makeShared(ActionType::Create, typeId, std::move(object));
       queueController->broadcastNotification(notification);
     }
+
     void sendUpdateNotification(TUnique object) {
       auto notification = Notification::makeShared(ActionType::Update, typeId, std::move(object));
       queueController->broadcastNotification(notification);
     }
+
     void sendDeleteNotification() {
       auto request = Notification::makeShared(ActionType::Delete, typeId,
-        StatusResult::makeUnique(StatusCode::NoContent, "Resource was deleted"));
+        StatusResult::makeUnique(StatusCode::NoContent, "The resource was deleted"));
       queueController->broadcastNotification(request);
     }
 
