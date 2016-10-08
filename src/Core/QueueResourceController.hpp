@@ -10,6 +10,8 @@
 #include "QueueController.hpp"
 #include "Logger.hpp"
 
+#include <set>
+
 namespace Core {
 
 class IMessageQueue;
@@ -46,7 +48,11 @@ class QueueResourceController {
     }
 
     void sendGetNotification(Core::ActionResult::Unique&& result) {
-
+      auto notification = Notification::makeShared(ActionType::Get, typeId, std::move(result));
+      for(auto sender: senders) {
+        queueController->sendNotification(sender, notification);
+      }
+      senders.clear();
     }
 
     void sendCreateNotification(TUnique object) {
@@ -68,6 +74,7 @@ class QueueResourceController {
   private:
     QueueController::Shared queueController;
     std::string typeId;
+    std::set<std::string> senders;
     std::function<Core::ActionResult::Unique()> onGetRequestHandler;
     std::function<Core::StatusResult::Unique(const T&)> onCreateRequestHandler;
     std::function<Core::StatusResult::Unique(const T&)> onUpdateRequestHandler;
@@ -80,7 +87,12 @@ class QueueResourceController {
     ActionResult::Unique processRequest(const Request& request) {
       if (request.getActionType() == ActionType::Get) {
         if (onGetRequestHandler) {
-          return onGetRequestHandler();
+          auto result = onGetRequestHandler();
+          auto statusResult = StatusResult::cast(result.get());
+          if (statusResult && statusResult->isAccepted()) {
+              senders.insert(request.getTag("sender"));
+          }
+          return result;
         }
         return StatusResult::NotImplemented();
       }

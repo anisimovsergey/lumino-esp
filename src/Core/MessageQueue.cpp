@@ -99,11 +99,23 @@ MessageQueue::processNotification(const Notification& notification) {
   auto sender = notification.getTag("sender");
   Logger::message("Broadcating a notification from '" + sender + "'.");
   std::list<QueueClient::Shared> deletedClients;
-  for(auto client: clients) {
-    if (!client.unique()) {
-	    client->onNotification(notification);
-    } else {
-      deletedClients.push_back(client);
+  auto receiver = notification.getTag("receiver");
+  if (receiver != "") {
+    auto client = getClient(receiver);
+    if (client) {
+      if (!client.unique()) {
+  	    client->onNotification(notification);
+      } else {
+        deletedClients.push_back(client);
+      }
+    }
+  } else {
+    for(auto client: clients) {
+      if (!client.unique()) {
+  	    client->onNotification(notification);
+      } else {
+        deletedClients.push_back(client);
+      }
     }
   }
   for(auto client: deletedClients) {
