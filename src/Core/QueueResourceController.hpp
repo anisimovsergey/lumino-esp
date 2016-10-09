@@ -47,10 +47,10 @@ class QueueResourceController {
       this->onDeleteRequestHandler = onDeleteRequestHandler;
     }
 
-    void sendGetNotification(Core::ActionResult::Unique&& result) {
-      auto notification = Notification::makeShared(ActionType::Get, typeId, std::move(result));
+    void sendGetNotification(Core::ActionResult::Shared result) {
       for(auto sender: senders) {
-        queueController->sendNotification(sender, notification);
+        auto notification = Notification::makeUnique(ActionType::Get, typeId, result);
+        queueController->sendNotification(sender, std::move(notification));
       }
       senders.clear();
     }

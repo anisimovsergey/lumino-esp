@@ -15,12 +15,12 @@ class Notification : public Message {
   TYPE_INFO(Notification, Message, "notification")
   public:
     Notification(ActionType actionType, std::string resource,
-      IEntity::Unique result);
+      IEntity::Shared result);
 
     const IEntity* getContent() const { return result.get(); };
 
   private:
-    IEntity::Unique result;
+    IEntity::Shared result;
 };
 
 }

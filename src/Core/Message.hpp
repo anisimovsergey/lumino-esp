@@ -10,7 +10,7 @@
 #include "IEntity.hpp"
 #include "ActionType.hpp"
 
-#include <list>
+#include <map>
 #include <string>
 
 namespace Core {
@@ -33,7 +33,7 @@ class Message : public IEntity {
     ActionType actionType;
     std::string resource;
     Priority priority;
-    std::list<std::tuple<std::string, std::string>> tags;
+    std::map<std::string, std::string> tags;
 };
 
 

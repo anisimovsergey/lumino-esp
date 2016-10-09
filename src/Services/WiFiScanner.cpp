@@ -38,6 +38,8 @@ WiFiScanner::onGetNetworks() {
     if (!wifi_station_scan(&config, reinterpret_cast<scan_done_cb_t>(&onScanDone))) {
       return StatusResult::makeUnique(StatusCode::InternalServerError,
         "Unable to scan WiFi networks.");
+    } else {
+      isScanning = true;
     }
   }
   return StatusResult::makeUnique(StatusCode::Accepted, "Scanning FiFi networks.");
@@ -45,7 +47,7 @@ WiFiScanner::onGetNetworks() {
 
 void
 WiFiScanner::onScanDone(void* result, int status) {
-  ActionResult::Unique actionResult;
+  ActionResult::Shared actionResult;
   if (status == OK) {
     auto networks = Networks::makeUnique();
     bss_info* head = reinterpret_cast<bss_info*>(result);
@@ -55,13 +57,13 @@ WiFiScanner::onScanDone(void* result, int status) {
       int encryptionType = it->authmode;
       networks->add(Network(ssid, rssi, encryptionType));
     }
-    actionResult = ObjectResult::makeUnique(StatusCode::OK, std::move(networks));
+    actionResult = ObjectResult::makeShared(StatusCode::OK, std::move(networks));
   } else {
-    actionResult = StatusResult::makeUnique(StatusCode::InternalServerError,
+    actionResult = StatusResult::makeShared(StatusCode::InternalServerError,
       "Failed to scan WiFi networks.");
   }
   isScanning = false;
   for(auto scanner: scanners) {
-    scanner->controller->sendGetNotification(std::move(actionResult));
+    scanner->controller->sendGetNotification(actionResult);
   }
 }

@@ -80,12 +80,17 @@ void setup(void){
   webSocketsServerAsync->start();
 
   // Adding servers to the loop
-  Logger::message("Adding services to the loop...");
+  Logger::message("Adding display...");
   loopedServices.push_back(display);
+  Logger::message("Adding messqge queue...");
   loopedServices.push_back(messageQueue);
+  Logger::message("Adding http server...");
   loopedServices.push_back(httpServerAsync);
+  Logger::message("Adding wifi manager...");
   loopedServices.push_back(wifiManager);
+  Logger::message("Adding wifi scaner...");
   loopedServices.push_back(wiFiScanner);
+  Logger::message("Adding websocket server...");
   loopedServices.push_back(webSocketsServerAsync);
   Logger::message("Initialization finished, free heap size " + toString(ESP.getFreeHeap()) + " bytes.");
 }

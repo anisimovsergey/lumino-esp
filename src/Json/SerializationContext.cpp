@@ -1,7 +1,28 @@
 #include "SerializationContext.hpp"
 
+#include "Core/Logger.hpp"
+
 using namespace Json;
 using namespace Core;
+
+namespace {
+
+  class StringBuilder : public Print {
+   public:
+    StringBuilder(std::string &str) : str(str) {}
+
+    virtual size_t write(uint8_t c) {
+      str += static_cast<char>(c);
+      return 1;
+    }
+
+   private:
+    StringBuilder &operator=(const StringBuilder &);
+
+    std::string &str;
+  };
+
+}
 
 SerializationContext::SerializationContext(
   const ISerializationService& serializationService,
@@ -15,7 +36,9 @@ SerializationContext::SerializationContext(
 std::string
 SerializationContext::toString() const {
   std::string str;
-  //jsonObject.printTo(str);
+  str.reserve(jsonObject.measureLength());
+  StringBuilder strBuilder(str);
+  jsonObject.printTo(strBuilder);
   return str;
 }
 
@@ -74,25 +97,25 @@ SerializationContext::getEntity(const std::string& key, Core::IEntity::Unique& e
 
 Core::StatusResult::Unique
 SerializationContext::setValue(const std::string& key, const std::string& value) {
-  jsonObject[key.c_str()] = value.c_str();
+  jsonObject[String(key.c_str())] = String(value.c_str());
   return StatusResult::OK();
 }
 
 Core::StatusResult::Unique
 SerializationContext::setValue(const std::string& key, int value) {
-  jsonObject[key.c_str()] = value;
+  jsonObject[String(key.c_str())] = value;
   return StatusResult::OK();
 }
 
 Core::StatusResult::Unique
 SerializationContext::setValue(const std::string& key, bool value) {
-  jsonObject[key.c_str()] = value;
+  jsonObject[String(key.c_str())] = value;
   return StatusResult::OK();
 }
 
 Core::StatusResult::Unique
 SerializationContext::setValue(const std::string& key, const IList& list) {
-  auto& array = jsonObject.createNestedArray(key.c_str());
+  auto& array = jsonObject.createNestedArray(String(key.c_str()));
   return list.forEach([&](const IEntity& element) {
     auto& nestedObject = array.createNestedObject();
     SerializationContext context(serializationService, jsonBuffer, nestedObject);
@@ -107,7 +130,7 @@ SerializationContext::setValue(const std::string& key, const IList& list) {
 
 Core::StatusResult::Unique
 SerializationContext::setValue(const std::string& key, const Core::IEntity& entity) {
-  auto& nestedObject = jsonObject.createNestedObject(key.c_str());
+  auto& nestedObject = jsonObject.createNestedObject(String(key.c_str()));
   SerializationContext context(serializationService, jsonBuffer, nestedObject);
   auto result = serializationService.serialize(entity, context);
   if (!result->isOk()) {

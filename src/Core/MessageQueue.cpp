@@ -86,21 +86,29 @@ MessageQueue::processResponse(const Response& response) {
   auto sender = response.getTag("sender");
   auto receiver = response.getTag("receiver");
   Logger::message("Processing a response from '" + sender + "' to '" + receiver + "'");
+  std::list<QueueClient::Shared> deletedClients;
   auto client = getClient(receiver);
   if (client) {
-    client->onResponse(response);
+    if (!client.unique()) {
+      client->onResponse(response);
+    } else {
+      deletedClients.push_back(client);
+    }
   } else {
     Logger::error("Unable to find client '" + receiver + "'");
+  }
+  for(auto client: deletedClients) {
+    clients.remove(client);
   }
 }
 
 void
 MessageQueue::processNotification(const Notification& notification) {
-  auto sender = notification.getTag("sender");
-  Logger::message("Broadcating a notification from '" + sender + "'.");
   std::list<QueueClient::Shared> deletedClients;
+  auto sender = notification.getTag("sender");
   auto receiver = notification.getTag("receiver");
   if (receiver != "") {
+    Logger::message("Send a notification from '" + sender + "' to '" + receiver + "'.");
     auto client = getClient(receiver);
     if (client) {
       if (!client.unique()) {
@@ -110,6 +118,7 @@ MessageQueue::processNotification(const Notification& notification) {
       }
     }
   } else {
+    Logger::message("Broadcating a notification from '" + sender + "'.");
     for(auto client: clients) {
       if (!client.unique()) {
   	    client->onNotification(notification);
