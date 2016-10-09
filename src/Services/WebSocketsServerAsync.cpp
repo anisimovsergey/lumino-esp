@@ -109,14 +109,15 @@ WebSocketsServerAsync::onClientDisconnected(AsyncWebSocketClient* client) {
 void
 WebSocketsServerAsync::onTextReceived(AsyncWebSocketClient* client, const std::string& text) {
   IEntity::Unique entity;
-  Request::Shared request;
+  Request::Unique request;
   auto statusResult = serializer->deserialize(text, entity);
   if (statusResult->isOk()) {
-    request = castToShared<Request>(std::move(entity));
+    request = castToUnique<Request>(std::move(entity));
     if (request) {
       auto queueClient = findQueueClient(client);
       if (queueClient) {
-        statusResult = queueClient->sendMessage(request);
+        auto clientRequest = Request::makeShared(queueClient->getId(), std::move(request));
+        statusResult = queueClient->sendMessage(clientRequest);
       } else {
         statusResult = StatusResult::makeUnique(StatusCode::InternalServerError,
           "Unable to find queue client '" + toString(client->id()) + "'.");

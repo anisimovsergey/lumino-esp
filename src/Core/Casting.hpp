@@ -11,20 +11,20 @@
 
 namespace Core {
 
-template<class Derived, class Base, class Del>
-std::unique_ptr<Derived, Del>
-castToUnique(std::unique_ptr<Base, Del>&& base)
+template<class Derived, class Base>
+std::unique_ptr<Derived>
+castToUnique(std::unique_ptr<Base>&& base)
 {
-   if (auto result = Derived::cast(base.get())){
-        base.release();
-        return std::unique_ptr<Derived, Del>(result, std::move(base.get_deleter()));
-    }
-    return std::unique_ptr<Derived, Del>(nullptr, base.get_deleter());
+  if (auto result = Derived::cast(base.get())){
+    base.release();
+    return std::unique_ptr<Derived>(result);
+  }
+  return std::unique_ptr<Derived>(nullptr);
 }
 
-template<class Derived, class Base, class Del>
+template<class Derived, class Base>
 std::shared_ptr<Derived>
-castToShared(std::unique_ptr<Base, Del>&& base)
+castToShared(std::unique_ptr<Base>&& base)
 {
    if (auto result = Derived::cast(base.get())){
         base.release();

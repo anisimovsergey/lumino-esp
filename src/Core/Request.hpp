@@ -14,10 +14,13 @@ namespace Core {
 class Request : public Message {
   TYPE_INFO(Request, Message, "request")
   public:
-    Request(std::string sender, std::string receiver,
-      ActionType actionType, std::string resource);
-    Request(std::string sender, std::string receiver,
-      ActionType actionType, std::string resource, IEntity::Unique content);
+    // Incomming requests
+    Request(std::string sender, Request::Unique request);
+    Request(ActionType actionType, std::string resource, IEntity::Unique content);
+
+    // Internal requests
+    Request(std::string sender, ActionType actionType, std::string resource);
+    Request(std::string sender, ActionType actionType, std::string resource, IEntity::Unique content);
 
     const IEntity* getContent() const { return content.get(); };
 

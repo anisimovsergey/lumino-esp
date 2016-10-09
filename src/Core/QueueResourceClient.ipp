@@ -25,28 +25,28 @@ QueueResourceClient<T>::QueueResourceClient(QueueClient::Shared queueClient) :
 template <typename T>
 StatusResult::Unique
 QueueResourceClient<T>::getResource() {
-  auto request = Request::makeShared(ActionType::Get, typeId);
+  auto request = Request::makeShared(queueClient->getId(), ActionType::Get, typeId);
   return queueClient->sendMessage(request);
 }
 
 template <typename T>
 StatusResult::Unique
 QueueResourceClient<T>::createResource(TUnique resource) {
-  auto request = Request::makeShared(ActionType::Create, typeId, resource);
+  auto request = Request::makeShared(queueClient->getId(), ActionType::Create, typeId, resource);
   return queueClient->sendMessage(request);
 }
 
 template <typename T>
 StatusResult::Unique
 QueueResourceClient<T>::updateResource(TUnique resource) {
-  auto request = Request::makeShared(ActionType::Update, typeId, resource);
+  auto request = Request::makeShared(queueClient->getId(), ActionType::Update, typeId, resource);
   return queueClient->sendMessage(request);
 }
 
 template <typename T>
 StatusResult::Unique
 QueueResourceClient<T>::deleteResource() {
-  auto request = Request::makeShared(ActionType::Delete, typeId);
+  auto request = Request::makeShared(queueClient->getId(), ActionType::Delete, typeId);
   return queueClient->sendMessage(request);
 }
 
