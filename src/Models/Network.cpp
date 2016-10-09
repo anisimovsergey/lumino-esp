@@ -5,8 +5,8 @@ using namespace Models;
 Network::Network(
   std::string ssid,
   int rssi,
-  int encryptionType) :
+  std::string encryption) :
   ssid(ssid),
   rssi(rssi),
-  encryptionType(encryptionType) {
+  encryption(encryption) {
 }

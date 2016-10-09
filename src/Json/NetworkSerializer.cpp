@@ -10,26 +10,6 @@ using namespace Models;
 #define FIELD_RSSI "rssi"
 #define FIELD_ENCRYPTION "encryption"
 
-namespace {
-
-std::string getEncryptionTypeString(int thisType) {
-  switch (thisType) {
-    case ENC_TYPE_WEP:
-      return "WEP";
-    case ENC_TYPE_TKIP:
-      return "WPA";
-    case ENC_TYPE_CCMP:
-      return "WPA2";
-    case ENC_TYPE_NONE:
-      return "None";
-    case ENC_TYPE_AUTO:
-      return "Auto";
-  }
-  return "Unknown";
-}
-
-}
-
 Core::StatusResult::Unique
 NetworkSerializer::serialize(
   const Network& network,
@@ -43,8 +23,7 @@ NetworkSerializer::serialize(
   if (!result->isOk())
     return result;
 
-  auto encryption = getEncryptionTypeString(network.getEncryptionType());
-  result = context.setValue(FIELD_ENCRYPTION, encryption);
+  result = context.setValue(FIELD_ENCRYPTION, network.getEncryption());
   if (!result->isOk())
     return result;
 

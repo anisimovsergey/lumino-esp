@@ -15,16 +15,16 @@ namespace Models {
 class Network : public Core::IEntity {
   TYPE_INFO(Network, Core::IEntity, "network")
   public:
-    Network(std::string ssid, int rssi, int encryptionType);
+    Network(std::string ssid, int rssi, std::string encryptionType);
 
     std::string  getSsid() const { return ssid; };
-    int     getRssi() const { return rssi; };
-    int     getEncryptionType() const { return encryptionType; };
+    int          getRssi() const { return rssi; };
+    std::string  getEncryption() const { return encryption; };
 
   private:
-    std::string  ssid;
-    int     rssi;
-    int     encryptionType;
+    std::string   ssid;
+    int           rssi;
+    std::string   encryption;
 };
 
 }

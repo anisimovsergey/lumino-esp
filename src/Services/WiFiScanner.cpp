@@ -16,6 +16,26 @@ extern "C" {
 bool WiFiScanner::isScanning = false;
 std::list<WiFiScanner*> WiFiScanner::scanners;
 
+namespace {
+
+  std::string getEncryptionString(int encryption) {
+    switch (encryption) {
+      case AUTH_WEP:
+        return "WEP";
+      case AUTH_WPA_PSK:
+        return "WPA";
+      case AUTH_WPA2_PSK:
+        return "WPA2";
+      case AUTH_WPA_WPA2_PSK:
+        return "AUTO";
+      case AUTH_OPEN:
+        return "NONE";
+    }
+    return "UNKNOWN";
+  }
+
+}
+
 WiFiScanner::WiFiScanner(IMessageQueue::Shared messageQueue) :
   messageQueue(messageQueue) {
   scanners.push_back(this);
@@ -53,8 +73,8 @@ WiFiScanner::onScanDone(void* result, int status) {
     bss_info* head = reinterpret_cast<bss_info*>(result);
     for(bss_info* it = head; it; it = STAILQ_NEXT(it, next)) {
       auto ssid = reinterpret_cast<const char*>(it->ssid);
-      int rssi = it->rssi;
-      int encryptionType = it->authmode;
+      auto rssi = it->rssi;
+      auto encryptionType = getEncryptionString(it->authmode);
       networks->add(Network(ssid, rssi, encryptionType));
     }
     actionResult = ObjectResult::makeShared(StatusCode::OK, std::move(networks));
