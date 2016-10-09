@@ -52,7 +52,7 @@ class MessageQueue : public IMessageQueue {
     void processNotification(const Notification& notification);
 
     QueueClient::Shared     getClient(std::string clientId);
-    QueueController::Shared getControllerFor(const Request& request);
+    QueueController::Shared getController(const Request& request);
     Response::Shared        createResponseFor(const Request& request,
       ActionResult::Unique result, const QueueController* controller);
 };

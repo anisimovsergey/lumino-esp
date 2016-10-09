@@ -70,7 +70,8 @@ void
 MessageQueue::processRequest(const Request& request) {
   Logger::message("Processing a request from '" + request.getTag("sender") + "'");
   ActionResult::Unique result;
-  auto controller = getControllerFor(request);
+  std::list<QueueClient::Shared> deletedControllers;
+  auto controller = getController(request);
   if (controller) {
     result = controller->processRequest(request);
   } else {
@@ -86,39 +87,27 @@ MessageQueue::processResponse(const Response& response) {
   auto sender = response.getTag("sender");
   auto receiver = response.getTag("receiver");
   Logger::message("Processing a response from '" + sender + "' to '" + receiver + "'");
-  std::list<QueueClient::Shared> deletedClients;
   auto client = getClient(receiver);
   if (client) {
-    if (!client.unique()) {
-      client->onResponse(response);
-    } else {
-      deletedClients.push_back(client);
-    }
+    client->onResponse(response);
   } else {
     Logger::error("Unable to find client '" + receiver + "'");
-  }
-  for(auto client: deletedClients) {
-    clients.remove(client);
   }
 }
 
 void
 MessageQueue::processNotification(const Notification& notification) {
-  std::list<QueueClient::Shared> deletedClients;
   auto sender = notification.getTag("sender");
   auto receiver = notification.getTag("receiver");
   if (receiver != "") {
-    Logger::message("Send a notification from '" + sender + "' to '" + receiver + "'.");
+    Logger::message("Sending a notification from '" + sender + "' to '" + receiver + "'.");
     auto client = getClient(receiver);
     if (client) {
-      if (!client.unique()) {
-  	    client->onNotification(notification);
-      } else {
-        deletedClients.push_back(client);
-      }
+	    client->onNotification(notification);
     }
   } else {
     Logger::message("Broadcating a notification from '" + sender + "'.");
+    std::list<QueueClient::Shared> deletedClients;
     for(auto client: clients) {
       if (!client.unique()) {
   	    client->onNotification(notification);
@@ -126,9 +115,9 @@ MessageQueue::processNotification(const Notification& notification) {
         deletedClients.push_back(client);
       }
     }
-  }
-  for(auto client: deletedClients) {
-    clients.remove(client);
+    for(auto client: deletedClients) {
+      clients.remove(client);
+    }
   }
 }
 
@@ -149,7 +138,7 @@ MessageQueue::getClient(std::string clientId) {
 }
 
 QueueController::Shared
-MessageQueue::getControllerFor(const Request& request) {
+MessageQueue::getController(const Request& request) {
   QueueController::Shared queueController;
   for(auto controller: controllers) {
     if (controller->canProcessRequest(request)) {
