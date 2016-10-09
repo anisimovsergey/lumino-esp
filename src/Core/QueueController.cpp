@@ -9,15 +9,16 @@ QueueController::QueueController(std::string controllerId, IMessageQueue& messag
 }
 
 StatusResult::Unique
-QueueController::sendNotification(std::string receiver, Notification::Shared notification) {
-  notification->addTag("sender", controllerId);
-  notification->addTag("receiver", receiver);
+QueueController::sendNotification(std::string receiver, ActionType actionType,
+  std::string resource, IEntity::Shared result) {
+  auto notification = Notification::makeShared(controllerId, receiver, actionType, resource, result);
   return messageQueue.sendMessage(notification);
 }
 
 StatusResult::Unique
-QueueController::broadcastNotification(Notification::Shared notification) {
-  notification->addTag("sender", controllerId);
+QueueController::broadcastNotification(ActionType actionType,
+  std::string resource, IEntity::Shared result) {
+  auto notification = Notification::makeShared(controllerId, "", actionType, resource, result);
   return messageQueue.sendMessage(notification);
 }
 

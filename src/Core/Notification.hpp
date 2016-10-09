@@ -14,8 +14,8 @@ namespace Core {
 class Notification : public Message {
   TYPE_INFO(Notification, Message, "notification")
   public:
-    Notification(ActionType actionType, std::string resource,
-      IEntity::Shared result);
+    Notification(std::string sender, std::string receiver,
+      ActionType actionType, std::string resource, IEntity::Shared result);
 
     const IEntity* getContent() const { return result.get(); };
 

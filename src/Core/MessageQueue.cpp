@@ -68,7 +68,7 @@ MessageQueue::removeController(QueueController::Shared controller) {
 
 void
 MessageQueue::processRequest(const Request& request) {
-  Logger::message("Processing a request from '" + request.getTag("sender") + "'");
+  Logger::message("Processing a request from '" + request.getSender() + "'");
   ActionResult::Unique result;
   std::list<QueueClient::Shared> deletedControllers;
   auto controller = getController(request);
@@ -84,8 +84,8 @@ MessageQueue::processRequest(const Request& request) {
 
 void
 MessageQueue::processResponse(const Response& response) {
-  auto sender = response.getTag("sender");
-  auto receiver = response.getTag("receiver");
+  auto sender = response.getSender();
+  auto receiver = response.getReceiver();
   Logger::message("Processing a response from '" + sender + "' to '" + receiver + "'");
   auto client = getClient(receiver);
   if (client) {
@@ -97,8 +97,8 @@ MessageQueue::processResponse(const Response& response) {
 
 void
 MessageQueue::processNotification(const Notification& notification) {
-  auto sender = notification.getTag("sender");
-  auto receiver = notification.getTag("receiver");
+  auto sender = notification.getSender();
+  auto receiver = notification.getReceiver();
   if (receiver != "") {
     Logger::message("Sending a notification from '" + sender + "' to '" + receiver + "'.");
     auto client = getClient(receiver);
@@ -156,13 +156,16 @@ MessageQueue::getController(const Request& request) {
 Response::Shared
 MessageQueue::createResponseFor(const Request& request,
   ActionResult::Unique result, const QueueController* controller) {
-  auto response = Response::makeShared(request.getActionType(),
-                                       request.getResource(),
-                                       std::move(result));
-  response->addTag("receiver", request.getTag("sender"));
+
+  std::string sender("messageQueue");
   if (controller)
-    response->addTag("sender", controller->getId());
-  else
-    response->addTag("sender", "messageQueue");
+    sender = controller->getId();
+
+  auto response = Response::makeShared(
+    sender,
+    request.getSender(),
+    request.getActionType(),
+    request.getResource(),
+    std::move(result));
   return response;
 }

@@ -49,26 +49,22 @@ class QueueResourceController {
 
     void sendGetNotification(Core::ActionResult::Shared result) {
       for(auto sender: senders) {
-        auto notification = Notification::makeUnique(ActionType::Get, typeId, result);
-        queueController->sendNotification(sender, std::move(notification));
+        queueController->sendNotification(sender, ActionType::Get, typeId, result);
       }
       senders.clear();
     }
 
     void sendCreateNotification(TUnique object) {
-      auto notification = Notification::makeShared(ActionType::Create, typeId, std::move(object));
-      queueController->broadcastNotification(notification);
+      queueController->broadcastNotification(ActionType::Create, typeId, std::move(object));
     }
 
     void sendUpdateNotification(TUnique object) {
-      auto notification = Notification::makeShared(ActionType::Update, typeId, std::move(object));
-      queueController->broadcastNotification(notification);
+      queueController->broadcastNotification(ActionType::Update, typeId, std::move(object));
     }
 
     void sendDeleteNotification() {
-      auto request = Notification::makeShared(ActionType::Delete, typeId,
-        StatusResult::makeUnique(StatusCode::NoContent, "The resource was deleted"));
-      queueController->broadcastNotification(request);
+      auto result = StatusResult::makeUnique(StatusCode::NoContent, "The resource was deleted");
+      queueController->broadcastNotification(ActionType::Delete, typeId, std::move(result));
     }
 
   private:
@@ -90,7 +86,7 @@ class QueueResourceController {
           auto result = onGetRequestHandler();
           auto statusResult = StatusResult::cast(result.get());
           if (statusResult && statusResult->isAccepted()) {
-              senders.insert(request.getTag("sender"));
+              senders.insert(request.getSender());
           }
           return result;
         }

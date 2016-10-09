@@ -15,8 +15,8 @@ namespace Core {
 class Response : public Message {
   TYPE_INFO(Response, Message, "response")
   public:
-    Response(ActionType actionType, std::string resource,
-      ActionResult::Unique result);
+    Response(std::string sender, std::string receiver,
+      ActionType actionType, std::string resource, ActionResult::Unique result);
 
     const ActionResult& getResult() const { return *result; }
 

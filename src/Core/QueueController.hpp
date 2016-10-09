@@ -24,8 +24,12 @@ class QueueController {
     QueueController(std::string controllerId, IMessageQueue& messageQueue);
 
     std::string getId() const { return controllerId; }
-    StatusResult::Unique sendNotification(std::string receiver, Notification::Shared notification);
-    StatusResult::Unique broadcastNotification(Notification::Shared notification);
+
+    StatusResult::Unique sendNotification(std::string receiver,
+      ActionType actionType, std::string resource, IEntity::Shared result);
+
+    StatusResult::Unique broadcastNotification(ActionType actionType,
+      std::string resource, IEntity::Shared result);
 
     bool canProcessRequest(const Request& request);
     ActionResult::Unique processRequest(const Request& request);

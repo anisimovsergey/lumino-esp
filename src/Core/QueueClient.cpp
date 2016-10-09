@@ -9,7 +9,6 @@ QueueClient::QueueClient(std::string clientId, IMessageQueue& messageQueue) :
 
 StatusResult::Unique
 QueueClient::sendMessage(Message::Shared request) {
-  request->addTag("sender", clientId);
   return messageQueue.sendMessage(request);
 }
 
