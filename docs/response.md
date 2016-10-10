@@ -17,7 +17,7 @@ In case of a recognized but not processed request the response contains the foll
 {
   "type": "response",
   "message": "get",
-  "resource": "/unknownResource",
+  "resource": "unknownResource",
   "result": {
     "type": "statusResult",
     "code": 404,

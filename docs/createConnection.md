@@ -4,7 +4,7 @@ Request
 {
   "type": "request",
   "action": "create",
-  "resource": "/connection",
+  "resource": "connection",
   "content" : {
     "type": "connection",
     "wifi_network": "network SSID",
@@ -17,7 +17,7 @@ Response
 {
   "type": "response",
   "action": "create",
-  "resource": "/connection",
+  "resource": "connection",
   "result": {
     "type": "statusResult",
     "code": 201,
@@ -30,7 +30,7 @@ Notification
 {
   "type": "notification",
   "action": "create",
-  "resource": "/connection",
+  "resource": "connection",
   "result": {
     "type": "objectResult",
     "object" : {

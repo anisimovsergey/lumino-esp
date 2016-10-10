@@ -4,7 +4,7 @@ Request
 {
   "type": "request",
   "action": "delete",
-  "resource": "/connection"
+  "resource": "connection"
 }
 ```
 Response
@@ -12,7 +12,7 @@ Response
 {
   "type": "response",
   "action": "delete",
-  "resource": "/connection",
+  "resource": "connection",
   "result": {
     "type": "statusResult",
     "code": 204,
@@ -25,7 +25,7 @@ Notification
 {
   "type": "notification",
   "action": "delete",
-  "resource": "/connection",
+  "resource": "connection",
   "result": {
     "type": "statusResult",
     "code": 204,
