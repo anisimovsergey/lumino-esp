@@ -149,9 +149,9 @@ WiFiManager::onDisconnected() {
 
 void
 WiFiManager::startSoftAP() {
-  auto ipAddress = WiFi.softAP(deviceName.c_str());
+  WiFi.softAP(deviceName.c_str());
   dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
-  dnsServer->start(53, "*", ipAddress);
+  dnsServer->start(53, "*", WiFi.softAPIP());
 }
 
 void
