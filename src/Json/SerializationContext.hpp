@@ -10,6 +10,7 @@
 #include "ISerializationContext.hpp"
 #include "ISerializationService.hpp"
 
+#define ARDUINOJSON_USE_ARDUINO_STRING 0
 #include <ArduinoJson.h>
 
 #include <memory>
