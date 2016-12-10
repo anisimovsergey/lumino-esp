@@ -44,13 +44,13 @@ SerializationContext::toString() const {
 
 bool
 SerializationContext::hasKey(const std::string& key) {
-  return jsonObject[key.c_str()].success();
+  return jsonObject[key].success();
 }
 
 Core::StatusResult::Unique
 SerializationContext::getStringValue(const std::string& key, std::string& value) {
 
-  auto jsonVal = jsonObject[key.c_str()];
+  auto jsonVal = jsonObject[key];
   if (!jsonVal.success())
     return StatusResult::makeUnique(StatusCode::BadRequest, "Key """ + key + """ is not defined.");
 
@@ -64,7 +64,7 @@ SerializationContext::getStringValue(const std::string& key, std::string& value)
 Core::StatusResult::Unique
 SerializationContext::getBoolValue(const std::string& key, bool& value) {
 
-  auto jsonVal = jsonObject[key.c_str()];
+  auto jsonVal = jsonObject[key];
   if (!jsonVal.success())
     return StatusResult::makeUnique(StatusCode::BadRequest, "Key """ + key + """ is not defined.");
 
@@ -78,7 +78,7 @@ SerializationContext::getBoolValue(const std::string& key, bool& value) {
 Core::StatusResult::Unique
 SerializationContext::getEntity(const std::string& key, Core::IEntity::Unique& entity) {
 
-  auto jsonVal = jsonObject[key.c_str()];
+  auto jsonVal = jsonObject[key];
   if (!jsonVal.success())
     return StatusResult::makeUnique(StatusCode::BadRequest, "Key """ + key + """ is not defined.");
 
