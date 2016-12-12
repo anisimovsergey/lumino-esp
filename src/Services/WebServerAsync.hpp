@@ -4,36 +4,47 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef SERVICES_WEBSOCKETS_SERVER_HPP
-#define SERVICES_WEBSOCKETS_SERVER_HPP
+#ifndef SERVICES_WEB_SERVER_ASYNC_HPP
+#define SERVICES_WEB_SERVER_ASYNC_HPP
 
+#include "Settings.hpp"
 #include "Core/ILoopedService.hpp"
 #include "Core/IMessageQueue.hpp"
 #include "Json/ISerializationService.hpp"
 
-#include "ESPAsyncWebServer.h"
-
 #include <memory>
 #include <list>
+#include <algorithm>
+
+#include <Hash.h>
+#include <ESPAsyncWebServer.h>
+#include <ESPAsyncWebServer.h>
 
 namespace Services {
 
-class WebSocketsServerAsync : public Core::ILoopedService {
-  TYPE_PTRS(WebSocketsServerAsync)
+class WebServerAsync : public Core::ILoopedService {
+  TYPE_PTRS(WebServerAsync)
   public:
-    WebSocketsServerAsync(
+    WebServerAsync(
+      std::shared_ptr<const Settings> settings,
       Core::IMessageQueue::Shared messageQueue,
       Json::ISerializationService::Shared serializer);
-    ~WebSocketsServerAsync();
+    virtual ~WebServerAsync();
 
-    void start() {};
+    void start();
     void loop() override { };
 
-    std::unique_ptr<AsyncWebSocket> server;
   private:
-    Core::IMessageQueue::Shared messageQueue;
-    Json::ISerializationService::Shared serializer;
-    std::list<Core::QueueClient::Shared> queueClients;
+    std::shared_ptr<const Settings>       settings;
+    std::unique_ptr<AsyncWebServer>       httpServer;
+    std::unique_ptr<AsyncWebSocket>       wsServer;
+    Core::IMessageQueue::Shared           messageQueue;
+    Json::ISerializationService::Shared   serializer;
+    std::list<Core::QueueClient::Shared>  queueClients;
+
+    std::string  getLocalDomain();
+    bool    isIntercepted(AsyncWebServerRequest* request);
+    void    redirectToSelf(AsyncWebServerRequest* request);
 
     void onSocketEvent(AsyncWebSocket* server, AsyncWebSocketClient* client,
       AwsEventType type, void* arg, uint8_t *data, size_t len);
@@ -52,4 +63,4 @@ class WebSocketsServerAsync : public Core::ILoopedService {
 
 }
 
-#endif /* end of include guard: SERVICES_WIFIMANAGER_HPP */
+#endif /* end of include guard: SERVICES_WEB_SERVER_ASYNC_HPP */

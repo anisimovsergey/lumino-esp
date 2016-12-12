@@ -7,7 +7,6 @@
 #ifndef SERVICES_DISPLAY_HPP
 #define SERVICES_DISPLAY_HPP
 
-#include "IDisplay.hpp"
 #include "Core/ILoopedService.hpp"
 #include "Core/IMessageQueue.hpp"
 #include "Models/Connection.hpp"
@@ -19,7 +18,7 @@ class Adafruit_NeoPixel;
 
 namespace Services {
 
-class Display : public IDisplay, public Core::ILoopedService  {
+class Display : public Core::ILoopedService  {
   TYPE_PTRS(Display)
   public:
     Display(Core::IMessageQueue::Shared messageQueue);

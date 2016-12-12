@@ -8,12 +8,11 @@
 #ifndef SERVICES_WIFIMANAGER_HPP
 #define SERVICES_WIFIMANAGER_HPP
 
-#include "IWiFiManager.hpp"
-#include "IDisplay.hpp"
 #include "Core/ILoopedService.hpp"
 #include "Core/IMessageQueue.hpp"
 #include "Core/QueueResourceController.hpp"
 #include "Models/Connection.hpp"
+#include "Settings.hpp"
 
 #include <DNSServer.h>
 #include <ESP8266WiFi.h>
@@ -21,30 +20,31 @@
 #include <memory>
 
 namespace Services {
-  class WiFiManager : public IWiFiManager, public Core::ILoopedService {
+  class WiFiManager : public Core::ILoopedService {
     TYPE_PTRS(WiFiManager)
   public:
-    WiFiManager(Core::IMessageQueue::Shared messageQueue);
+    WiFiManager(
+      std::shared_ptr<const Settings> settings,
+      Core::IMessageQueue::Shared messageQueue);
     ~WiFiManager();
 
     void   start();
-
-    std::string getDeviceName() const override;
-    bool   hasConnection() const override;
-    std::string getNetwork() const override;
-    bool   isConnected() const override;
-
-    Core::StatusResult::Unique connect(std::string network, std::string password) override;
-    Core::StatusResult::Unique disconnect() override;
     void   loop() override;
 
   private:
-    std::unique_ptr<DNSServer> dnsServer;
-    Core::IMessageQueue::Shared messageQueue;
-    WiFiEventHandler connectedEventHandler;
-    WiFiEventHandler disconnectedEventHandler;
+    std::shared_ptr<const Settings>   settings;
+    Core::IMessageQueue::Shared       messageQueue;
+    std::unique_ptr<DNSServer>        dnsServer;
+    WiFiEventHandler                  connectedEventHandler;
+    WiFiEventHandler                  disconnectedEventHandler;
     Core::QueueResourceController<Models::Connection>::Shared controller;
-    std::string deviceName;
+
+    bool        hasConnection() const;
+    std::string getNetwork() const;
+    bool        isConnected() const;
+
+    Core::StatusResult::Unique connect(std::string network, std::string password);
+    Core::StatusResult::Unique disconnect();
 
     Models::Connection::Unique createConnectionObject();
 

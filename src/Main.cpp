@@ -2,10 +2,10 @@
 #include "Core/MessageQueue.hpp"
 #include "Core/StringFormat.hpp"
 #include "Services/Display.hpp"
-#include "Services/HttpServerAsync.hpp"
 #include "Services/WiFiManager.hpp"
 #include "Services/WiFiScanner.hpp"
-#include "Services/WebSocketsServerAsync.hpp"
+#include "Services/WebServerAsync.hpp"
+#include "Services/Settings.hpp"
 #include "Json/SerializationService.hpp"
 #include "Json/StatusResultSerializer.hpp"
 #include "Json/ListSerializer.hpp"
@@ -32,24 +32,22 @@ void setup(void){
   SPIFFS.begin();
 
   // Creating services
+  Logger::message("Creating settings...");
+  auto settings(Settings::makeShared());
   Logger::message("Creating a message queue...");
   auto messageQueue(MessageQueue::makeShared());
   Logger::message("Creating a display..");
   auto display(Display::makeShared(messageQueue));
   Logger::message("Creating a wifi manager...");
-  auto wifiManager(WiFiManager::makeShared(messageQueue));
+  auto wifiManager(WiFiManager::makeShared(settings, messageQueue));
   Logger::message("Creating a wifi scanner...");
   auto wiFiScanner(WiFiScanner::makeShared(messageQueue));
   Logger::message("Creating a context factory...");
   auto contextFactory(SerializationContextFactory::makeShared());
   Logger::message("Creating a serialization service...");
   auto serializationService(SerializationService::makeShared(contextFactory));
-  Logger::message("Creating an HTTP server...");
-  auto httpServerAsync(HttpServerAsync::makeShared(80, wifiManager));
-  Logger::message("Creating a Web Sockets server...");
-  auto webSocketsServerAsync(WebSocketsServerAsync::makeShared(messageQueue, serializationService));
-  // TODO: Clean this up.
-  httpServerAsync->server->addHandler(webSocketsServerAsync->server.get());
+  Logger::message("Creating a Web server...");
+  auto webServerAsync(WebServerAsync::makeShared(settings, messageQueue, serializationService));
 
   // Registering serializers
   Logger::message("Registering serializers...");
@@ -74,24 +72,20 @@ void setup(void){
 
   Logger::message("Starting wifi manager...");
   wifiManager->start();
-  Logger::message("Starting http server...");
-  httpServerAsync->start();
-  Logger::message("Starting websocket server server...");
-  webSocketsServerAsync->start();
+  Logger::message("Starting Web server...");
+  webServerAsync->start();
 
   // Adding servers to the loop
   Logger::message("Adding display...");
   loopedServices.push_back(display);
   Logger::message("Adding messqge queue...");
   loopedServices.push_back(messageQueue);
-  Logger::message("Adding http server...");
-  loopedServices.push_back(httpServerAsync);
+  Logger::message("Adding Web server...");
+  loopedServices.push_back(webServerAsync);
   Logger::message("Adding wifi manager...");
   loopedServices.push_back(wifiManager);
   Logger::message("Adding wifi scaner...");
   loopedServices.push_back(wiFiScanner);
-  Logger::message("Adding websocket server...");
-  loopedServices.push_back(webSocketsServerAsync);
   Logger::message("Initialization finished, free heap size " + toString(ESP.getFreeHeap()) + " bytes.");
 }
 

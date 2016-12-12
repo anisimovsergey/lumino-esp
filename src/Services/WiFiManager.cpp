@@ -11,9 +11,12 @@ using namespace Models;
 using namespace Services;
 using namespace std::placeholders;
 
-WiFiManager::WiFiManager(Core::IMessageQueue::Shared messageQueue) :
-  dnsServer(Core::makeUnique<DNSServer>()), messageQueue(messageQueue) {
-  deviceName = "esp8266fs";
+WiFiManager::WiFiManager(
+  std::shared_ptr<const Settings> settings,
+  Core::IMessageQueue::Shared messageQueue) :
+  settings(settings),
+  messageQueue(messageQueue),
+  dnsServer(Core::makeUnique<DNSServer>()) {
 
   auto queueController = messageQueue->createController("WiFiManager");
   controller = QueueResourceController<Connection>::makeUnique(queueController);
@@ -44,18 +47,13 @@ WiFiManager::~WiFiManager() {
 void
 WiFiManager::start() {
   WiFi.mode(WIFI_STA);
-  WiFi.hostname(deviceName.c_str());
+  WiFi.hostname(settings->getDeviceName().c_str());
   startSoftAP();
 }
 
 bool
 WiFiManager::hasConnection() const {
   return (WiFi.SSID().length() > 0);
-}
-
-std::string
-WiFiManager::getDeviceName() const {
-  return deviceName;
 }
 
 std::string
@@ -149,7 +147,7 @@ WiFiManager::onDisconnected() {
 
 void
 WiFiManager::startSoftAP() {
-  WiFi.softAP(deviceName.c_str());
+  WiFi.softAP(settings->getDeviceName().c_str());
   dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
   dnsServer->start(53, "*", WiFi.softAPIP());
 }
