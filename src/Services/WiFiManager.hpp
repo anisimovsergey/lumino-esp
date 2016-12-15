@@ -16,6 +16,7 @@
 
 #include <DNSServer.h>
 #include <ESP8266WiFi.h>
+#include <Ticker.h>
 
 #include <memory>
 
@@ -35,18 +36,22 @@ namespace Services {
     std::shared_ptr<const Settings>   settings;
     Core::IMessageQueue::Shared       messageQueue;
     std::unique_ptr<DNSServer>        dnsServer;
+    Ticker                            disconnectTimer;
+    Core::QueueResourceController<Models::Connection>::Shared controller;
+
+    // Event handlers
     WiFiEventHandler                  connectedEventHandler;
     WiFiEventHandler                  disconnectedEventHandler;
-    Core::QueueResourceController<Models::Connection>::Shared controller;
+    WiFiEventHandler                  clientConnectedEventHandler;
+    WiFiEventHandler                  clientDisconnectedEventHandler;
 
     bool        hasConnection() const;
     std::string getNetwork() const;
     bool        isConnected() const;
 
+    Models::Connection::Unique createConnectionObject();
     Core::StatusResult::Unique connect(std::string network, std::string password);
     Core::StatusResult::Unique disconnect();
-
-    Models::Connection::Unique createConnectionObject();
 
     // Message handling
     Core::ActionResult::Unique onGetConnection();
@@ -56,9 +61,18 @@ namespace Services {
     // Events handling
     void onConnected();
     void onDisconnected();
+    void onClientConnected();
+    void onClientDisconnected();
 
     void startSoftAP();
     void stopSoftAP();
+
+    // Access point automatic shutdown
+    static void onDisconnectStatic(WiFiManager* manager);
+
+    void startDisconnectTimer();
+    void stopDisconnectTimer();
+    void onDisconnectTimeout();
   };
 }
 

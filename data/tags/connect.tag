@@ -66,6 +66,7 @@
             this.caret.style.opacity = 1;
         }
 
+/*
         fetch('/wifi_networks').then(function (response) {
             return response.json()
         }).then(function (json) {
@@ -89,6 +90,7 @@
             that.hide_spinner();
             console.log('wifi networks parsing failed', ex)
         })
+*/
     </script>
 </wifi_network>
 <connect>
@@ -140,6 +142,7 @@
             });
         };
 
+/*
         refetchSettings() {
             fetch('/settings').then(function (response) {
                 return response.json()
@@ -153,5 +156,6 @@
         };
 
         this.refetchSettings();
+*/
     </script>
 </connect>

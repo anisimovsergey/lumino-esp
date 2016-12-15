@@ -29,15 +29,19 @@ WiFiManager::WiFiManager(
     std::bind(&WiFiManager::onDeleteConnection, this));
 
   connectedEventHandler = WiFi.onStationModeGotIP(
-    [=](const WiFiEventStationModeGotIP&) {
-      onConnected();
-    }
+    [=](const WiFiEventStationModeGotIP&) { onConnected(); }
   );
 
   disconnectedEventHandler = WiFi.onStationModeDisconnected(
-    [=](const WiFiEventStationModeDisconnected&) {
-      onDisconnected();
-    }
+    [=](const WiFiEventStationModeDisconnected&) { onDisconnected(); }
+  );
+
+  clientConnectedEventHandler = WiFi.onSoftAPModeStationConnected(
+    [=](const WiFiEventSoftAPModeStationConnected&) { onClientConnected(); }
+  );
+
+  clientDisconnectedEventHandler = WiFi.onSoftAPModeStationDisconnected(
+    [=](const WiFiEventSoftAPModeStationDisconnected&) {  onClientDisconnected(); }
   );
 }
 
@@ -46,9 +50,9 @@ WiFiManager::~WiFiManager() {
 
 void
 WiFiManager::start() {
-  WiFi.mode(WIFI_STA);
   WiFi.hostname(settings->getDeviceName().c_str());
   startSoftAP();
+  startDisconnectTimer();
 }
 
 bool
@@ -146,6 +150,18 @@ WiFiManager::onDisconnected() {
 }
 
 void
+WiFiManager::onClientConnected() {
+  stopDisconnectTimer();
+}
+
+void
+WiFiManager::onClientDisconnected() {
+  if (WiFi.softAPgetStationNum() == 0) {
+    startDisconnectTimer();
+  }
+}
+
+void
 WiFiManager::startSoftAP() {
   WiFi.softAP(settings->getDeviceName().c_str());
   dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
@@ -154,5 +170,27 @@ WiFiManager::startSoftAP() {
 
 void
 WiFiManager::stopSoftAP() {
+  dnsServer->stop();
   WiFi.softAPdisconnect();
+  WiFi.mode(WIFI_STA);
+}
+
+void
+WiFiManager::onDisconnectStatic(WiFiManager* manager) {
+  manager->onDisconnectTimeout();
+}
+
+void
+WiFiManager::startDisconnectTimer() {
+  disconnectTimer.once(300, onDisconnectStatic,  this);
+}
+
+void
+WiFiManager::stopDisconnectTimer() {
+  disconnectTimer.detach();
+}
+
+void
+WiFiManager::onDisconnectTimeout() {
+  stopSoftAP();
 }

@@ -42,7 +42,6 @@ class WebServerAsync : public Core::ILoopedService {
     Json::ISerializationService::Shared   serializer;
     std::list<Core::QueueClient::Shared>  queueClients;
 
-    std::string  getLocalDomain();
     bool    isIntercepted(AsyncWebServerRequest* request);
     void    redirectToSelf(AsyncWebServerRequest* request);
 

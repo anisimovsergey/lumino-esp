@@ -17,6 +17,7 @@ class Settings {
   TYPE_PTRS(Settings)
   public:
     std::string getDeviceName()     const;
+    std::string getLocalDomain()    const;
     int         getWebServerPort()  const;
 };
 

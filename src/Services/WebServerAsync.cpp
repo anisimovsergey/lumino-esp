@@ -30,19 +30,15 @@ WebServerAsync::WebServerAsync(
 WebServerAsync::~WebServerAsync() {
 }
 
-std::string
-WebServerAsync::getLocalDomain() {
-  return settings->getDeviceName() + ".local";
-}
-
 bool
 WebServerAsync::isIntercepted(AsyncWebServerRequest *request) {
-  return request->host() != getLocalDomain().c_str();
+  return request->host() != settings->getLocalDomain().c_str();
 }
 
 void
 WebServerAsync::redirectToSelf(AsyncWebServerRequest *request) {
-  auto route = std::string("http://") + getLocalDomain();
+  auto route = std::string("http://") + settings->getLocalDomain();
+  Logger::message(route);
   request->redirect(route.c_str());
 }
 
