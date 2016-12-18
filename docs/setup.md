@@ -15,12 +15,13 @@ In the initial state:
 When the device is in the initial state, you can connect it to your home WiFi network by following these steps:
 1. Scan the available WiFi networks on your mobile phone or a computer.
 * Find the one created by your device (it should have `DEVICE_` prefix) and connect to it.
-* You should be redirected to the captive portal page hosted on the device. This page allows you to see all the WiFi networks available for the device to connect.
-* Connect the device to your WiFi network by selecting it in the list of the available ones, or typing the network identifier (SSID) in. For the secured networks you need to provide a password too.
+* You should be redirected to the captive portal page hosted on the device. If you are not redirected automatically, try to open the following page in your browser:
+http://192.164.1.4/ This page allows you to see all the WiFi networks available for the device to connect.
+* Connect the device to your WiFi network by selecting it in the list of the available ones, or typing the network identifier (SSID) in. For the secured networks, which is mostly the case, you need to provide a password too.
 
 If the user doesn't connect to the WiFi access point created by the device in 5 minutes, the device automatically switches to the [silent state](#silent_state).
 
-When the device successfully connects to a WiFi network, it switches to the [connected state](#connected_state). In this state its own access point gets disabled and the user's browser is redirected to the settings webpage hosted on the same device but now accessible through the WiFi network it connected to. The name of this page corresponds to the device name followed by `.local` suffix (e.g. device_r2d2.local).
+When the device successfully connects to a WiFi network, it switches to the [connected state](#connected_state). Now you can disconnect from the WiFi network created by the device, connect back to your home network and use the software coming with the device for changing its settings. The WiFi access point created by the device will be automatically disabled in 5 minutes as soon as the device switches to the [silent state](#silent_state).
 
 In case of a connection attempt failure, due to an incorrect password or other error, the device displays an error message to the user and remains in the initial state.
 
@@ -28,14 +29,14 @@ In case of a connection attempt failure, due to an incorrect password or other e
 
 As soon as the device successfully connects to a WiFi network, the network identifier as well as the required password are stored in the device and used in the reconnection attempts.
 
-In the connected state the WiFi access point created by the device in the initial state, gets disabled but the user can still access the device settings page through the WiFi network the device now connected to. For doing that, the user, while being connected to the same network, needs to open the settings page in a Web browser. The name of page corresponds to the device name followed by `.local` suffix (e.g. device_r2d2.local).
+In the connected state the WiFi access point created by the device in the initial state, gets eventually disabled (see [silent state](#silent_state)) but the user can still access the device settings page through the WiFi network the device now connected to. For doing that, the user, while being connected to the same network, needs to run the software coming with the device.
 
-On the device settings page the user can disconnect the device from the WiFi network. In this case, the device erases the current network identifier and password, disconnects from the network and switches back to the [initial state](#initial_state). The same effect can be achieved by pressing the reset button.
+Using the software, the user change manipulate the device settings and can also disconnect the device from the WiFi network. In this case, the device erases the current network identifier and password, disconnects from the network and switches back to the [initial state](#initial_state). The same effect can be achieved by pressing the reset button.
 
 If the device losses the WiFi connection, due to a restart of some issues with the network itself, it starts automatically reconnecting using the network identifier and the password stored in the device memory.
 
 ## <a name="silent_state"></a> The silent state
 
-If the device is in the initial state and the user doesn't connect to its WiFi network in 5 minutes or loses the connection and doesn't reconnect for the same period of time, the device gets switched to the silent state by shutting down its WiFi access point.
+If the device is in the initial or connected state and the user doesn't connect to its WiFi network in 5 minutes or disconnects from it and doesn't reconnect for the same period of time, the device is switched to the silent state by shutting down its WiFi access point.
 
-In order to reset the device into the initial state and enable the access point, the user needs to simply switch it off and on again.
+In order to enable the access point, the user needs to simply switch it off and on again.
