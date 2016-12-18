@@ -9,7 +9,7 @@ using namespace Core;
 void
 Logger::initialize() {
   DBG_OUTPUT_PORT.begin(115200);
-  DBG_OUTPUT_PORT.setDebugOutput(true);
+  DBG_OUTPUT_PORT.setDebugOutput(false);
   DBG_OUTPUT_PORT.println("");
 }
 

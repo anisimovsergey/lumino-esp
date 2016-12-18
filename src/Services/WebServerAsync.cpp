@@ -17,14 +17,15 @@ WebServerAsync::WebServerAsync(
   IMessageQueue::Shared messageQueue,
   Json::ISerializationService::Shared serializer) :
   settings(settings),
-  httpServer(Core::makeUnique<AsyncWebServer>(settings->getWebServerPort())),
-  wsServer(Core::makeUnique<AsyncWebSocket>("/ws")),
   messageQueue(messageQueue),
   serializer(serializer) {
 
-  httpServer->addHandler(wsServer.get());
+  wsServer = std::move(Core::makeUnique<AsyncWebSocket>("/ws"));
   wsServer->onEvent(std::bind(&WebServerAsync::onSocketEvent, this,
     _1, _2, _3, _4, _5, _6));
+
+  httpServer = std::move(Core::makeUnique<AsyncWebServer>(settings->getWebServerPort()));
+  httpServer->addHandler(wsServer.get());
 }
 
 WebServerAsync::~WebServerAsync() {

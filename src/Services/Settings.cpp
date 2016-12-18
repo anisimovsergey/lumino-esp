@@ -11,9 +11,20 @@ Settings::getDeviceName() const {
   return "esp8266fs";
 }
 
+/** IP to String? */
+String toStringIp(IPAddress ip) {
+  String res = "";
+  for (int i = 0; i < 3; i++) {
+    res += String((ip >> (8 * i)) & 0xFF) + ".";
+  }
+  res += String(((ip >> 8 * 3)) & 0xFF);
+  return res;
+}
+
+
 std::string
 Settings::getLocalDomain() const {
-  return ipToString(WiFi.softAPIP());
+  return toStringIp(WiFi.softAPIP()).c_str();
 }
 
 int

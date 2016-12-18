@@ -1,6 +1,7 @@
 #include "WiFiManager.hpp"
 #include "Core/Logger.hpp"
 #include "Core/Memory.hpp"
+#include "Core/StringFormat.hpp"
 #include "Core/ObjectResult.hpp"
 #include "Models/Connection.hpp"
 
@@ -15,8 +16,10 @@ WiFiManager::WiFiManager(
   std::shared_ptr<const Settings> settings,
   Core::IMessageQueue::Shared messageQueue) :
   settings(settings),
-  messageQueue(messageQueue),
-  dnsServer(Core::makeUnique<DNSServer>()) {
+  messageQueue(messageQueue) {
+
+  dnsServer = std::move(Core::makeUnique<DNSServer>());
+  isConnectedInternal = false;
 
   auto queueController = messageQueue->createController("WiFiManager");
   controller = QueueResourceController<Connection>::makeUnique(queueController);
@@ -33,7 +36,7 @@ WiFiManager::WiFiManager(
   );
 
   disconnectedEventHandler = WiFi.onStationModeDisconnected(
-    [=](const WiFiEventStationModeDisconnected&) { onDisconnected(); }
+    [=](const WiFiEventStationModeDisconnected& e) { onDisconnected(); }
   );
 
   clientConnectedEventHandler = WiFi.onSoftAPModeStationConnected(
@@ -137,14 +140,16 @@ WiFiManager::onDeleteConnection() {
 
 void
 WiFiManager::onConnected() {
-  if (hasConnection()) {
+  if (hasConnection() && !isConnectedInternal) {
+    isConnectedInternal = true;
     controller->sendUpdateNotification(createConnectionObject());
   }
 }
 
 void
 WiFiManager::onDisconnected() {
-  if (hasConnection()) {
+  if (hasConnection() && isConnectedInternal) {
+    isConnectedInternal = false;
     controller->sendUpdateNotification(createConnectionObject());
   }
 }

@@ -37,6 +37,7 @@ namespace Services {
     Core::IMessageQueue::Shared       messageQueue;
     std::unique_ptr<DNSServer>        dnsServer;
     Ticker                            disconnectTimer;
+    bool                              isConnectedInternal;
     Core::QueueResourceController<Models::Connection>::Shared controller;
 
     // Event handlers
