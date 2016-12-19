@@ -6,6 +6,7 @@
 #include "Models/Connection.hpp"
 
 #include <ESP8266WiFi.h>
+#include <ESP8266mDNS.h>
 
 using namespace Core;
 using namespace Models;
@@ -141,6 +142,16 @@ WiFiManager::onDeleteConnection() {
 void
 WiFiManager::onConnected() {
   if (hasConnection() && !isConnectedInternal) {
+
+    if (!MDNS.begin(settings->getDeviceName().c_str())) {
+      Serial.println("Error setting up MDNS responder!");
+      while(1) {
+        delay(1000);
+      }
+    }
+    MDNS.addService("http", "tcp", 80);
+    Serial.println("mDNS responder started");
+
     isConnectedInternal = true;
     controller->sendUpdateNotification(createConnectionObject());
   }
