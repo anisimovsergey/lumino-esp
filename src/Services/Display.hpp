@@ -9,9 +9,11 @@
 
 #include "Core/ILoopedService.hpp"
 #include "Core/IMessageQueue.hpp"
+#include "Models/Color.hpp"
 #include "Models/Connection.hpp"
 #include "Models/AccessPoint.hpp"
 #include "Core/QueueResourceClient.hpp"
+#include "Core/QueueResourceController.hpp"
 
 #include <memory>
 
@@ -30,8 +32,12 @@ class Display : public Core::ILoopedService  {
   private:
     Core::IMessageQueue::Shared messageQueue;
     std::unique_ptr<Adafruit_NeoPixel> pixels;
+    Core::QueueResourceController<Models::Color>::Shared colorController;
     Core::QueueResourceClient<Models::Connection>::Unique connectionClient;
     Core::QueueResourceClient<Models::AccessPoint>::Unique accessPointClient;
+
+    // Color
+    uint8_t r, g, b;
 
     // WiFi state
     bool hasAccessPoint;
@@ -39,6 +45,10 @@ class Display : public Core::ILoopedService  {
 
     void colorWipe(uint32_t color);
     void updateDisplay();
+
+    // Color controller
+    Core::ActionResult::Unique onGetColor();
+    Core::StatusResult::Unique onUpdateColor(const Models::Color& color);
 
     // Connection events
     void onConnectionGetStatusResponse(const Core::StatusResult& status);

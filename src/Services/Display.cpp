@@ -27,6 +27,12 @@ Display::Display(IMessageQueue::Shared messageQueue) :
   isConnected     = false;
   updateDisplay();
 
+  auto queueController = messageQueue->createController(SenderId);
+
+  colorController = QueueResourceController<Color>::makeUnique(queueController);
+  colorController->setOnGetRequestHandler(std::bind(&Display::onGetColor, this));
+  colorController->setOnUpdateRequestHandler(std::bind(&Display::onUpdateColor, this, _1));
+
   auto queueClient = messageQueue->createClient(SenderId);
 
   connectionClient = QueueResourceClient<Connection>::makeUnique(queueClient);
@@ -68,8 +74,21 @@ Display::updateDisplay() {
       colorWipe(pixels->Color(25, 0, 0));
     }
   } else {
-    colorWipe(pixels->Color(0, 0, 0));
+    colorWipe(pixels->Color(r, g, b));
   }
+}
+
+Core::ActionResult::Unique
+Display::onGetColor() {
+  auto color = Color::makeUnique(r, g, b);
+  return ObjectResult::makeUnique(StatusCode::OK, std::move(color));
+}
+
+Core::StatusResult::Unique
+Display::onUpdateColor(const Models::Color& color) {
+  r = color.getR(); g = color.getG(); b = color.getB();
+  updateDisplay();
+  return StatusResult::OK();
 }
 
 void
