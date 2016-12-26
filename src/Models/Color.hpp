@@ -15,6 +15,7 @@ namespace Models {
 class Color : public Core::IEntity {
   TYPE_INFO(Color, Core::IEntity, "color")
   public:
+    Color();
     Color(uint8_t r, uint8_t g, uint8_t b);
 
     uint8_t      getR() const { return r; };

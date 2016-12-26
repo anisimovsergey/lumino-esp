@@ -18,13 +18,17 @@ namespace {
   const char* SenderId = "Display";
 }
 
-Display::Display(IMessageQueue::Shared messageQueue) :
+Display::Display(
+  Services::Settings::Shared settings,
+  Core::IMessageQueue::Shared messageQueue) :
+  settings(settings),
   messageQueue(messageQueue),
   pixels(Core::makeUnique<Adafruit_NeoPixel>(PIXEL_COUNT, PIXEL_PIN, PIXEL_TYPE)) {
 
   pixels->begin();
   hasAccessPoint  = false;
   isConnected     = false;
+  color = settings->getColor();
   updateDisplay();
 
   auto queueController = messageQueue->createController(SenderId);
@@ -74,19 +78,18 @@ Display::updateDisplay() {
       colorWipe(pixels->Color(25, 0, 0));
     }
   } else {
-    colorWipe(pixels->Color(r, g, b));
+    colorWipe(pixels->Color(color.getR(), color.getG(), color.getB()));
   }
 }
 
 Core::ActionResult::Unique
 Display::onGetColor() {
-  auto color = Color::makeUnique(r, g, b);
-  return ObjectResult::makeUnique(StatusCode::OK, std::move(color));
+  return ObjectResult::makeUnique(StatusCode::OK, Color::makeUnique(color));
 }
 
 Core::StatusResult::Unique
 Display::onUpdateColor(const Models::Color& color) {
-  r = color.getR(); g = color.getG(); b = color.getB();
+  this->color = color;
   updateDisplay();
   return StatusResult::OK();
 }

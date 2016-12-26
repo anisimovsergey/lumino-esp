@@ -9,11 +9,12 @@
 
 #include "Core/ILoopedService.hpp"
 #include "Core/IMessageQueue.hpp"
+#include "Core/QueueResourceClient.hpp"
+#include "Core/QueueResourceController.hpp"
 #include "Models/Color.hpp"
 #include "Models/Connection.hpp"
 #include "Models/AccessPoint.hpp"
-#include "Core/QueueResourceClient.hpp"
-#include "Core/QueueResourceController.hpp"
+#include "Services/Settings.hpp"
 
 #include <memory>
 
@@ -24,20 +25,23 @@ namespace Services {
 class Display : public Core::ILoopedService  {
   TYPE_PTRS(Display)
   public:
-    Display(Core::IMessageQueue::Shared messageQueue);
+    Display(Services::Settings::Shared settings,
+            Core::IMessageQueue::Shared messageQueue);
 
     // From ILoopedService
     virtual void loop() override;
 
   private:
-    Core::IMessageQueue::Shared messageQueue;
-    std::unique_ptr<Adafruit_NeoPixel> pixels;
+    Services::Settings::Shared          settings;
+    Core::IMessageQueue::Shared         messageQueue;
+    std::unique_ptr<Adafruit_NeoPixel>  pixels;
+
     Core::QueueResourceController<Models::Color>::Shared colorController;
     Core::QueueResourceClient<Models::Connection>::Unique connectionClient;
     Core::QueueResourceClient<Models::AccessPoint>::Unique accessPointClient;
 
     // Color
-    uint8_t r, g, b;
+    Models::Color color;
 
     // WiFi state
     bool hasAccessPoint;
