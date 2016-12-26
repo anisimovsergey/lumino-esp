@@ -39,7 +39,6 @@ WebServerAsync::isIntercepted(AsyncWebServerRequest *request) {
 void
 WebServerAsync::redirectToSelf(AsyncWebServerRequest *request) {
   auto route = std::string("http://") + settings->getLocalDomain();
-  Logger::message(route);
   request->redirect(route.c_str());
 }
 

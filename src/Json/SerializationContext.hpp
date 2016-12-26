@@ -32,6 +32,8 @@ class SerializationContext : public ISerializationContext {
     virtual Core::StatusResult::Unique
       getStringValue(const std::string& key, std::string& value) override;
     virtual Core::StatusResult::Unique
+      getIntValue(const std::string& key, int& value) override;
+    virtual Core::StatusResult::Unique
       getBoolValue(const std::string& key, bool& value) override;
     virtual Core::StatusResult::Unique
       getEntity(const std::string& key, Core::IEntity::Unique& entity) override;

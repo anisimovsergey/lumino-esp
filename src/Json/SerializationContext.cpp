@@ -62,6 +62,20 @@ SerializationContext::getStringValue(const std::string& key, std::string& value)
 }
 
 Core::StatusResult::Unique
+SerializationContext::getIntValue(const std::string& key, int& value) {
+
+  auto jsonVal = jsonObject[key];
+  if (!jsonVal.success())
+    return StatusResult::makeUnique(StatusCode::BadRequest, "Key """ + key + """ is not defined.");
+
+  if (!jsonVal.is<int>())
+    return StatusResult::makeUnique(StatusCode::BadRequest, "Value for key """ + key + """ should be a integer.");
+
+  value = (int)jsonVal;
+  return StatusResult::OK();
+}
+
+Core::StatusResult::Unique
 SerializationContext::getBoolValue(const std::string& key, bool& value) {
 
   auto jsonVal = jsonObject[key];

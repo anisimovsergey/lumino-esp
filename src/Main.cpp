@@ -37,7 +37,7 @@ void setup(void){
   Logger::message("Creating a message queue...");
   auto messageQueue(MessageQueue::makeShared());
   Logger::message("Creating a display..");
-  auto display(Display::makeShared(messageQueue));
+  auto display(Display::makeShared(settings, messageQueue));
   Logger::message("Creating a wifi manager...");
   auto wifiManager(WiFiManager::makeShared(settings, messageQueue));
   Logger::message("Creating a wifi scanner...");
