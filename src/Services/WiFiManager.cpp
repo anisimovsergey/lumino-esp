@@ -23,14 +23,14 @@ WiFiManager::WiFiManager(
   isConnectedInternal = false;
 
   auto queueController = messageQueue->createController("WiFiManager");
-  controller = QueueResourceController<Connection>::makeUnique(queueController);
 
-  controller->setOnGetRequestHandler(
-    std::bind(&WiFiManager::onGetConnection, this));
-  controller->setOnCreateRequestHandler(
-    std::bind(&WiFiManager::onCreateConnection, this, _1));
-  controller->setOnDeleteRequestHandler(
-    std::bind(&WiFiManager::onDeleteConnection, this));
+  connectionController = QueueResourceController<Connection>::makeUnique(queueController);
+  connectionController->setOnGetRequestHandler(std::bind(&WiFiManager::onGetConnection, this));
+  connectionController->setOnCreateRequestHandler(std::bind(&WiFiManager::onCreateConnection, this, _1));
+  connectionController->setOnDeleteRequestHandler(std::bind(&WiFiManager::onDeleteConnection, this));
+
+  accessPointController = QueueResourceController<AccessPoint>::makeUnique(queueController);
+  accessPointController->setOnGetRequestHandler(std::bind(&WiFiManager::onGetAccessPoint, this));
 
   connectedEventHandler = WiFi.onStationModeGotIP(
     [=](const WiFiEventStationModeGotIP&) { onConnected(); }
@@ -64,6 +64,12 @@ WiFiManager::hasConnection() const {
   return (WiFi.SSID().length() > 0);
 }
 
+bool
+WiFiManager::hasAccessPoint() const {
+  auto currentMode = WiFi.getMode();
+  return ((currentMode & WIFI_AP) != 0);
+}
+
 std::string
 WiFiManager::getNetwork() const {
   return WiFi.SSID().c_str();
@@ -95,6 +101,22 @@ WiFiManager::disconnect() {
 }
 
 void
+WiFiManager::startSoftAP() {
+  WiFi.softAP(settings->getDeviceName().c_str());
+  dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
+  dnsServer->start(53, "*", WiFi.softAPIP());
+  accessPointController->sendCreateNotification(createAccessPointObject());
+}
+
+void
+WiFiManager::stopSoftAP() {
+  dnsServer->stop();
+  WiFi.softAPdisconnect();
+  WiFi.enableAP(false);
+  accessPointController->sendDeleteNotification();
+}
+
+void
 WiFiManager::loop() {
   dnsServer->processNextRequest();
 }
@@ -102,6 +124,11 @@ WiFiManager::loop() {
 Models::Connection::Unique
 WiFiManager::createConnectionObject() {
   return Connection::makeUnique(getNetwork(), isConnected());
+}
+
+Models::AccessPoint::Unique
+WiFiManager::createAccessPointObject() {
+  return AccessPoint::makeUnique(settings->getDeviceName());
 }
 
 ActionResult::Unique
@@ -122,7 +149,7 @@ WiFiManager::onCreateConnection(const Models::Connection& connection) {
       "Unable to create the connection.", std::move(result));
   }
 
-  controller->sendCreateNotification(createConnectionObject());
+  connectionController->sendCreateNotification(createConnectionObject());
   return StatusResult::makeUnique(StatusCode::Created, "The connection was created.");
 }
 
@@ -135,25 +162,27 @@ WiFiManager::onDeleteConnection() {
       "Unable to delete the connection.", std::move(result));
   }
 
-  controller->sendDeleteNotification();
+  connectionController->sendDeleteNotification();
   return StatusResult::makeUnique(StatusCode::NoContent, "The connection was deleted.");
+}
+
+ActionResult::Unique
+WiFiManager::onGetAccessPoint() {
+  if (hasAccessPoint()) {
+    return ObjectResult::makeUnique(StatusCode::OK, createAccessPointObject());
+  } else {
+    return StatusResult::makeUnique(StatusCode::NotFound, "The access point doesn't exist.");
+  }
 }
 
 void
 WiFiManager::onConnected() {
   if (hasConnection() && !isConnectedInternal) {
-
-    if (!MDNS.begin(settings->getDeviceName().c_str())) {
-      Serial.println("Error setting up MDNS responder!");
-      while(1) {
-        delay(1000);
-      }
+    if (MDNS.begin(settings->getDeviceName().c_str())) {
+      MDNS.addService("http", "tcp", 80);
     }
-    MDNS.addService("http", "tcp", 80);
-    Serial.println("mDNS responder started");
-
     isConnectedInternal = true;
-    controller->sendUpdateNotification(createConnectionObject());
+    connectionController->sendUpdateNotification(createConnectionObject());
   }
 }
 
@@ -161,7 +190,7 @@ void
 WiFiManager::onDisconnected() {
   if (hasConnection() && isConnectedInternal) {
     isConnectedInternal = false;
-    controller->sendUpdateNotification(createConnectionObject());
+    connectionController->sendUpdateNotification(createConnectionObject());
   }
 }
 
@@ -175,20 +204,6 @@ WiFiManager::onClientDisconnected() {
   if (WiFi.softAPgetStationNum() == 0) {
     startDisconnectTimer();
   }
-}
-
-void
-WiFiManager::startSoftAP() {
-  WiFi.softAP(settings->getDeviceName().c_str());
-  dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
-  dnsServer->start(53, "*", WiFi.softAPIP());
-}
-
-void
-WiFiManager::stopSoftAP() {
-  dnsServer->stop();
-  WiFi.softAPdisconnect();
-  WiFi.mode(WIFI_STA);
 }
 
 void

@@ -12,6 +12,7 @@
 #include "Core/IMessageQueue.hpp"
 #include "Core/QueueResourceController.hpp"
 #include "Models/Connection.hpp"
+#include "Models/AccessPoint.hpp"
 #include "Settings.hpp"
 
 #include <DNSServer.h>
@@ -24,9 +25,8 @@ namespace Services {
   class WiFiManager : public Core::ILoopedService {
     TYPE_PTRS(WiFiManager)
   public:
-    WiFiManager(
-      std::shared_ptr<const Settings> settings,
-      Core::IMessageQueue::Shared messageQueue);
+    WiFiManager(std::shared_ptr<const Settings> settings,
+                Core::IMessageQueue::Shared messageQueue);
     ~WiFiManager();
 
     void   start();
@@ -38,7 +38,8 @@ namespace Services {
     std::unique_ptr<DNSServer>        dnsServer;
     Ticker                            disconnectTimer;
     bool                              isConnectedInternal;
-    Core::QueueResourceController<Models::Connection>::Shared controller;
+    Core::QueueResourceController<Models::Connection>::Shared connectionController;
+    Core::QueueResourceController<Models::AccessPoint>::Shared accessPointController;
 
     // Event handlers
     WiFiEventHandler                  connectedEventHandler;
@@ -47,26 +48,30 @@ namespace Services {
     WiFiEventHandler                  clientDisconnectedEventHandler;
 
     bool        hasConnection() const;
+    bool        hasAccessPoint() const;
+
     std::string getNetwork() const;
     bool        isConnected() const;
 
     Models::Connection::Unique createConnectionObject();
+    Models::AccessPoint::Unique createAccessPointObject();
+
     Core::StatusResult::Unique connect(std::string network, std::string password);
     Core::StatusResult::Unique disconnect();
+    void startSoftAP();
+    void stopSoftAP();
 
     // Message handling
     Core::ActionResult::Unique onGetConnection();
     Core::StatusResult::Unique onCreateConnection(const Models::Connection& connection);
     Core::StatusResult::Unique onDeleteConnection();
+    Core::ActionResult::Unique onGetAccessPoint();
 
     // Events handling
     void onConnected();
     void onDisconnected();
     void onClientConnected();
     void onClientDisconnected();
-
-    void startSoftAP();
-    void stopSoftAP();
 
     // Access point automatic shutdown
     static void onDisconnectStatic(WiFiManager* manager);

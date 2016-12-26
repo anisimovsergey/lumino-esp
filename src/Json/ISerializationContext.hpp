@@ -26,6 +26,8 @@ class ISerializationContext {
     virtual Core::StatusResult::Unique
       getStringValue(const std::string& key, std::string& value) = 0;
     virtual Core::StatusResult::Unique
+      getIntValue(const std::string& key, int& value) = 0;      
+    virtual Core::StatusResult::Unique
       getBoolValue(const std::string& key, bool& value) = 0;
     virtual Core::StatusResult::Unique
       getEntity(const std::string& key, Core::IEntity::Unique& entity) = 0;

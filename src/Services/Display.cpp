@@ -23,24 +23,27 @@ Display::Display(IMessageQueue::Shared messageQueue) :
   pixels(Core::makeUnique<Adafruit_NeoPixel>(PIXEL_COUNT, PIXEL_PIN, PIXEL_TYPE)) {
 
   pixels->begin();
-
-  colorWipe(pixels->Color(0, 0, 0));
+  hasAccessPoint  = false;
+  isConnected     = false;
+  updateDisplay();
 
   auto queueClient = messageQueue->createClient(SenderId);
-  client = QueueResourceClient<Connection>::makeUnique(queueClient);
 
-  client->setOnGetStatusResponse(
-    std::bind(&Display::onConnectionGetStatusResponse, this, _1));
-  client->setOnGetObjectResponse(
-    std::bind(&Display::onConnectionGetObjectResponse, this, _1));
-  client->setOnCreateNotification(
-    std::bind(&Display::onConnectionCreateNotification, this, _1));
-  client->setOnUpdateNotification(
-    std::bind(&Display::onConnectionUpdateNotification, this, _1));
-  client->setOnDeleteNotification(
-    std::bind(&Display::onConnectionDeleteNotification, this));;
+  connectionClient = QueueResourceClient<Connection>::makeUnique(queueClient);
+  connectionClient->setOnGetStatusResponse(std::bind(&Display::onConnectionGetStatusResponse, this, _1));
+  connectionClient->setOnGetObjectResponse(std::bind(&Display::onConnectionGetObjectResponse, this, _1));
+  connectionClient->setOnCreateNotification(std::bind(&Display::onConnectionCreateNotification, this, _1));
+  connectionClient->setOnUpdateNotification(std::bind(&Display::onConnectionUpdateNotification, this, _1));
+  connectionClient->setOnDeleteNotification(std::bind(&Display::onConnectionDeleteNotification, this));;
 
-  client->getResource();
+  accessPointClient = QueueResourceClient<AccessPoint>::makeUnique(queueClient);
+  accessPointClient->setOnGetStatusResponse(std::bind(&Display::onAccessPointGetStatusResponse, this, _1));
+  accessPointClient->setOnGetObjectResponse(std::bind(&Display::onAccessPointGetObjectResponse, this, _1));
+  accessPointClient->setOnCreateNotification(std::bind(&Display::onAccessPointCreateNotification, this, _1));
+  accessPointClient->setOnDeleteNotification(std::bind(&Display::onAccessPointDeleteNotification, this));;
+
+  connectionClient->getResource();
+  accessPointClient->getResource();
 }
 
 void
@@ -57,38 +60,68 @@ Display::colorWipe(uint32_t color) {
 }
 
 void
-Display::updateConnectionStatus(const Connection& connection) {
-  if (connection.getIsConnected())
-    colorWipe(pixels->Color(0, 25, 0, 0));
-  else
-    colorWipe(pixels->Color(25, 0, 0, 0));
-}
-
-void
-Display::onConnectionGetStatusResponse(const Core::StatusResult& status) {
-  if (status.getStatusCode() == StatusCode::NotFound) {
-    colorWipe(pixels->Color(0, 0, 0, 0));
+Display::updateDisplay() {
+  if (!isConnected) {
+    if (hasAccessPoint) {
+      colorWipe(pixels->Color(0, 25, 0));
+    } else if (!isConnected) {
+      colorWipe(pixels->Color(25, 0, 0));
+    }
   } else {
-    colorWipe(pixels->Color(0, 0, 0, 25));
+    colorWipe(pixels->Color(0, 0, 0));
   }
 }
 
 void
+Display::onConnectionGetStatusResponse(const Core::StatusResult& status) {
+  isConnected = false;
+  updateDisplay();
+}
+
+void
 Display::onConnectionGetObjectResponse(const Connection& connection) {
-  updateConnectionStatus(connection);
+  isConnected = connection.getIsConnected();
+  updateDisplay();
 }
 
 void
 Display::onConnectionCreateNotification(const Connection& connection) {
-  updateConnectionStatus(connection);
+  isConnected = connection.getIsConnected();
+  updateDisplay();
 }
 
 void
 Display::onConnectionUpdateNotification(const Connection& connection) {
-  updateConnectionStatus(connection);
+  isConnected = connection.getIsConnected();
+  updateDisplay();
 }
 
 void
 Display::onConnectionDeleteNotification() {
-  colorWipe(pixels->Color(0, 0, 0, 0));
+  isConnected = false;
+  updateDisplay();
+}
+
+void
+Display::onAccessPointGetStatusResponse(const Core::StatusResult& status) {
+  hasAccessPoint = false;
+  updateDisplay();
+}
+
+void
+Display::onAccessPointGetObjectResponse(const AccessPoint& accessPoint) {
+  hasAccessPoint = true;
+  updateDisplay();
+}
+
+void
+Display::onAccessPointCreateNotification(const AccessPoint& accessPoint) {
+  hasAccessPoint = true;
+  updateDisplay();
+}
+
+void
+Display::onAccessPointDeleteNotification() {
+  hasAccessPoint = false;
+  updateDisplay();
 }
