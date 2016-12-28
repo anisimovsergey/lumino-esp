@@ -90,7 +90,10 @@ Display::onGetColor() {
 Core::StatusResult::Unique
 Display::onUpdateColor(const Models::Color& color) {
   this->color = color;
+  settings->setColor(color);
   updateDisplay();
+  auto c = Models::Color::makeUnique(color);
+  colorController->sendUpdateNotification(std::move(c));
   return StatusResult::OK();
 }
 

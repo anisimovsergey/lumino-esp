@@ -25,7 +25,7 @@ namespace Services {
   class WiFiManager : public Core::ILoopedService {
     TYPE_PTRS(WiFiManager)
   public:
-    WiFiManager(std::shared_ptr<const Settings> settings,
+    WiFiManager(Services::Settings::Shared settings,
                 Core::IMessageQueue::Shared messageQueue);
     ~WiFiManager();
 
@@ -33,7 +33,7 @@ namespace Services {
     void   loop() override;
 
   private:
-    std::shared_ptr<const Settings>   settings;
+    Services::Settings::Shared        settings;
     Core::IMessageQueue::Shared       messageQueue;
     std::unique_ptr<DNSServer>        dnsServer;
     Ticker                            disconnectTimer;
@@ -75,7 +75,6 @@ namespace Services {
 
     // Access point automatic shutdown
     static void onDisconnectStatic(WiFiManager* manager);
-
     void startDisconnectTimer();
     void stopDisconnectTimer();
     void onDisconnectTimeout();

@@ -14,7 +14,7 @@ using namespace Services;
 using namespace std::placeholders;
 
 WiFiManager::WiFiManager(
-  std::shared_ptr<const Settings> settings,
+  Services::Settings::Shared settings,
   Core::IMessageQueue::Shared messageQueue) :
   settings(settings),
   messageQueue(messageQueue) {
@@ -54,7 +54,8 @@ WiFiManager::~WiFiManager() {
 
 void
 WiFiManager::start() {
-  WiFi.hostname(settings->getDeviceName().c_str());
+  // Set DHCP host name
+  WiFi.hostname(settings->getUniqueName().c_str());
   startSoftAP();
   startDisconnectTimer();
 }
@@ -102,7 +103,8 @@ WiFiManager::disconnect() {
 
 void
 WiFiManager::startSoftAP() {
-  WiFi.softAP(settings->getDeviceName().c_str());
+  // Set access point name (SSID)
+  WiFi.softAP(settings->getUniqueName().c_str());
   dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
   dnsServer->start(53, "*", WiFi.softAPIP());
   accessPointController->sendCreateNotification(createAccessPointObject());
@@ -128,7 +130,7 @@ WiFiManager::createConnectionObject() {
 
 Models::AccessPoint::Unique
 WiFiManager::createAccessPointObject() {
-  return AccessPoint::makeUnique(settings->getDeviceName());
+  return AccessPoint::makeUnique(settings->getUniqueName());
 }
 
 ActionResult::Unique
@@ -178,7 +180,7 @@ WiFiManager::onGetAccessPoint() {
 void
 WiFiManager::onConnected() {
   if (hasConnection() && !isConnectedInternal) {
-    if (MDNS.begin(settings->getDeviceName().c_str())) {
+    if (MDNS.begin(settings->getUniqueName().c_str())) {
       MDNS.addService("http", "tcp", 80);
     }
     isConnectedInternal = true;
