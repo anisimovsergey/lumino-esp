@@ -2,7 +2,5 @@
 
 using namespace Models;
 
-Settings::Settings(
-  std::string deviceName) :
-  deviceName(deviceName) {
+Settings::Settings(std::string deviceName) : deviceName(deviceName) {
 }
