@@ -12,7 +12,7 @@
 namespace Core {
 
 class ILoopedService {
-  TYPE_PTRS(ILoopedService)
+  TYPE_PTRS_ABSTRACT(ILoopedService)
   public:
       virtual ~ILoopedService();
       virtual void loop() = 0;

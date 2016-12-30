@@ -1,7 +1,5 @@
 #include "NetworkSerializer.hpp"
 
-#include <ESP8266WiFi.h>
-
 using namespace Core;
 using namespace Json;
 using namespace Models;

@@ -17,7 +17,6 @@ SettingsController::SettingsController(
   messageQueue(messageQueue) {
 
   auto queueController = messageQueue->createController(ControllerId);
-
   controller = QueueResourceController<Models::Settings>::makeUnique(queueController);
   controller->setOnGetRequestHandler(std::bind(&SettingsController::onGetSettings, this));
   controller->setOnUpdateRequestHandler(std::bind(&SettingsController::onUpdateSettings, this, _1));

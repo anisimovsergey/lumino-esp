@@ -10,15 +10,15 @@
 #include "Core/ILoopedService.hpp"
 #include "Core/IMessageQueue.hpp"
 #include "Core/QueueResourceController.hpp"
-#include "Models/Settings.hpp"
+#include "Models/Color.hpp"
 #include "Services/Settings.hpp"
 
 namespace Services {
 
-class SettingsController : public Core::ILoopedService  {
-  TYPE_PTRS(SettingsController)
+class ColorController : public Core::ILoopedService  {
+  TYPE_PTRS(ColorController)
   public:
-    SettingsController(Services::Settings::Shared settings,
+    ColorController(Services::Settings::Shared settings,
                        Core::IMessageQueue::Shared messageQueue);
 
     // From ILoopedService
@@ -27,10 +27,10 @@ class SettingsController : public Core::ILoopedService  {
   private:
     Services::Settings::Shared          settings;
     Core::IMessageQueue::Shared         messageQueue;
-    Core::QueueResourceController<Models::Settings>::Unique controller;
+    Core::QueueResourceController<Models::Color>::Unique controller;
 
-    Core::ActionResult::Unique onGetSettings();
-    Core::StatusResult::Unique onUpdateSettings(const Models::Settings& model);
+    Core::ActionResult::Unique onGetColor();
+    Core::StatusResult::Unique onUpdateColor(const Models::Color& model);
 };
 
 }

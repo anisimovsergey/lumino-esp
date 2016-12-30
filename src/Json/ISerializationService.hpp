@@ -16,7 +16,7 @@
 namespace Json {
 
 class ISerializationService {
-  TYPE_PTRS(ISerializationService)
+  TYPE_PTRS_ABSTRACT(ISerializationService)
   public:
     virtual ~ISerializationService();
 

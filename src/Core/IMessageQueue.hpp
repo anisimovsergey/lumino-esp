@@ -13,15 +13,13 @@
 #include "QueueClient.hpp"
 #include "QueueController.hpp"
 
-#include <WString.h>
-
 #include <memory>
 #include <functional>
 
 namespace Core {
 
 class IMessageQueue : public ILoopedService {
-  TYPE_PTRS(IMessageQueue)
+  TYPE_PTRS_ABSTRACT(IMessageQueue)
   public:
     virtual ~IMessageQueue();
 

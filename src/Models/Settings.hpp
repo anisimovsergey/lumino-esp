@@ -7,7 +7,6 @@
 #ifndef MODELS_SETTINGS_HPP
 #define MODELS_SETTINGS_HPP
 
-#include "WString.h"
 #include "Core/IEntity.hpp"
 
 namespace Models {

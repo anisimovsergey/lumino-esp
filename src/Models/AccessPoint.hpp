@@ -7,7 +7,6 @@
 #ifndef MODELS_ACCESS_POINT_HPP
 #define MODELS_ACCESS_POINT_HPP
 
-#include "WString.h"
 #include "Core/IEntity.hpp"
 
 namespace Models {
