@@ -15,7 +15,7 @@
 namespace Core {
 
 class IList : public IEntity {
-  TYPE_INFO(IList, IEntity, "list")
+  TYPE_PTRS_ABSTRACT(IList)
   public:
     virtual ~IList();
 

@@ -1,7 +1,7 @@
 #include "Core/Logger.hpp"
 #include "Core/MessageQueue.hpp"
 #include "Core/StringFormat.hpp"
-#include "Services/Display.hpp"
+#include "Services/DisplayController.hpp"
 #include "Services/WiFiManager.hpp"
 #include "Services/WiFiScanner.hpp"
 #include "Services/WebServerAsync.hpp"
@@ -37,7 +37,7 @@ void setup(void){
   Logger::message("Creating a message queue...");
   auto messageQueue(MessageQueue::makeShared());
   Logger::message("Creating a display..");
-  auto display(Display::makeShared(settings, messageQueue));
+  auto display(DisplayController::makeShared(messageQueue));
   Logger::message("Creating a wifi manager...");
   auto wifiManager(WiFiManager::makeShared(settings, messageQueue));
   Logger::message("Creating a wifi scanner...");

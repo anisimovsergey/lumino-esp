@@ -4,55 +4,46 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef SERVICES_DISPLAY_HPP
-#define SERVICES_DISPLAY_HPP
+#ifndef SERVICES_DISPLAY_CONTROLLER_HPP
+#define SERVICES_DISPLAY_CONTROLLER_HPP
 
 #include "Core/ILoopedService.hpp"
 #include "Core/IMessageQueue.hpp"
 #include "Core/QueueResourceClient.hpp"
-#include "Core/QueueResourceController.hpp"
 #include "Models/Color.hpp"
 #include "Models/Connection.hpp"
 #include "Models/AccessPoint.hpp"
-#include "Services/Settings.hpp"
-
-#include <memory>
 
 class Adafruit_NeoPixel;
 
 namespace Services {
 
-class Display : public Core::ILoopedService  {
-  TYPE_PTRS(Display)
+class DisplayController : public Core::ILoopedService  {
+  TYPE_PTRS(DisplayController)
   public:
-    Display(Services::Settings::Shared settings,
-            Core::IMessageQueue::Shared messageQueue);
+    DisplayController(Core::IMessageQueue::Shared messageQueue);
 
     // From ILoopedService
     virtual void loop() override;
 
   private:
-    Services::Settings::Shared          settings;
     Core::IMessageQueue::Shared         messageQueue;
     std::unique_ptr<Adafruit_NeoPixel>  pixels;
 
-    Core::QueueResourceController<Models::Color>::Shared colorController;
-    Core::QueueResourceClient<Models::Connection>::Unique connectionClient;
-    Core::QueueResourceClient<Models::AccessPoint>::Unique accessPointClient;
+    Core::QueueResourceClient<Models::Color>::Unique        colorClient;
+    Core::QueueResourceClient<Models::Connection>::Unique   connectionClient;
+    Core::QueueResourceClient<Models::AccessPoint>::Unique  accessPointClient;
 
-    // Color
     Models::Color color;
-
-    // WiFi state
     bool hasAccessPoint;
     bool isConnected;
 
     void colorWipe(uint32_t color);
     void updateDisplay();
 
-    // Color controller
-    Core::ActionResult::Unique onGetColor();
-    Core::StatusResult::Unique onUpdateColor(const Models::Color& color);
+    // Color events
+    void onColorGetObjectResponse(const Models::Color& color);
+    void onColorUpdateNotification(const Models::Color& color);
 
     // Connection events
     void onConnectionGetStatusResponse(const Core::StatusResult& status);
@@ -70,4 +61,4 @@ class Display : public Core::ILoopedService  {
 
 }
 
-#endif /* end of include guard: SERVICES_DISPLAY_HPP */
+#endif /* end of include guard: SERVICES_DISPLAY_CONTROLLER_HPP */

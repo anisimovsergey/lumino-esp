@@ -2,3 +2,7 @@
 .clang_complete
 .gcc-flags.json
 .piolibdeps
+CMakeFiles
+CMakeCache.txt
+cmake_install.cmake
+Makefile

@@ -7,12 +7,12 @@
 #ifndef CORE_I_ENTITY_HPP
 #define CORE_I_ENTITY_HPP
 
-#include "TypeInfo.hpp"
+#include "Core/TypeInfo.hpp"
 
 namespace Core {
 
 class IEntity {
-TYPE_PTRS(IEntity)
+TYPE_PTRS_ABSTRACT(IEntity)
 public:
   virtual ~IEntity();
   virtual const char* getTypeId() const = 0;

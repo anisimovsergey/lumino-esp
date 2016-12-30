@@ -10,12 +10,10 @@
 #include "Core/ActionResult.hpp"
 #include "Core/IList.hpp"
 
-#include <WString.h>
-
 namespace Json {
 
 class ISerializationContext {
-  TYPE_PTRS(ISerializationContext)
+  TYPE_PTRS_ABSTRACT(ISerializationContext)
   public:
     virtual ~ISerializationContext();
 
@@ -26,7 +24,7 @@ class ISerializationContext {
     virtual Core::StatusResult::Unique
       getStringValue(const std::string& key, std::string& value) = 0;
     virtual Core::StatusResult::Unique
-      getIntValue(const std::string& key, int& value) = 0;      
+      getIntValue(const std::string& key, int& value) = 0;
     virtual Core::StatusResult::Unique
       getBoolValue(const std::string& key, bool& value) = 0;
     virtual Core::StatusResult::Unique

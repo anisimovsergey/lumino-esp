@@ -16,6 +16,7 @@
 #include <list>
 #include <algorithm>
 
+#include <WString.h>
 #include <Hash.h>
 #include <ESPAsyncWebServer.h>
 #include <ESPAsyncWebServer.h>

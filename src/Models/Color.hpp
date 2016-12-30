@@ -7,7 +7,6 @@
 #ifndef MODELS_DISPLAY_HPP
 #define MODELS_DISPLAY_HPP
 
-#include "WString.h"
 #include "Core/IEntity.hpp"
 
 namespace Models {
