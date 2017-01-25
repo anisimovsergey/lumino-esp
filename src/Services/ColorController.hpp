@@ -7,30 +7,30 @@
 #ifndef SETTINGS_CONTROLLER_HPP
 #define SETTINGS_CONTROLLER_HPP
 
-#include "Core/ILoopedService.hpp"
-#include "Core/IMessageQueue.hpp"
-#include "Core/QueueResourceController.hpp"
+#include "Core/IService.hpp"
+#include "Messaging/IMessageQueue.hpp"
+#include "Messaging/QueueResourceController.hpp"
 #include "Models/Color.hpp"
 #include "Services/Settings.hpp"
 
 namespace Services {
 
-class ColorController : public Core::ILoopedService  {
+class ColorController : public Core::IService  {
   TYPE_PTRS(ColorController)
   public:
     ColorController(Services::Settings::Shared settings,
-                       Core::IMessageQueue::Shared messageQueue);
+                    Messaging::IMessageQueue::Shared messageQueue);
 
     // From ILoopedService
-    virtual void loop() override;
+    virtual void idle() override;
 
   private:
-    Services::Settings::Shared          settings;
-    Core::IMessageQueue::Shared         messageQueue;
-    Core::QueueResourceController<Models::Color>::Unique controller;
+    Services::Settings::Shared                  settings;
+    Messaging::IMessageQueue::Shared            messageQueue;
+    Messaging::QueueResourceController::Shared  controller;
 
-    Core::ActionResult::Unique onGetColor();
-    Core::StatusResult::Unique onUpdateColor(const Models::Color& model);
+    Core::IEntity::Unique onGetColor();
+    Core::IEntity::Unique onUpdateColor(const Models::Color& model);
 };
 
 }

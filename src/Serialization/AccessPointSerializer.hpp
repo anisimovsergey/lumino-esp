@@ -4,27 +4,27 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef JSON_ACCESS_POINT_SERIALIZER_HPP
-#define JSON_ACCESS_POINT_SERIALIZER_HPP
+#ifndef SERIALIZATION_ACCESS_POINT_SERIALIZER_HPP
+#define SERIALIZATION_ACCESS_POINT_SERIALIZER_HPP
 
-#include "Serializer.hpp"
+#include "Serialization/Serializer.hpp"
 #include "Models/AccessPoint.hpp"
 
-namespace Json {
+namespace Serialization {
 
 class AccessPointSerializer : public Serializer<Models::AccessPoint> {
   TYPE_PTRS(AccessPointSerializer)
   protected:
     // From Serializer
-    virtual Core::StatusResult::Unique serialize(
+    virtual Core::Status serialize(
       const Models::AccessPoint& accessPoint,
       ISerializationContext& context) const override;
 
-    virtual Core::StatusResult::Unique deserialize(
+    virtual Core::Status deserialize(
       Models::AccessPoint::Unique& accessPoint,
-      ISerializationContext& context) const override;
+      IDeserializationContext& context) const override;
 };
 
 }
 
-#endif /* end of include guard: JSON_ACCESS_POINT_SERIALIZER_HPP */
+#endif /* end of include guard: SERIALIZATION_ACCESS_POINT_SERIALIZER_HPP */

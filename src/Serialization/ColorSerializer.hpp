@@ -4,27 +4,27 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef JSON_COLOR_SERIALIZER_HPP
-#define JSON_COLOR_SERIALIZER_HPP
+#ifndef SERIALIZATION_COLOR_SERIALIZER_HPP
+#define SERIALIZATION_COLOR_SERIALIZER_HPP
 
-#include "Serializer.hpp"
+#include "Serialization/Serializer.hpp"
 #include "Models/Color.hpp"
 
-namespace Json {
+namespace Serialization {
 
 class ColorSerializer : public Serializer<Models::Color> {
   TYPE_PTRS(ColorSerializer)
   protected:
     // From Serializer
-    virtual Core::StatusResult::Unique serialize(
+    virtual Core::Status serialize(
       const Models::Color& color,
       ISerializationContext& context) const override;
 
-    virtual Core::StatusResult::Unique deserialize(
+    virtual Core::Status deserialize(
       Models::Color::Unique& color,
-      ISerializationContext& context) const override;
+      IDeserializationContext& context) const override;
 };
 
 }
 
-#endif /* end of include guard: JSON_CONNECTION_SERIALIZER_HPP */
+#endif /* end of include guard: SERIALIZATION_CONNECTION_SERIALIZER_HPP */

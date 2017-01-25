@@ -11,7 +11,9 @@
 
 using namespace Core;
 using namespace Models;
+using namespace Messaging;
 using namespace Services;
+
 using namespace std::placeholders;
 
 namespace {
@@ -19,9 +21,10 @@ namespace {
 }
 
 DisplayController::DisplayController(
-  Core::IMessageQueue::Shared messageQueue) :
+  IMessageQueue::Shared messageQueue) :
   messageQueue(messageQueue),
-  pixels(Core::makeUnique<Adafruit_NeoPixel>(PIXEL_COUNT, PIXEL_PIN, PIXEL_TYPE)) {
+  pixels(new Adafruit_NeoPixel(PIXEL_COUNT, PIXEL_PIN, PIXEL_TYPE),
+  [](Adafruit_NeoPixel *impl) { delete impl; }) {
 
   pixels->begin();
   color           = Color(0,0,0);
@@ -29,30 +32,29 @@ DisplayController::DisplayController(
   isConnected     = false;
   updateDisplay();
 
-  auto queueClient = messageQueue->createClient(SenderId);
-  colorClient = QueueResourceClient<Color>::makeUnique(queueClient);
-  colorClient->setOnGetObjectResponse(std::bind(&DisplayController::onColorGetObjectResponse, this, _1));
-  colorClient->setOnUpdateNotification(std::bind(&DisplayController::onColorUpdateNotification, this, _1));
+  colorClient = messageQueue->createClient(SenderId, Color::TypeId());
+  colorClient->addOnResponse<Color>("get", std::bind(&DisplayController::onColorGetObjectResponse, this, _1));
+  colorClient->addOnEvent<Color>("updated", std::bind(&DisplayController::onColorUpdateNotification, this, _1));
 
-  connectionClient = QueueResourceClient<Connection>::makeUnique(queueClient);
-  connectionClient->setOnGetStatusResponse(std::bind(&DisplayController::onConnectionGetStatusResponse, this, _1));
-  connectionClient->setOnGetObjectResponse(std::bind(&DisplayController::onConnectionGetObjectResponse, this, _1));
-  connectionClient->setOnCreateNotification(std::bind(&DisplayController::onConnectionCreateNotification, this, _1));
-  connectionClient->setOnUpdateNotification(std::bind(&DisplayController::onConnectionUpdateNotification, this, _1));
-  connectionClient->setOnDeleteNotification(std::bind(&DisplayController::onConnectionDeleteNotification, this));;
+  connectionClient = messageQueue->createClient(SenderId, Connection::TypeId());
+  connectionClient->addOnResponse<Status>("get", std::bind(&DisplayController::onConnectionGetStatusResponse, this, _1));
+  connectionClient->addOnResponse<Connection>("get", std::bind(&DisplayController::onConnectionGetObjectResponse, this, _1));
+  connectionClient->addOnEvent<Connection>("created", std::bind(&DisplayController::onConnectionCreateNotification, this, _1));
+  connectionClient->addOnEvent<Connection>("updated", std::bind(&DisplayController::onConnectionUpdateNotification, this, _1));
+  connectionClient->addOnEvent("deleted", std::bind(&DisplayController::onConnectionDeleteNotification, this));;
 
-  accessPointClient = QueueResourceClient<AccessPoint>::makeUnique(queueClient);
-  accessPointClient->setOnGetStatusResponse(std::bind(&DisplayController::onAccessPointGetStatusResponse, this, _1));
-  accessPointClient->setOnGetObjectResponse(std::bind(&DisplayController::onAccessPointGetObjectResponse, this, _1));
-  accessPointClient->setOnCreateNotification(std::bind(&DisplayController::onAccessPointCreateNotification, this, _1));
-  accessPointClient->setOnDeleteNotification(std::bind(&DisplayController::onAccessPointDeleteNotification, this));;
+  accessPointClient = messageQueue->createClient(SenderId, AccessPoint::TypeId());
+  accessPointClient->addOnResponse<Status>("get", std::bind(&DisplayController::onAccessPointGetStatusResponse, this, _1));
+  accessPointClient->addOnResponse<AccessPoint>("get", std::bind(&DisplayController::onAccessPointGetObjectResponse, this, _1));
+  accessPointClient->addOnEvent<AccessPoint>("created", std::bind(&DisplayController::onAccessPointCreateNotification, this, _1));
+  accessPointClient->addOnEvent("deleted", std::bind(&DisplayController::onAccessPointDeleteNotification, this));;
 
-  connectionClient->getResource();
-  accessPointClient->getResource();
+  connectionClient->sendRequest("get");
+  accessPointClient->sendRequest("get");
 }
 
 void
-DisplayController::loop() {
+DisplayController::idle() {
   // Perform animation
 }
 
@@ -90,7 +92,7 @@ DisplayController::onColorUpdateNotification(const Color& color) {
 }
 
 void
-DisplayController::onConnectionGetStatusResponse(const Core::StatusResult& status) {
+DisplayController::onConnectionGetStatusResponse(const Core::Status& status) {
   isConnected = false;
   updateDisplay();
 }
@@ -120,7 +122,7 @@ DisplayController::onConnectionDeleteNotification() {
 }
 
 void
-DisplayController::onAccessPointGetStatusResponse(const Core::StatusResult& status) {
+DisplayController::onAccessPointGetStatusResponse(const Core::Status& status) {
   hasAccessPoint = false;
   updateDisplay();
 }

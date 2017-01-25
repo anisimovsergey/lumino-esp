@@ -1,11 +1,11 @@
-#include "Core/Logger.hpp"
-#include "Core/MessageQueue.hpp"
-#include "Core/StringFormat.hpp"
+#include "Core/Format.hpp"
+#include "Services/Logger.hpp"
 #include "Services/DisplayController.hpp"
 #include "Services/WiFiManager.hpp"
 #include "Services/WiFiScanner.hpp"
 #include "Services/WebServerAsync.hpp"
 #include "Services/Settings.hpp"
+#include "Messaging/MessageQueue.hpp"
 #include "Serialization/SerializationService.hpp"
 #include "Serialization/StatusSerializer.hpp"
 #include "Serialization/ListSerializer.hpp"
@@ -32,11 +32,11 @@ void setup(void){
   // Creating services
   logger->message("Creating settings...");
   auto settings(Settings::makeShared());
-  Logger::message("Creating a message queue...");
-  auto messageQueue(MessageQueue::makeShared());
-  Logger::message("Creating a display..");
+  logger->message("Creating a message queue...");
+  auto messageQueue(MessageQueue::makeShared(logger));
+  logger->message("Creating a display..");
   auto display(DisplayController::makeShared(messageQueue));
-  Logger::message("Creating a wifi manager...");
+  logger->message("Creating a wifi manager...");
   auto wifiManager(WiFiManager::makeShared(settings, messageQueue));
   logger->message("Creating a wifi scanner...");
   auto wiFiScanner(WiFiScanner::makeShared(messageQueue));

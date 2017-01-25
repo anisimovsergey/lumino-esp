@@ -7,30 +7,30 @@
 #ifndef SETTINGS_CONTROLLER_HPP
 #define SETTINGS_CONTROLLER_HPP
 
-#include "Core/ILoopedService.hpp"
-#include "Core/IMessageQueue.hpp"
-#include "Core/QueueResourceController.hpp"
+#include "Core/IService.hpp"
+#include "Messaging/IMessageQueue.hpp"
+#include "Messaging/QueueResourceController.hpp"
 #include "Models/Settings.hpp"
 #include "Services/Settings.hpp"
 
 namespace Services {
 
-class SettingsController : public Core::ILoopedService  {
+class SettingsController : public Core::IService  {
   TYPE_PTRS(SettingsController)
   public:
     SettingsController(Services::Settings::Shared settings,
-                       Core::IMessageQueue::Shared messageQueue);
+                       Messaging::IMessageQueue::Shared messageQueue);
 
     // From ILoopedService
-    virtual void loop() override;
+    virtual void idle() override;
 
   private:
-    Services::Settings::Shared          settings;
-    Core::IMessageQueue::Shared         messageQueue;
-    Core::QueueResourceController<Models::Settings>::Unique controller;
+    Services::Settings::Shared                  settings;
+    Messaging::IMessageQueue::Shared            messageQueue;
+    Messaging::QueueResourceController::Shared  controller;
 
-    Core::ActionResult::Unique onGetSettings();
-    Core::StatusResult::Unique onUpdateSettings(const Models::Settings& model);
+    Core::IEntity::Unique onGetSettings();
+    Core::IEntity::Unique onUpdateSettings(const Models::Settings& model);
 };
 
 }

@@ -1,9 +1,9 @@
 #include "ColorController.hpp"
 
-#include "Core/ObjectResult.hpp"
-
 using namespace Core;
 using namespace Services;
+using namespace Models;
+
 using namespace std::placeholders;
 
 namespace {
@@ -12,29 +12,27 @@ namespace {
 
 ColorController::ColorController(
   Services::Settings::Shared settings,
-  Core::IMessageQueue::Shared messageQueue) :
+  Messaging::IMessageQueue::Shared messageQueue) :
   settings(settings),
   messageQueue(messageQueue) {
 
-  auto queueController = messageQueue->createController(ControllerId);
-  controller = QueueResourceController<Models::Color>::makeUnique(queueController);
-  controller->setOnGetRequestHandler(std::bind(&ColorController::onGetColor, this));
-  controller->setOnUpdateRequestHandler(std::bind(&ColorController::onUpdateColor, this, _1));
+  controller = messageQueue->createController(Color::TypeId());
+  controller->addOnRequest("get", std::bind(&ColorController::onGetColor, this));
+  controller->addOnRequest<Color>("update", std::bind(&ColorController::onUpdateColor, this, _1));
 }
 
 void
-ColorController::loop() {
+ColorController::idle() {
 }
 
-Core::ActionResult::Unique
+Core::IEntity::Unique
 ColorController::onGetColor() {
-  auto model = Models::Color::makeUnique(settings->getColor());
-  return ObjectResult::makeUnique(StatusCode::OK, std::move(model));
+  return Models::Color::makeUnique(settings->getColor());
 }
 
-Core::StatusResult::Unique
+Core::IEntity::Unique
 ColorController::onUpdateColor(const Models::Color& model) {
   settings->setColor(model);
-  controller->sendUpdateNotification(Models::Color::makeUnique(model));
-  return StatusResult::OK();
+  controller->sendEvent("updated", Models::Color::makeUnique(model));
+  return Status::makeUnique(Status::OK);
 }

@@ -7,9 +7,9 @@
 #ifndef SERVICES_DISPLAY_CONTROLLER_HPP
 #define SERVICES_DISPLAY_CONTROLLER_HPP
 
-#include "Core/ILoopedService.hpp"
-#include "Core/IMessageQueue.hpp"
-#include "Core/QueueResourceClient.hpp"
+#include "Core/IService.hpp"
+#include "Messaging/IMessageQueue.hpp"
+#include "Messaging/QueueResourceClient.hpp"
 #include "Models/Color.hpp"
 #include "Models/Connection.hpp"
 #include "Models/AccessPoint.hpp"
@@ -18,21 +18,22 @@ class Adafruit_NeoPixel;
 
 namespace Services {
 
-class DisplayController : public Core::ILoopedService  {
+class DisplayController : public Core::IService  {
   TYPE_PTRS(DisplayController)
   public:
-    DisplayController(Core::IMessageQueue::Shared messageQueue);
+    DisplayController(Messaging::IMessageQueue::Shared messageQueue);
 
     // From ILoopedService
-    virtual void loop() override;
+    virtual void idle() override;
 
   private:
-    Core::IMessageQueue::Shared         messageQueue;
-    std::unique_ptr<Adafruit_NeoPixel>  pixels;
+    Messaging::IMessageQueue::Shared messageQueue;
+    Messaging::QueueResourceClient::Unique client;
+    std::unique_ptr<Adafruit_NeoPixel, void (*)(Adafruit_NeoPixel *)> pixels;
 
-    Core::QueueResourceClient<Models::Color>::Unique        colorClient;
-    Core::QueueResourceClient<Models::Connection>::Unique   connectionClient;
-    Core::QueueResourceClient<Models::AccessPoint>::Unique  accessPointClient;
+    Messaging::QueueResourceClient::Shared        colorClient;
+    Messaging::QueueResourceClient::Shared   connectionClient;
+    Messaging::QueueResourceClient::Shared  accessPointClient;
 
     Models::Color color;
     bool hasAccessPoint;
@@ -46,14 +47,14 @@ class DisplayController : public Core::ILoopedService  {
     void onColorUpdateNotification(const Models::Color& color);
 
     // Connection events
-    void onConnectionGetStatusResponse(const Core::StatusResult& status);
+    void onConnectionGetStatusResponse(const Core::Status& status);
     void onConnectionGetObjectResponse(const Models::Connection& connection);
     void onConnectionCreateNotification(const Models::Connection& connection);
     void onConnectionUpdateNotification(const Models::Connection& connection);
     void onConnectionDeleteNotification();
 
     // Access point events
-    void onAccessPointGetStatusResponse(const Core::StatusResult& status);
+    void onAccessPointGetStatusResponse(const Core::Status& status);
     void onAccessPointGetObjectResponse(const Models::AccessPoint& accessPoint);
     void onAccessPointCreateNotification(const Models::AccessPoint& accessPoint);
     void onAccessPointDeleteNotification();
