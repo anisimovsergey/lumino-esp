@@ -8,6 +8,9 @@
 #define SERVICES_SETTINGS_HPP
 
 #include "Core/TypeInfo.hpp"
+#include "Models/Color.hpp"
+
+#include <Ticker.h>
 
 #include <memory>
 
@@ -16,9 +19,14 @@ namespace Services {
 class Settings {
   TYPE_PTRS(Settings)
   public:
-    std::string getDeviceName()     const;
-    std::string getLocalDomain()    const;
-    int         getWebServerPort()  const;
+    std::string     getUniqueName() const;
+    std::string     getLocalDomain() const;
+
+    std::string     getDeviceName() const;
+    void            setDeviceName(std::string name);
+
+    Models::Color   getColor() const;
+    void            setColor(const Models::Color& color);
 };
 
 }

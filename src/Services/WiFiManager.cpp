@@ -4,6 +4,7 @@
 #include "Models/Connection.hpp"
 
 #include <ESP8266WiFi.h>
+#include <ESP8266mDNS.h>
 
 using namespace Core;
 using namespace Models;
@@ -13,22 +14,23 @@ using namespace Services;
 using namespace std::placeholders;
 
 WiFiManager::WiFiManager(
-  std::shared_ptr<const Settings> settings,
-  IMessageQueue::Shared messageQueue) :
+  Services::Settings::Shared settings,
+  Core::IMessageQueue::Shared messageQueue) :
   settings(settings),
   messageQueue(messageQueue) {
 
   dnsServer = std::move(Core::makeUnique<DNSServer>());
   isConnectedInternal = false;
 
-  auto controller = messageQueue->createController(Connection::TypeId());
+  auto queueController = messageQueue->createController("WiFiManager");
 
-  controller->addOnRequest("get",
-    std::bind(&WiFiManager::onGetConnection, this));
-  controller->addOnRequest<Connection>("create",
-    std::bind(&WiFiManager::onCreateConnection, this, _1));
-  controller->addOnRequest("delete",
-    std::bind(&WiFiManager::onDeleteConnection, this));
+  connectionController = QueueResourceController<Connection>::makeUnique(queueController);
+  connectionController->setOnGetRequestHandler(std::bind(&WiFiManager::onGetConnection, this));
+  connectionController->setOnCreateRequestHandler(std::bind(&WiFiManager::onCreateConnection, this, _1));
+  connectionController->setOnDeleteRequestHandler(std::bind(&WiFiManager::onDeleteConnection, this));
+
+  accessPointController = QueueResourceController<AccessPoint>::makeUnique(queueController);
+  accessPointController->setOnGetRequestHandler(std::bind(&WiFiManager::onGetAccessPoint, this));
 
   connectedEventHandler = WiFi.onStationModeGotIP(
     [=](const WiFiEventStationModeGotIP&) { onConnected(); }
@@ -49,7 +51,8 @@ WiFiManager::WiFiManager(
 
 void
 WiFiManager::start() {
-  WiFi.hostname(settings->getDeviceName().c_str());
+  // Set DHCP host name
+  WiFi.hostname(settings->getUniqueName().c_str());
   startSoftAP();
   startDisconnectTimer();
 }
@@ -57,6 +60,12 @@ WiFiManager::start() {
 bool
 WiFiManager::hasConnection() const {
   return (WiFi.SSID().length() > 0);
+}
+
+bool
+WiFiManager::hasAccessPoint() const {
+  auto currentMode = WiFi.getMode();
+  return ((currentMode & WIFI_AP) != 0);
 }
 
 std::string
@@ -90,7 +99,24 @@ WiFiManager::disconnect() {
 }
 
 void
-WiFiManager::idle() {
+WiFiManager::startSoftAP() {
+  // Set access point name (SSID)
+  WiFi.softAP(settings->getUniqueName().c_str());
+  dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
+  dnsServer->start(53, "*", WiFi.softAPIP());
+  accessPointController->sendCreateNotification(createAccessPointObject());
+}
+
+void
+WiFiManager::stopSoftAP() {
+  dnsServer->stop();
+  WiFi.softAPdisconnect();
+  WiFi.enableAP(false);
+  accessPointController->sendDeleteNotification();
+}
+
+void
+WiFiManager::loop() {
   dnsServer->processNextRequest();
 }
 
@@ -99,7 +125,12 @@ WiFiManager::createConnectionObject() {
   return Connection::makeUnique(getNetwork(), isConnected());
 }
 
-Core::IEntity::Unique
+Models::AccessPoint::Unique
+WiFiManager::createAccessPointObject() {
+  return AccessPoint::makeUnique(settings->getUniqueName());
+}
+
+ActionResult::Unique
 WiFiManager::onGetConnection() {
   if (hasConnection()) {
     return createConnectionObject();
@@ -117,8 +148,8 @@ WiFiManager::onCreateConnection(const Models::Connection& connection) {
       "Unable to create the connection.", std::move(result));
   }
 
-  controller->sendEvent("created",createConnectionObject());
-  return Status::makeUnique(StatusCode::Created, "The connection was created.");
+  connectionController->sendCreateNotification(createConnectionObject());
+  return StatusResult::makeUnique(StatusCode::Created, "The connection was created.");
 }
 
 Core::IEntity::Unique
@@ -130,15 +161,27 @@ WiFiManager::onDeleteConnection() {
       "Unable to delete the connection.", std::move(result));
   }
 
-  controller->sendEvent("deleted");
-  return Status::makeUnique(StatusCode::NoContent, "The connection was deleted.");
+  connectionController->sendDeleteNotification();
+  return StatusResult::makeUnique(StatusCode::NoContent, "The connection was deleted.");
+}
+
+ActionResult::Unique
+WiFiManager::onGetAccessPoint() {
+  if (hasAccessPoint()) {
+    return ObjectResult::makeUnique(StatusCode::OK, createAccessPointObject());
+  } else {
+    return StatusResult::makeUnique(StatusCode::NotFound, "The access point doesn't exist.");
+  }
 }
 
 void
 WiFiManager::onConnected() {
   if (hasConnection() && !isConnectedInternal) {
+    if (MDNS.begin(settings->getUniqueName().c_str())) {
+      MDNS.addService("http", "tcp", 80);
+    }
     isConnectedInternal = true;
-    controller->sendEvent("updated", createConnectionObject());
+    connectionController->sendUpdateNotification(createConnectionObject());
   }
 }
 
@@ -146,7 +189,7 @@ void
 WiFiManager::onDisconnected() {
   if (hasConnection() && isConnectedInternal) {
     isConnectedInternal = false;
-    controller->sendEvent("updated", createConnectionObject());
+    connectionController->sendUpdateNotification(createConnectionObject());
   }
 }
 
@@ -160,20 +203,6 @@ WiFiManager::onClientDisconnected() {
   if (WiFi.softAPgetStationNum() == 0) {
     startDisconnectTimer();
   }
-}
-
-void
-WiFiManager::startSoftAP() {
-  WiFi.softAP(settings->getDeviceName().c_str());
-  dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
-  dnsServer->start(53, "*", WiFi.softAPIP());
-}
-
-void
-WiFiManager::stopSoftAP() {
-  dnsServer->stop();
-  WiFi.softAPdisconnect();
-  WiFi.mode(WIFI_STA);
 }
 
 void

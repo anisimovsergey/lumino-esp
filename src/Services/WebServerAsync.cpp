@@ -23,7 +23,7 @@ WebServerAsync::WebServerAsync(
   wsServer->onEvent(std::bind(&WebServerAsync::onSocketEvent, this,
     _1, _2, _3, _4, _5, _6));
 
-  httpServer = std::move(Core::makeUnique<AsyncWebServer>(settings->getWebServerPort()));
+  httpServer = std::move(Core::makeUnique<AsyncWebServer>(80));
   httpServer->addHandler(wsServer.get());
 }
 
