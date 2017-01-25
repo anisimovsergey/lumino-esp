@@ -6,10 +6,6 @@ using namespace Models;
 
 using namespace std::placeholders;
 
-namespace {
-  const char* ControllerId = "Color";
-}
-
 ColorController::ColorController(
   Services::Settings::Shared settings,
   Messaging::IMessageQueue::Shared messageQueue) :
