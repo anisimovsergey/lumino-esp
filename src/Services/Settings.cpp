@@ -1,5 +1,5 @@
 #include "Settings.hpp"
-#include "Core/StringFormat.hpp"
+#include "Core/Format.hpp"
 
 #include <ESP8266WiFi.h>
 

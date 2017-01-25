@@ -1,34 +1,33 @@
 #include "WiFiManager.hpp"
-#include "Core/Logger.hpp"
 #include "Core/Memory.hpp"
-#include "Core/StringFormat.hpp"
-#include "Core/ObjectResult.hpp"
+#include "Core/Format.hpp"
 #include "Models/Connection.hpp"
 
 #include <ESP8266WiFi.h>
 
 using namespace Core;
 using namespace Models;
+using namespace Messaging;
 using namespace Services;
+
 using namespace std::placeholders;
 
 WiFiManager::WiFiManager(
   std::shared_ptr<const Settings> settings,
-  Core::IMessageQueue::Shared messageQueue) :
+  IMessageQueue::Shared messageQueue) :
   settings(settings),
   messageQueue(messageQueue) {
 
   dnsServer = std::move(Core::makeUnique<DNSServer>());
   isConnectedInternal = false;
 
-  auto queueController = messageQueue->createController("WiFiManager");
-  controller = QueueResourceController<Connection>::makeUnique(queueController);
+  auto controller = messageQueue->createController(Connection::TypeId());
 
-  controller->setOnGetRequestHandler(
+  controller->addOnRequest("get",
     std::bind(&WiFiManager::onGetConnection, this));
-  controller->setOnCreateRequestHandler(
+  controller->addOnRequest<Connection>("create",
     std::bind(&WiFiManager::onCreateConnection, this, _1));
-  controller->setOnDeleteRequestHandler(
+  controller->addOnRequest("delete",
     std::bind(&WiFiManager::onDeleteConnection, this));
 
   connectedEventHandler = WiFi.onStationModeGotIP(
@@ -46,9 +45,6 @@ WiFiManager::WiFiManager(
   clientDisconnectedEventHandler = WiFi.onSoftAPModeStationDisconnected(
     [=](const WiFiEventSoftAPModeStationDisconnected&) {  onClientDisconnected(); }
   );
-}
-
-WiFiManager::~WiFiManager() {
 }
 
 void
@@ -73,28 +69,28 @@ WiFiManager::isConnected() const {
   return WiFi.isConnected();
 }
 
-Core::StatusResult::Unique
+Core::Status
 WiFiManager::connect(std::string network, std::string password) {
 
   if (isConnected())
-    return StatusResult::makeUnique(StatusCode::Conflict, "The connection already exists.");
+    return Status(StatusCode::Conflict, "The connection already exists.");
 
   WiFi.begin(network.c_str(), password.c_str());
-  return StatusResult::OK();
+  return Status::OK;
 }
 
-Core::StatusResult::Unique
+Core::Status
 WiFiManager::disconnect() {
 
   if (!hasConnection())
-    return StatusResult::makeUnique(StatusCode::Conflict, "The connection doesn't exist.");
+    return Status(StatusCode::Conflict, "The connection doesn't exist.");
 
   WiFi.disconnect();
-  return StatusResult::OK();
+  return Status::OK;
 }
 
 void
-WiFiManager::loop() {
+WiFiManager::idle() {
   dnsServer->processNextRequest();
 }
 
@@ -103,46 +99,46 @@ WiFiManager::createConnectionObject() {
   return Connection::makeUnique(getNetwork(), isConnected());
 }
 
-ActionResult::Unique
+Core::IEntity::Unique
 WiFiManager::onGetConnection() {
   if (hasConnection()) {
-    return ObjectResult::makeUnique(StatusCode::OK, createConnectionObject());
+    return createConnectionObject();
   } else {
-    return StatusResult::makeUnique(StatusCode::NotFound, "The connection doesn't exist.");
+    return Status::makeUnique(StatusCode::NotFound, "The connection doesn't exist.");
   }
 }
 
-StatusResult::Unique
+Core::IEntity::Unique
 WiFiManager::onCreateConnection(const Models::Connection& connection) {
 
   auto result = connect(connection.getNetworkSsid(), connection.getNetworkPassword());
-  if (!result->isOk()) {
-    return StatusResult::makeUnique(StatusCode::InternalServerError,
+  if (!result.isOk()) {
+    return Status::makeUnique(StatusCode::InternalServerError,
       "Unable to create the connection.", std::move(result));
   }
 
-  controller->sendCreateNotification(createConnectionObject());
-  return StatusResult::makeUnique(StatusCode::Created, "The connection was created.");
+  controller->sendEvent("created",createConnectionObject());
+  return Status::makeUnique(StatusCode::Created, "The connection was created.");
 }
 
-StatusResult::Unique
+Core::IEntity::Unique
 WiFiManager::onDeleteConnection() {
 
   auto result = disconnect();
-  if (!result->isOk()) {
-    return StatusResult::makeUnique(StatusCode::InternalServerError,
+  if (!result.isOk()) {
+    return Status::makeUnique(StatusCode::InternalServerError,
       "Unable to delete the connection.", std::move(result));
   }
 
-  controller->sendDeleteNotification();
-  return StatusResult::makeUnique(StatusCode::NoContent, "The connection was deleted.");
+  controller->sendEvent("deleted");
+  return Status::makeUnique(StatusCode::NoContent, "The connection was deleted.");
 }
 
 void
 WiFiManager::onConnected() {
   if (hasConnection() && !isConnectedInternal) {
     isConnectedInternal = true;
-    controller->sendUpdateNotification(createConnectionObject());
+    controller->sendEvent("updated", createConnectionObject());
   }
 }
 
@@ -150,7 +146,7 @@ void
 WiFiManager::onDisconnected() {
   if (hasConnection() && isConnectedInternal) {
     isConnectedInternal = false;
-    controller->sendUpdateNotification(createConnectionObject());
+    controller->sendEvent("updated", createConnectionObject());
   }
 }
 

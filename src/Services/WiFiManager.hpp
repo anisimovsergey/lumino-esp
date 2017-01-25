@@ -8,9 +8,9 @@
 #ifndef SERVICES_WIFIMANAGER_HPP
 #define SERVICES_WIFIMANAGER_HPP
 
-#include "Core/ILoopedService.hpp"
-#include "Core/IMessageQueue.hpp"
-#include "Core/QueueResourceController.hpp"
+#include "Core/IService.hpp"
+#include "Messaging/IMessageQueue.hpp"
+#include "Messaging/QueueResourceController.hpp"
 #include "Models/Connection.hpp"
 #include "Settings.hpp"
 
@@ -21,24 +21,23 @@
 #include <memory>
 
 namespace Services {
-  class WiFiManager : public Core::ILoopedService {
+  class WiFiManager : public Core::IService {
     TYPE_PTRS(WiFiManager)
   public:
     WiFiManager(
       std::shared_ptr<const Settings> settings,
-      Core::IMessageQueue::Shared messageQueue);
-    ~WiFiManager();
+      Messaging::IMessageQueue::Shared messageQueue);
 
     void   start();
-    void   loop() override;
+    void   idle() override;
 
   private:
     std::shared_ptr<const Settings>   settings;
-    Core::IMessageQueue::Shared       messageQueue;
+    Messaging::IMessageQueue::Shared  messageQueue;
     std::unique_ptr<DNSServer>        dnsServer;
     Ticker                            disconnectTimer;
     bool                              isConnectedInternal;
-    Core::QueueResourceController<Models::Connection>::Shared controller;
+    Messaging::QueueResourceController::Shared controller;
 
     // Event handlers
     WiFiEventHandler                  connectedEventHandler;
@@ -51,13 +50,13 @@ namespace Services {
     bool        isConnected() const;
 
     Models::Connection::Unique createConnectionObject();
-    Core::StatusResult::Unique connect(std::string network, std::string password);
-    Core::StatusResult::Unique disconnect();
+    Core::Status connect(std::string network, std::string password);
+    Core::Status disconnect();
 
     // Message handling
-    Core::ActionResult::Unique onGetConnection();
-    Core::StatusResult::Unique onCreateConnection(const Models::Connection& connection);
-    Core::StatusResult::Unique onDeleteConnection();
+    Core::IEntity::Unique onGetConnection();
+    Core::IEntity::Unique onCreateConnection(const Models::Connection& connection);
+    Core::IEntity::Unique onDeleteConnection();
 
     // Events handling
     void onConnected();

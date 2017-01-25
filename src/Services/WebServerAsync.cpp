@@ -2,12 +2,11 @@
 
 #include "Core/Memory.hpp"
 #include <Core/Casting.hpp>
-#include <Core/StringFormat.hpp>
-
-#include <Hash.h>
-#include <ESPAsyncWebServer.h>
+#include <Core/Format.hpp>
 
 using namespace Core;
+using namespace Messaging;
+using namespace Serialization;
 using namespace Services;
 
 using namespace std::placeholders;
@@ -15,7 +14,7 @@ using namespace std::placeholders;
 WebServerAsync::WebServerAsync(
   std::shared_ptr<const Settings> settings,
   IMessageQueue::Shared messageQueue,
-  Json::ISerializationService::Shared serializer) :
+  ISerializationService::Shared serializer) :
   settings(settings),
   messageQueue(messageQueue),
   serializer(serializer) {
@@ -28,9 +27,6 @@ WebServerAsync::WebServerAsync(
   httpServer->addHandler(wsServer.get());
 }
 
-WebServerAsync::~WebServerAsync() {
-}
-
 bool
 WebServerAsync::isIntercepted(AsyncWebServerRequest *request) {
   return request->host() != settings->getLocalDomain().c_str();
@@ -39,12 +35,12 @@ WebServerAsync::isIntercepted(AsyncWebServerRequest *request) {
 void
 WebServerAsync::redirectToSelf(AsyncWebServerRequest *request) {
   auto route = std::string("http://") + settings->getLocalDomain();
-  Logger::message(route);
   request->redirect(route.c_str());
 }
 
 void
 WebServerAsync::start() {
+  SPIFFS.begin();
   httpServer->serveStatic("", SPIFFS, "");
   httpServer->onNotFound([&](AsyncWebServerRequest *request){
     if (isIntercepted(request)) {
@@ -86,11 +82,11 @@ WebServerAsync::getClientId(AsyncWebSocketClient* client) {
   return "WebSocketsServer/" + toString(client->id());
 }
 
-Core::QueueClient::Shared
+QueueGenericClient::Shared
 WebServerAsync::findQueueClient(AsyncWebSocketClient* client) {
   auto clientId = getClientId(client);
   for(auto client: queueClients) {
-    if (client->getId() == clientId)
+    if (client->getClientId() == clientId)
       return client;
   }
   return nullptr;
@@ -101,15 +97,15 @@ WebServerAsync::sendToClinet(AsyncWebSocketClient* client,
   const Core::IEntity& entity) {
   std::string json;
   auto status = serializer->serialize(entity, json);
-  if (status->isOk()) {
+  if (status.isOk()) {
     client->text(json.c_str());
   } else {
-    status = serializer->serialize(*status, json);
-    if (status->isOk())
+    status = serializer->serialize(status, json);
+    if (status.isOk())
       client->text(json.c_str());
     else
-      Logger::error("Unable to seraile the response of type '" +
-        std::string(status->getTypeId()) + "'.");
+      logger->error("Unable to seraile the response of type '" +
+        status.getTypeId() + "'.");
   }
 }
 
@@ -120,11 +116,11 @@ WebServerAsync::onClientConnected(AsyncWebSocketClient* client) {
   queueClinet->setOnResponse([=](const Response& response){
     onResponse(client, response);
   });
-  queueClinet->setOnNotification([=](const Notification& notification){
-    onNotification(client, notification);
+  queueClinet->setOnEvent([=](const Event& event){
+    onNotification(client, event);
   });
   queueClients.push_back(queueClinet);
-  Logger::message("Client '" + clientId + "' connected.");
+  logger->message("Client '" + clientId + "' connected.");
 }
 
 void
@@ -133,9 +129,9 @@ WebServerAsync::onClientDisconnected(AsyncWebSocketClient* client) {
   if (queueClient) {
     messageQueue->removeClient(queueClient);
     queueClients.remove(queueClient);
-    Logger::message("Client '" + queueClient->getId() + "' disconnected.");
+    logger->message("Client '" + queueClient->getClientId() + "' disconnected.");
   } else {
-    Logger::error("Client '" + getClientId(client) + "' not found.");
+    logger->error("Client '" + getClientId(client) + "' not found.");
   }
 }
 
@@ -143,25 +139,25 @@ void
 WebServerAsync::onTextReceived(AsyncWebSocketClient* client, const std::string& text) {
   IEntity::Unique entity;
   Request::Unique request;
-  auto statusResult = serializer->deserialize(text, entity);
-  if (statusResult->isOk()) {
+  auto status = serializer->deserialize(text, entity);
+  if (status.isOk()) {
     request = castToUnique<Request>(std::move(entity));
     if (request) {
       auto queueClient = findQueueClient(client);
       if (queueClient) {
-        auto clientRequest = Request::makeShared(queueClient->getId(), std::move(request));
-        statusResult = queueClient->sendMessage(clientRequest);
+        request->setSender(queueClient->getClientId());
+        status = messageQueue->addRequest(std::move(request));
       } else {
-        statusResult = StatusResult::makeUnique(StatusCode::InternalServerError,
+        status = Status(StatusCode::InternalServerError,
           "Unable to find queue client '" + toString(client->id()) + "'.");
       }
     } else {
-      statusResult = StatusResult::makeUnique(StatusCode::BadRequest,
-        "Type '" + std::string(Request::TypeId) + "' was expected.");
+      status = Status(StatusCode::BadRequest, "Type '" +
+        Request::TypeId() + "' was expected.");
     }
   }
-  if (!statusResult->isOk()) {
-    sendToClinet(client, *statusResult);
+  if (!status.isOk()) {
+    sendToClinet(client, status);
   }
 }
 
@@ -171,6 +167,6 @@ WebServerAsync::onResponse(AsyncWebSocketClient* client, const Response& respons
 }
 
 void
-WebServerAsync::onNotification(AsyncWebSocketClient* client, const Notification& notification) {
-  sendToClinet(client, notification);
+WebServerAsync::onNotification(AsyncWebSocketClient* client, const Event& event) {
+  sendToClinet(client, event);
 }

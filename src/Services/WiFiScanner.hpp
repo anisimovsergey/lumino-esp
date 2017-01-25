@@ -7,9 +7,9 @@
 #ifndef SERVICES_WIFI_SCANNER_HPP
 #define SERVICES_WIFI_SCANNER_HPP
 
-#include "Core/IMessageQueue.hpp"
-#include "Core/ILoopedService.hpp"
-#include "Core/QueueResourceController.hpp"
+#include "Core/IService.hpp"
+#include "Messaging/IMessageQueue.hpp"
+#include "Messaging/QueueResourceController.hpp"
 #include "Models/Networks.hpp"
 
 #include <memory>
@@ -17,18 +17,18 @@
 
 namespace Services {
 
-class WiFiScanner : public Core::ILoopedService  {
+class WiFiScanner : public Core::IService  {
   TYPE_PTRS(WiFiScanner)
   public:
-    WiFiScanner(Core::IMessageQueue::Shared messageQueue);
+    WiFiScanner(Messaging::IMessageQueue::Shared messageQueue);
     ~WiFiScanner();
 
-    void loop() {}
+    void idle() {}
 
   private:
-    Core::IMessageQueue::Shared    messageQueue;
-    Core::QueueResourceController<Models::Networks>::Shared controller;
-    Core::ActionResult::Unique onGetNetworks();
+    Messaging::IMessageQueue::Shared    messageQueue;
+    Messaging::QueueResourceController::Shared controller;
+    Core::IEntity::Unique onGetNetworks();
 
     static bool isScanning;
     static std::list<WiFiScanner*> scanners;

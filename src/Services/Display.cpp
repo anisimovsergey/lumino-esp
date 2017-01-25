@@ -12,6 +12,7 @@
 using namespace Core;
 using namespace Models;
 using namespace Services;
+using namespace Messaging;
 using namespace std::placeholders;
 
 namespace {
@@ -20,31 +21,34 @@ namespace {
 
 Display::Display(IMessageQueue::Shared messageQueue) :
   messageQueue(messageQueue),
-  pixels(Core::makeUnique<Adafruit_NeoPixel>(PIXEL_COUNT, PIXEL_PIN, PIXEL_TYPE)) {
+  pixels(new Adafruit_NeoPixel(PIXEL_COUNT, PIXEL_PIN, PIXEL_TYPE),
+      [](Adafruit_NeoPixel *impl) { delete impl; }) {
 
   pixels->begin();
 
   colorWipe(pixels->Color(0, 0, 0));
 
-  auto queueClient = messageQueue->createClient(SenderId);
-  client = QueueResourceClient<Connection>::makeUnique(queueClient);
-
-  client->setOnGetStatusResponse(
-    std::bind(&Display::onConnectionGetStatusResponse, this, _1));
-  client->setOnGetObjectResponse(
-    std::bind(&Display::onConnectionGetObjectResponse, this, _1));
-  client->setOnCreateNotification(
-    std::bind(&Display::onConnectionCreateNotification, this, _1));
-  client->setOnUpdateNotification(
-    std::bind(&Display::onConnectionUpdateNotification, this, _1));
-  client->setOnDeleteNotification(
-    std::bind(&Display::onConnectionDeleteNotification, this));;
-
-  client->getResource();
+  auto queueClient = messageQueue->createClient(SenderId, Connection::TypeId());
+  queueClient->addOnResponse<Status>("get",
+    std::bind(&Display::onConnectionGetStatusResponse, this, _1)
+  );
+  queueClient->addOnResponse<Connection>("get",
+    std::bind(&Display::onConnectionGetResponse, this, _1)
+  );
+  queueClient->addOnEvent<Connection>("created",
+    std::bind(&Display::onConnectionCreatedEvent, this, _1)
+  );
+  queueClient->addOnEvent<Connection>("updated",
+    std::bind(&Display::onConnectionUpdatedEvent, this, _1)
+  );
+  queueClient->addOnEvent("deleted",
+    std::bind(&Display::onConnectionDeletedEvent, this)
+  );
+  client->sendRequest("get");
 }
 
 void
-Display::loop() {
+Display::idle() {
   // Perform animation
 }
 
@@ -65,7 +69,7 @@ Display::updateConnectionStatus(const Connection& connection) {
 }
 
 void
-Display::onConnectionGetStatusResponse(const Core::StatusResult& status) {
+Display::onConnectionGetStatusResponse(const Core::Status& status) {
   if (status.getStatusCode() == StatusCode::NotFound) {
     colorWipe(pixels->Color(0, 0, 0, 0));
   } else {
@@ -74,21 +78,21 @@ Display::onConnectionGetStatusResponse(const Core::StatusResult& status) {
 }
 
 void
-Display::onConnectionGetObjectResponse(const Connection& connection) {
+Display::onConnectionGetResponse(const Connection& connection) {
   updateConnectionStatus(connection);
 }
 
 void
-Display::onConnectionCreateNotification(const Connection& connection) {
+Display::onConnectionCreatedEvent(const Connection& connection) {
   updateConnectionStatus(connection);
 }
 
 void
-Display::onConnectionUpdateNotification(const Connection& connection) {
+Display::onConnectionUpdatedEvent(const Connection& connection) {
   updateConnectionStatus(connection);
 }
 
 void
-Display::onConnectionDeleteNotification() {
+Display::onConnectionDeletedEvent() {
   colorWipe(pixels->Color(0, 0, 0, 0));
 }

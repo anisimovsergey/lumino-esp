@@ -1,12 +1,12 @@
 #include "WiFiScanner.hpp"
 
-#include "Core/ObjectResult.hpp"
-
 #include <ESP8266WiFi.h>
 
 using namespace Core;
 using namespace Models;
 using namespace Services;
+using namespace Messaging;
+
 using namespace std::placeholders;
 
 extern "C" {
@@ -36,38 +36,35 @@ namespace {
 
 }
 
-WiFiScanner::WiFiScanner(IMessageQueue::Shared messageQueue) :
+WiFiScanner::WiFiScanner(Messaging::IMessageQueue::Shared messageQueue) :
   messageQueue(messageQueue) {
   scanners.push_back(this);
 
-  auto queueController = messageQueue->createController("WiFiScanner");
-  controller = QueueResourceController<Networks>::makeUnique(queueController);
-
-  controller->setOnGetRequestHandler(
-    std::bind(&WiFiScanner::onGetNetworks, this));
+  auto controller = messageQueue->createController("WiFiScanner");
+  controller->addOnRequest("get", std::bind(&WiFiScanner::onGetNetworks, this));
 }
 
 WiFiScanner::~WiFiScanner() {
   scanners.remove(this);
 }
 
-ActionResult::Unique
+IEntity::Unique
 WiFiScanner::onGetNetworks() {
   if (!isScanning) {
     auto config = (const struct scan_config){ 0 };
     if (!wifi_station_scan(&config, reinterpret_cast<scan_done_cb_t>(&onScanDone))) {
-      return StatusResult::makeUnique(StatusCode::InternalServerError,
+      return Status::makeUnique(StatusCode::InternalServerError,
         "Unable to scan WiFi networks.");
     } else {
       isScanning = true;
     }
   }
-  return StatusResult::makeUnique(StatusCode::Accepted, "Scanning FiFi networks.");
+  return Status::makeUnique(StatusCode::Accepted, "Scanning FiFi networks.");
 }
 
 void
 WiFiScanner::onScanDone(void* result, int status) {
-  ActionResult::Shared actionResult;
+  IEntity::Unique eventContent;
   if (status == OK) {
     auto networks = Networks::makeUnique();
     bss_info* head = reinterpret_cast<bss_info*>(result);
@@ -77,13 +74,13 @@ WiFiScanner::onScanDone(void* result, int status) {
       auto encryptionType = getEncryptionString(it->authmode);
       networks->add(Network(ssid, rssi, encryptionType));
     }
-    actionResult = ObjectResult::makeShared(StatusCode::OK, std::move(networks));
+    eventContent = std::move(networks);
   } else {
-    actionResult = StatusResult::makeShared(StatusCode::InternalServerError,
+    eventContent = Status::makeUnique(StatusCode::InternalServerError,
       "Failed to scan WiFi networks.");
   }
   isScanning = false;
   for(auto scanner: scanners) {
-    scanner->controller->sendGetNotification(actionResult);
+    scanner->controller->sendEvent("scanned", std::move(eventContent));
   }
 }
