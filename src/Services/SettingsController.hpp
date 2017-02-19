@@ -16,21 +16,19 @@
 namespace Services {
 
 class SettingsController : public Core::IService  {
-  TYPE_PTRS(SettingsController)
   public:
-    SettingsController(Services::Settings::Shared settings,
-                       Messaging::IMessageQueue::Shared messageQueue);
+    SettingsController(Services::Settings& settings,
+                       Messaging::IMessageQueue& messageQueue);
 
-    // From ILoopedService
     virtual void idle() override;
 
   private:
-    Services::Settings::Shared                  settings;
-    Messaging::IMessageQueue::Shared            messageQueue;
-    Messaging::QueueResourceController::Shared  controller;
+    Services::Settings&                  settings;
+    Messaging::IMessageQueue&            messageQueue;
+    std::unique_ptr<Messaging::QueueResourceController>  controller;
 
-    Core::IEntity::Unique onGetSettings();
-    Core::IEntity::Unique onUpdateSettings(const Models::Settings& model);
+    std::unique_ptr<Core::IEntity> onGetSettings();
+    std::unique_ptr<Core::IEntity> onUpdateSettings(const Models::Settings& model);
 };
 
 }

@@ -32,7 +32,7 @@ NetworkSerializer::serialize(
 
 Core::Status
 NetworkSerializer::deserialize(
-  Models::Network::Unique& network,
+  std::unique_ptr<Models::Network>& network,
   IDeserializationContext& context) const {
 
   return Status::NotImplemented;

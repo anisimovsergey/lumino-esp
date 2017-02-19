@@ -11,24 +11,30 @@ using namespace Models;
 using namespace Messaging;
 using namespace Services;
 
-using namespace std::placeholders;
-
 WiFiManager::WiFiManager(
-  Settings::Shared settings,
-  IMessageQueue::Shared messageQueue) :
+  std::shared_ptr<Settings> settings,
+  IMessageQueue& messageQueue) :
   settings(settings),
   messageQueue(messageQueue) {
 
-  dnsServer = std::move(Core::makeUnique<DNSServer>());
+  dnsServer = std::move(std::make_unique<DNSServer>());
   isConnectedInternal = false;
 
-  connectionController = messageQueue->createController(Connection::TypeId());
-  connectionController->addOnRequest("get", std::bind(&WiFiManager::onGetConnection, this));
-  connectionController->addOnRequest<Connection>("create", std::bind(&WiFiManager::onCreateConnection, this, _1));
-  connectionController->addOnRequest("delete", std::bind(&WiFiManager::onDeleteConnection, this));
+  connectionController = messageQueue.createController(Connection::TypeId());
+  connectionController->addOnRequest("get", [=](){
+    return onGetConnection();
+  });
+  connectionController->addOnRequest("create", [=](const Models::Connection& connection){
+    return onCreateConnection(connection);
+  });
+  connectionController->addOnRequest("delete", [=](){
+    return onDeleteConnection();
+  });
 
-  accessPointController = messageQueue->createController(AccessPoint::TypeId());
-  accessPointController->addOnRequest("get", std::bind(&WiFiManager::onGetAccessPoint, this));
+  accessPointController = messageQueue.createController(AccessPoint::TypeId());
+  accessPointController->addOnRequest("get", [=](){
+    return onGetAccessPoint();
+  });
 
   connectedEventHandler = WiFi.onStationModeGotIP(
     [=](const WiFiEventStationModeGotIP&) { onConnected(); }
@@ -118,57 +124,57 @@ WiFiManager::idle() {
   dnsServer->processNextRequest();
 }
 
-Models::Connection::Unique
+std::unique_ptr<Connection>
 WiFiManager::createConnectionObject() {
-  return Connection::makeUnique(getNetwork(), isConnected());
+  return std::make_unique<Connection>(getNetwork(), isConnected());
 }
 
-Models::AccessPoint::Unique
+std::unique_ptr<AccessPoint>
 WiFiManager::createAccessPointObject() {
-  return AccessPoint::makeUnique(settings->getUniqueName());
+  return std::make_unique<AccessPoint>(settings->getUniqueName());
 }
 
-Core::IEntity::Unique
+std::unique_ptr<IEntity>
 WiFiManager::onGetConnection() {
   if (hasConnection()) {
     return createConnectionObject();
   } else {
-    return Status::makeUnique(StatusCode::NotFound, "The connection doesn't exist.");
+    return std::make_unique<Status>(StatusCode::NotFound, "The connection doesn't exist.");
   }
 }
 
-Core::IEntity::Unique
+std::unique_ptr<IEntity>
 WiFiManager::onCreateConnection(const Models::Connection& connection) {
 
   auto result = connect(connection.getNetworkSsid(), connection.getNetworkPassword());
   if (!result.isOk()) {
-    return Status::makeUnique(StatusCode::InternalServerError,
+    return std::make_unique<Status>(StatusCode::InternalServerError,
       "Unable to create the connection.", std::move(result));
   }
 
   connectionController->sendEvent("created", createConnectionObject());
-  return Status::makeUnique(StatusCode::Created, "The connection was created.");
+  return std::make_unique<Status>(StatusCode::Created, "The connection was created.");
 }
 
-Core::IEntity::Unique
+std::unique_ptr<IEntity>
 WiFiManager::onDeleteConnection() {
 
   auto result = disconnect();
   if (!result.isOk()) {
-    return Status::makeUnique(StatusCode::InternalServerError,
+    return std::make_unique<Status>(StatusCode::InternalServerError,
       "Unable to delete the connection.", std::move(result));
   }
 
   connectionController->sendEvent("deleted");
-  return Status::makeUnique(StatusCode::NoContent, "The connection was deleted.");
+  return std::make_unique<Status>(StatusCode::NoContent, "The connection was deleted.");
 }
 
-Core::IEntity::Unique
+std::unique_ptr<IEntity>
 WiFiManager::onGetAccessPoint() {
   if (hasAccessPoint()) {
     return createAccessPointObject();
   } else {
-    return Status::makeUnique(StatusCode::NotFound, "The access point doesn't exist.");
+    return std::make_unique<Status>(StatusCode::NotFound, "The access point doesn't exist.");
   }
 }
 

@@ -62,7 +62,7 @@ DeserializationContext::getInt(const std::string& key, int& value) {
 }
 
 Core::Status
-DeserializationContext::getEntity(const std::string& key, Core::IEntity::Unique& entity) {
+DeserializationContext::getEntity(const std::string& key, std::unique_ptr<Core::IEntity>& entity) {
 
   auto jsonVal = jsonObject[key];
   if (!jsonVal.success())

@@ -10,10 +10,11 @@
 #include "Serialization/Serializer.hpp"
 #include "Models/Color.hpp"
 
+#include <memory>
+
 namespace Serialization {
 
 class ColorSerializer : public Serializer<Models::Color> {
-  TYPE_PTRS(ColorSerializer)
   protected:
     // From Serializer
     virtual Core::Status serialize(
@@ -21,7 +22,7 @@ class ColorSerializer : public Serializer<Models::Color> {
       ISerializationContext& context) const override;
 
     virtual Core::Status deserialize(
-      Models::Color::Unique& color,
+      std::unique_ptr<Models::Color>& color,
       IDeserializationContext& context) const override;
 };
 

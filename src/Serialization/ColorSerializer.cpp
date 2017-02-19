@@ -1,5 +1,7 @@
 #include "ColorSerializer.hpp"
 
+#include "Core/Memory.hpp"
+
 using namespace Core;
 using namespace Serialization;
 using namespace Models;
@@ -30,7 +32,7 @@ ColorSerializer::serialize(
 
 Core::Status
 ColorSerializer::deserialize(
-  Models::Color::Unique& color,
+  std::unique_ptr<Models::Color>& color,
   IDeserializationContext& context) const {
 
   int r, g, b;
@@ -46,6 +48,6 @@ ColorSerializer::deserialize(
   if (!result.isOk())
     return result;
 
-  color = Color::makeUnique(r, g, b);
+  color = std::make_unique<Color>(r, g, b);
   return Status::OK;
 }

@@ -18,7 +18,6 @@ namespace Serialization {
 struct ISerializationService;
 
 class DeserializationContext : public IDeserializationContext {
-  TYPE_PTRS(DeserializationContext)
   public:
     DeserializationContext(
       const ISerializationService& serializationService,
@@ -35,7 +34,7 @@ class DeserializationContext : public IDeserializationContext {
     virtual Core::Status
       getBool(const std::string& key, bool& value) override;
     virtual Core::Status
-      getEntity(const std::string& key, Core::IEntity::Unique& entity) override;
+      getEntity(const std::string& key, std::unique_ptr<Core::IEntity>& entity) override;
 
   private:
     const ISerializationService&              serializationService;

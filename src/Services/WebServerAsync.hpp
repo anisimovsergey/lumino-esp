@@ -25,12 +25,12 @@
 namespace Services {
 
 class WebServerAsync : public Core::IService {
-  TYPE_PTRS(WebServerAsync)
   public:
     WebServerAsync(
       std::shared_ptr<const Settings> settings,
-      Messaging::IMessageQueue::Shared messageQueue,
-      Serialization::ISerializationService::Shared serializer);
+      Messaging::IMessageQueue& messageQueue,
+      Serialization::ISerializationService& serializer,
+      Core::ILogger& logger);
 
     void start();
     void idle() override { };
@@ -39,11 +39,10 @@ class WebServerAsync : public Core::IService {
     std::shared_ptr<const Settings>       settings;
     std::unique_ptr<AsyncWebServer>       httpServer;
     std::unique_ptr<AsyncWebSocket>       wsServer;
-    Messaging::IMessageQueue::Shared                  messageQueue;
-    Serialization::ISerializationService::Shared      serializer;
-    Core::ILogger::Shared                             logger;
-    std::list<Messaging::QueueGenericClient::Shared>  queueClients;
-
+    Messaging::IMessageQueue&                  messageQueue;
+    Serialization::ISerializationService&      serializer;
+    Core::ILogger&                             logger;
+    std::list<std::unique_ptr<Messaging::QueueGenericClient>>  queueClients;
 
     bool    isIntercepted(AsyncWebServerRequest* request);
     void    redirectToSelf(AsyncWebServerRequest* request);
@@ -52,7 +51,7 @@ class WebServerAsync : public Core::IService {
       AwsEventType type, void* arg, uint8_t *data, size_t len);
 
     std::string getClientId(AsyncWebSocketClient* client);
-    Messaging::QueueGenericClient::Shared findQueueClient(AsyncWebSocketClient* client);
+    Messaging::QueueGenericClient* findQueueClient(AsyncWebSocketClient* client);
     void sendToClinet(AsyncWebSocketClient* client, const Core::IEntity& entity);
 
     // Events

@@ -1,10 +1,12 @@
 #include "AccessPointSerializer.hpp"
 
+#include "Core/Memory.hpp"
+
 using namespace Core;
 using namespace Serialization;
 using namespace Models;
 
-#define FIELD_WIFI_NETWORK    "wifi_network"
+#define FIELD_WIFI_NETWORK "wifi_network"
 
 Core::Status
 AccessPointSerializer::serialize(
@@ -20,7 +22,7 @@ AccessPointSerializer::serialize(
 
 Core::Status
 AccessPointSerializer::deserialize(
-  Models::AccessPoint::Unique& accessPoint,
+  std::unique_ptr<AccessPoint>& accessPoint,
   IDeserializationContext& context) const {
 
   std::string networkSsid;
@@ -28,6 +30,6 @@ AccessPointSerializer::deserialize(
   if (!result.isOk())
     return result;
 
-  accessPoint = AccessPoint::makeUnique(networkSsid);
+  accessPoint = std::make_unique<AccessPoint>(networkSsid);
   return Status::OK;
 }

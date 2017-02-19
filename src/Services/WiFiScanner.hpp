@@ -18,17 +18,16 @@
 namespace Services {
 
 class WiFiScanner : public Core::IService  {
-  TYPE_PTRS(WiFiScanner)
   public:
-    WiFiScanner(Messaging::IMessageQueue::Shared messageQueue);
+    WiFiScanner(Messaging::IMessageQueue& messageQueue);
     ~WiFiScanner();
 
     void idle() {}
 
   private:
-    Messaging::IMessageQueue::Shared    messageQueue;
-    Messaging::QueueResourceController::Shared controller;
-    Core::IEntity::Unique onGetNetworks();
+    Messaging::IMessageQueue&    messageQueue;
+    std::unique_ptr<Messaging::QueueResourceController> controller;
+    std::unique_ptr<Core::IEntity> onGetNetworks();
 
     static bool isScanning;
     static std::list<WiFiScanner*> scanners;

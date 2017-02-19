@@ -10,10 +10,11 @@
 #include "Serialization/Serializer.hpp"
 #include "Models/AccessPoint.hpp"
 
+#include <memory>
+
 namespace Serialization {
 
 class AccessPointSerializer : public Serializer<Models::AccessPoint> {
-  TYPE_PTRS(AccessPointSerializer)
   protected:
     // From Serializer
     virtual Core::Status serialize(
@@ -21,7 +22,7 @@ class AccessPointSerializer : public Serializer<Models::AccessPoint> {
       ISerializationContext& context) const override;
 
     virtual Core::Status deserialize(
-      Models::AccessPoint::Unique& accessPoint,
+      std::unique_ptr<Models::AccessPoint>& accessPoint,
       IDeserializationContext& context) const override;
 };
 

@@ -1,5 +1,7 @@
 #include "ConnectionSerializer.hpp"
 
+#include "Core/Memory.hpp"
+
 using namespace Core;
 using namespace Serialization;
 using namespace Models;
@@ -26,7 +28,7 @@ ConnectionSerializer::serialize(
 
 Core::Status
 ConnectionSerializer::deserialize(
-  Models::Connection::Unique& connection,
+  std::unique_ptr<Models::Connection>& connection,
   IDeserializationContext& context) const {
 
   std::string networkSsid;
@@ -39,6 +41,6 @@ ConnectionSerializer::deserialize(
   if (!result.isOk())
     return result;
 
-  connection = Connection::makeUnique(networkSsid, networkPassword);
+  connection = std::make_unique<Connection>(networkSsid, networkPassword);
   return Status::OK;
 }

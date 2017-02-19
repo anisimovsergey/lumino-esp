@@ -1,33 +1,37 @@
 #include "SettingsController.hpp"
 
+#include "Core/Memory.hpp"
+
 using namespace Core;
 using namespace Services;
 
-using namespace std::placeholders;
-
 SettingsController::SettingsController(
-  Services::Settings::Shared settings,
-  Messaging::IMessageQueue::Shared messageQueue) :
+  Services::Settings& settings,
+  Messaging::IMessageQueue& messageQueue) :
   settings(settings),
   messageQueue(messageQueue) {
 
-  controller = messageQueue->createController(Models::Settings::TypeId());
-  controller->addOnRequest("get", std::bind(&SettingsController::onGetSettings, this));
-  controller->addOnRequest<Models::Settings>("update", std::bind(&SettingsController::onUpdateSettings, this, _1));
+  controller = messageQueue.createController(Models::Settings::TypeId());
+  controller->addOnRequest("get", [=]() {
+    return onGetSettings();
+  });
+  controller->addOnRequest("update", [=](const Models::Settings& model) {
+    return onUpdateSettings(model);
+  });
 }
 
 void
 SettingsController::idle() {
 }
 
-Core::IEntity::Unique
+std::unique_ptr<Core::IEntity>
 SettingsController::onGetSettings() {
-  return Models::Settings::makeUnique(settings->getDeviceName());
+  return std::make_unique<Models::Settings>(settings.getDeviceName());
 }
 
-Core::IEntity::Unique
+std::unique_ptr<IEntity>
 SettingsController::onUpdateSettings(const Models::Settings& model) {
-  settings->setDeviceName(model.getDeviceName());
-  controller->sendEvent("updated", Models::Settings::makeUnique(model));
-  return Status::makeUnique(Status::OK);
+  settings.setDeviceName(model.getDeviceName());
+  controller->sendEvent("updated", std::make_unique<Models::Settings>(model));
+  return std::make_unique<Status>(Status::OK);
 }

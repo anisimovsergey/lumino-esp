@@ -14,16 +14,15 @@
 namespace Serialization {
 
 class ContextFactory : public IContextFactory {
-  TYPE_PTRS(ContextFactory)
   public:
     // From ISerializationContextFactory
     virtual Core::Status createSerializationContext(
       const ISerializationService& serializationService,
-      ISerializationContext::Unique& context) const override;
+      std::unique_ptr<ISerializationContext>& context) const override;
 
     virtual Core::Status createDeserializationContext(
       const ISerializationService& serializationService, const std::string& json,
-      IDeserializationContext::Unique& context) const override;
+      std::unique_ptr<IDeserializationContext>& context) const override;
 };
 
 }

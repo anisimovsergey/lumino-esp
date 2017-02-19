@@ -7,7 +7,6 @@
 #ifndef SERVICES_SETTINGS_HPP
 #define SERVICES_SETTINGS_HPP
 
-#include "Core/TypeInfo.hpp"
 #include "Models/Color.hpp"
 
 #include <Ticker.h>
@@ -17,7 +16,6 @@
 namespace Services {
 
 class Settings {
-  TYPE_PTRS(Settings)
   public:
     std::string     getUniqueName() const;
     std::string     getLocalDomain() const;

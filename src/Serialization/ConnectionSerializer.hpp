@@ -10,10 +10,11 @@
 #include "Serialization/Serializer.hpp"
 #include "Models/Connection.hpp"
 
+#include <memory>
+
 namespace Serialization {
 
 class ConnectionSerializer : public Serializer<Models::Connection> {
-  TYPE_PTRS(ConnectionSerializer)
   protected:
     // From Serializer
     virtual Core::Status serialize(
@@ -21,7 +22,7 @@ class ConnectionSerializer : public Serializer<Models::Connection> {
       ISerializationContext& context) const override;
 
     virtual Core::Status deserialize(
-      Models::Connection::Unique& connection,
+      std::unique_ptr<Models::Connection>& connection,
       IDeserializationContext& context) const override;
 };
 

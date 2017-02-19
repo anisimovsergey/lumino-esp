@@ -22,23 +22,23 @@
 #include <memory>
 
 namespace Services {
-  class WiFiManager : public Core::IService {
-    TYPE_PTRS(WiFiManager)
+
+class WiFiManager : public Core::IService {
   public:
-    WiFiManager(Services::Settings::Shared settings,
-                Messaging::IMessageQueue::Shared messageQueue);
+    WiFiManager(std::shared_ptr<Services::Settings> settings,
+                Messaging::IMessageQueue& messageQueue);
 
     void   start();
     void   idle() override;
 
   private:
-    Services::Settings::Shared                  settings;
-    Messaging::IMessageQueue::Shared            messageQueue;
+    std::shared_ptr<Services::Settings>         settings;
+    Messaging::IMessageQueue&                   messageQueue;
     std::unique_ptr<DNSServer>                  dnsServer;
     Ticker                                      disconnectTimer;
     bool                                        isConnectedInternal;
-    Messaging::QueueResourceController::Shared  connectionController;
-    Messaging::QueueResourceController::Shared  accessPointController;
+    std::unique_ptr<Messaging::QueueResourceController>  connectionController;
+    std::unique_ptr<Messaging::QueueResourceController>  accessPointController;
 
     // Event handlers
     WiFiEventHandler                  connectedEventHandler;
@@ -52,8 +52,8 @@ namespace Services {
     std::string getNetwork() const;
     bool        isConnected() const;
 
-    Models::Connection::Unique createConnectionObject();
-    Models::AccessPoint::Unique createAccessPointObject();
+    std::unique_ptr<Models::Connection> createConnectionObject();
+    std::unique_ptr<Models::AccessPoint> createAccessPointObject();
 
     Core::Status connect(std::string network, std::string password);
     Core::Status disconnect();
@@ -61,10 +61,10 @@ namespace Services {
     void stopSoftAP();
 
     // Message handling
-    Core::IEntity::Unique onGetConnection();
-    Core::IEntity::Unique onCreateConnection(const Models::Connection& connection);
-    Core::IEntity::Unique onDeleteConnection();
-    Core::IEntity::Unique onGetAccessPoint();
+    std::unique_ptr<Core::IEntity> onGetConnection();
+    std::unique_ptr<Core::IEntity> onCreateConnection(const Models::Connection& connection);
+    std::unique_ptr<Core::IEntity> onDeleteConnection();
+    std::unique_ptr<Core::IEntity> onGetAccessPoint();
 
     // Events handling
     void onConnected();
@@ -77,7 +77,8 @@ namespace Services {
     void startDisconnectTimer();
     void stopDisconnectTimer();
     void onDisconnectTimeout();
-  };
+};
+
 }
 
 #endif /* end of include guard: SERVICES_WIFIMANAGER_HPP */

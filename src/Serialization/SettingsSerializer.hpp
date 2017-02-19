@@ -10,10 +10,11 @@
 #include "Serialization/Serializer.hpp"
 #include "Models/Settings.hpp"
 
+#include <memory>
+
 namespace Serialization {
 
 class SettingsSerializer : public Serializer<Models::Settings> {
-  TYPE_PTRS(SettingsSerializer)
   protected:
     // From Serializer
     virtual Core::Status serialize(
@@ -21,7 +22,7 @@ class SettingsSerializer : public Serializer<Models::Settings> {
       ISerializationContext& context) const override;
 
     virtual Core::Status deserialize(
-      Models::Settings::Unique& settings,
+      std::unique_ptr<Models::Settings>& settings,
       IDeserializationContext& context) const override;
 };
 

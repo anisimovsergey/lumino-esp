@@ -7,8 +7,6 @@ using namespace Models;
 using namespace Services;
 using namespace Messaging;
 
-using namespace std::placeholders;
-
 extern "C" {
   #include "user_interface.h"
 }
@@ -36,37 +34,39 @@ namespace {
 
 }
 
-WiFiScanner::WiFiScanner(Messaging::IMessageQueue::Shared messageQueue) :
+WiFiScanner::WiFiScanner(Messaging::IMessageQueue& messageQueue) :
   messageQueue(messageQueue) {
   scanners.push_back(this);
 
-  auto controller = messageQueue->createController("WiFiScanner");
-  controller->addOnRequest("get", std::bind(&WiFiScanner::onGetNetworks, this));
+  auto controller = messageQueue.createController("WiFiScanner");
+  controller->addOnRequest("get", [=](){
+    return onGetNetworks();
+  });
 }
 
 WiFiScanner::~WiFiScanner() {
   scanners.remove(this);
 }
 
-IEntity::Unique
+std::unique_ptr<Core::IEntity>
 WiFiScanner::onGetNetworks() {
   if (!isScanning) {
     auto config = (const struct scan_config){ 0 };
     if (!wifi_station_scan(&config, reinterpret_cast<scan_done_cb_t>(&onScanDone))) {
-      return Status::makeUnique(StatusCode::InternalServerError,
+      return std::make_unique<Status>(StatusCode::InternalServerError,
         "Unable to scan WiFi networks.");
     } else {
       isScanning = true;
     }
   }
-  return Status::makeUnique(StatusCode::Accepted, "Scanning FiFi networks.");
+  return std::make_unique<Status>(StatusCode::Accepted, "Scanning FiFi networks.");
 }
 
 void
 WiFiScanner::onScanDone(void* result, int status) {
-  IEntity::Unique eventContent;
+  std::unique_ptr<IEntity> eventContent;
   if (status == OK) {
-    auto networks = Networks::makeUnique();
+    auto networks = std::make_unique<Networks>();
     bss_info* head = reinterpret_cast<bss_info*>(result);
     for(bss_info* it = head; it; it = STAILQ_NEXT(it, next)) {
       auto ssid = reinterpret_cast<const char*>(it->ssid);
@@ -76,7 +76,7 @@ WiFiScanner::onScanDone(void* result, int status) {
     }
     eventContent = std::move(networks);
   } else {
-    eventContent = Status::makeUnique(StatusCode::InternalServerError,
+    eventContent = std::make_unique<Status>(StatusCode::InternalServerError,
       "Failed to scan WiFi networks.");
   }
   isScanning = false;

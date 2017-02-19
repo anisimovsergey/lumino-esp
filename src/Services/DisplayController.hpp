@@ -19,21 +19,18 @@ class Adafruit_NeoPixel;
 namespace Services {
 
 class DisplayController : public Core::IService  {
-  TYPE_PTRS(DisplayController)
   public:
-    DisplayController(Messaging::IMessageQueue::Shared messageQueue);
+    DisplayController(Messaging::IMessageQueue& messageQueue);
 
-    // From ILoopedService
     virtual void idle() override;
 
   private:
-    Messaging::IMessageQueue::Shared messageQueue;
-    Messaging::QueueResourceClient::Unique client;
+    Messaging::IMessageQueue& messageQueue;
     std::unique_ptr<Adafruit_NeoPixel, void (*)(Adafruit_NeoPixel *)> pixels;
 
-    Messaging::QueueResourceClient::Shared        colorClient;
-    Messaging::QueueResourceClient::Shared   connectionClient;
-    Messaging::QueueResourceClient::Shared  accessPointClient;
+    std::unique_ptr<Messaging::QueueResourceClient> colorClient;
+    std::unique_ptr<Messaging::QueueResourceClient> connectionClient;
+    std::unique_ptr<Messaging::QueueResourceClient> accessPointClient;
 
     Models::Color color;
     bool hasAccessPoint;

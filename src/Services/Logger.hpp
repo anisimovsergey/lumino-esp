@@ -9,17 +9,17 @@
 
 #include "Core/ILogger.hpp"
 
+#include <string>
+
 namespace Services {
 
 class Logger : public Core::ILogger  {
-  TYPE_PTRS(Logger)
   public:
     Logger();
-
-  private:
+    virtual void idle() override {};
     virtual void message(const std::string& message) override;
-    virtual void warning(const std::string& message) override;
-    virtual void error(const std::string& message) override;
+    virtual void warning(const std::string& warning) override;
+    virtual void error(const std::string& error) override;
 };
 
 }

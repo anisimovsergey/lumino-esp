@@ -1,5 +1,7 @@
 #include "SettingsSerializer.hpp"
 
+#include "Core/Memory.hpp"
+
 using namespace Core;
 using namespace Serialization;
 using namespace Models;
@@ -18,7 +20,7 @@ SettingsSerializer::serialize(const Settings& settings, ISerializationContext& c
 
 Core::Status
 SettingsSerializer::deserialize(
-  Models::Settings::Unique& settings,
+  std::unique_ptr<Settings>& settings,
   IDeserializationContext& context) const {
 
   std::string deviceName;
@@ -26,6 +28,6 @@ SettingsSerializer::deserialize(
   if (!result.isOk())
     return result;
 
-  settings = Models::Settings::makeUnique(deviceName);
+  settings = std::make_unique<Settings>(deviceName);
   return Status::OK;
 }

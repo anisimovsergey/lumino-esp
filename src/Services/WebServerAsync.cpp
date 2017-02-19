@@ -1,7 +1,6 @@
 #include "WebServerAsync.hpp"
 
 #include "Core/Memory.hpp"
-#include <Core/Casting.hpp>
 #include <Core/Format.hpp>
 
 using namespace Core;
@@ -9,21 +8,23 @@ using namespace Messaging;
 using namespace Serialization;
 using namespace Services;
 
-using namespace std::placeholders;
-
 WebServerAsync::WebServerAsync(
   std::shared_ptr<const Settings> settings,
-  IMessageQueue::Shared messageQueue,
-  ISerializationService::Shared serializer) :
+  IMessageQueue& messageQueue,
+  ISerializationService& serializer,
+  ILogger& logger) :
   settings(settings),
   messageQueue(messageQueue),
-  serializer(serializer) {
+  serializer(serializer),
+  logger(logger) {
 
-  wsServer = std::move(Core::makeUnique<AsyncWebSocket>("/ws"));
-  wsServer->onEvent(std::bind(&WebServerAsync::onSocketEvent, this,
-    _1, _2, _3, _4, _5, _6));
+  wsServer = std::move(std::make_unique<AsyncWebSocket>("/ws"));
+  wsServer->onEvent([=](AsyncWebSocket* server, AsyncWebSocketClient* client,
+    AwsEventType type, void* arg, uint8_t *data, size_t len) {
+    WebServerAsync::onSocketEvent(server, client, type, arg, data, len);
+  });
 
-  httpServer = std::move(Core::makeUnique<AsyncWebServer>(80));
+  httpServer = std::move(std::make_unique<AsyncWebServer>(80));
   httpServer->addHandler(wsServer.get());
 }
 
@@ -82,12 +83,12 @@ WebServerAsync::getClientId(AsyncWebSocketClient* client) {
   return "WebSocketsServer/" + toString(client->id());
 }
 
-QueueGenericClient::Shared
+Messaging::QueueGenericClient*
 WebServerAsync::findQueueClient(AsyncWebSocketClient* client) {
   auto clientId = getClientId(client);
-  for(auto client: queueClients) {
+  for(const auto& client: queueClients) {
     if (client->getClientId() == clientId)
-      return client;
+      return client.get();
   }
   return nullptr;
 }
@@ -96,15 +97,15 @@ void
 WebServerAsync::sendToClinet(AsyncWebSocketClient* client,
   const Core::IEntity& entity) {
   std::string json;
-  auto status = serializer->serialize(entity, json);
+  auto status = serializer.serialize(entity, json);
   if (status.isOk()) {
     client->text(json.c_str());
   } else {
-    status = serializer->serialize(status, json);
+    status = serializer.serialize(status, json);
     if (status.isOk())
       client->text(json.c_str());
     else
-      logger->error("Unable to seraile the response of type '" +
+      logger.error("Unable to seraile the response of type '" +
         status.getTypeId() + "'.");
   }
 }
@@ -112,41 +113,42 @@ WebServerAsync::sendToClinet(AsyncWebSocketClient* client,
 void
 WebServerAsync::onClientConnected(AsyncWebSocketClient* client) {
   auto clientId = getClientId(client);
-  auto queueClinet = messageQueue->createClient(clientId);
+  auto queueClinet = messageQueue.createClient(clientId);
   queueClinet->setOnResponse([=](const Response& response){
     onResponse(client, response);
   });
   queueClinet->setOnEvent([=](const Event& event){
     onNotification(client, event);
   });
-  queueClients.push_back(queueClinet);
-  logger->message("Client '" + clientId + "' connected.");
+  queueClients.push_back(std::move(queueClinet));
+  logger.message("Client '" + clientId + "' connected.");
 }
 
 void
 WebServerAsync::onClientDisconnected(AsyncWebSocketClient* client) {
-  auto queueClient = findQueueClient(client);
-  if (queueClient) {
-    messageQueue->removeClient(queueClient);
-    queueClients.remove(queueClient);
-    logger->message("Client '" + queueClient->getClientId() + "' disconnected.");
-  } else {
-    logger->error("Client '" + getClientId(client) + "' not found.");
+  auto clientId = getClientId(client);
+  for (auto iter = queueClients.begin(); iter != queueClients.end(); iter++) {
+     if (iter->get()->getClientId() == clientId) {
+       queueClients.erase(iter);
+       logger.message("Client '" + clientId + "' disconnected.");
+       return;
+     }
   }
+  logger.error("Client '" + clientId + "' not found.");
 }
 
 void
 WebServerAsync::onTextReceived(AsyncWebSocketClient* client, const std::string& text) {
-  IEntity::Unique entity;
-  Request::Unique request;
-  auto status = serializer->deserialize(text, entity);
+  std::unique_ptr<IEntity> entity;
+  std::unique_ptr<Request> request;
+  auto status = serializer.deserialize(text, entity);
   if (status.isOk()) {
     request = castToUnique<Request>(std::move(entity));
     if (request) {
       auto queueClient = findQueueClient(client);
       if (queueClient) {
         request->setSender(queueClient->getClientId());
-        status = messageQueue->addRequest(std::move(request));
+        status = messageQueue.addRequest(std::move(request));
       } else {
         status = Status(StatusCode::InternalServerError,
           "Unable to find queue client '" + toString(client->id()) + "'.");

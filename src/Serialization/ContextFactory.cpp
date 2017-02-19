@@ -11,13 +11,13 @@ using namespace Serialization;
 Core::Status
 ContextFactory::createSerializationContext(
   const ISerializationService& serializationService,
-  ISerializationContext::Unique& context) const {
+  std::unique_ptr<ISerializationContext>& context) const {
 
   std::shared_ptr<DynamicJsonBuffer> jsonBuffer(
     std::make_shared<DynamicJsonBuffer>());
   JsonObject& jsonObject = jsonBuffer->createObject();
 
-  context = SerializationContext::makeUnique(
+  context = std::make_unique<SerializationContext>(
     serializationService,
     jsonBuffer,
     jsonObject);
@@ -27,7 +27,7 @@ ContextFactory::createSerializationContext(
 Core::Status
 ContextFactory::createDeserializationContext(
   const ISerializationService& serializationService, const std::string& json,
-  IDeserializationContext::Unique& context) const {
+  std::unique_ptr<IDeserializationContext>& context) const {
 
   std::shared_ptr<DynamicJsonBuffer> jsonBuffer(
     std::make_shared<DynamicJsonBuffer>());
@@ -35,7 +35,7 @@ ContextFactory::createDeserializationContext(
   if (!jsonObject.success())
     return Status(StatusCode::BadRequest, "Incorrect JSON format.");
 
-  context = DeserializationContext::makeUnique(
+  context = std::make_unique<DeserializationContext>(
     serializationService,
     jsonBuffer,
     jsonObject);

@@ -16,21 +16,19 @@
 namespace Services {
 
 class ColorController : public Core::IService  {
-  TYPE_PTRS(ColorController)
   public:
-    ColorController(Services::Settings::Shared settings,
-                    Messaging::IMessageQueue::Shared messageQueue);
+    ColorController(Services::Settings& settings,
+                    Messaging::IMessageQueue& messageQueue);
 
-    // From ILoopedService
     virtual void idle() override;
 
   private:
-    Services::Settings::Shared                  settings;
-    Messaging::IMessageQueue::Shared            messageQueue;
-    Messaging::QueueResourceController::Shared  controller;
+    Services::Settings& settings;
+    Messaging::IMessageQueue& messageQueue;
+    std::unique_ptr<Messaging::QueueResourceController> controller;
 
-    Core::IEntity::Unique onGetColor();
-    Core::IEntity::Unique onUpdateColor(const Models::Color& model);
+    std::unique_ptr<Core::IEntity> onGetColor();
+    std::unique_ptr<Core::IEntity> onUpdateColor(const Models::Color& model);
 };
 
 }

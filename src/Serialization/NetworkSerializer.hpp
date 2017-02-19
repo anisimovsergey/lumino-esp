@@ -10,10 +10,11 @@
 #include "Serialization/Serializer.hpp"
 #include "Models/Network.hpp"
 
+#include <memory>
+
 namespace Serialization {
 
 class NetworkSerializer : public Serializer<Models::Network> {
-  TYPE_PTRS(NetworkSerializer)
   protected:
     // From Serializer
     virtual Core::Status serialize(
@@ -21,7 +22,7 @@ class NetworkSerializer : public Serializer<Models::Network> {
       ISerializationContext& context) const override;
 
     virtual Core::Status deserialize(
-      Models::Network::Unique& network,
+      std::unique_ptr<Models::Network>& network,
       IDeserializationContext& context) const override;
 };
 
