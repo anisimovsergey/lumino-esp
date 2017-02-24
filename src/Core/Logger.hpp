@@ -4,14 +4,12 @@
 // Moikot
 // https://github.com/anisimovsergey/moikot
 
-#ifndef SERVICES_LOGGER_HPP
-#define SERVICES_LOGGER_HPP
+#ifndef CORE_LOGGER_HPP
+#define CORE_LOGGER_HPP
 
 #include "Core/ILogger.hpp"
 
-#include <string>
-
-namespace Services {
+namespace Core {
 
 class Logger : public Core::ILogger  {
   public:
@@ -23,4 +21,4 @@ class Logger : public Core::ILogger  {
 
 }
 
-#endif /* end of include guard: SERVICES_LOGGER_HPP */
+#endif /* end of include guard: CORE_LOGGER_HPP */

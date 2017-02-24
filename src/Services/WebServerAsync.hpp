@@ -12,18 +12,18 @@
 #include "Messaging/IMessageQueue.hpp"
 #include "Serialization/ISerializationService.hpp"
 
-#include <memory>
-#include <list>
-#include <algorithm>
-
 #include <WString.h>
 #include <Hash.h>
 #include <ESPAsyncWebServer.h>
 #include <ESPAsyncWebServer.h>
 
+#include <memory>
+#include <list>
+#include <algorithm>
+
 namespace Services {
 
-class WebServerAsync : public Core::IService {
+class WebServerAsync {
   public:
     WebServerAsync(
       std::shared_ptr<const Settings> settings,

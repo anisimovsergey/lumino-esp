@@ -8,7 +8,6 @@
 #define SERVICES_DISPLAY_CONTROLLER_HPP
 
 #include "Messaging/IMessageQueue.hpp"
-#include "Messaging/QueueResourceClient.hpp"
 #include "Models/Color.hpp"
 #include "Models/Connection.hpp"
 #include "Models/AccessPoint.hpp"
@@ -17,7 +16,7 @@ class Adafruit_NeoPixel;
 
 namespace Services {
 
-class DisplayController : public Core::IService  {
+class DisplayController {
   public:
     DisplayController(Messaging::IMessageQueue& messageQueue);
 

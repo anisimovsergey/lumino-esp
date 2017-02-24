@@ -8,9 +8,7 @@
 #ifndef SERVICES_WIFIMANAGER_HPP
 #define SERVICES_WIFIMANAGER_HPP
 
-#include "Core/IIdleService.hpp"
 #include "Messaging/IMessageQueue.hpp"
-#include "Messaging/QueueResourceController.hpp"
 #include "Models/Connection.hpp"
 #include "Models/AccessPoint.hpp"
 #include "Settings.hpp"
@@ -23,13 +21,13 @@
 
 namespace Services {
 
-class WiFiManager : public Core::IIdleService {
+class WiFiManager {
   public:
     WiFiManager(std::shared_ptr<Services::Settings> settings,
                 Messaging::IMessageQueue& messageQueue);
 
     void   start();
-    void   idle() override;
+    void   idle();
 
   private:
     std::shared_ptr<Services::Settings>         settings;

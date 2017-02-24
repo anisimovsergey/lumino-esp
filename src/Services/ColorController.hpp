@@ -7,15 +7,13 @@
 #ifndef SETTINGS_CONTROLLER_HPP
 #define SETTINGS_CONTROLLER_HPP
 
-#include "Core/IIdleService.hpp"
 #include "Messaging/IMessageQueue.hpp"
-#include "Messaging/QueueResourceController.hpp"
 #include "Models/Color.hpp"
 #include "Services/Settings.hpp"
 
 namespace Services {
 
-class ColorController : public Core::IService  {
+class ColorController {
   public:
     ColorController(Services::Settings& settings,
                     Messaging::IMessageQueue& messageQueue);

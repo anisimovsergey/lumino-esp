@@ -7,15 +7,13 @@
 #ifndef SETTINGS_CONTROLLER_HPP
 #define SETTINGS_CONTROLLER_HPP
 
-#include "Core/IService.hpp"
 #include "Messaging/IMessageQueue.hpp"
-#include "Messaging/QueueResourceController.hpp"
 #include "Models/Settings.hpp"
 #include "Services/Settings.hpp"
 
 namespace Services {
 
-class SettingsController : public Core::IService  {
+class SettingsController {
   public:
     SettingsController(Services::Settings& settings,
                        Messaging::IMessageQueue& messageQueue);

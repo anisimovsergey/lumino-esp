@@ -1,7 +1,6 @@
 #include "Logger.hpp"
 
 using namespace Core;
-using namespace Services;
 
 #include <HardwareSerial.h>
 

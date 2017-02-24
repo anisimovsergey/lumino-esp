@@ -8,7 +8,6 @@
 #define SERVICES_WIFI_SCANNER_HPP
 
 #include "Messaging/IMessageQueue.hpp"
-#include "Messaging/QueueResourceController.hpp"
 #include "Models/Networks.hpp"
 
 #include <memory>
@@ -16,7 +15,7 @@
 
 namespace Services {
 
-class WiFiScanner : public Core::IService  {
+class WiFiScanner {
   public:
     WiFiScanner(Messaging::IMessageQueue& messageQueue);
     ~WiFiScanner();
