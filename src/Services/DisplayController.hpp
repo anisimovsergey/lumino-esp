@@ -7,7 +7,6 @@
 #ifndef SERVICES_DISPLAY_CONTROLLER_HPP
 #define SERVICES_DISPLAY_CONTROLLER_HPP
 
-#include "Core/IService.hpp"
 #include "Messaging/IMessageQueue.hpp"
 #include "Messaging/QueueResourceClient.hpp"
 #include "Models/Color.hpp"
@@ -21,8 +20,6 @@ namespace Services {
 class DisplayController : public Core::IService  {
   public:
     DisplayController(Messaging::IMessageQueue& messageQueue);
-
-    virtual void idle() override;
 
   private:
     Messaging::IMessageQueue& messageQueue;

@@ -20,8 +20,6 @@ class SettingsController : public Core::IService  {
     SettingsController(Services::Settings& settings,
                        Messaging::IMessageQueue& messageQueue);
 
-    virtual void idle() override;
-
   private:
     Services::Settings&                  settings;
     Messaging::IMessageQueue&            messageQueue;

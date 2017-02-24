@@ -16,10 +16,6 @@ ColorController::ColorController(Services::Settings& settings,
   });
 }
 
-void
-ColorController::idle() {
-}
-
 std::unique_ptr<Core::IEntity>
 ColorController::onGetColor() {
   return std::make_unique<Models::Color>(settings.getColor());

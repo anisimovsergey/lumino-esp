@@ -63,7 +63,7 @@ SerializationContext::setBool(const std::string& key, bool value) {
 Core::Status
 SerializationContext::setList(const std::string& key, const IList& list) {
   auto& array = jsonObject.createNestedArray(key);
-  return list.forEach([&](const IEntity& element) {
+  return list.forEachEntity([&](const IEntity& element) {
     auto& nestedObject = array.createNestedObject();
     SerializationContext context(serializationService, jsonBuffer, nestedObject);
     auto result = serializationService.serialize(element, context);

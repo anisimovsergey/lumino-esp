@@ -8,7 +8,6 @@
 #define SERVICES_WEB_SERVER_ASYNC_HPP
 
 #include "Settings.hpp"
-#include "Core/IService.hpp"
 #include "Core/ILogger.hpp"
 #include "Messaging/IMessageQueue.hpp"
 #include "Serialization/ISerializationService.hpp"
@@ -33,7 +32,6 @@ class WebServerAsync : public Core::IService {
       Core::ILogger& logger);
 
     void start();
-    void idle() override { };
 
   private:
     std::shared_ptr<const Settings>       settings;

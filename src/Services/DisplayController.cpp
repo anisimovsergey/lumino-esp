@@ -74,10 +74,6 @@ DisplayController::DisplayController(
 }
 
 void
-DisplayController::idle() {
-}
-
-void
 DisplayController::colorWipe(uint32_t color) {
   for(uint16_t i = 0; i < pixels->numPixels(); i++) {
     pixels->setPixelColor(i, color);

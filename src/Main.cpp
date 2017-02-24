@@ -23,6 +23,7 @@ using namespace Messaging;
 using namespace Serialization;
 
 std::list<std::shared_ptr<IService>> services;
+std::list<std::shared_ptr<IIdleService>> idleServices;
 
 void setup(void){
 
@@ -78,7 +79,7 @@ void setup(void){
 }
 
 void loop(void){
-  for(auto service : services) {
+  for(auto service : idleServices) {
       service->idle();
   }
 }

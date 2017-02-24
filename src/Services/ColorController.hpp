@@ -7,7 +7,7 @@
 #ifndef SETTINGS_CONTROLLER_HPP
 #define SETTINGS_CONTROLLER_HPP
 
-#include "Core/IService.hpp"
+#include "Core/IIdleService.hpp"
 #include "Messaging/IMessageQueue.hpp"
 #include "Messaging/QueueResourceController.hpp"
 #include "Models/Color.hpp"
@@ -19,8 +19,6 @@ class ColorController : public Core::IService  {
   public:
     ColorController(Services::Settings& settings,
                     Messaging::IMessageQueue& messageQueue);
-
-    virtual void idle() override;
 
   private:
     Services::Settings& settings;

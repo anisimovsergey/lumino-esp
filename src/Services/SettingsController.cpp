@@ -20,10 +20,6 @@ SettingsController::SettingsController(
   });
 }
 
-void
-SettingsController::idle() {
-}
-
 std::unique_ptr<Core::IEntity>
 SettingsController::onGetSettings() {
   return std::make_unique<Models::Settings>(settings.getDeviceName());

@@ -7,7 +7,6 @@
 #ifndef SERVICES_WIFI_SCANNER_HPP
 #define SERVICES_WIFI_SCANNER_HPP
 
-#include "Core/IService.hpp"
 #include "Messaging/IMessageQueue.hpp"
 #include "Messaging/QueueResourceController.hpp"
 #include "Models/Networks.hpp"
@@ -21,8 +20,6 @@ class WiFiScanner : public Core::IService  {
   public:
     WiFiScanner(Messaging::IMessageQueue& messageQueue);
     ~WiFiScanner();
-
-    void idle() {}
 
   private:
     Messaging::IMessageQueue&    messageQueue;
