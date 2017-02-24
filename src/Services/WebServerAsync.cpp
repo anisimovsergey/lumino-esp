@@ -8,12 +8,22 @@ using namespace Messaging;
 using namespace Serialization;
 using namespace Services;
 
+namespace {
+  /** IP to String? */
+  String toStringIp(IPAddress ip) {
+    String res = "";
+    for (int i = 0; i < 3; i++) {
+      res += String((ip >> (8 * i)) & 0xFF) + ".";
+    }
+    res += String(((ip >> 8 * 3)) & 0xFF);
+    return res;
+  }
+}
+
 WebServerAsync::WebServerAsync(
-  std::shared_ptr<const Settings> settings,
   IMessageQueue& messageQueue,
   ISerializationService& serializer,
   ILogger& logger) :
-  settings(settings),
   messageQueue(messageQueue),
   serializer(serializer),
   logger(logger) {
@@ -28,14 +38,19 @@ WebServerAsync::WebServerAsync(
   httpServer->addHandler(wsServer.get());
 }
 
+std::string
+WebServerAsync::getLocalDomain() const {
+  return toStringIp(WiFi.softAPIP()).c_str();
+}
+
 bool
 WebServerAsync::isIntercepted(AsyncWebServerRequest *request) {
-  return request->host() != settings->getLocalDomain().c_str();
+  return request->host() != getLocalDomain().c_str();
 }
 
 void
 WebServerAsync::redirectToSelf(AsyncWebServerRequest *request) {
-  auto route = std::string("http://") + settings->getLocalDomain();
+  auto route = std::string("http://") + getLocalDomain();
   request->redirect(route.c_str());
 }
 

@@ -7,7 +7,6 @@
 #ifndef SERVICES_WEB_SERVER_ASYNC_HPP
 #define SERVICES_WEB_SERVER_ASYNC_HPP
 
-#include "Settings.hpp"
 #include "Core/ILogger.hpp"
 #include "Messaging/IMessageQueue.hpp"
 #include "Serialization/ISerializationService.hpp"
@@ -26,7 +25,6 @@ namespace Services {
 class WebServerAsync {
   public:
     WebServerAsync(
-      std::shared_ptr<const Settings> settings,
       Messaging::IMessageQueue& messageQueue,
       Serialization::ISerializationService& serializer,
       Core::ILogger& logger);
@@ -34,13 +32,14 @@ class WebServerAsync {
     void start();
 
   private:
-    std::shared_ptr<const Settings>       settings;
     std::unique_ptr<AsyncWebServer>       httpServer;
     std::unique_ptr<AsyncWebSocket>       wsServer;
     Messaging::IMessageQueue&                  messageQueue;
     Serialization::ISerializationService&      serializer;
     Core::ILogger&                             logger;
     std::list<std::unique_ptr<Messaging::QueueGenericClient>>  queueClients;
+
+    std::string     getLocalDomain() const;
 
     bool    isIntercepted(AsyncWebServerRequest* request);
     void    redirectToSelf(AsyncWebServerRequest* request);

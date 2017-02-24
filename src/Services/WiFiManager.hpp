@@ -11,7 +11,6 @@
 #include "Messaging/IMessageQueue.hpp"
 #include "Models/Connection.hpp"
 #include "Models/AccessPoint.hpp"
-#include "Settings.hpp"
 
 #include <DNSServer.h>
 #include <ESP8266WiFi.h>
@@ -23,14 +22,12 @@ namespace Services {
 
 class WiFiManager {
   public:
-    WiFiManager(std::shared_ptr<Services::Settings> settings,
-                Messaging::IMessageQueue& messageQueue);
+    WiFiManager(Messaging::IMessageQueue& messageQueue);
 
     void   start();
     void   idle();
 
   private:
-    std::shared_ptr<Services::Settings>         settings;
     Messaging::IMessageQueue&                   messageQueue;
     std::unique_ptr<DNSServer>                  dnsServer;
     Ticker                                      disconnectTimer;
@@ -44,11 +41,11 @@ class WiFiManager {
     WiFiEventHandler                  clientConnectedEventHandler;
     WiFiEventHandler                  clientDisconnectedEventHandler;
 
-    bool        hasConnection() const;
-    bool        hasAccessPoint() const;
-
-    std::string getNetwork() const;
-    bool        isConnected() const;
+    std::string   getUniqueName() const;
+    bool          hasConnection() const;
+    bool          hasAccessPoint() const;
+    std::string   getNetwork() const;
+    bool          isConnected() const;
 
     std::unique_ptr<Models::Connection> createConnectionObject();
     std::unique_ptr<Models::AccessPoint> createAccessPointObject();

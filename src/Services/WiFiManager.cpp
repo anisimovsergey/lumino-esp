@@ -12,9 +12,7 @@ using namespace Messaging;
 using namespace Services;
 
 WiFiManager::WiFiManager(
-  std::shared_ptr<Settings> settings,
   IMessageQueue& messageQueue) :
-  settings(settings),
   messageQueue(messageQueue) {
 
   dnsServer = std::move(std::make_unique<DNSServer>());
@@ -56,9 +54,14 @@ WiFiManager::WiFiManager(
 void
 WiFiManager::start() {
   // Set DHCP host name
-  WiFi.hostname(settings->getUniqueName().c_str());
+  WiFi.hostname(getUniqueName().c_str());
   startSoftAP();
   startDisconnectTimer();
+}
+
+std::string
+WiFiManager::getUniqueName() const {
+  return "esp8266fs";
 }
 
 bool
@@ -105,7 +108,7 @@ WiFiManager::disconnect() {
 void
 WiFiManager::startSoftAP() {
   // Set access point name (SSID)
-  WiFi.softAP(settings->getUniqueName().c_str());
+  WiFi.softAP(getUniqueName().c_str());
   dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
   dnsServer->start(53, "*", WiFi.softAPIP());
   accessPointController->sendEvent("created", createAccessPointObject());
@@ -131,7 +134,7 @@ WiFiManager::createConnectionObject() {
 
 std::unique_ptr<AccessPoint>
 WiFiManager::createAccessPointObject() {
-  return std::make_unique<AccessPoint>(settings->getUniqueName());
+  return std::make_unique<AccessPoint>(getUniqueName());
 }
 
 std::unique_ptr<IEntity>
@@ -181,7 +184,7 @@ WiFiManager::onGetAccessPoint() {
 void
 WiFiManager::onConnected() {
   if (hasConnection() && !isConnectedInternal) {
-    if (MDNS.begin(settings->getUniqueName().c_str())) {
+    if (MDNS.begin(getUniqueName().c_str())) {
       MDNS.addService("http", "tcp", 80);
     }
     isConnectedInternal = true;

@@ -27,15 +27,14 @@ Application::setup() {
 void
 Application::createServices() {
   logger = std::make_unique<Logger>();
-  settings = std::make_shared<Settings>();
   logger->message("Creating a message queue...");
   messageQueue = std::make_unique<MessageQueue>(*logger);
   logger->message("Creating a display...");
   display = std::make_unique<DisplayController>(*messageQueue);
   logger->message("Creating settings...");
-  settingsCon = std::make_unique<SettingsController>(*messageQueue);
+  settings = std::make_unique<SettingsController>(*messageQueue);
   logger->message("Creating a wifi manager...");
-  wifiManager = std::make_unique<WiFiManager>(settings, *messageQueue);
+  wifiManager = std::make_unique<WiFiManager>(*messageQueue);
   logger->message("Creating a wifi scanner...");
   wifiScanner = std::make_unique<WiFiScanner>(*messageQueue);
   logger->message("Creating a context factory...");
@@ -43,7 +42,7 @@ Application::createServices() {
   logger->message("Creating a serialization service...");
   serializer = std::make_unique<SerializationService>(*contextFactory);
   logger->message("Creating a Web server...");
-  webServerAsync = std::make_unique<WebServerAsync>(settings, *messageQueue, *serializer, *logger);
+  webServerAsync = std::make_unique<WebServerAsync>(*messageQueue, *serializer, *logger);
 }
 
 void
