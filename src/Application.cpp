@@ -27,12 +27,13 @@ Application::setup() {
 void
 Application::createServices() {
   logger = std::make_unique<Logger>();
-  logger->message("Creating settings...");
   settings = std::make_shared<Settings>();
   logger->message("Creating a message queue...");
   messageQueue = std::make_unique<MessageQueue>(*logger);
   logger->message("Creating a display...");
   display = std::make_unique<DisplayController>(*messageQueue);
+  logger->message("Creating settings...");
+  settingsCon = std::make_unique<SettingsController>(*messageQueue);
   logger->message("Creating a wifi manager...");
   wifiManager = std::make_unique<WiFiManager>(settings, *messageQueue);
   logger->message("Creating a wifi scanner...");

@@ -71,7 +71,7 @@ DeserializationContext::getEntity(const std::string& key, std::unique_ptr<Core::
   if (!jsonVal.is<JsonObject>())
     return Status(StatusCode::BadRequest, "Value for key """ + key + """ should be a JSON object.");
 
-  auto& nestedObject = jsonVal.asObject();
+  auto& nestedObject = jsonVal.as<JsonObject>();
   DeserializationContext context(serializationService, jsonBuffer, nestedObject);
   auto result = serializationService.deserialize(context, entity);
   if (!result.isOk()) {

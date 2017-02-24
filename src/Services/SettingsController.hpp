@@ -9,22 +9,31 @@
 
 #include "Messaging/IMessageQueue.hpp"
 #include "Models/Settings.hpp"
-#include "Services/Settings.hpp"
+#include "Models/Color.hpp"
 
 namespace Services {
 
 class SettingsController {
   public:
-    SettingsController(Services::Settings& settings,
-                       Messaging::IMessageQueue& messageQueue);
+    SettingsController(Messaging::IMessageQueue& messageQueue);
 
   private:
-    Services::Settings&                  settings;
     Messaging::IMessageQueue&            messageQueue;
-    std::unique_ptr<Messaging::QueueResourceController>  controller;
+
+    std::string     getDeviceName() const;
+    void            setDeviceName(std::string name);
+
+    Models::Color   getColor() const;
+    void            setColor(const Models::Color& color);
+
+    std::unique_ptr<Messaging::QueueResourceController>  settingsController;
+    std::unique_ptr<Messaging::QueueResourceController>  colorController;
 
     std::unique_ptr<Core::IEntity> onGetSettings();
     std::unique_ptr<Core::IEntity> onUpdateSettings(const Models::Settings& model);
+
+    std::unique_ptr<Core::IEntity> onGetColor();
+    std::unique_ptr<Core::IEntity> onUpdateColor(const Models::Color& model);
 };
 
 }

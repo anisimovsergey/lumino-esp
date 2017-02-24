@@ -19,12 +19,6 @@ class Settings {
   public:
     std::string     getUniqueName() const;
     std::string     getLocalDomain() const;
-
-    std::string     getDeviceName() const;
-    void            setDeviceName(std::string name);
-
-    Models::Color   getColor() const;
-    void            setColor(const Models::Color& color);
 };
 
 }
