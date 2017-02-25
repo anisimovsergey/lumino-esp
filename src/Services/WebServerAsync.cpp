@@ -31,7 +31,7 @@ WebServerAsync::WebServerAsync(
   wsServer = std::move(std::make_unique<AsyncWebSocket>("/ws"));
   wsServer->onEvent([=](AsyncWebSocket* server, AsyncWebSocketClient* client,
     AwsEventType type, void* arg, uint8_t *data, size_t len) {
-    WebServerAsync::onSocketEvent(server, client, type, arg, data, len);
+    WebServerAsync::onSocketEvent(client, type, arg, data, len);
   });
 
   httpServer = std::move(std::make_unique<AsyncWebServer>(80));
@@ -69,9 +69,8 @@ WebServerAsync::start() {
 }
 
 void
-WebServerAsync::onSocketEvent(AsyncWebSocket* server,
-  AsyncWebSocketClient* client, AwsEventType type, void * arg,
-  uint8_t *data, size_t len) {
+WebServerAsync::onSocketEvent(AsyncWebSocketClient* client,
+  AwsEventType type, void* arg, uint8_t* data, size_t len) {
   switch (type) {
     case WS_EVT_CONNECT:
       onClientConnected(client);

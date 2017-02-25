@@ -16,10 +16,10 @@ class Settings : public Core::IEntity {
   public:
     Settings(std::string deviceName);
 
-    std::string      getDeviceName() const { return deviceName; };
+    std::string getDeviceName() const { return deviceName; };
 
   private:
-    std::string  deviceName;
+    std::string deviceName;
 };
 
 }

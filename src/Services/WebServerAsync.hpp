@@ -18,7 +18,6 @@
 
 #include <memory>
 #include <list>
-#include <algorithm>
 
 namespace Services {
 
@@ -44,7 +43,7 @@ class WebServerAsync {
     bool    isIntercepted(AsyncWebServerRequest* request);
     void    redirectToSelf(AsyncWebServerRequest* request);
 
-    void onSocketEvent(AsyncWebSocket* server, AsyncWebSocketClient* client,
+    void onSocketEvent(AsyncWebSocketClient* client,
       AwsEventType type, void* arg, uint8_t *data, size_t len);
 
     std::string getClientId(AsyncWebSocketClient* client);

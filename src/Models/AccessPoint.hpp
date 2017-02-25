@@ -14,14 +14,12 @@ namespace Models {
 class AccessPoint : public Core::IEntity {
   TYPE_INFO(AccessPoint, Core::IEntity, "accessPoint")
   public:
-    AccessPoint(
-      std::string   networkSsid
-    );
+    AccessPoint(std::string networkSsid);
 
-    std::string  getNetworkSsid() const { return networkSsid; };
+    std::string getNetworkSsid() const { return networkSsid; };
 
   private:
-    std::string  networkSsid;
+    std::string networkSsid;
 };
 
 }

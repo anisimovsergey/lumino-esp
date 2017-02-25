@@ -14,15 +14,8 @@ namespace Models {
 class Connection : public Core::IEntity {
   TYPE_INFO(Connection, Core::IEntity, "connection")
   public:
-    Connection(
-      std::string  networkSsid,
-      bool    isConnected
-    );
-
-    Connection(
-      std::string  networkSsid,
-      std::string  networkPassword
-    );
+    Connection(std::string networkSsid, bool isConnected);
+    Connection(std::string networkSsid, std::string  networkPassword);
 
     std::string  getNetworkSsid() const { return networkSsid; };
     std::string  getNetworkPassword() const { return networkPassword; };

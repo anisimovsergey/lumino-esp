@@ -15,7 +15,7 @@ namespace Serialization {
 
 class ContextFactory : public IContextFactory {
   public:
-    // From ISerializationContextFactory
+    // From IContextFactory
     virtual Core::Status createSerializationContext(
       const ISerializationService& serializationService,
       std::unique_ptr<ISerializationContext>& context) const override;
