@@ -28,7 +28,7 @@ void
 Application::createServices() {
   logger = std::make_unique<Logger>();
   logger->message("Creating a message queue...");
-  messageQueue = std::make_unique<MessageQueue>(*logger);
+  messageQueue = std::make_unique<MessageQueue>();
   logger->message("Creating a display...");
   display = std::make_unique<DisplayController>(*messageQueue);
   logger->message("Creating settings...");

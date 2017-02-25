@@ -39,7 +39,7 @@ WiFiScanner::WiFiScanner(Messaging::IMessageQueue& messageQueue) :
   scanners.push_back(this);
 
   auto controller = messageQueue.createController("WiFiScanner");
-  controller->addOnRequest("get", [=](){
+  controller->addOnRequest(RequestType::Read, [=](){
     return onGetNetworks();
   });
 }
@@ -81,6 +81,6 @@ WiFiScanner::onScanDone(void* result, int status) {
   }
   isScanning = false;
   for(auto scanner: scanners) {
-    scanner->controller->sendEvent("scanned", std::move(eventContent));
+    scanner->controller->sendEvent(EventType("scanned"), std::move(eventContent));
   }
 }

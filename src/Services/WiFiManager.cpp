@@ -19,18 +19,18 @@ WiFiManager::WiFiManager(
   isConnectedInternal = false;
 
   connectionController = messageQueue.createController(Connection::TypeId());
-  connectionController->addOnRequest("get", [=](){
+  connectionController->addOnRequest(RequestType::Read, [=](){
     return onGetConnection();
   });
-  connectionController->addOnRequest("create", [=](const Models::Connection& connection){
+  connectionController->addOnRequest(RequestType::Create, [=](const Models::Connection& connection){
     return onCreateConnection(connection);
   });
-  connectionController->addOnRequest("delete", [=](){
+  connectionController->addOnRequest(RequestType::Delete, [=](){
     return onDeleteConnection();
   });
 
   accessPointController = messageQueue.createController(AccessPoint::TypeId());
-  accessPointController->addOnRequest("get", [=](){
+  accessPointController->addOnRequest(RequestType::Read, [=](){
     return onGetAccessPoint();
   });
 
@@ -111,7 +111,7 @@ WiFiManager::startSoftAP() {
   WiFi.softAP(getUniqueName().c_str());
   dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
   dnsServer->start(53, "*", WiFi.softAPIP());
-  accessPointController->sendEvent("created", createAccessPointObject());
+  accessPointController->sendEvent(EventType::Created, createAccessPointObject());
 }
 
 void
@@ -119,7 +119,7 @@ WiFiManager::stopSoftAP() {
   dnsServer->stop();
   WiFi.softAPdisconnect();
   WiFi.enableAP(false);
-  accessPointController->sendEvent("deleted");
+  accessPointController->sendEvent(EventType::Deleted);
 }
 
 void
@@ -155,7 +155,7 @@ WiFiManager::onCreateConnection(const Models::Connection& connection) {
       "Unable to create the connection.", std::move(result));
   }
 
-  connectionController->sendEvent("created", createConnectionObject());
+  connectionController->sendEvent(EventType::Created, createConnectionObject());
   return std::make_unique<Status>(StatusCode::Created, "The connection was created.");
 }
 
@@ -168,7 +168,7 @@ WiFiManager::onDeleteConnection() {
       "Unable to delete the connection.", std::move(result));
   }
 
-  connectionController->sendEvent("deleted");
+  connectionController->sendEvent(EventType::Deleted);
   return std::make_unique<Status>(StatusCode::NoContent, "The connection was deleted.");
 }
 
@@ -188,7 +188,7 @@ WiFiManager::onConnected() {
       MDNS.addService("http", "tcp", 80);
     }
     isConnectedInternal = true;
-    connectionController->sendEvent("updated", createConnectionObject());
+    connectionController->sendEvent(EventType::Updated, createConnectionObject());
   }
 }
 
@@ -196,7 +196,7 @@ void
 WiFiManager::onDisconnected() {
   if (hasConnection() && isConnectedInternal) {
     isConnectedInternal = false;
-    connectionController->sendEvent("updated", createConnectionObject());
+    connectionController->sendEvent(EventType::Updated, createConnectionObject());
   }
 }
 

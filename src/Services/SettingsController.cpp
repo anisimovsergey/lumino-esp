@@ -5,6 +5,7 @@
 #include <EEPROM.h>
 
 using namespace Core;
+using namespace Messaging;
 using namespace Services;
 
 namespace {
@@ -19,18 +20,18 @@ SettingsController::SettingsController(
   messageQueue(messageQueue) {
 
   settingsController = messageQueue.createController(Models::Settings::TypeId());
-  settingsController->addOnRequest("get", [=]() {
+  settingsController->addOnRequest(RequestType::Read, [=]() {
     return onGetSettings();
   });
-  settingsController->addOnRequest("update", [=](const Models::Settings& model) {
+  settingsController->addOnRequest(RequestType::Update, [=](const Models::Settings& model) {
     return onUpdateSettings(model);
   });
 
   colorController = messageQueue.createController(Models::Color::TypeId());
-  colorController->addOnRequest("get", [=](){
+  colorController->addOnRequest(RequestType::Read, [=](){
     return onGetColor();
   });
-  colorController->addOnRequest("update", [=](const Models::Color& model){
+  colorController->addOnRequest(RequestType::Update, [=](const Models::Color& model){
     return onUpdateColor(model);
   });
 }
@@ -83,7 +84,7 @@ SettingsController::onGetSettings() {
 std::unique_ptr<IEntity>
 SettingsController::onUpdateSettings(const Models::Settings& model) {
   setDeviceName(model.getDeviceName());
-  settingsController->sendEvent("updated", std::make_unique<Models::Settings>(model));
+  settingsController->sendEvent(EventType::Updated, std::make_unique<Models::Settings>(model));
   return std::make_unique<Status>(Status::OK);
 }
 
@@ -95,6 +96,6 @@ SettingsController::onGetColor() {
 std::unique_ptr<Core::IEntity>
 SettingsController::onUpdateColor(const Models::Color& model) {
   setColor(model);
-  colorController->sendEvent("updated", std::make_unique<Models::Color>(model));
+  colorController->sendEvent(EventType::Updated, std::make_unique<Models::Color>(model));
   return std::make_unique<Status>(Status::OK);
 }

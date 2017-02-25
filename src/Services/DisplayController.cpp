@@ -31,46 +31,46 @@ DisplayController::DisplayController(
   updateDisplay();
 
   colorClient = messageQueue.createClient(SenderId, Color::TypeId());
-  colorClient->addOnResponse("get", [=](const Models::Color& color) {
+  colorClient->addOnResponse(RequestType::Read, [=](const Models::Color& color) {
     onColorGetObjectResponse(color);
   });
-  colorClient->addOnEvent("updated", [=](const Models::Color& color) {
+  colorClient->addOnEvent(EventType::Updated, [=](const Models::Color& color) {
     onColorUpdateNotification(color);
   });
 
   connectionClient = messageQueue.createClient(SenderId, Connection::TypeId());
-  connectionClient->addOnResponse("get", [=](const Core::Status& status) {
+  connectionClient->addOnResponse(RequestType::Read, [=](const Core::Status& status) {
     onConnectionGetStatusResponse(status);
   });
-  connectionClient->addOnResponse("get", [=](const Models::Connection& connection) {
+  connectionClient->addOnResponse(RequestType::Read, [=](const Models::Connection& connection) {
     onConnectionGetObjectResponse(connection);
   });
-  connectionClient->addOnEvent("created", [=](const Models::Connection& connection) {
+  connectionClient->addOnEvent(EventType::Created, [=](const Models::Connection& connection) {
     onConnectionCreateNotification(connection);
   });
-  connectionClient->addOnEvent("updated", [=](const Models::Connection& connection) {
+  connectionClient->addOnEvent(EventType::Updated, [=](const Models::Connection& connection) {
     onConnectionUpdateNotification(connection);
   });
-  connectionClient->addOnEvent("deleted", [=]() {
+  connectionClient->addOnEvent(EventType::Deleted, [=]() {
     onConnectionDeleteNotification();
   });
 
   accessPointClient = messageQueue.createClient(SenderId, AccessPoint::TypeId());
-  accessPointClient->addOnResponse("get", [=](const Core::Status& status) {
+  accessPointClient->addOnResponse(RequestType::Read, [=](const Core::Status& status) {
     onAccessPointGetStatusResponse(status);
   });
-  accessPointClient->addOnResponse("get", [=](const Models::AccessPoint& accessPoint) {
+  accessPointClient->addOnResponse(RequestType::Read, [=](const Models::AccessPoint& accessPoint) {
     onAccessPointGetObjectResponse(accessPoint);
   });
-  accessPointClient->addOnEvent("created", [=](const Models::AccessPoint& accessPoint) {
+  accessPointClient->addOnEvent(EventType::Created, [=](const Models::AccessPoint& accessPoint) {
     onAccessPointCreateNotification(accessPoint);
   });
-  accessPointClient->addOnEvent("deleted", [=]() {
+  accessPointClient->addOnEvent(EventType::Deleted, [=]() {
     onAccessPointDeleteNotification();
   });
 
-  connectionClient->sendRequest("get");
-  accessPointClient->sendRequest("get");
+  connectionClient->sendRequest(RequestType::Read);
+  accessPointClient->sendRequest(RequestType::Read);
 }
 
 void
