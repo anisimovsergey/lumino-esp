@@ -69,6 +69,7 @@ DisplayController::DisplayController(
     onAccessPointDeleteNotification();
   });
 
+  colorClient->sendRequest(RequestType::Read);
   connectionClient->sendRequest(RequestType::Read);
   accessPointClient->sendRequest(RequestType::Read);
 }
@@ -86,7 +87,7 @@ DisplayController::updateDisplay() {
   if (!isConnected) {
     if (hasAccessPoint) {
       colorWipe(pixels->Color(0, 25, 0));
-    } else if (!isConnected) {
+    } else {
       colorWipe(pixels->Color(25, 0, 0));
     }
   } else {

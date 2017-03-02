@@ -55,7 +55,7 @@ DeserializationContext::getInt(const std::string& key, int& value) {
     return Status(StatusCode::BadRequest, "Key """ + key + """ is not defined.");
 
   if (!jsonVal.is<int>())
-    return Status(StatusCode::BadRequest, "Value for key """ + key + """ should be a boolean.");
+    return Status(StatusCode::BadRequest, "Value for key """ + key + """ should be an int.");
 
   value = (int)jsonVal;
   return Status::OK;

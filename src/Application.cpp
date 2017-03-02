@@ -10,6 +10,7 @@
 #include "Serialization/RequestSerializer.hpp"
 #include "Serialization/ResponseSerializer.hpp"
 #include "Serialization/EventSerializer.hpp"
+#include "Serialization/ColorSerializer.hpp"
 
 using namespace Core;
 using namespace Messaging;
@@ -56,6 +57,7 @@ Application::registerSerializers() {
   serializer->addSerializer(std::make_unique<RequestSerializer>());
   serializer->addSerializer(std::make_unique<ResponseSerializer>());
   serializer->addSerializer(std::make_unique<EventSerializer>());
+  serializer->addSerializer(std::make_unique<ColorSerializer>());
 }
 
 void

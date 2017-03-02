@@ -87,7 +87,6 @@ WiFiManager::isConnected() const {
 
 Core::Status
 WiFiManager::connect(std::string network, std::string password) {
-
   if (isConnected())
     return Status(StatusCode::Conflict, "The connection already exists.");
 
@@ -97,7 +96,6 @@ WiFiManager::connect(std::string network, std::string password) {
 
 Core::Status
 WiFiManager::disconnect() {
-
   if (!hasConnection())
     return Status(StatusCode::Conflict, "The connection doesn't exist.");
 
@@ -148,26 +146,22 @@ WiFiManager::onGetConnection() {
 
 std::unique_ptr<IEntity>
 WiFiManager::onCreateConnection(const Models::Connection& connection) {
-
   auto result = connect(connection.getNetworkSsid(), connection.getNetworkPassword());
   if (!result.isOk()) {
     return std::make_unique<Status>(StatusCode::InternalServerError,
       "Unable to create the connection.", std::move(result));
   }
-
   connectionController->sendEvent(EventType::Created, createConnectionObject());
   return std::make_unique<Status>(StatusCode::Created, "The connection was created.");
 }
 
 std::unique_ptr<IEntity>
 WiFiManager::onDeleteConnection() {
-
   auto result = disconnect();
   if (!result.isOk()) {
     return std::make_unique<Status>(StatusCode::InternalServerError,
       "Unable to delete the connection.", std::move(result));
   }
-
   connectionController->sendEvent(EventType::Deleted);
   return std::make_unique<Status>(StatusCode::NoContent, "The connection was deleted.");
 }
@@ -183,7 +177,7 @@ WiFiManager::onGetAccessPoint() {
 
 void
 WiFiManager::onConnected() {
-  if (hasConnection() && !isConnectedInternal) {
+  if (hasConnection()) {
     if (MDNS.begin(getUniqueName().c_str())) {
       MDNS.addService("http", "tcp", 80);
     }

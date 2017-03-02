@@ -19,6 +19,8 @@ SettingsController::SettingsController(
   Messaging::IMessageQueue& messageQueue) :
   messageQueue(messageQueue) {
 
+  EEPROM.begin(64);
+
   settingsController = messageQueue.createController(Models::Settings::TypeId());
   settingsController->addOnRequest(RequestType::Read, [=]() {
     return onGetSettings();
@@ -42,7 +44,7 @@ SettingsController::getDeviceName() const {
   std::string name;
   for (size_t i = EEPROM_NAME_START; i <= EEPROM_NAME_END; i++) {
     auto ch = EEPROM.read(i);
-    if (ch != 0)
+    if (ch != 0 && ch > 31 && ch < 127)
       name += ch;
   }
   return name;
@@ -57,6 +59,7 @@ SettingsController::setDeviceName(std::string name) {
       ch = name[index];
     EEPROM.write(i, ch);
   }
+  EEPROM.commit();
 }
 
 Models::Color
@@ -74,6 +77,7 @@ SettingsController::setColor(const Models::Color& color) {
   EEPROM.write(address++, color.getR());
   EEPROM.write(address++, color.getG());
   EEPROM.write(address++, color.getB());
+  EEPROM.commit();
 }
 
 std::unique_ptr<Core::IEntity>
