@@ -2,34 +2,29 @@
 Request
 ```json
 {
-  "type": "request",
-  "action": "delete",
+  "_type": "request",
+  "requestType": "delete",
   "resource": "connection"
 }
 ```
 Response
 ```json
 {
-  "type": "response",
-  "action": "delete",
+  "_type": "response",
+  "requestType": "delete",
   "resource": "connection",
   "result": {
-    "type": "statusResult",
+    "type": "status",
     "code": 204,
-    "text": "NoContent"
+    "text": "The connection was deleted."
   }
 }
 ```
-Notification
+Event
 ```json
 {
-  "type": "notification",
-  "action": "delete",
-  "resource": "connection",
-  "result": {
-    "type": "statusResult",
-    "code": 204,
-    "text": "NoContent"
-  }
+  "_type": "event",
+  "eventType": "deleted",
+  "resource": "connection"
 }
 ```

@@ -1,11 +1,10 @@
 
-
 In case of an unrecognized request the response contains the following
 ```json
 {
-  "type": "response",
+  "_type": "response",
   "result": {
-    "type": "statusResult",
+    "type": "status",
     "code": 400
   }
 }
@@ -15,11 +14,11 @@ Please note that fields `message` and `resource` are missing in this case.
 In case of a recognized but not processed request the response contains the following
 ```json
 {
-  "type": "response",
-  "message": "get",
-  "resource": "unknownResource",
+  "_type": "response",
+  "requestType": "read",
+  "resource": "someUnknownResource",
   "result": {
-    "type": "statusResult",
+    "type": "status",
     "code": 404,
     "message": "ResourceNotFound"
   }  

@@ -2,8 +2,8 @@
 Request
 ```json
 {
-  "type": "request",
-  "action": "create",
+  "_type": "request",
+  "requestType": "create",
   "resource": "connection",
   "content" : {
     "type": "connection",
@@ -15,8 +15,8 @@ Request
 Response
 ```json
 {
-  "type": "response",
-  "action": "create",
+  "_type": "response",
+  "requestType": "create",
   "resource": "connection",
   "result": {
     "type": "statusResult",
@@ -25,19 +25,16 @@ Response
   }
 }
 ```
-Notification
+Event
 ```json
 {
-  "type": "notification",
-  "action": "create",
+  "_type": "event",
+  "eventType": "deleted",
   "resource": "connection",
   "result": {
-    "type": "objectResult",
-    "object" : {
-      "type": "connection",
-      "network": "network name",
-      "isConnected": true
-    }
+    "type": "connection",
+    "network": "network name",
+    "isConnected": true
   }
 }
 ```

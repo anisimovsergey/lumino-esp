@@ -2,35 +2,32 @@
 Request
 ```json
 {
-  "type": "request",
-  "action": "get",
+  "_type": "request",
+  "requestType": "read",
   "resource": "connection"
 }
 ```
 Response (successful)
 ```json
 {
-  "type": "response",
-  "action": "get",
+  "_type": "response",
+  "requestType": "read",
   "resource": "connection",
   "result": {
-    "type": "objectResult",
-    "object" : {
-      "type": "connection",
-      "network": "network name",
-      "isConnected": true
-    }
+    "type": "connection",
+    "network": "network name",
+    "isConnected": true
   }
 }
 ```
 Response (error)
 ```json
 {
-  "type": "response",
-  "action": "get",
+  "_type": "response",
+  "requestType": "read",
   "resource": "connection",
   "result": {
-    "type": "statusResult",
+    "type": "status",
     "code": 404,
     "text": "NotFound"
   }
