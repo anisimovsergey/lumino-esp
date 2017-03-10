@@ -19,17 +19,17 @@ namespace {
   std::string getEncryptionString(int encryption) {
     switch (encryption) {
       case AUTH_WEP:
-        return "WEP";
+        return "wep";
       case AUTH_WPA_PSK:
-        return "WPA";
+        return "wpa";
       case AUTH_WPA2_PSK:
-        return "WPA2";
+        return "wpa2";
       case AUTH_WPA_WPA2_PSK:
-        return "AUTO";
+        return "auto";
       case AUTH_OPEN:
-        return "NONE";
+        return "none";
     }
-    return "UNKNOWN";
+    return "unknown";
   }
 
 }

@@ -31,12 +31,14 @@ class WebServerAsync {
     void start();
 
   private:
+    typedef std::list<std::unique_ptr<Messaging::QueueGenericClient>> QueueClients;
+
     std::unique_ptr<AsyncWebServer>       httpServer;
     std::unique_ptr<AsyncWebSocket>       wsServer;
-    Messaging::IMessageQueue&                  messageQueue;
-    Serialization::ISerializationService&      serializer;
-    Core::ILogger&                             logger;
-    std::list<std::unique_ptr<Messaging::QueueGenericClient>>  queueClients;
+    Messaging::IMessageQueue&             messageQueue;
+    Serialization::ISerializationService& serializer;
+    Core::ILogger&                        logger;
+    QueueClients                          queueClients;
 
     std::string     getLocalDomain() const;
 

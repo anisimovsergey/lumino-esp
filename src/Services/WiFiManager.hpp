@@ -32,6 +32,8 @@ class WiFiManager {
     std::unique_ptr<DNSServer>                  dnsServer;
     Ticker                                      disconnectTimer;
     bool                                        isConnectedInternal;
+
+    // Controllers
     std::unique_ptr<Messaging::QueueResourceController>  connectionController;
     std::unique_ptr<Messaging::QueueResourceController>  accessPointController;
 
