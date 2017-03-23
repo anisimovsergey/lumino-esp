@@ -8,18 +8,6 @@ using namespace Messaging;
 using namespace Serialization;
 using namespace Services;
 
-namespace {
-  /** IP to String? */
-  String toStringIp(IPAddress ip) {
-    String res = "";
-    for (int i = 0; i < 3; i++) {
-      res += String((ip >> (8 * i)) & 0xFF) + ".";
-    }
-    res += String(((ip >> 8 * 3)) & 0xFF);
-    return res;
-  }
-}
-
 WebServerAsync::WebServerAsync(
   IMessageQueue& messageQueue,
   ISerializationService& serializer,
@@ -40,7 +28,7 @@ WebServerAsync::WebServerAsync(
 
 std::string
 WebServerAsync::getLocalDomain() const {
-  return toStringIp(WiFi.softAPIP()).c_str();
+  return Core::ipToString(WiFi.softAPIP());
 }
 
 bool
