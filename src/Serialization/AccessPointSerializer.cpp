@@ -9,9 +9,9 @@ using namespace Models;
 #define FIELD_WIFI_NETWORK "wifi_network"
 
 Core::Status
-AccessPointSerializer::serialize(
-  const AccessPoint& accessPoint,
-  ISerializationContext& context) const {
+AccessPointSerializer::serializeImpl(
+  ISerializationContext& context,
+  const AccessPoint& accessPoint) const {
 
   auto result = context.setString(FIELD_WIFI_NETWORK, accessPoint.getNetworkSsid());
   if (!result.isOk())
@@ -20,16 +20,14 @@ AccessPointSerializer::serialize(
   return Status::OK;
 }
 
-Core::Status
-AccessPointSerializer::deserialize(
-  std::unique_ptr<AccessPoint>& accessPoint,
-  IDeserializationContext& context) const {
-
+std::tuple<Core::Status, std::unique_ptr<Models::AccessPoint>>
+AccessPointSerializer::deserializeImpl(const IDeserializationContext& context) const {
+  Status result;
   std::string networkSsid;
-  auto result = context.getString(FIELD_WIFI_NETWORK, networkSsid);
+  std::tie(result, networkSsid) = context.getString(FIELD_WIFI_NETWORK);
   if (!result.isOk())
-    return result;
+    return std::make_tuple(result, nullptr);
 
-  accessPoint = std::make_unique<AccessPoint>(networkSsid);
-  return Status::OK;
+  auto accessPoint = std::make_unique<AccessPoint>(networkSsid);
+  return std::make_tuple(Status::OK, std::move(accessPoint));
 }

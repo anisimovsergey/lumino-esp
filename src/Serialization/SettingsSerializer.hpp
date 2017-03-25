@@ -16,14 +16,12 @@ namespace Serialization {
 
 class SettingsSerializer : public Serializer<Models::Settings> {
   protected:
-    // From Serializer
-    virtual Core::Status serialize(
-      const Models::Settings& settings,
-      ISerializationContext& context) const override;
+    virtual Core::Status serializeImpl(
+      ISerializationContext& context,
+      const Models::Settings& settings) const override;
 
-    virtual Core::Status deserialize(
-      std::unique_ptr<Models::Settings>& settings,
-      IDeserializationContext& context) const override;
+    virtual std::tuple<Core::Status, std::unique_ptr<Models::Settings>> deserializeImpl(
+      const IDeserializationContext& context) const override;
 };
 
 }

@@ -11,9 +11,9 @@ using namespace Models;
 #define FIELD_ENCRYPTION "encryption"
 
 Core::Status
-NetworkSerializer::serialize(
-  const Network& network,
-  ISerializationContext& context) const {
+NetworkSerializer::serializeImpl(
+  ISerializationContext& context,
+  const Network& network) const {
 
   auto result = context.setString(FIELD_SSID, network.getSsid());
   if (!result.isOk())
@@ -30,10 +30,7 @@ NetworkSerializer::serialize(
   return Status::OK;
 }
 
-Core::Status
-NetworkSerializer::deserialize(
-  std::unique_ptr<Models::Network>& network,
-  IDeserializationContext& context) const {
-
-  return Status::NotImplemented;
+std::tuple<Core::Status, std::unique_ptr<Models::Network>>
+NetworkSerializer::deserializeImpl(const IDeserializationContext& context) const {
+  return std::make_tuple(Status::NotImplemented, nullptr);
 }

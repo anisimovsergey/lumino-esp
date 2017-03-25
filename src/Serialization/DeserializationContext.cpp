@@ -15,68 +15,65 @@ DeserializationContext::DeserializationContext(
 }
 
 bool
-DeserializationContext::hasKey(const std::string& key) {
+DeserializationContext::hasKey(const std::string& key) const {
   return jsonObject[key].success();
 }
 
-Core::Status
-DeserializationContext::getString(const std::string& key, std::string& value) {
+std::tuple<Core::Status, std::string>
+DeserializationContext::getString(const std::string& key) const {
 
   auto jsonVal = jsonObject[key];
   if (!jsonVal.success())
-    return Status(StatusCode::BadRequest, "Key """ + key + """ is not defined.");
+    return std::make_tuple(Status(StatusCode::BadRequest, "Key """ + key + """ is not defined."), "");
 
   if (!jsonVal.is<const char*>())
-    return Status(StatusCode::BadRequest, "Value for key """ + key + """ should be a string.");
+    return std::make_tuple(Status(StatusCode::BadRequest, "Value for key """ + key + """ should be a string."), "");
 
-  value = (const char*)jsonVal;
-  return Status::OK;
+  return std::make_tuple(Status::OK, (const char*)jsonVal);
 }
 
-Core::Status
-DeserializationContext::getBool(const std::string& key, bool& value) {
+std::tuple<Core::Status, int>
+DeserializationContext::getInt(const std::string& key) const {
 
   auto jsonVal = jsonObject[key];
   if (!jsonVal.success())
-    return Status(StatusCode::BadRequest, "Key """ + key + """ is not defined.");
-
-  if (!jsonVal.is<bool>())
-    return Status(StatusCode::BadRequest, "Value for key """ + key + """ should be a boolean.");
-
-  value = (bool)jsonVal;
-  return Status::OK;
-}
-
-Core::Status
-DeserializationContext::getInt(const std::string& key, int& value) {
-
-  auto jsonVal = jsonObject[key];
-  if (!jsonVal.success())
-    return Status(StatusCode::BadRequest, "Key """ + key + """ is not defined.");
+    return std::make_tuple(Status(StatusCode::BadRequest, "Key """ + key + """ is not defined."), 0);
 
   if (!jsonVal.is<int>())
-    return Status(StatusCode::BadRequest, "Value for key """ + key + """ should be an int.");
+    return std::make_tuple(Status(StatusCode::BadRequest, "Value for key """ + key + """ should be an int."), 0);
 
-  value = (int)jsonVal;
-  return Status::OK;
+  return std::make_tuple(Status::OK, (int)jsonVal);
 }
 
-Core::Status
-DeserializationContext::getEntity(const std::string& key, std::unique_ptr<Core::IEntity>& entity) {
+std::tuple<Core::Status, bool>
+DeserializationContext::getBool(const std::string& key) const {
 
   auto jsonVal = jsonObject[key];
   if (!jsonVal.success())
-    return Status(StatusCode::BadRequest, "Key """ + key + """ is not defined.");
+    return std::make_tuple(Status(StatusCode::BadRequest, "Key """ + key + """ is not defined."), false);
+
+  if (!jsonVal.is<bool>())
+    return std::make_tuple(Status(StatusCode::BadRequest, "Value for key """ + key + """ should be a boolean."), false);
+
+  return std::make_tuple(Status::OK, (bool)jsonVal);
+}
+
+std::tuple<Core::Status, std::unique_ptr<Core::IEntity>>
+DeserializationContext::getEntity(const std::string& key) const {
+
+  auto jsonVal = jsonObject[key];
+  if (!jsonVal.success())
+    return std::make_tuple(Status(StatusCode::BadRequest, "Key """ + key + """ is not defined."), nullptr);
 
   if (!jsonVal.is<JsonObject>())
-    return Status(StatusCode::BadRequest, "Value for key """ + key + """ should be a JSON object.");
+    return std::make_tuple(Status(StatusCode::BadRequest, "Value for key """ + key + """ should be a JSON object."), nullptr);
 
   auto& nestedObject = jsonVal.as<JsonObject>();
   DeserializationContext context(serializationService, jsonBuffer, nestedObject);
-  auto result = serializationService.deserialize(context, entity);
-  if (!result.isOk()) {
-    return Status(StatusCode::InternalServerError,
-      "Unable to deserialize a nested entity.", std::move(result));
+  auto result = serializationService.deserialize(context);
+  if (!std::get<0>(result).isOk()) {
+    return std::make_tuple(Status(StatusCode::InternalServerError,
+      "Unable to deserialize a nested entity.", std::move(std::get<0>(result))), nullptr);
   }
-  return Status::OK;
+  return result;
 }

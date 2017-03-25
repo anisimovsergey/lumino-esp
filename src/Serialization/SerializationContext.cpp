@@ -66,7 +66,7 @@ SerializationContext::setList(const std::string& key, const IList& list) {
   return list.forEachEntity([&](const IEntity& element) {
     auto& nestedObject = array.createNestedObject();
     SerializationContext context(serializationService, jsonBuffer, nestedObject);
-    auto result = serializationService.serialize(element, context);
+    auto result = serializationService.serialize(context, element);
     if (!result.isOk()) {
       return Status(StatusCode::InternalServerError,
         "Unable to serialize an element of the list.", std::move(result));
@@ -79,7 +79,7 @@ Core::Status
 SerializationContext::setEntity(const std::string& key, const Core::IEntity& entity) {
   auto& nestedObject = jsonObject.createNestedObject(key);
   SerializationContext context(serializationService, jsonBuffer, nestedObject);
-  auto result = serializationService.serialize(entity, context);
+  auto result = serializationService.serialize(context, entity);
   if (!result.isOk()) {
       return Status(StatusCode::InternalServerError,
         "Unable to serialize a nested entity.", std::move(result));

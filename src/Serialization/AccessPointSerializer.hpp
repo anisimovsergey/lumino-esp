@@ -16,14 +16,11 @@ namespace Serialization {
 
 class AccessPointSerializer : public Serializer<Models::AccessPoint> {
   protected:
-    // From Serializer
-    virtual Core::Status serialize(
-      const Models::AccessPoint& accessPoint,
-      ISerializationContext& context) const override;
+    virtual Core::Status serializeImpl(ISerializationContext& context,
+      const Models::AccessPoint& accessPoint) const override;
 
-    virtual Core::Status deserialize(
-      std::unique_ptr<Models::AccessPoint>& accessPoint,
-      IDeserializationContext& context) const override;
+    virtual std::tuple<Core::Status, std::unique_ptr<Models::AccessPoint>> deserializeImpl(
+      const IDeserializationContext& context) const override;
 };
 
 }

@@ -17,13 +17,12 @@ namespace Serialization {
 class ConnectionSerializer : public Serializer<Models::Connection> {
   protected:
     // From Serializer
-    virtual Core::Status serialize(
-      const Models::Connection& connection,
-      ISerializationContext& context) const override;
+    virtual Core::Status serializeImpl(
+      ISerializationContext& context,
+      const Models::Connection& connection) const override;
 
-    virtual Core::Status deserialize(
-      std::unique_ptr<Models::Connection>& connection,
-      IDeserializationContext& context) const override;
+    virtual std::tuple<Core::Status, std::unique_ptr<Models::Connection>> deserializeImpl(
+      const IDeserializationContext& context) const override;
 };
 
 }

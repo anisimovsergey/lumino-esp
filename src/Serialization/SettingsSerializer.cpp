@@ -9,8 +9,7 @@ using namespace Models;
 #define FIELD_NAME "name"
 
 Core::Status
-SettingsSerializer::serialize(const Settings& settings, ISerializationContext& context) const {
-
+SettingsSerializer::serializeImpl(ISerializationContext& context, const Settings& settings) const {
   auto result = context.setString(FIELD_NAME, settings.getDeviceName());
   if (!result.isOk())
     return result;
@@ -18,16 +17,15 @@ SettingsSerializer::serialize(const Settings& settings, ISerializationContext& c
   return Status::OK;
 }
 
-Core::Status
-SettingsSerializer::deserialize(
-  std::unique_ptr<Settings>& settings,
-  IDeserializationContext& context) const {
-
+std::tuple<Core::Status, std::unique_ptr<Settings>>
+SettingsSerializer::deserializeImpl(
+  const IDeserializationContext& context) const {
+  Status result;
   std::string deviceName;
-  auto result = context.getString(FIELD_NAME, deviceName);
+  std::tie(result, deviceName) = context.getString(FIELD_NAME);
   if (!result.isOk())
-    return result;
+    return std::make_tuple(result, nullptr);
 
-  settings = std::make_unique<Settings>(deviceName);
-  return Status::OK;
+  auto settings = std::make_unique<Settings>(deviceName);
+  return std::make_tuple(Status::OK, std::move(settings));
 }

@@ -98,12 +98,13 @@ WebServerAsync::findQueueClient(AsyncWebSocketClient* client) {
 void
 WebServerAsync::sendToClinet(AsyncWebSocketClient* client,
   const Core::IEntity& entity) {
+  Status status;
   std::string json;
-  auto status = serializer.serialize(entity, json);
+  std::tie(status, json) = serializer.serialize(entity);
   if (status.isOk()) {
     client->text(json.c_str());
   } else {
-    status = serializer.serialize(status, json);
+    std::tie(status, json) = serializer.serialize(status);
     if (status.isOk())
       client->text(json.c_str());
     else
@@ -141,9 +142,10 @@ WebServerAsync::onClientDisconnected(AsyncWebSocketClient* client) {
 
 void
 WebServerAsync::onTextReceived(AsyncWebSocketClient* client, const std::string& text) {
+  Status status;
   std::unique_ptr<IEntity> entity;
   std::unique_ptr<Request> request;
-  auto status = serializer.deserialize(text, entity);
+  std::tie(status, entity) = serializer.deserialize(text);
   if (status.isOk()) {
     request = castToUnique<Request>(std::move(entity));
     if (request) {

@@ -11,9 +11,9 @@ using namespace Models;
 #define FIELD_BLUE    "b"
 
 Core::Status
-ColorSerializer::serialize(
-  const Color& color,
-  ISerializationContext& context) const {
+ColorSerializer::serializeImpl(
+  ISerializationContext& context,
+  const Color& color) const {
 
   auto result = context.setInt(FIELD_RED, color.getR());
   if (!result.isOk())
@@ -30,24 +30,23 @@ ColorSerializer::serialize(
   return Status::OK;
 }
 
-Core::Status
-ColorSerializer::deserialize(
-  std::unique_ptr<Models::Color>& color,
-  IDeserializationContext& context) const {
-
+std::tuple<Core::Status, std::unique_ptr<Models::Color>>
+ColorSerializer::deserializeImpl(
+  const IDeserializationContext& context) const {
+  Status result;
   int r, g, b;
-  auto result = context.getInt(FIELD_RED, r);
+  std::tie(result, r) = context.getInt(FIELD_RED);
   if (!result.isOk())
-    return result;
+    return std::make_tuple(result, nullptr);
 
-  result = context.getInt(FIELD_GREEN, g);
+  std::tie(result, g) = context.getInt(FIELD_GREEN);
   if (!result.isOk())
-    return result;
+    return std::make_tuple(result, nullptr);
 
-  result = context.getInt(FIELD_BLUE, b);
+  std::tie(result, b) = context.getInt(FIELD_BLUE);
   if (!result.isOk())
-    return result;
+    return std::make_tuple(result, nullptr);
 
-  color = std::make_unique<Color>(r, g, b);
-  return Status::OK;
+  auto color = std::make_unique<Color>(r, g, b);
+  return std::make_tuple(Status::OK, std::move(color));
 }

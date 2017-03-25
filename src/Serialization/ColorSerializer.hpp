@@ -16,14 +16,12 @@ namespace Serialization {
 
 class ColorSerializer : public Serializer<Models::Color> {
   protected:
-    // From Serializer
-    virtual Core::Status serialize(
-      const Models::Color& color,
-      ISerializationContext& context) const override;
+    virtual Core::Status serializeImpl(
+      ISerializationContext& context,
+      const Models::Color& color) const override;
 
-    virtual Core::Status deserialize(
-      std::unique_ptr<Models::Color>& color,
-      IDeserializationContext& context) const override;
+    virtual std::tuple<Core::Status, std::unique_ptr<Models::Color>> deserializeImpl(
+      const IDeserializationContext& context) const override;
 };
 
 }

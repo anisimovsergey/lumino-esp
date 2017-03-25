@@ -16,14 +16,12 @@ namespace Serialization {
 
 class NetworkSerializer : public Serializer<Models::Network> {
   protected:
-    // From Serializer
-    virtual Core::Status serialize(
-      const Models::Network& network,
-      ISerializationContext& context) const override;
+    virtual Core::Status serializeImpl(
+      ISerializationContext& context,
+      const Models::Network& network) const override;
 
-    virtual Core::Status deserialize(
-      std::unique_ptr<Models::Network>& network,
-      IDeserializationContext& context) const override;
+    virtual std::tuple<Core::Status, std::unique_ptr<Models::Network>> deserializeImpl(
+      const IDeserializationContext& context) const override;
 };
 
 }

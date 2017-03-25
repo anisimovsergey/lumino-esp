@@ -25,16 +25,16 @@ class DeserializationContext : public IDeserializationContext {
       JsonObject& jsonObject);
 
     // From IDeserializationContext
-    virtual bool hasKey(const std::string& key) override;
+    virtual bool hasKey(const std::string& key) const override;
 
-    virtual Core::Status
-      getString(const std::string& key, std::string& value) override;
-    virtual Core::Status
-      getInt(const std::string& key, int& value) override;
-    virtual Core::Status
-      getBool(const std::string& key, bool& value) override;
-    virtual Core::Status
-      getEntity(const std::string& key, std::unique_ptr<Core::IEntity>& entity) override;
+    virtual std::tuple<Core::Status, std::string>
+      getString(const std::string& key) const override;
+    virtual std::tuple<Core::Status, int>
+      getInt(const std::string& key) const override;
+    virtual std::tuple<Core::Status, bool>
+      getBool(const std::string& key) const override;
+    virtual std::tuple<Core::Status, std::unique_ptr<Core::IEntity>>
+      getEntity(const std::string& key) const override;
 
   private:
     const ISerializationService&              serializationService;

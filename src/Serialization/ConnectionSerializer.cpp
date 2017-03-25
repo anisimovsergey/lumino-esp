@@ -11,9 +11,9 @@ using namespace Models;
 #define FIELD_CONNECTED       "connected"
 
 Core::Status
-ConnectionSerializer::serialize(
-  const Connection& connection,
-  ISerializationContext& context) const {
+ConnectionSerializer::serializeImpl(
+  ISerializationContext& context,
+  const Connection& connection) const {
 
   auto result = context.setString(FIELD_WIFI_NETWORK, connection.getNetworkSsid());
   if (!result.isOk())
@@ -26,21 +26,20 @@ ConnectionSerializer::serialize(
   return Status::OK;
 }
 
-Core::Status
-ConnectionSerializer::deserialize(
-  std::unique_ptr<Models::Connection>& connection,
-  IDeserializationContext& context) const {
-
+ std::tuple<Core::Status, std::unique_ptr<Models::Connection>>
+ConnectionSerializer::deserializeImpl(
+  const IDeserializationContext& context) const {
+  Status result;
   std::string networkSsid;
-  auto result = context.getString(FIELD_WIFI_NETWORK, networkSsid);
+  std::tie(result, networkSsid) = context.getString(FIELD_WIFI_NETWORK);
   if (!result.isOk())
-    return result;
+    return std::make_tuple(result, nullptr);
 
   std::string networkPassword;
-  result = context.getString(FIELD_WIFI_PASSWORD, networkPassword);
+  std::tie(result, networkPassword) = context.getString(FIELD_WIFI_PASSWORD);
   if (!result.isOk())
-    return result;
+    return std::make_tuple(result, nullptr);
 
-  connection = std::make_unique<Connection>(networkSsid, networkPassword);
-  return Status::OK;
+  auto connection = std::make_unique<Connection>(networkSsid, networkPassword);
+  return std::make_tuple(Status::OK, std::move(connection));
 }
