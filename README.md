@@ -15,7 +15,7 @@ $ git clone https://github.com/anisimovsergey/lumino-esp
 
 ## Architecture
 
-The application architecture is based on the message processing and it's  implemented using [Gluino](https://github.com/anisimovsergey/gluino) library. This approach allows to compose the application from modules which don't directly depend on each other but rather sending messages and events using the message queue. The advantages of such architecture:
+The application architecture is based on the message processing. This approach allows to compose the application from modules which don't directly depend on each other but rather sending messages and events using the message queue. The advantages of such architecture:
 1. Modules are completely decoupled and can evolve independently
 2. Asynchronous communication support and better responsiveness
 3. It is possible to add and remove modules during run time
@@ -36,3 +36,11 @@ This manager creates the access point when the device boots up as well as redire
 
 ### WiFi Scanner (WiFiScanner)
 WiFi scanner allows to scan WiFi networks asynchronously and reports the scanning results back to the clients.
+
+## Used libraries
+* [Arduino Core for ESP8266](https://github.com/esp8266/Arduino)
+* [Gluino](https://github.com/anisimovsergey/gluino)
+* [Arduino JSON](https://github.com/bblanchon/ArduinoJson)
+* [ESP Asynchronous Web Server](https://github.com/me-no-dev/ESPAsyncWebServer)
+* [ESP Asynchronous TCP](https://github.com/me-no-dev/ESPAsyncTCP)
+* [Adafruit NeoPixel](https://github.com/adafruit/Adafruit_NeoPixel)
