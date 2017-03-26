@@ -45,9 +45,9 @@ When the device is powered on, it could be be set in either of two states:
 * The [initial state](#initial_state), if the WiFi network identifier and password are not stored in the device, what normally happens when the user switches it on the first time of after reseting it.
 * The [connected state](#connected_state) when the device has already been connected to the WiFi network before and the network identifier and password are stored in the device memory.
 
-### <a name="initial_state"></a> The initial state
+### <a name="initial_state"></a> Initial state
 In the initial state:
-* The device name is set to `DEVICE_` followed by a random four letter sequence which can include capital letters from A to Z  and numbers from 0 to 9.
+* The device name is set to `DEVICE_` followed by a random four letter sequence which can include capital letters from A to Z  and numbers from 0 to 9 (yet to be implemented).
 * An unprotected WiFi network access point is created with the name equal to the device name.
 
 When the device is in the initial state, you can connect it to your home WiFi network by following these steps:
@@ -63,7 +63,7 @@ When the device successfully connects to a WiFi network, it switches to the [con
 
 In case of a connection attempt failure, due to an incorrect password or other error, the device displays an error message to the user and remains in the initial state.
 
-### <a name="connected_state"></a> The connected state
+### <a name="connected_state"></a> Connected state
 
 As soon as the device successfully connects to a WiFi network, the network identifier as well as the required password are stored in the device's memory and used in the reconnection attempts.
 
@@ -73,7 +73,7 @@ Using the software, the user can manipulate the device settings and can also dis
 
 If the device losses the WiFi connection, due to a restart of some issues with the network itself, it starts automatically reconnecting using the network identifier and the password stored in the device's memory.
 
-### <a name="silent_state"></a> The silent state
+### <a name="silent_state"></a> Silent state
 
 If the device is in the initial or connected state and the user doesn't connect to its WiFi access point in 5 minutes or disconnects from it and doesn't reconnect for the same period of time, the device gets switched to the silent state by shutting down its WiFi access point.
 
