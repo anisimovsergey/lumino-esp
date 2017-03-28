@@ -11,7 +11,7 @@
 
 namespace Models {
 
-class Settings : public Core::IEntity {
+class Settings final : public Core::IEntity {
   TYPE_INFO(Settings, Core::IEntity, "settings")
   public:
     Settings(std::string deviceName);

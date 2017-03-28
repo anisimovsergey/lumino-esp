@@ -11,7 +11,7 @@
 
 namespace Models {
 
-class Connection : public Core::IEntity {
+class Connection final : public Core::IEntity {
   TYPE_INFO(Connection, Core::IEntity, "connection")
   public:
     Connection(std::string networkSsid, bool isConnected);

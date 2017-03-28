@@ -11,7 +11,7 @@
 
 namespace Models {
 
-class AccessPoint : public Core::IEntity {
+class AccessPoint final : public Core::IEntity {
   TYPE_INFO(AccessPoint, Core::IEntity, "accessPoint")
   public:
     AccessPoint(std::string networkSsid);

@@ -11,7 +11,7 @@
 
 namespace Models {
 
-class Network : public Core::IEntity {
+class Network final : public Core::IEntity {
   TYPE_INFO(Network, Core::IEntity, "network")
   public:
     Network(std::string ssid, int rssi, std::string encryptionType);

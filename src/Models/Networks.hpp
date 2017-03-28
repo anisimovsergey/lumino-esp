@@ -12,7 +12,7 @@
 
 namespace Models {
 
-class Networks : public Core::List<Models::Network> {
+class Networks final : public Core::List<Models::Network> {
   TYPE_INFO(Networks, Core::List<Models::Network>, "networks")
 };
 
