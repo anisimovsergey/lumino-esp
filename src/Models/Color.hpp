@@ -11,7 +11,7 @@
 
 namespace Models {
 
-class Color : public Core::IEntity {
+class Color final : public Core::IEntity {
   TYPE_INFO(Color, Core::IEntity, "color")
   public:
     Color();

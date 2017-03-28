@@ -1,6 +1,7 @@
 #include "SettingsController.hpp"
 
 #include "Core/Memory.hpp"
+#include "Core/Format.hpp"
 
 #include <EEPROM.h>
 
@@ -9,6 +10,7 @@ using namespace Messaging;
 using namespace Services;
 
 namespace {
+  static const int COMMIT_DELAY       = 10; // 10 seconds
   static const int EEPROM_COLOR_START = 0;
   static const int EEPROM_COLOR_END   = 2;
   static const int EEPROM_NAME_START  = 5;
@@ -16,7 +18,7 @@ namespace {
 }
 
 SettingsController::SettingsController(
-  Messaging::IMessageQueue& messageQueue) :
+  IMessageQueue& messageQueue) :
   messageQueue(messageQueue) {
 
   EEPROM.begin(64);
@@ -50,16 +52,24 @@ SettingsController::getDeviceName() const {
   return name;
 }
 
-void
+bool
 SettingsController::setDeviceName(std::string name) {
+  bool updated = false;
   for (size_t i = EEPROM_NAME_START; i <= EEPROM_NAME_END; i++) {
     char ch = 0;
     size_t index = i - EEPROM_NAME_START;
-    if (index < name.length())
+    if (index < name.length()) {
       ch = name[index];
-    EEPROM.write(i, ch);
+      if (ch != EEPROM.read(i)) {
+        EEPROM.write(i, ch);
+        updated = true;
+      }
+    }
   }
-  EEPROM.commit();
+  if (updated) {
+    startCommitTimer();
+  }
+  return updated;
 }
 
 Models::Color
@@ -71,13 +81,29 @@ SettingsController::getColor() const {
   return Models::Color(r, g, b);
 }
 
-void
+bool
 SettingsController::setColor(const Models::Color& color) {
   int address = EEPROM_COLOR_START;
-  EEPROM.write(address++, color.getR());
-  EEPROM.write(address++, color.getG());
-  EEPROM.write(address++, color.getB());
-  EEPROM.commit();
+  bool updated = false;
+  auto r = EEPROM.read(address);
+  if (r != color.getR()) {
+    EEPROM.write(address, color.getR());
+    updated = true;
+  }
+  auto g = EEPROM.read(++address);
+  if (g != color.getG()) {
+    EEPROM.write(address, color.getG());
+    updated = true;
+  }
+  auto b = EEPROM.read(++address);
+  if (b != color.getB()) {
+    EEPROM.write(address, color.getB());
+    updated = true;
+  }
+  if (updated) {
+    startCommitTimer();
+  }
+  return updated;
 }
 
 std::unique_ptr<Core::IEntity>
@@ -86,9 +112,10 @@ SettingsController::onGetSettings() {
 }
 
 std::unique_ptr<IEntity>
-SettingsController::onUpdateSettings(const Models::Settings& model) {
-  setDeviceName(model.getDeviceName());
-  settingsController->sendEvent(EventType::Updated, std::make_unique<Models::Settings>(model));
+SettingsController::onUpdateSettings(const Models::Settings& settings) {
+  if (setDeviceName(settings.getDeviceName())) {
+    settingsController->sendEvent(EventType::Updated, std::make_unique<Models::Settings>(settings));
+  }
   return std::make_unique<Status>(Status::OK);
 }
 
@@ -98,8 +125,24 @@ SettingsController::onGetColor() {
 }
 
 std::unique_ptr<Core::IEntity>
-SettingsController::onUpdateColor(const Models::Color& model) {
-  setColor(model);
-  colorController->sendEvent(EventType::Updated, std::make_unique<Models::Color>(model));
+SettingsController::onUpdateColor(const Models::Color& color) {
+  if (setColor(color)) {
+    colorController->sendEvent(EventType::Updated, std::make_unique<Models::Color>(color));
+  }
   return std::make_unique<Status>(Status::OK);
+}
+
+void
+SettingsController::onCommitStatic(SettingsController* controller) {
+  controller->onCommitTimeout();
+}
+
+void
+SettingsController::startCommitTimer() {
+  commitTimer.once(COMMIT_DELAY, onCommitStatic,  this);
+}
+
+void
+SettingsController::onCommitTimeout() {
+  EEPROM.commit();
 }

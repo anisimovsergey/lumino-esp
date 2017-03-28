@@ -11,29 +11,39 @@
 #include "Models/Settings.hpp"
 #include "Models/Color.hpp"
 
+#include <Ticker.h>
+
 namespace Services {
 
 class SettingsController {
   public:
-    SettingsController(Messaging::IMessageQueue& messageQueue);
+    SettingsController(
+      Messaging::IMessageQueue& messageQueue
+    );
 
   private:
-    Messaging::IMessageQueue&            messageQueue;
+    Messaging::IMessageQueue&   messageQueue;
+    Ticker                      commitTimer;
 
     std::string     getDeviceName() const;
-    void            setDeviceName(std::string name);
+    bool            setDeviceName(std::string name);
 
     Models::Color   getColor() const;
-    void            setColor(const Models::Color& color);
+    bool            setColor(const Models::Color& color);
 
     std::unique_ptr<Messaging::QueueResourceController>  settingsController;
     std::unique_ptr<Messaging::QueueResourceController>  colorController;
 
     std::unique_ptr<Core::IEntity> onGetSettings();
-    std::unique_ptr<Core::IEntity> onUpdateSettings(const Models::Settings& model);
+    std::unique_ptr<Core::IEntity> onUpdateSettings(const Models::Settings& Settings);
 
     std::unique_ptr<Core::IEntity> onGetColor();
-    std::unique_ptr<Core::IEntity> onUpdateColor(const Models::Color& model);
+    std::unique_ptr<Core::IEntity> onUpdateColor(const Models::Color& color);
+
+    // Delayed commit
+    static void onCommitStatic(SettingsController* manager);
+    void startCommitTimer();
+    void onCommitTimeout();
 };
 
 }
