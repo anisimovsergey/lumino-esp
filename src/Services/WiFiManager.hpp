@@ -11,7 +11,6 @@
 #include "Messaging/IMessageQueue.hpp"
 #include "Models/Connection.hpp"
 #include "Models/AccessPoint.hpp"
-#include "Models/Settings.hpp"
 
 #include <DNSServer.h>
 #include <ESP8266WiFi.h>
@@ -25,17 +24,14 @@ class WiFiManager {
   public:
     WiFiManager(Messaging::IMessageQueue& messageQueue);
 
+    void   start();
     void   idle();
 
   private:
     Messaging::IMessageQueue&                   messageQueue;
-    std::string                                 uniqueName;
     std::unique_ptr<DNSServer>                  dnsServer;
     Ticker                                      disconnectTimer;
     bool                                        isConnectedInternal;
-
-    // Clients
-    std::unique_ptr<Messaging::QueueResourceClient>      settingsClient;
 
     // Controllers
     std::unique_ptr<Messaging::QueueResourceController>  connectionController;
@@ -47,6 +43,7 @@ class WiFiManager {
     WiFiEventHandler                  clientConnectedEventHandler;
     WiFiEventHandler                  clientDisconnectedEventHandler;
 
+    std::string   getUniqueName() const;
     bool          hasConnection() const;
     bool          hasAccessPoint() const;
     std::string   getNetwork() const;
@@ -55,14 +52,10 @@ class WiFiManager {
     std::unique_ptr<Models::Connection> createConnectionObject();
     std::unique_ptr<Models::AccessPoint> createAccessPointObject();
 
-    void         start();
     Core::Status connect(std::string network, std::string password);
     Core::Status disconnect();
     void startSoftAP();
     void stopSoftAP();
-
-    // Settings events
-    void onSettingsGetObjectResponse(const Models::Settings& settings);
 
     // Message handling
     std::unique_ptr<Core::IEntity> onGetConnection();

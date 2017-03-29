@@ -62,8 +62,8 @@ Application::registerSerializers() {
 
 void
 Application::startServices() {
-  logger->message("Creating settings...");
-  settings->start();
+  logger->message("Starting wifi manager...");
+  wifiManager->start();
   logger->message("Starting Web server...");
   webServerAsync->start();
 }
