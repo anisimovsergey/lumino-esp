@@ -8,6 +8,7 @@
 #define SERVICES_WEB_SERVER_ASYNC_HPP
 
 #include "Core/ILogger.hpp"
+#include "Models/AccessPoint.hpp"
 #include "Messaging/IMessageQueue.hpp"
 #include "Serialization/ISerializationService.hpp"
 
@@ -32,6 +33,7 @@ class WebServerAsync {
 
   private:
     typedef std::list<std::unique_ptr<Messaging::QueueGenericClient>> QueueClients;
+    typedef std::unique_ptr<Messaging::QueueResourceClient> AccessPointClient;
 
     std::unique_ptr<AsyncWebServer>       httpServer;
     std::unique_ptr<AsyncWebSocket>       wsServer;
@@ -39,6 +41,9 @@ class WebServerAsync {
     Serialization::ISerializationService& serializer;
     Core::ILogger&                        logger;
     QueueClients                          queueClients;
+    AccessPointClient                     accessPointClient;
+
+    void onAccessPointCreated(const Models::AccessPoint& accessPoint);
 
     std::string     getLocalDomain() const;
 

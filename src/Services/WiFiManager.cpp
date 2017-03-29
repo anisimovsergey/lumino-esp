@@ -11,12 +11,22 @@ using namespace Models;
 using namespace Messaging;
 using namespace Services;
 
+namespace {
+  static const int DISCONNECT_DELAY = 300; // 60 * 5 min
+  const char* SenderId = "WiFiManager";
+}
+
 WiFiManager::WiFiManager(
   IMessageQueue& messageQueue) :
   messageQueue(messageQueue) {
 
   dnsServer = std::move(std::make_unique<DNSServer>());
   isConnectedInternal = false;
+
+  settingsClient = messageQueue.createClient(SenderId, Settings::TypeId());
+  settingsClient->addOnEvent(EventType::Created, [=](const Models::Settings& settings) {
+    onSettingsCreated(settings);
+  });
 
   connectionController = messageQueue.createController(Connection::TypeId());
   connectionController->addOnRequest(RequestType::Read, [=](){
@@ -51,19 +61,6 @@ WiFiManager::WiFiManager(
   );
 }
 
-void
-WiFiManager::start() {
-  // Set DHCP host name
-  WiFi.hostname(getUniqueName().c_str());
-  startSoftAP();
-  startDisconnectTimer();
-}
-
-std::string
-WiFiManager::getUniqueName() const {
-  return "esp8266fs";
-}
-
 bool
 WiFiManager::hasConnection() const {
   return (WiFi.SSID().length() > 0);
@@ -87,7 +84,7 @@ WiFiManager::isConnected() const {
 
 Core::Status
 WiFiManager::connect(std::string network, std::string password) {
-  if (isConnected())
+  if (hasConnection())
     return Status(StatusCode::Conflict, "The connection already exists.");
 
   WiFi.begin(network.c_str(), password.c_str());
@@ -104,12 +101,21 @@ WiFiManager::disconnect() {
 }
 
 void
-WiFiManager::startSoftAP() {
+WiFiManager::startService() {
+  startDisconnectTimer();
+  // Set DHCP host name
+  WiFi.hostname(uniqueName.c_str());
   // Set access point name (SSID)
-  WiFi.softAP(getUniqueName().c_str());
+  WiFi.softAP(uniqueName.c_str());
+  // Start DNS respiner
   dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
   dnsServer->start(53, "*", WiFi.softAPIP());
+
+  // Sending events
   accessPointController->sendEvent(EventType::Created, createAccessPointObject());
+  if (hasConnection()) {
+    connectionController->sendEvent(EventType::Created, createConnectionObject());
+  }
 }
 
 void
@@ -132,7 +138,13 @@ WiFiManager::createConnectionObject() {
 
 std::unique_ptr<AccessPoint>
 WiFiManager::createAccessPointObject() {
-  return std::make_unique<AccessPoint>(getUniqueName());
+  return std::make_unique<AccessPoint>(uniqueName);
+}
+
+void
+WiFiManager::onSettingsCreated(const Models::Settings& settings) {
+  uniqueName = settings.getUniqueName();
+  startService();
 }
 
 std::unique_ptr<IEntity>
@@ -178,7 +190,7 @@ WiFiManager::onGetAccessPoint() {
 void
 WiFiManager::onConnected() {
   if (hasConnection()) {
-    if (MDNS.begin(getUniqueName().c_str())) {
+    if (MDNS.begin(uniqueName.c_str())) {
       MDNS.addService("http", "tcp", 80);
     }
     isConnectedInternal = true;
@@ -213,7 +225,7 @@ WiFiManager::onDisconnectStatic(WiFiManager* manager) {
 
 void
 WiFiManager::startDisconnectTimer() {
-  disconnectTimer.once(300, onDisconnectStatic,  this);
+  disconnectTimer.once(DISCONNECT_DELAY, onDisconnectStatic,  this);
 }
 
 void

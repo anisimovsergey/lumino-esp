@@ -1,12 +1,17 @@
 #include "WebServerAsync.hpp"
 
 #include "Core/Memory.hpp"
-#include <Core/Format.hpp>
+#include "Core/Format.hpp"
 
 using namespace Core;
+using namespace Models;
 using namespace Messaging;
 using namespace Serialization;
 using namespace Services;
+
+namespace {
+  const char* SenderId = "WebServer";
+}
 
 WebServerAsync::WebServerAsync(
   IMessageQueue& messageQueue,
@@ -16,6 +21,11 @@ WebServerAsync::WebServerAsync(
   serializer(serializer),
   logger(logger) {
 
+  accessPointClient = messageQueue.createClient(SenderId, AccessPoint::TypeId());
+  accessPointClient->addOnEvent(EventType::Created, [=](const Models::AccessPoint& accessPoint) {
+    onAccessPointCreated(accessPoint);
+  });
+
   wsServer = std::move(std::make_unique<AsyncWebSocket>("/ws"));
   wsServer->onEvent([=](AsyncWebSocket* server, AsyncWebSocketClient* client,
     AwsEventType type, void* arg, uint8_t *data, size_t len) {
@@ -24,6 +34,20 @@ WebServerAsync::WebServerAsync(
 
   httpServer = std::move(std::make_unique<AsyncWebServer>(80));
   httpServer->addHandler(wsServer.get());
+}
+
+void
+WebServerAsync::onAccessPointCreated(const Models::AccessPoint& accessPoint) {
+  SPIFFS.begin();
+  httpServer->serveStatic("", SPIFFS, "");
+  httpServer->onNotFound([&](AsyncWebServerRequest *request){
+    if (isIntercepted(request)) {
+      redirectToSelf(request);
+    } else {
+      request->send((int)StatusCode::NotFound);
+    }
+  });
+  httpServer->begin();
 }
 
 std::string
@@ -40,20 +64,6 @@ void
 WebServerAsync::redirectToSelf(AsyncWebServerRequest *request) {
   auto route = std::string("http://") + getLocalDomain();
   request->redirect(route.c_str());
-}
-
-void
-WebServerAsync::start() {
-  SPIFFS.begin();
-  httpServer->serveStatic("", SPIFFS, "");
-  httpServer->onNotFound([&](AsyncWebServerRequest *request){
-    if (isIntercepted(request)) {
-      redirectToSelf(request);
-    } else {
-      request->send((int)StatusCode::NotFound);
-    }
-  });
-  httpServer->begin();
 }
 
 void

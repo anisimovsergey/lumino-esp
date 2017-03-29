@@ -23,7 +23,7 @@ SettingsController::SettingsController(
   IMessageQueue& messageQueue) :
   messageQueue(messageQueue) {
 
-  EEPROM.begin(64);
+  EEPROM.begin(76);
 
   settingsController = messageQueue.createController(Models::Settings::TypeId());
   settingsController->addOnRequest(RequestType::Read, [=]() {
@@ -40,15 +40,15 @@ SettingsController::SettingsController(
   colorController->addOnRequest(RequestType::Update, [=](const Models::Color& model){
     return onUpdateColor(model);
   });
-}
 
-void
-SettingsController::start() {
   // Set the uniuqe name to the device name at the first start
   auto uniqueName = getUniqueName();
   if (setUniqueName(uniqueName)) {
     setDeviceName(uniqueName);
   }
+
+  settingsController->sendEvent(EventType::Created, onGetSettings());
+  colorController->sendEvent(EventType::Created, onGetColor());
 }
 
 std::string
