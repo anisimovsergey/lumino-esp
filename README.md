@@ -47,12 +47,12 @@ When the device is powered on, it could be be set in either of two states:
 
 ### <a name="initial_state"></a> Initial state
 In the initial state:
-* The device name is set to `DEVICE_` followed by a random four letter sequence which can include capital letters from A to Z  and numbers from 0 to 9 (yet to be implemented).
+* The device name is set to `LUMINO_` followed by a random four letter sequence which can include capital letters from A to Z  and numbers from 0 to 9 (yet to be implemented).
 * An unprotected WiFi network access point is created with the name equal to the device name.
 
 When the device is in the initial state, you can connect it to your home WiFi network by following these steps:
 1. Scan the available WiFi networks on your mobile phone or a computer.
-* Find the one created by your device (it should have `DEVICE_` prefix) and connect to it.
+* Find the one created by your device (it should have `LUMINO_` prefix) and connect to it.
 * You should be redirected to the captive portal page hosted on the device. If you are not redirected automatically, try to open the following page in your browser:
 http://192.164.1.4/ This page allows you to see all the WiFi networks available for the device to connect.
 * Connect the device to your WiFi network by selecting it in the list of the available ones. For the secured home network, which is mostly the case, you need to provide the password too.

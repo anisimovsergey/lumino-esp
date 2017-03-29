@@ -3,6 +3,7 @@
 #include "Core/Memory.hpp"
 #include "Core/Format.hpp"
 
+#include <ESP8266WiFi.h>
 #include <EEPROM.h>
 
 using namespace Core;
@@ -12,9 +13,10 @@ using namespace Services;
 namespace {
   static const int COMMIT_DELAY       = 10; // 10 seconds
   static const int EEPROM_COLOR_START = 0;
-  static const int EEPROM_COLOR_END   = 2;
-  static const int EEPROM_NAME_START  = 5;
-  static const int EEPROM_NAME_END    = 36;
+  static const int EEPROM_UNIQUE_NAME_START  = 5;
+  static const int EEPROM_UNIQUE_NAME_LEN    = 32;
+  static const int EEPROM_DEVICE_NAME_START  = 40;
+  static const int EEPROM_DEVICE_NAME_LEN    = 32;
 }
 
 SettingsController::SettingsController(
@@ -40,30 +42,63 @@ SettingsController::SettingsController(
   });
 }
 
+void
+SettingsController::start() {
+  // Set the uniuqe name to the device name at the first start
+  auto uniqueName = getUniqueName();
+  if (setUniqueName(uniqueName)) {
+    setDeviceName(uniqueName);
+  }
+}
+
+std::string
+SettingsController::getUniqueName() const {
+  // Creating a unique name from the MAC address
+  uint8_t macArray[6];
+  WiFi.macAddress(macArray);
+  uint8_t b1 = macArray[0] ^ macArray[2] ^ macArray[4];
+  uint8_t b2 = macArray[1] ^ macArray[3] ^ macArray[5];
+  return stringFormat("LUMINO_%02X%02X", b1, b2);
+}
+
+bool
+SettingsController::setUniqueName(std::string name) {
+  return setString(name, EEPROM_UNIQUE_NAME_START, EEPROM_UNIQUE_NAME_LEN);
+}
 
 std::string
 SettingsController::getDeviceName() const {
+  return getString(EEPROM_DEVICE_NAME_START, EEPROM_DEVICE_NAME_LEN);
+}
+
+bool
+SettingsController::setDeviceName(std::string name) {
+  return setString(name, EEPROM_DEVICE_NAME_START, EEPROM_DEVICE_NAME_LEN);
+}
+
+std::string
+SettingsController::getString(size_t start, size_t len) const {
   std::string name;
-  for (size_t i = EEPROM_NAME_START; i <= EEPROM_NAME_END; i++) {
+  for (size_t i = start;i < start + len; i++) {
     auto ch = EEPROM.read(i);
-    if (ch != 0 && ch > 31 && ch < 127)
+    if (ch != 0)
       name += ch;
   }
   return name;
 }
 
 bool
-SettingsController::setDeviceName(std::string name) {
+SettingsController::setString(std::string str, size_t start, size_t len) {
   bool updated = false;
-  for (size_t i = EEPROM_NAME_START; i <= EEPROM_NAME_END; i++) {
+  for (size_t i = start; i < start + len; i++) {
     char ch = 0;
-    size_t index = i - EEPROM_NAME_START;
-    if (index < name.length()) {
-      ch = name[index];
-      if (ch != EEPROM.read(i)) {
-        EEPROM.write(i, ch);
-        updated = true;
-      }
+    size_t index = i - start;
+    if (index < str.length()) {
+      ch = str[index];
+    }
+    if (ch != EEPROM.read(i)) {
+      EEPROM.write(i, ch);
+      updated = true;
     }
   }
   if (updated) {
@@ -108,7 +143,7 @@ SettingsController::setColor(const Models::Color& color) {
 
 std::unique_ptr<Core::IEntity>
 SettingsController::onGetSettings() {
-  return std::make_unique<Models::Settings>(getDeviceName());
+  return std::make_unique<Models::Settings>(getUniqueName(), getDeviceName());
 }
 
 std::unique_ptr<IEntity>
