@@ -31,47 +31,31 @@ DisplayController::DisplayController(
   updateDisplay();
 
   colorClient = messageQueue.createClient(SenderId, Color::TypeId());
-  colorClient->addOnResponse(RequestType::Read, [=](const Models::Color& color) {
-    onColorGetObjectResponse(color);
+  colorClient->addOnEvent(EventType::Created, [=](const Models::Color& color) {
+    onColorCreated(color);
   });
   colorClient->addOnEvent(EventType::Updated, [=](const Models::Color& color) {
-    onColorUpdateNotification(color);
+    onColorUpdated(color);
   });
 
   connectionClient = messageQueue.createClient(SenderId, Connection::TypeId());
-  connectionClient->addOnResponse(RequestType::Read, [=](const Core::Status& status) {
-    onConnectionGetStatusResponse(status);
-  });
-  connectionClient->addOnResponse(RequestType::Read, [=](const Models::Connection& connection) {
-    onConnectionGetObjectResponse(connection);
-  });
   connectionClient->addOnEvent(EventType::Created, [=](const Models::Connection& connection) {
-    onConnectionCreateNotification(connection);
+    onConnectionCreated(connection);
   });
   connectionClient->addOnEvent(EventType::Updated, [=](const Models::Connection& connection) {
-    onConnectionUpdateNotification(connection);
+    onConnectionUpdated(connection);
   });
   connectionClient->addOnEvent(EventType::Deleted, [=]() {
-    onConnectionDeleteNotification();
+    onConnectionDeleted();
   });
 
   accessPointClient = messageQueue.createClient(SenderId, AccessPoint::TypeId());
-  accessPointClient->addOnResponse(RequestType::Read, [=](const Core::Status& status) {
-    onAccessPointGetStatusResponse(status);
-  });
-  accessPointClient->addOnResponse(RequestType::Read, [=](const Models::AccessPoint& accessPoint) {
-    onAccessPointGetObjectResponse(accessPoint);
-  });
   accessPointClient->addOnEvent(EventType::Created, [=](const Models::AccessPoint& accessPoint) {
-    onAccessPointCreateNotification(accessPoint);
+    onAccessPointCreated(accessPoint);
   });
   accessPointClient->addOnEvent(EventType::Deleted, [=]() {
-    onAccessPointDeleteNotification();
+    onAccessPointDeleted();
   });
-
-  colorClient->sendRequest(RequestType::Read);
-  connectionClient->sendRequest(RequestType::Read);
-  accessPointClient->sendRequest(RequestType::Read);
 }
 
 void
@@ -96,67 +80,43 @@ DisplayController::updateDisplay() {
 }
 
 void
-DisplayController::onColorGetObjectResponse(const Color& color) {
+DisplayController::onColorCreated(const Color& color) {
   this->color = color;
   updateDisplay();
 }
 
 void
-DisplayController::onColorUpdateNotification(const Color& color) {
+DisplayController::onColorUpdated(const Color& color) {
   this->color = color;
   updateDisplay();
 }
 
 void
-DisplayController::onConnectionGetStatusResponse(const Core::Status& status) {
+DisplayController::onConnectionCreated(const Connection& connection) {
+  isConnected = connection.getIsConnected();
+  updateDisplay();
+}
+
+void
+DisplayController::onConnectionUpdated(const Connection& connection) {
+  isConnected = connection.getIsConnected();
+  updateDisplay();
+}
+
+void
+DisplayController::onConnectionDeleted() {
   isConnected = false;
   updateDisplay();
 }
 
 void
-DisplayController::onConnectionGetObjectResponse(const Connection& connection) {
-  isConnected = connection.getIsConnected();
-  updateDisplay();
-}
-
-void
-DisplayController::onConnectionCreateNotification(const Connection& connection) {
-  isConnected = connection.getIsConnected();
-  updateDisplay();
-}
-
-void
-DisplayController::onConnectionUpdateNotification(const Connection& connection) {
-  isConnected = connection.getIsConnected();
-  updateDisplay();
-}
-
-void
-DisplayController::onConnectionDeleteNotification() {
-  isConnected = false;
-  updateDisplay();
-}
-
-void
-DisplayController::onAccessPointGetStatusResponse(const Core::Status& status) {
-  hasAccessPoint = false;
-  updateDisplay();
-}
-
-void
-DisplayController::onAccessPointGetObjectResponse(const AccessPoint& accessPoint) {
+DisplayController::onAccessPointCreated(const AccessPoint& accessPoint) {
   hasAccessPoint = true;
   updateDisplay();
 }
 
 void
-DisplayController::onAccessPointCreateNotification(const AccessPoint& accessPoint) {
-  hasAccessPoint = true;
-  updateDisplay();
-}
-
-void
-DisplayController::onAccessPointDeleteNotification() {
+DisplayController::onAccessPointDeleted() {
   hasAccessPoint = false;
   updateDisplay();
 }

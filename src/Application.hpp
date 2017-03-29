@@ -38,7 +38,6 @@ class Application {
   private:
     void createServices();
     void registerSerializers();
-    void startServices();
 };
 
 #endif /* end of include guard: APPLICATION_HPP */

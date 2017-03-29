@@ -36,21 +36,17 @@ class DisplayController {
     void updateDisplay();
 
     // Color events
-    void onColorGetObjectResponse(const Models::Color& color);
-    void onColorUpdateNotification(const Models::Color& color);
+    void onColorCreated(const Models::Color& color);
+    void onColorUpdated(const Models::Color& color);
 
     // Connection events
-    void onConnectionGetStatusResponse(const Core::Status& status);
-    void onConnectionGetObjectResponse(const Models::Connection& connection);
-    void onConnectionCreateNotification(const Models::Connection& connection);
-    void onConnectionUpdateNotification(const Models::Connection& connection);
-    void onConnectionDeleteNotification();
+    void onConnectionCreated(const Models::Connection& connection);
+    void onConnectionUpdated(const Models::Connection& connection);
+    void onConnectionDeleted();
 
     // Access point events
-    void onAccessPointGetStatusResponse(const Core::Status& status);
-    void onAccessPointGetObjectResponse(const Models::AccessPoint& accessPoint);
-    void onAccessPointCreateNotification(const Models::AccessPoint& accessPoint);
-    void onAccessPointDeleteNotification();
+    void onAccessPointCreated(const Models::AccessPoint& accessPoint);
+    void onAccessPointDeleted();
 };
 
 }

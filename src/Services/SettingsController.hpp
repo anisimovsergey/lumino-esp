@@ -21,12 +21,20 @@ class SettingsController {
       Messaging::IMessageQueue& messageQueue
     );
 
+    void            start();
+
   private:
     Messaging::IMessageQueue&   messageQueue;
     Ticker                      commitTimer;
 
+    std::string     getUniqueName() const;
+    bool            setUniqueName(std::string name);
+
     std::string     getDeviceName() const;
     bool            setDeviceName(std::string name);
+
+    std::string     getString(size_t start, size_t len) const;
+    bool            setString(std::string str, size_t start, size_t len);
 
     Models::Color   getColor() const;
     bool            setColor(const Models::Color& color);

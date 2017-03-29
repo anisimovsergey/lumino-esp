@@ -21,7 +21,6 @@ void
 Application::setup() {
   createServices();
   registerSerializers();
-  startServices();
   logger->message("Initialized, free heap: " + toString(ESP.getFreeHeap()) + " bytes.");
 }
 
@@ -58,14 +57,6 @@ Application::registerSerializers() {
   serializer->addSerializer(std::make_unique<ResponseSerializer>());
   serializer->addSerializer(std::make_unique<EventSerializer>());
   serializer->addSerializer(std::make_unique<ColorSerializer>());
-}
-
-void
-Application::startServices() {
-  logger->message("Starting wifi manager...");
-  wifiManager->start();
-  logger->message("Starting Web server...");
-  webServerAsync->start();
 }
 
 void

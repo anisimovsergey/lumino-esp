@@ -14,11 +14,13 @@ namespace Models {
 class Settings final : public Core::IEntity {
   TYPE_INFO(Settings, Core::IEntity, "settings")
   public:
-    Settings(std::string deviceName);
+    Settings(std::string uniqueName, std::string deviceName);
 
+    std::string getUniqueName() const { return uniqueName; }
     std::string getDeviceName() const { return deviceName; };
 
   private:
+    std::string uniqueName;
     std::string deviceName;
 };
 
