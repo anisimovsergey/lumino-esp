@@ -41,31 +41,26 @@ WiFi scanner allows to scan WiFi networks asynchronously and reports the discove
 
 When the device is powered on, it creates an unprotected WiFi access point with the name starting with `LUMINO_` followed by a unique four letter sequence which can include capital letters from A to F  and numbers from 0 to 9.
 
-When the access point is available, user can connect it to a home WiFi network by doing the following steps:
+When the access point is available, user can connect the device to a home WiFi network by doing the following steps:
 1. Scan the available WiFi networks on your mobile phone or a computer.
 2. Find the one created by your device (it should have `LUMINO_` prefix) and connect to it.
 3. You should be redirected to the captive portal page hosted on the device. If you are not redirected automatically, try to open the following page in your browser:
 http://192.164.1.4/ This page allows you to see all the WiFi networks available for the device to connect.
 4. Connect the device to your WiFi network by selecting its SSID in the list of the available ones. For the secured home network, which is mostly the case, you need to provide the password too.
 
-If the user doesn't connect to the WiFi access point in 5 minutes or disconnects from it and doesn't reconnect for the same period of time, the device disables it.
-
-In order to enable the access point, the user needs to simply switch the device off and on again.
+If the user doesn't connect to the WiFi access point in 5 minutes or disconnects from it and doesn't reconnect for the same period of time, the device disables it. In order to re-enable the access point, the user needs to simply switch the device off and on again.
 
 ![access point state diagram](https://raw.githubusercontent.com/anisimovsergey/lumino-esp/master/docs/images/soft_ap_state_diagram.png)
 
-In case of a connection attempt failure, due to an incorrect password or other error, the device displays an error message to the user and remains in the initial state.
+In case of a connection attempt failure, due to an incorrect password or other error, the device displays an error message to the user and remains in the disconnected state trying to connect to the specified WiFi network.
 
-As soon as the device successfully connects to a WiFi network, the network identifier as well as the required password are stored in the device's memory and used in the reconnection attempts.
+![connection state diagram](https://raw.githubusercontent.com/anisimovsergey/lumino-esp/master/docs/images/connection_state_diagram.png)
 
-When the device successfully connects to a WiFi network, it switches to the connected state. Now you can disconnect from the WiFi network created by the device, connect back to your home network and use the software coming with the device for changing its settings.
+In the connected state the WiFi access point created by the device in the initial state, gets eventually disabled but the user can still access the device settings through the WiFi network the device now connected to. For doing that, the user, while being connected to the same network, needs to run the software coming with the device.
 
-In the connected state the WiFi access point created by the device in the initial state, gets eventually disabled (see [silent state](#silent_state)) but the user can still access the device settings through the WiFi network the device now connected to. For doing that, the user, while being connected to the same network, needs to run the software coming with the device.
-
-Using the software, the user can manipulate the device settings and can also disconnect the device from the WiFi network. In this case, the device erases the current network identifier and password, disconnects from the network and switches back to the [initial state](#initial_state). The same effect can be achieved by pressing the reset button.
+Using the software, the user can manipulate the device settings and can also disconnect the device from the WiFi network. In this case, the device erases the current network identifier and password, disconnects from the network and switches back to the initial state.
 
 If the device losses the WiFi connection, due to a restart of some issues with the network itself, it starts automatically reconnecting using the network identifier and the password stored in the device's memory.
-
 
 ## Used libraries
 * [Arduino Core for ESP8266](https://github.com/esp8266/Arduino)
