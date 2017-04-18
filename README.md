@@ -22,6 +22,8 @@ The application architecture is based on the message processing. This approach a
 
 ## Modules
 
+![components diagram](https://raw.githubusercontent.com/anisimovsergey/lumino-esp/master/docs/images/components_diagram.png)
+
 ### Display controller (DisplayController)
 Display controller is responsible for reflecting the current state of the application, including currently selected color, the connection and access point state, on a display, although for this application the display is just a group of NeoPixel LEDs. This controller doesn't process any requests directly but rather listening on the events from the color, connection and access point resources.
 
