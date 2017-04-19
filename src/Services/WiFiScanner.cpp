@@ -38,9 +38,9 @@ WiFiScanner::WiFiScanner(Messaging::IMessageQueue& messageQueue) :
   messageQueue(messageQueue) {
   scanners.push_back(this);
 
-  auto controller = messageQueue.createController("WiFiScanner");
-  controller->addOnRequest(RequestType::Read, [=](){
-    return onGetNetworks();
+  controller = messageQueue.createController(Networks::TypeId());
+  controller->addOnRequest(RequestType("scan"), [=](){
+    return onScanNetworks();
   });
 }
 
@@ -49,7 +49,7 @@ WiFiScanner::~WiFiScanner() {
 }
 
 std::unique_ptr<Core::IEntity>
-WiFiScanner::onGetNetworks() {
+WiFiScanner::onScanNetworks() {
   if (!isScanning) {
     auto config = (const struct scan_config){ 0 };
     if (!wifi_station_scan(&config, reinterpret_cast<scan_done_cb_t>(&onScanDone))) {
@@ -59,7 +59,7 @@ WiFiScanner::onGetNetworks() {
       isScanning = true;
     }
   }
-  return std::make_unique<Status>(StatusCode::Accepted, "Scanning FiFi networks.");
+  return std::make_unique<Status>(StatusCode::Accepted, "Scanning WiFi networks.");
 }
 
 void

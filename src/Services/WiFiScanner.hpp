@@ -23,7 +23,7 @@ class WiFiScanner {
   private:
     Messaging::IMessageQueue&    messageQueue;
     std::unique_ptr<Messaging::QueueResourceController> controller;
-    std::unique_ptr<Core::IEntity> onGetNetworks();
+    std::unique_ptr<Core::IEntity> onScanNetworks();
 
     static bool isScanning;
     static std::list<WiFiScanner*> scanners;
