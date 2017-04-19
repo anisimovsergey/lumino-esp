@@ -28,7 +28,7 @@ The application architecture is based on the message processing. This approach a
 Display controller is responsible for reflecting the current state of the application, including currently selected color, the connection and access point state, on a display, although for this application the display is just a group of NeoPixel LEDs. This controller doesn't process any requests directly but rather listening on the events from the color, connection and access point resources.
 
 ### Settings controller (SettingsController)
-Settings controller provides access to the application settings such as the device name and currently selected color.
+Settings controller provides access to the application settings stored in EEPROM, such as the device name and currently selected color.
 
 ### Web Server (WebServerAsync)
 Asynchronous web-server serves static content which is displayed as the WiFi connection page when the user connects to the access point created by the device. This module is also handling asynchronous WebSockets communication by accepting the clients connections, receiving requests, adding them to the message queue and sending the responses back to the clients.
@@ -47,7 +47,7 @@ When the access point is available, user can connect the device to a home WiFi n
 1. Scan the available WiFi networks on your mobile phone or a computer.
 2. Find the one created by your device (it should have `LUMINO_` prefix) and connect to it.
 3. You should be redirected to the captive portal page hosted on the device. If you are not redirected automatically, try to open the following page in your browser:
-http://192.164.1.4/ This page allows you to see all the WiFi networks available for the device to connect.
+http://192.168.4.1/ This page allows you to see all the WiFi networks available for the device to connect.
 4. Connect the device to your WiFi network by selecting its SSID in the list of the available ones. For the secured home network, which is mostly the case, you need to provide the password too.
 
 If the user doesn't connect to the WiFi access point in 5 minutes or disconnects from it and doesn't reconnect for the same period of time, the device disables it. In order to re-enable the access point, the user needs to simply switch the device off and on again.
@@ -63,6 +63,198 @@ In the connected state the WiFi access point created by the device in the initia
 Using the software, the user can manipulate the device settings and can also disconnect the device from the WiFi network. In this case, the device erases the current network identifier and password, disconnects from the network and switches back to the initial state.
 
 If the device losses the WiFi connection, due to a restart of some issues with the network itself, it starts automatically reconnecting using the network identifier and the password stored in the device's memory.
+
+## Communication
+
+When the device is connected to the local network it can be discovered as service "lumino-ws" using MDNS. The client can communicate with the device using WebSockets protocol by connecting to `ws://[device]/ws` endpoint where `device` is the ether a discovered MDNS name or IP address of the device. All the communication messages are formatted as JSON.
+
+### Networks resource
+
+For scanning available WiFi networks you need to send this package:
+```json
+{
+  "_type": "request",
+  "id": "[random id]",
+  "requestType": "scan",
+  "resource": "networks"
+}
+```
+If the request was successfully accepted you should get response:
+```json
+{
+  "_type": "response",
+  "id": "[random id]",
+  "requestType": "scan",
+  "resource": "networks",
+  "content": {
+    "_type": "status",
+    "code": 202,
+    "message": "Scanning WiFi networks."
+  }
+}
+```
+When the scan is completed successfully the results are broadcasted to all the clients:
+```json
+{
+  "_type": "event",
+  "eventType": "scanned",
+  "resource": "networks",
+  "content": {
+    "_type": "networks",
+    "elements": [
+      {
+        "_type": "network",
+        "ssid": "BTHub4-NC8S",
+        "rssi": -64,
+        "encryption": "auto"
+      }
+    ]
+  }
+}
+```
+### Connection resource
+#### Reading
+By reading the existing connection resource:
+```json
+{
+  "_type": "request",
+  "id": "[random id]",
+  "requestType": "read",
+  "resource": "connection"
+}
+```
+you should get the connection status:
+```json
+{
+  "_type": "response",
+  "id": "[random id]",
+  "requestType": "read",
+  "resource": "connection",
+  "content": {
+    "_type": "connection",
+    "wifi_network": "BTHub4-NC8S",
+    "connected": true
+  }
+}
+```
+### Creating
+The device can be connected to a WiFi network by creating a connection resource:
+```json
+{
+  "_type": "request",
+  "id": "[random id]",
+  "requestType": "create",
+  "resource": "connection",
+  "content": {
+    "_type": "connection",
+    "wifi_network": "BTHub4-NC8S",
+    "wifi_password": "password"
+  }
+}
+```
+When the status of the created WiFi connection changes, the device issues the following event:
+```json
+{
+  "_type": "event",
+  "eventType": "updated",
+  "resource": "connection",
+  "content": {
+    "_type": "connection",
+    "wifi_network": "BTHub4-NC8S",
+    "connected": true
+  }
+}
+```
+#### Deleting
+For disconnecting from the WiFi network you need to delete the connection resource:
+```json
+{
+  "_type": "request",
+  "id": "[random id]",
+  "requestType": "delete",
+  "resource": "connection"
+}
+```
+### Color resource
+#### Reading
+By reading the color using request:
+```json
+{
+  "_type": "request",
+  "id": "[random id]",
+  "requestType": "read",
+  "resource": "color"
+}
+```
+you should get the color resource:
+```json
+{
+  "_type": "response",
+  "id": "[random id]",
+  "requestType": "read",
+  "resource": "color",
+  "content": {
+    "_type": "color",
+    "r": 10,
+    "g": 11,
+    "b": 8
+  }
+}
+```
+#### Updating
+For updating the color you can send:
+```json
+{
+  "_type": "request",
+  "id": "[random id]",
+  "requestType": "update",
+  "resource": "color",
+  "content": {
+    "_type": "color",
+    "r": 100,
+    "g": 11,
+    "b": 8
+  }
+}
+```
+### Settings resource
+#### Reading
+By reading the setting using request:
+```json
+{
+  "_type": "request",
+  "id": "[random id]",
+  "requestType": "read",
+  "resource": "settings"
+}
+```
+you should get the settings resource:
+```json
+{
+  "_type": "response",
+  "id": "[random id]",
+  "requestType": "read",
+  "resource": "settings",
+  "content": {
+    "_type": "settings",
+    "device_name": "LUMINO_BB6C"
+  }
+}
+```
+#### Updating
+For updating the settings you can send:
+```json
+{
+  "_type": "request",
+  "id": "[random id]",
+  "resource": "settings",
+  "requestType": "update",
+   "content": {
+    "_type": "settings",
+    "device_name": "MY_LUMINO"
+  }
+}
+```
 
 ## Used libraries
 * [Arduino Core for ESP8266](https://github.com/esp8266/Arduino)
