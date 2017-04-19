@@ -87,7 +87,9 @@ WiFiManager::connect(std::string network, std::string password) {
   if (hasConnection())
     return Status(StatusCode::Conflict, "The connection already exists.");
 
-  WiFi.begin(network.c_str(), password.c_str());
+  if (WiFi.begin(network.c_str(), password.c_str()) == WL_CONNECT_FAILED)
+    return Status(StatusCode::BadRequest, "Unable to create the connection.");
+
   return Status::OK;
 }
 
@@ -191,7 +193,7 @@ void
 WiFiManager::onConnected() {
   if (hasConnection()) {
     if (MDNS.begin(uniqueName.c_str())) {
-      MDNS.addService("http", "tcp", 80);
+      MDNS.addService("lumino-ws", "tcp", 80);
     }
     isConnectedInternal = true;
     connectionController->sendEvent(EventType::Updated, createConnectionObject());
