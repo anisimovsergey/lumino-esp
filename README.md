@@ -20,8 +20,6 @@ The application architecture is based on the message processing. This approach a
 2. Asynchronous communication support and better responsiveness
 3. It is possible to add and remove modules during run time
 
-## Modules
-
 ![components diagram](https://raw.githubusercontent.com/anisimovsergey/lumino-esp/master/docs/images/components_diagram.png)
 
 ### Display controller (DisplayController)
