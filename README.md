@@ -123,7 +123,7 @@ Request:
   "resource": "connection"
 }
 ```
-Response
+Response:
 ```json
 {
   "_type": "response",
