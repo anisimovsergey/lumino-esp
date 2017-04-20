@@ -66,11 +66,10 @@ If the device losses the WiFi connection, due to a restart of some issues with t
 
 ## Communication
 
-When the device is connected to the local network it can be discovered as service "lumino-ws" using MDNS. The client can communicate with the device using WebSockets protocol by connecting to `ws://[device]/ws` endpoint where `device` is the ether a discovered MDNS name or IP address of the device. All the communication messages are formatted as JSON.
+When the device is connected to the local network it can be discovered as service "lumino-ws" using MDNS. The client can communicate with the device using WebSockets protocol by connecting to `ws://[device]/ws` endpoint where `device` is the ether a discovered MDNS name or IP address of the device. All the communication messages are formatted as JSON. Some examples of the requests, responses and events.
 
 ### Networks resource
-
-For scanning available WiFi networks you need to send this package:
+Request for the WiFi networks scanning:
 ```json
 {
   "_type": "request",
@@ -79,7 +78,7 @@ For scanning available WiFi networks you need to send this package:
   "resource": "networks"
 }
 ```
-If the request was successfully accepted you should get response:
+Response (request accepted):
 ```json
 {
   "_type": "response",
@@ -93,6 +92,7 @@ If the request was successfully accepted you should get response:
   }
 }
 ```
+#### Events
 When the scan is completed successfully the results are broadcasted to all the clients:
 ```json
 {
@@ -114,7 +114,7 @@ When the scan is completed successfully the results are broadcasted to all the c
 ```
 ### Connection resource
 #### Reading
-By reading the existing connection resource:
+Request:
 ```json
 {
   "_type": "request",
@@ -123,7 +123,7 @@ By reading the existing connection resource:
   "resource": "connection"
 }
 ```
-you should get the connection status:
+Response
 ```json
 {
   "_type": "response",
@@ -132,13 +132,13 @@ you should get the connection status:
   "resource": "connection",
   "content": {
     "_type": "connection",
-    "wifi_network": "BTHub4-NC8S",
+    "wifiNetwork": "BTHub4-NC8S",
     "connected": true
   }
 }
 ```
-### Creating
-The device can be connected to a WiFi network by creating a connection resource:
+#### Creating
+For connecting to a WiFi network you need to create a connection resource:
 ```json
 {
   "_type": "request",
@@ -147,21 +147,8 @@ The device can be connected to a WiFi network by creating a connection resource:
   "resource": "connection",
   "content": {
     "_type": "connection",
-    "wifi_network": "BTHub4-NC8S",
-    "wifi_password": "password"
-  }
-}
-```
-When the status of the created WiFi connection changes, the device issues the following event:
-```json
-{
-  "_type": "event",
-  "eventType": "updated",
-  "resource": "connection",
-  "content": {
-    "_type": "connection",
-    "wifi_network": "BTHub4-NC8S",
-    "connected": true
+    "wifiNetwork": "BTHub4-NC8S",
+    "wifiPassword": "password"
   }
 }
 ```
@@ -175,9 +162,23 @@ For disconnecting from the WiFi network you need to delete the connection resour
   "resource": "connection"
 }
 ```
+#### Events
+When the status of the created WiFi connection changes, the device issues the following event:
+```json
+{
+  "_type": "event",
+  "eventType": "updated",
+  "resource": "connection",
+  "content": {
+    "_type": "connection",
+    "wifiNetwork": "BTHub4-NC8S",
+    "connected": true
+  }
+}
+```
 ### Color resource
 #### Reading
-By reading the color using request:
+Reading the color:
 ```json
 {
   "_type": "request",
@@ -186,7 +187,7 @@ By reading the color using request:
   "resource": "color"
 }
 ```
-you should get the color resource:
+Response:
 ```json
 {
   "_type": "response",
@@ -202,7 +203,7 @@ you should get the color resource:
 }
 ```
 #### Updating
-For updating the color you can send:
+Updating the color:
 ```json
 {
   "_type": "request",
@@ -219,7 +220,7 @@ For updating the color you can send:
 ```
 ### Settings resource
 #### Reading
-By reading the setting using request:
+Reading the settings:
 ```json
 {
   "_type": "request",
@@ -228,7 +229,7 @@ By reading the setting using request:
   "resource": "settings"
 }
 ```
-you should get the settings resource:
+Response:
 ```json
 {
   "_type": "response",
@@ -237,12 +238,12 @@ you should get the settings resource:
   "resource": "settings",
   "content": {
     "_type": "settings",
-    "device_name": "LUMINO_BB6C"
+    "deviceName": "LUMINO_BB6C"
   }
 }
 ```
 #### Updating
-For updating the settings you can send:
+Updating the settings:
 ```json
 {
   "_type": "request",
@@ -251,7 +252,7 @@ For updating the settings you can send:
   "requestType": "update",
    "content": {
     "_type": "settings",
-    "device_name": "MY_LUMINO"
+    "deviceName": "MY_LUMINO"
   }
 }
 ```

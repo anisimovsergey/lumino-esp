@@ -6,7 +6,7 @@ using namespace Core;
 using namespace Serialization;
 using namespace Models;
 
-#define FIELD_DEVICE_NAME "device_name"
+#define FIELD_DEVICE_NAME "deviceName"
 
 Core::Status
 SettingsSerializer::serializeImpl(ISerializationContext& context, const Settings& settings) const {

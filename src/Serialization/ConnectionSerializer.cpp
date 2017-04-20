@@ -6,8 +6,8 @@ using namespace Core;
 using namespace Serialization;
 using namespace Models;
 
-#define FIELD_WIFI_NETWORK    "wifi_network"
-#define FIELD_WIFI_PASSWORD   "wifi_password"
+#define FIELD_WIFI_NETWORK    "wifiNetwork"
+#define FIELD_WIFI_PASSWORD   "wifiPassword"
 #define FIELD_CONNECTED       "connected"
 
 Core::Status
