@@ -6,7 +6,7 @@ using namespace Core;
 using namespace Serialization;
 using namespace Models;
 
-#define FIELD_WIFI_NETWORK "wifi_network"
+#define FIELD_WIFI_NETWORK "wifiNetwork"
 
 Core::Status
 AccessPointSerializer::serializeImpl(
