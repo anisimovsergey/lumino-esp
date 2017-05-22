@@ -15,16 +15,18 @@ class Color final : public Core::IEntity {
   TYPE_INFO(Color, Core::IEntity, "color")
   public:
     Color();
-    Color(uint8_t r, uint8_t g, uint8_t b);
+    Color(float h, float s, float l);
 
-    uint8_t      getR() const { return r; };
-    uint8_t      getG() const { return g; };
-    uint8_t      getB() const { return b; };
+    float      getH() const { return h; };
+    float      getS() const { return s; };
+    float      getL() const { return l; };
+
+    void       toRGB(uint8_t& r, uint8_t& g, uint8_t& b);
 
   private:
-    uint8_t  r;
-    uint8_t  g;
-    uint8_t  b;
+    float  h;
+    float  s;
+    float  l;
 };
 
 }

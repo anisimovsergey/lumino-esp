@@ -32,6 +32,8 @@ class SerializationContext : public ISerializationContext {
     virtual Core::Status
       setInt(const std::string& key, int value) override;
     virtual Core::Status
+      setFloat(const std::string& key, float value) override;
+    virtual Core::Status
       setBool(const std::string& key, bool value) override;
     virtual Core::Status
       setList(const std::string& key, const Core::IList& list) override;

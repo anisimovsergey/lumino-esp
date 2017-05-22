@@ -55,6 +55,12 @@ SerializationContext::setInt(const std::string& key, int value) {
 }
 
 Core::Status
+SerializationContext::setFloat(const std::string& key, float value) {
+  jsonObject[key] = value;
+  return Status::OK;
+}
+
+Core::Status
 SerializationContext::setBool(const std::string& key, bool value) {
   jsonObject[key] = value;
   return Status::OK;

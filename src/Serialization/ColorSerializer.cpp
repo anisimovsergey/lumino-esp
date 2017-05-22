@@ -6,24 +6,24 @@ using namespace Core;
 using namespace Serialization;
 using namespace Models;
 
-#define FIELD_RED     "r"
-#define FIELD_GREEN   "g"
-#define FIELD_BLUE    "b"
+#define FIELD_RED     "h"
+#define FIELD_GREEN   "s"
+#define FIELD_BLUE    "l"
 
 Core::Status
 ColorSerializer::serializeImpl(
   ISerializationContext& context,
   const Color& color) const {
 
-  auto result = context.setInt(FIELD_RED, color.getR());
+  auto result = context.setFloat(FIELD_RED, color.getH());
   if (!result.isOk())
     return result;
 
-  result = context.setInt(FIELD_GREEN, color.getG());
+  result = context.setFloat(FIELD_GREEN, color.getS());
   if (!result.isOk())
     return result;
 
-  result = context.setInt(FIELD_BLUE, color.getB());
+  result = context.setFloat(FIELD_BLUE, color.getL());
   if (!result.isOk())
     return result;
 
@@ -34,19 +34,19 @@ std::tuple<Core::Status, std::unique_ptr<Models::Color>>
 ColorSerializer::deserializeImpl(
   const IDeserializationContext& context) const {
   Status result;
-  int r, g, b;
-  std::tie(result, r) = context.getInt(FIELD_RED);
+  float h, s, l;
+  std::tie(result, h) = context.getFloat(FIELD_RED);
   if (!result.isOk())
     return std::make_tuple(result, nullptr);
 
-  std::tie(result, g) = context.getInt(FIELD_GREEN);
+  std::tie(result, s) = context.getFloat(FIELD_GREEN);
   if (!result.isOk())
     return std::make_tuple(result, nullptr);
 
-  std::tie(result, b) = context.getInt(FIELD_BLUE);
+  std::tie(result, l) = context.getFloat(FIELD_BLUE);
   if (!result.isOk())
     return std::make_tuple(result, nullptr);
 
-  auto color = std::make_unique<Color>(r, g, b);
+  auto color = std::make_unique<Color>(h, s, l);
   return std::make_tuple(Status::OK, std::move(color));
 }

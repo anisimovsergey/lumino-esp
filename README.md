@@ -194,9 +194,9 @@ Response:
   "resource": "color",
   "content": {
     "_type": "color",
-    "r": 10,
-    "g": 11,
-    "b": 8
+    "h": 0.4,
+    "s": 0.9,
+    "l": 0.3
   }
 }
 ```
@@ -210,9 +210,9 @@ Updating the color:
   "resource": "color",
   "content": {
     "_type": "color",
-    "r": 100,
-    "g": 11,
-    "b": 8
+    "h": 0.4,
+    "s": 0.9,
+    "l": 0.3
   }
 }
 ```

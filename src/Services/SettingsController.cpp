@@ -13,9 +13,9 @@ using namespace Services;
 namespace {
   static const int COMMIT_DELAY       = 10; // 10 seconds
   static const int EEPROM_COLOR_START = 0;
-  static const int EEPROM_UNIQUE_NAME_START  = 5;
+  static const int EEPROM_UNIQUE_NAME_START  = 12;
   static const int EEPROM_UNIQUE_NAME_LEN    = 32;
-  static const int EEPROM_DEVICE_NAME_START  = 40;
+  static const int EEPROM_DEVICE_NAME_START  = 46;
   static const int EEPROM_DEVICE_NAME_LEN    = 32;
 }
 
@@ -23,7 +23,7 @@ SettingsController::SettingsController(
   IMessageQueue& messageQueue) :
   messageQueue(messageQueue) {
 
-  EEPROM.begin(76);
+  EEPROM.begin(80);
 
   settingsController = messageQueue.createController(Models::Settings::TypeId());
   settingsController->addOnRequest(RequestType::Read, [=]() {
@@ -110,29 +110,31 @@ SettingsController::setString(std::string str, size_t start, size_t len) {
 Models::Color
 SettingsController::getColor() const {
   int address = EEPROM_COLOR_START;
-  auto r = EEPROM.read(address++);
-  auto g = EEPROM.read(address++);
-  auto b = EEPROM.read(address++);
-  return Models::Color(r, g, b);
+  float h,s,l;
+  EEPROM.get(address, h);
+  EEPROM.get(address+=4, s);
+  EEPROM.get(address+=4, l);
+  return Models::Color(h, s, l);
 }
 
 bool
 SettingsController::setColor(const Models::Color& color) {
   int address = EEPROM_COLOR_START;
   bool updated = false;
-  auto r = EEPROM.read(address);
-  if (r != color.getR()) {
-    EEPROM.write(address, color.getR());
+  float h,s,l;
+  EEPROM.get(address, h);
+  if (h != color.getH()) {
+    EEPROM.put(address, color.getH());
     updated = true;
   }
-  auto g = EEPROM.read(++address);
-  if (g != color.getG()) {
-    EEPROM.write(address, color.getG());
+  EEPROM.get(address+=4, s);
+  if (s != color.getS()) {
+    EEPROM.put(address, color.getS());
     updated = true;
   }
-  auto b = EEPROM.read(++address);
-  if (b != color.getB()) {
-    EEPROM.write(address, color.getB());
+  EEPROM.get(address+=4, l);
+  if (l != color.getL()) {
+    EEPROM.put(address, color.getL());
     updated = true;
   }
   if (updated) {

@@ -31,6 +31,8 @@ class DeserializationContext : public IDeserializationContext {
       getString(const std::string& key) const override;
     virtual std::tuple<Core::Status, int>
       getInt(const std::string& key) const override;
+    virtual std::tuple<Core::Status, float>
+      getFloat(const std::string& key) const override;
     virtual std::tuple<Core::Status, bool>
       getBool(const std::string& key) const override;
     virtual std::tuple<Core::Status, std::unique_ptr<Core::IEntity>>

@@ -25,7 +25,7 @@ DisplayController::DisplayController(
   [](Adafruit_NeoPixel *impl) { delete impl; }) {
 
   pixels->begin();
-  color           = Color(0,0,0);
+  color           = Color();
   hasAccessPoint  = false;
   isConnected     = false;
   updateDisplay();
@@ -75,7 +75,9 @@ DisplayController::updateDisplay() {
       colorWipe(pixels->Color(25, 0, 0));
     }
   } else {
-    colorWipe(pixels->Color(color.getR(), color.getG(), color.getB()));
+    uint8_t r, g, b;
+    color.toRGB(r, g, b);
+    colorWipe(pixels->Color(r, g, b));
   }
 }
 
