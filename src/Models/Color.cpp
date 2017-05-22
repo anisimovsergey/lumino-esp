@@ -1,37 +1,35 @@
 #include "Color.hpp"
 
+#include <math.h>
+
 using namespace Models;
 
-float hue2rgb(float p, float q, float t) {
-    if (t < 0) t += 1;
-    if (t > 1.0) t -= 1;
-    if (t < 1.0/6.0) return p + (q - p) * 6.0 * t;
-    if (t < 1.0/2.0) return q;
-    if (t < 2.0/3.0) return p + (q - p) * (2.0 / 3.0 - t) * 6;
-    return p;
+Color::Color() : h(.0), s(.0), v(.0) {
 }
 
-Color::Color() : h(.0), s(.0), l(.0) {
-}
-
-Color::Color(float h, float s, float l) : h(h), s(s), l(l) {
+Color::Color(float h, float s, float v) : h(h), s(s), v(v) {
 }
 
 void
 Color::toRGB(uint8_t& r, uint8_t& g, uint8_t& b) {
-  float rf, gf, bf;
+   float rx = .0, gx = .0, bx = .0;
 
-  if (s == 0) {
-      rf = gf = bf = l; // achromatic
-  } else {
-      float q = l < 0.5 ? l * (1.0 + s) : l + s - l * s;
-      float p = 2.0 * l - q;
-      rf = hue2rgb(p, q, h + 1.0 / 3.0);
-      gf = hue2rgb(p, q, h);
-      bf = hue2rgb(p, q, h - 1.0 / 3.0);
-  }
+   int i = int(floor(h * 6.0));
+   float f = h * 6.0 - i;
+   float p = v * (1.0 - s);
+   float q = v * (1.0 - f * s);
+   float t = v * (1.0 - (1.0 - f) * s);
 
-  r = rf * 255;
-  g = gf * 255;
-  b = bf * 255;
+   switch(i % 6){
+       case 0: rx = v, gx = t, bx = p; break;
+       case 1: rx = q, gx = v, bx = p; break;
+       case 2: rx = p, gx = v, bx = t; break;
+       case 3: rx = p, gx = q, bx = v; break;
+       case 4: rx = t, gx = p, bx = v; break;
+       case 5: rx = v, gx = p, bx = q; break;
+   }
+
+   r = rx * 255;
+   g = gx * 255;
+   b = bx * 255;
 }

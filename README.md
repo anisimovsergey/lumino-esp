@@ -196,7 +196,7 @@ Response:
     "_type": "color",
     "h": 0.4,
     "s": 0.9,
-    "l": 0.3
+    "v": 0.3
   }
 }
 ```
@@ -212,7 +212,7 @@ Updating the color:
     "_type": "color",
     "h": 0.4,
     "s": 0.9,
-    "l": 0.3
+    "v": 0.3
   }
 }
 ```

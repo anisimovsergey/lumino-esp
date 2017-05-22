@@ -133,8 +133,8 @@ SettingsController::setColor(const Models::Color& color) {
     updated = true;
   }
   EEPROM.get(address+=4, l);
-  if (l != color.getL()) {
-    EEPROM.put(address, color.getL());
+  if (l != color.getV()) {
+    EEPROM.put(address, color.getV());
     updated = true;
   }
   if (updated) {

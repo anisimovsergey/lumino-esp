@@ -19,14 +19,14 @@ class Color final : public Core::IEntity {
 
     float      getH() const { return h; };
     float      getS() const { return s; };
-    float      getL() const { return l; };
+    float      getV() const { return v; };
 
     void       toRGB(uint8_t& r, uint8_t& g, uint8_t& b);
 
   private:
     float  h;
     float  s;
-    float  l;
+    float  v;
 };
 
 }
