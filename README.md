@@ -250,6 +250,7 @@ Updating the settings:
   "requestType": "update",
    "content": {
     "_type": "settings",
+    "isOn": true,
     "deviceName": "MY_LUMINO"
   }
 }

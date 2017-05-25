@@ -11,19 +11,20 @@ using namespace Messaging;
 using namespace Services;
 
 namespace {
-  static const int COMMIT_DELAY       = 10; // 10 seconds
-  static const int EEPROM_COLOR_START = 0;
-  static const int EEPROM_UNIQUE_NAME_START  = 12;
-  static const int EEPROM_UNIQUE_NAME_LEN    = 32;
-  static const int EEPROM_DEVICE_NAME_START  = 46;
-  static const int EEPROM_DEVICE_NAME_LEN    = 32;
+  static const int COMMIT_DELAY              = 10; // 10 seconds
+  static const int EEPROM_COLOR_START        = 0;
+  static const int EEPROM_IS_ON_START        = 12;
+  static const int EEPROM_UNIQUE_NAME_START  = 14;
+  static const int EEPROM_UNIQUE_NAME_LEN    = 34;
+  static const int EEPROM_DEVICE_NAME_START  = 48;
+  static const int EEPROM_DEVICE_NAME_LEN    = 34;
 }
 
 SettingsController::SettingsController(
   IMessageQueue& messageQueue) :
   messageQueue(messageQueue) {
 
-  EEPROM.begin(80);
+  EEPROM.begin(128);
 
   settingsController = messageQueue.createController(Models::Settings::TypeId());
   settingsController->addOnRequest(RequestType::Read, [=]() {
@@ -49,6 +50,30 @@ SettingsController::SettingsController(
 
   settingsController->sendEvent(EventType::Created, onGetSettings());
   colorController->sendEvent(EventType::Created, onGetColor());
+}
+
+bool
+SettingsController::getIsOn() const {
+  int address = EEPROM_IS_ON_START;
+  bool isOn = false;
+  EEPROM.get(address, isOn);
+  return isOn;
+}
+
+bool
+SettingsController::setIsOn(bool isOn) {
+  int address = EEPROM_IS_ON_START;
+  bool updated = false;
+  bool isOnOld = false;
+  EEPROM.get(address, isOnOld);
+  if (isOnOld != isOn) {
+    EEPROM.put(address, isOn);
+    updated = true;
+  }
+  if (updated) {
+    startCommitTimer();
+  }
+  return updated;
 }
 
 std::string
@@ -145,12 +170,12 @@ SettingsController::setColor(const Models::Color& color) {
 
 std::unique_ptr<Core::IEntity>
 SettingsController::onGetSettings() {
-  return std::make_unique<Models::Settings>(getUniqueName(), getDeviceName());
+  return std::make_unique<Models::Settings>(getIsOn(), getUniqueName(), getDeviceName());
 }
 
 std::unique_ptr<IEntity>
 SettingsController::onUpdateSettings(const Models::Settings& settings) {
-  if (setDeviceName(settings.getDeviceName())) {
+  if (setIsOn(settings.getIsOn()) || setDeviceName(settings.getDeviceName())) {
     settingsController->sendEvent(EventType::Updated, std::make_unique<Models::Settings>(settings));
   }
   return std::make_unique<Status>(Status::OK);

@@ -30,6 +30,14 @@ DisplayController::DisplayController(
   isConnected     = false;
   updateDisplay();
 
+  settingsClient = messageQueue.createClient(SenderId, Settings::TypeId());
+  settingsClient->addOnEvent(EventType::Created, [=](const Models::Settings& settings) {
+    onSettingsCreated(settings);
+  });
+  settingsClient->addOnEvent(EventType::Updated, [=](const Models::Settings& settings) {
+    onSettingsUpdated(settings);
+  });
+
   colorClient = messageQueue.createClient(SenderId, Color::TypeId());
   colorClient->addOnEvent(EventType::Created, [=](const Models::Color& color) {
     onColorCreated(color);
@@ -75,10 +83,26 @@ DisplayController::updateDisplay() {
       colorWipe(pixels->Color(25, 0, 0));
     }
   } else {
-    uint8_t r, g, b;
-    color.toRGB(r, g, b);
-    colorWipe(pixels->Color(r, g, b));
+    if (isOn) {
+      uint8_t r, g, b;
+      color.toRGB(r, g, b);
+      colorWipe(pixels->Color(r, g, b));
+    } else {
+      colorWipe(pixels->Color(0, 0, 0));
+    }
   }
+}
+
+void
+DisplayController::onSettingsCreated(const Settings& settings) {
+  isOn = settings.getIsOn();
+  updateDisplay();
+}
+
+void
+DisplayController::onSettingsUpdated(const Settings& settings) {
+  isOn = settings.getIsOn();
+  updateDisplay();
 }
 
 void

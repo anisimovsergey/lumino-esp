@@ -53,7 +53,7 @@ DeserializationContext::getFloat(const std::string& key) const {
     return std::make_tuple(Status(StatusCode::BadRequest, "Key """ + key + """ is not defined."), .0);
 
   if (!jsonVal.is<float>())
-    return std::make_tuple(Status(StatusCode::BadRequest, "Value for key """ + key + """ should be an int."), .0);
+    return std::make_tuple(Status(StatusCode::BadRequest, "Value for key """ + key + """ should be a float."), .0);
 
   return std::make_tuple(Status::OK, (float)jsonVal);
 }

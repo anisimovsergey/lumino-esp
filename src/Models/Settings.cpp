@@ -2,6 +2,6 @@
 
 using namespace Models;
 
-Settings::Settings(std::string uniqueName, std::string deviceName) :
-  uniqueName(uniqueName), deviceName(deviceName) {
+Settings::Settings(bool isOn, std::string uniqueName, std::string deviceName) :
+  isOn(isOn), uniqueName(uniqueName), deviceName(deviceName) {
 }

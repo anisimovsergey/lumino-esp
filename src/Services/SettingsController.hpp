@@ -27,6 +27,9 @@ class SettingsController {
     Messaging::IMessageQueue&   messageQueue;
     Ticker                      commitTimer;
 
+    bool            getIsOn() const;
+    bool            setIsOn(bool isOn);
+
     std::string     getUniqueName() const;
     bool            setUniqueName(std::string name);
 
