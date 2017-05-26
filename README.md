@@ -237,7 +237,8 @@ Response:
   "content": {
     "_type": "settings",
     "isOn": true,
-    "deviceName": "LUMINO_BB6C"
+    "uniqueName":"LUMINO_BB6C",
+    "deviceName": "MY_LUMINO"
   }
 }
 ```
@@ -252,7 +253,7 @@ Updating the settings:
    "content": {
     "_type": "settings",
     "isOn": true,
-    "deviceName": "MY_LUMINO"
+    "deviceName": "My new Lumino"
   }
 }
 ```
