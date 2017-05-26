@@ -7,11 +7,16 @@ using namespace Serialization;
 using namespace Models;
 
 #define FIELD_IS_ON "isOn"
+#define FIELD_UNIQUE_NAME "uniqueName"
 #define FIELD_DEVICE_NAME "deviceName"
 
 Core::Status
 SettingsSerializer::serializeImpl(ISerializationContext& context, const Settings& settings) const {
   auto result = context.setBool(FIELD_IS_ON, settings.getIsOn());
+  if (!result.isOk())
+    return result;
+
+  result = context.setString(FIELD_UNIQUE_NAME, settings.getUniqueName());
   if (!result.isOk())
     return result;
 

@@ -236,6 +236,7 @@ Response:
   "resource": "settings",
   "content": {
     "_type": "settings",
+    "isOn": true,
     "deviceName": "LUMINO_BB6C"
   }
 }
