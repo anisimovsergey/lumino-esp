@@ -23,23 +23,23 @@ The application architecture is based on the message processing. This approach a
 ![components diagram](https://raw.githubusercontent.com/anisimovsergey/lumino-esp/master/docs/images/components_diagram.png)
 
 ### Display controller (DisplayController)
-Display controller is responsible for reflecting the current state of the application, including currently selected color, the connection and access point state, on a display, although for this application the display is just a group of NeoPixel LEDs. This controller doesn't process any requests directly but rather listening on the events from the color, connection and access point resources.
+Display controller is responsible for reflecting the current state of the application, including currently selected color, the WiFi connection and the access point state on a display, although in this application the display is just a group of NeoPixel LEDs. This controller doesn't process any requests directly but rather listening on the events from the color, settings, connection and access point resources.
 
 ### Settings controller (SettingsController)
-Settings controller provides access to the application settings stored in EEPROM, such as the device name and currently selected color.
+Settings controller provides access to the application settings stored in EEPROM, such as the device name and currently selected color. The settings are not saved immediately when they change but after 10 seconds timeout.
 
 ### Web Server (WebServerAsync)
-Asynchronous web-server serves static content which is displayed as the WiFi connection page when the user connects to the access point created by the device. This module is also handling asynchronous WebSockets communication by accepting the clients connections, receiving requests, adding them to the message queue and sending the responses back to the clients.
+Asynchronous web-server serves static content which is displayed as the WiFi connection page when the user connects to the access point created by the device. This module is also handling asynchronous WebSockets communication by accepting the clients connections, receiving requests, adding them to the message queue and sending responses back to the clients.
 
 ### WiFi Manager (WiFiManger)
-This manager creates the access point when the device boots up as well as redirects all the DNS requests to the device itself so it can serve as a captive portal. The captive portal allows to connect the device to the user's WiFi network. This module also responsible for establishing a WiFi connection to the specified network and for advertising the device as MDNS service so that it can be discovered by the client applications (such as [this one](https://github.com/anisimovsergey/lumino-ios))
+This manager creates an access point when the device boots up as well as redirects all the DNS requests to the device itself so it can serve as a [captive portal](https://en.wikipedia.org/wiki/Captive_portal). The captive portal allows to connect the device to the user's WiFi network. This module also responsible for establishing a WiFi connection to the specified network and for advertising the device as MDNS service so that it can be discovered by the client applications (such as [this one](https://github.com/anisimovsergey/lumino-ios))
 
 ### WiFi Scanner (WiFiScanner)
-WiFi scanner allows to scan WiFi networks asynchronously and reports the discovered networks back to the clients.
+WiFi scanner allows to scan available WiFi networks asynchronously and reports the discovered networks back to the clients.
 
 ## Setting up the device
 
-When the device is powered on, it creates an unprotected WiFi access point with the name starting with `LUMINO_` followed by a unique four letter sequence which can include capital letters from A to F  and numbers from 0 to 9.
+When the device is powered on, it creates an unprotected WiFi access point with the name starting with `LUMINO_` followed by a unique four letter sequence which can include capital letters from A to F  and numbers from 0 to 9. The unique name is specific to every device and never changes.
 
 When the access point is available, user can connect the device to a home WiFi network by doing the following steps:
 1. Scan the available WiFi networks on your mobile phone or a computer.
