@@ -82,6 +82,11 @@ WiFiManager::isConnected() const {
   return WiFi.isConnected();
 }
 
+bool
+WiFiManager::isProtected() const {
+  return (WiFi.psk().length() > 0);
+}
+
 Core::Status
 WiFiManager::connect(std::string network, std::string password) {
   if (hasConnection())
@@ -105,10 +110,13 @@ WiFiManager::disconnect() {
 void
 WiFiManager::startService() {
   startDisconnectTimer();
+
   // Set DHCP host name
   WiFi.hostname(uniqueName.c_str());
+
   // Set access point name (SSID)
   WiFi.softAP(uniqueName.c_str());
+
   // Start DNS respiner
   dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
   dnsServer->start(53, "*", WiFi.softAPIP());
@@ -135,7 +143,16 @@ WiFiManager::idle() {
 
 std::unique_ptr<Connection>
 WiFiManager::createConnectionObject() {
-  return std::make_unique<Connection>(getNetwork(), isConnected());
+  return std::make_unique<Connection>(
+    getNetwork(),
+    isConnected(),
+    isProtected(),
+    WiFi.RSSI(),
+    WiFi.localIP(),
+    WiFi.subnetMask(),
+    WiFi.gatewayIP(),
+    WiFi.dnsIP()
+  );
 }
 
 std::unique_ptr<AccessPoint>
@@ -160,7 +177,7 @@ WiFiManager::onGetConnection() {
 
 std::unique_ptr<IEntity>
 WiFiManager::onCreateConnection(const Models::Connection& connection) {
-  auto result = connect(connection.getNetworkSsid(), connection.getNetworkPassword());
+  auto result = connect(connection.getSsid(), connection.getPassword());
   if (!result.isOk()) {
     return std::make_unique<Status>(StatusCode::InternalServerError,
       "Unable to create the connection.", std::move(result));

@@ -130,8 +130,14 @@ Response:
   "resource": "connection",
   "content": {
     "_type": "connection",
-    "wifiNetwork": "BTHub4-NC8S",
-    "connected": true
+    "ssid": "BTHub4-NC8S",
+    "isConnected": true,
+    "isProtected": true,
+    "rssi": -82,
+    "localIP": "192.168.1.71",
+    "subnetMask": "255.255.0.0",
+    "gatewayIP": "192.168.1.1",
+    "dnsIP": "192.168.1.1"
   }
 }
 ```
@@ -145,8 +151,8 @@ For connecting to a WiFi network you need to create a connection resource:
   "resource": "connection",
   "content": {
     "_type": "connection",
-    "wifiNetwork": "BTHub4-NC8S",
-    "wifiPassword": "password"
+    "ssid": "BTHub4-NC8S",
+    "password": "password"
   }
 }
 ```
@@ -169,8 +175,14 @@ When the status of the created WiFi connection changes, the device issues the fo
   "resource": "connection",
   "content": {
     "_type": "connection",
-    "wifiNetwork": "BTHub4-NC8S",
-    "connected": true
+    "ssid": "BTHub4-NC8S",
+    "isConnected": true,
+    "isProtected": true,
+    "rssi": -82,
+    "localIP": "192.168.1.71",
+    "subnetMask": "255.255.0.0",
+    "gatewayIP": "192.168.1.1",
+    "dnsIP": "192.168.1.1"
   }
 }
 ```

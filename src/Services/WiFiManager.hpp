@@ -51,6 +51,7 @@ class WiFiManager {
     bool          hasAccessPoint() const;
     std::string   getNetwork() const;
     bool          isConnected() const;
+    bool          isProtected() const;
 
     std::unique_ptr<Models::Connection> createConnectionObject();
     std::unique_ptr<Models::AccessPoint> createAccessPointObject();

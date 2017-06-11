@@ -3,15 +3,27 @@
 using namespace Models;
 
 Connection::Connection(
-  std::string networkSsid,
-  bool isConnected) :
-  networkSsid(networkSsid),
-  isConnected(isConnected) {
+  std::string ssid,
+  bool        isConnected,
+  bool        isProtected,
+  int         rssi,
+  uint32_t    localIP,
+  uint32_t    subnetMask,
+  uint32_t    gatewayIP,
+  uint32_t    dnsIP) :
+  ssid(ssid),
+  isConnected(isConnected),
+  isProtected(isProtected),
+  rssi(rssi),
+  localIP(localIP),
+  subnetMask(subnetMask),
+  gatewayIP(gatewayIP),
+  dnsIP(dnsIP) {
 }
 
 Connection::Connection(
-  std::string networkSsid,
-  std::string networkPassword) :
-  networkSsid(networkSsid),
-  networkPassword(networkPassword) {
+  std::string ssid,
+  std::string password) :
+  ssid(ssid),
+  password(password) {
 }
