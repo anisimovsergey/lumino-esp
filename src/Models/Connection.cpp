@@ -10,7 +10,8 @@ Connection::Connection(
   uint32_t    localIP,
   uint32_t    subnetMask,
   uint32_t    gatewayIP,
-  uint32_t    dnsIP) :
+  uint32_t    dnsIP,
+  int         disconnectReason):
   ssid(ssid),
   isConnected(isConnected),
   isProtected(isProtected),
@@ -18,7 +19,8 @@ Connection::Connection(
   localIP(localIP),
   subnetMask(subnetMask),
   gatewayIP(gatewayIP),
-  dnsIP(dnsIP) {
+  dnsIP(dnsIP),
+  disconnectReason(disconnectReason) {
 }
 
 Connection::Connection(

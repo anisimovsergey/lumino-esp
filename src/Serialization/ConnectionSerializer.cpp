@@ -7,15 +7,16 @@ using namespace Core;
 using namespace Serialization;
 using namespace Models;
 
-#define FIELD_SSID          "ssid"
-#define FIELD_PASSWORD      "password"
-#define FIELD_IS_CONNECTED  "isConnected"
-#define FIELD_IS_PROTECTED  "isProtected"
-#define FIELD_RSSI          "rssi"
-#define FIELD_LOCAL_IP      "localIP"
-#define FIELD_SUBNET_MASK   "subnetMask"
-#define FIELD_GATEWAY_IP    "gatewayIP"
-#define FIELD_DNS_IP        "dnsIP"
+#define FIELD_SSID                "ssid"
+#define FIELD_PASSWORD            "password"
+#define FIELD_IS_CONNECTED        "isConnected"
+#define FIELD_IS_PROTECTED        "isProtected"
+#define FIELD_RSSI                "rssi"
+#define FIELD_LOCAL_IP            "localIP"
+#define FIELD_SUBNET_MASK         "subnetMask"
+#define FIELD_GATEWAY_IP          "gatewayIP"
+#define FIELD_DNS_IP              "dnsIP"
+#define FIELD_DISCONNECT_REASON   "disconnectReason"
 
 Core::Status
 ConnectionSerializer::serializeImpl(
@@ -51,6 +52,10 @@ ConnectionSerializer::serializeImpl(
     return result;
 
   result = context.setString(FIELD_DNS_IP, Core::ipToString(connection.getDnsIP()));
+  if (!result.isOk())
+    return result;
+
+  result = context.setInt(FIELD_DISCONNECT_REASON, connection.getDisconnectReason());
   if (!result.isOk())
     return result;
 

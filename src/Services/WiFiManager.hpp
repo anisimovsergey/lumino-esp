@@ -32,7 +32,7 @@ class WiFiManager {
     std::unique_ptr<DNSServer>                  dnsServer;
     std::string                                 uniqueName;
     Ticker                                      disconnectTimer;
-    bool                                        isConnectedInternal;
+    int                                         disconnectReason;
 
     // Clients
     std::unique_ptr<Messaging::QueueResourceClient>      settingsClient;
@@ -73,7 +73,7 @@ class WiFiManager {
 
     // Events handling
     void onConnected();
-    void onDisconnected();
+    void onDisconnected(int reason);
     void onClientConnected();
     void onClientDisconnected();
 

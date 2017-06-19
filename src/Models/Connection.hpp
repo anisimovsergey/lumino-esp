@@ -22,7 +22,8 @@ class Connection final : public Core::IEntity {
       uint32_t    localIP,
       uint32_t    subnetMask,
       uint32_t    gatewayIP,
-      uint32_t    dnsIP
+      uint32_t    dnsIP,
+      int         disconnectReason
     );
 
     Connection(
@@ -39,6 +40,7 @@ class Connection final : public Core::IEntity {
     uint32_t     getSubnetMask() const { return subnetMask; };
     uint32_t     getGatewayIP() const { return gatewayIP; };
     uint32_t     getDnsIP() const { return dnsIP; };
+    int          getDisconnectReason() const { return disconnectReason; };
 
   private:
     std::string  ssid;
@@ -50,6 +52,7 @@ class Connection final : public Core::IEntity {
     uint32_t     subnetMask;
     uint32_t     gatewayIP;
     uint32_t     dnsIP;
+    int          disconnectReason;
 };
 
 }

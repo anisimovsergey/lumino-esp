@@ -21,7 +21,7 @@ WiFiManager::WiFiManager(
   messageQueue(messageQueue) {
 
   dnsServer = std::move(std::make_unique<DNSServer>());
-  isConnectedInternal = false;
+  disconnectReason = 0;
 
   settingsClient = messageQueue.createClient(SenderId, Settings::TypeId());
   settingsClient->addOnEvent(EventType::Created, [=](const Models::Settings& settings) {
@@ -49,7 +49,7 @@ WiFiManager::WiFiManager(
   );
 
   disconnectedEventHandler = WiFi.onStationModeDisconnected(
-    [=](const WiFiEventStationModeDisconnected& e) { onDisconnected(); }
+    [=](const WiFiEventStationModeDisconnected& e) { onDisconnected(e.reason); }
   );
 
   clientConnectedEventHandler = WiFi.onSoftAPModeStationConnected(
@@ -89,21 +89,22 @@ WiFiManager::isProtected() const {
 
 Core::Status
 WiFiManager::connect(std::string network, std::string password) {
-  if (hasConnection())
+  if (hasConnection()) {
     return Status(StatusCode::Conflict, "The connection already exists.");
-
-  if (WiFi.begin(network.c_str(), password.c_str()) == WL_CONNECT_FAILED)
+  }
+  if (WiFi.begin(network.c_str(), password.c_str()) == WL_CONNECT_FAILED) {
     return Status(StatusCode::BadRequest, "Unable to create the connection.");
-
+  }
   return Status::OK;
 }
 
 Core::Status
 WiFiManager::disconnect() {
-  if (!hasConnection())
+  if (!hasConnection()) {
     return Status(StatusCode::Conflict, "The connection doesn't exist.");
-
+  }
   WiFi.disconnect();
+  disconnectReason = 0;
   return Status::OK;
 }
 
@@ -151,7 +152,8 @@ WiFiManager::createConnectionObject() {
     WiFi.localIP(),
     WiFi.subnetMask(),
     WiFi.gatewayIP(),
-    WiFi.dnsIP()
+    WiFi.dnsIP(),
+    disconnectReason
   );
 }
 
@@ -212,15 +214,15 @@ WiFiManager::onConnected() {
     if (MDNS.begin(uniqueName.c_str())) {
       MDNS.addService("lumino-ws", "tcp", 80);
     }
-    isConnectedInternal = true;
+    disconnectReason = 0;
     connectionController->sendEvent(EventType::Updated, createConnectionObject());
   }
 }
 
 void
-WiFiManager::onDisconnected() {
-  if (hasConnection() && isConnectedInternal) {
-    isConnectedInternal = false;
+WiFiManager::onDisconnected(int reason) {
+  if (hasConnection() && disconnectReason != reason) {
+    disconnectReason = reason;
     connectionController->sendEvent(EventType::Updated, createConnectionObject());
   }
 }
