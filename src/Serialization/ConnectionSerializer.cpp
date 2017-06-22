@@ -1,7 +1,7 @@
 #include "ConnectionSerializer.hpp"
 
 #include "Core/Memory.hpp"
-#include "Core/Format.hpp"
+#include "Core/Utils.hpp"
 
 using namespace Core;
 using namespace Serialization;
@@ -39,19 +39,19 @@ ConnectionSerializer::serializeImpl(
   if (!result.isOk())
     return result;
 
-  result = context.setString(FIELD_LOCAL_IP, Core::ipToString(connection.getLocalIP()));
+  result = context.setString(FIELD_LOCAL_IP, ipToStr(connection.getLocalIP()));
   if (!result.isOk())
     return result;
 
-  result = context.setString(FIELD_SUBNET_MASK, Core::ipToString(connection.getSubnetMask()));
+  result = context.setString(FIELD_SUBNET_MASK, ipToStr(connection.getSubnetMask()));
   if (!result.isOk())
     return result;
 
-  result = context.setString(FIELD_GATEWAY_IP, Core::ipToString(connection.getGatewayIP()));
+  result = context.setString(FIELD_GATEWAY_IP, ipToStr(connection.getGatewayIP()));
   if (!result.isOk())
     return result;
 
-  result = context.setString(FIELD_DNS_IP, Core::ipToString(connection.getDnsIP()));
+  result = context.setString(FIELD_DNS_IP, ipToStr(connection.getDnsIP()));
   if (!result.isOk())
     return result;
 

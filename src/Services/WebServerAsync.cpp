@@ -1,7 +1,7 @@
 #include "WebServerAsync.hpp"
 
 #include "Core/Memory.hpp"
-#include "Core/Format.hpp"
+#include "Core/Utils.hpp"
 
 using namespace Core;
 using namespace Models;
@@ -52,7 +52,7 @@ WebServerAsync::onAccessPointCreated(const Models::AccessPoint& accessPoint) {
 
 std::string
 WebServerAsync::getLocalDomain() const {
-  return Core::ipToString(WiFi.softAPIP());
+  return ipToStr(WiFi.softAPIP());
 }
 
 bool
