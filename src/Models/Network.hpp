@@ -1,8 +1,8 @@
 // Copyright Sergey Anisimov 2016-2017
 // MIT License
 //
-// Moikot
-// https://github.com/anisimovsergey/moikot
+// Lumino
+// https://github.com/anisimovsergey/lumino-esp
 
 #ifndef MODELS_NETWORK_HPP
 #define MODELS_NETWORK_HPP

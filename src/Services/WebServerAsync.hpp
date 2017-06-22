@@ -1,8 +1,8 @@
 // Copyright Sergey Anisimov 2016-2017
 // MIT License
 //
-// Moikot
-// https://github.com/anisimovsergey/moikot
+// Lumino
+// https://github.com/anisimovsergey/lumino-esp
 
 #ifndef SERVICES_WEB_SERVER_ASYNC_HPP
 #define SERVICES_WEB_SERVER_ASYNC_HPP

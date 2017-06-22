@@ -2,8 +2,8 @@
 
 // MIT License
 //
-// Moikot
-// https://github.com/anisimovsergey/moikot
+// Lumino
+// https://github.com/anisimovsergey/lumino-esp
 
 #ifndef SERVICES_WIFIMANAGER_HPP
 #define SERVICES_WIFIMANAGER_HPP

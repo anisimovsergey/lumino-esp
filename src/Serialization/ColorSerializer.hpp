@@ -1,8 +1,8 @@
 // Copyright Sergey Anisimov 2016-2017
 // MIT License
 //
-// Moikot
-// https://github.com/anisimovsergey/moikot
+// Lumino
+// https://github.com/anisimovsergey/lumino-esp
 
 #ifndef SERIALIZATION_COLOR_SERIALIZER_HPP
 #define SERIALIZATION_COLOR_SERIALIZER_HPP
