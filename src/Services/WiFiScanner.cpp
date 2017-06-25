@@ -68,7 +68,7 @@ WiFiScanner::onScanDone(void* result, int status) {
   if (status == OK) {
     auto networks = std::make_unique<Networks>();
     bss_info* head = reinterpret_cast<bss_info*>(result);
-    for(bss_info* it = head; it; it = it->next) {
+    for(bss_info* it = head; it; it = STAILQ_NEXT(it, next)) {
       auto ssid = reinterpret_cast<const char*>(it->ssid);
       auto rssi = it->rssi;
       auto encryptionType = getEncryptionString(it->authmode);
