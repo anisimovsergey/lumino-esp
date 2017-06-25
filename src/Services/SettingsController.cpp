@@ -46,6 +46,8 @@ SettingsController::SettingsController(
   auto uniqueName = getUniqueName();
   if (setUniqueName(uniqueName)) {
     setDeviceName(uniqueName);
+    setIsOn(true);
+    setColor(Models::Color(0.0, 0.0, 0.5));
   }
 
   settingsController->sendEvent(EventType::Created, onGetSettings());
