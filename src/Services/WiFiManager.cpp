@@ -116,6 +116,7 @@ WiFiManager::startService() {
   WiFi.hostname(uniqueName.c_str());
 
   // Set access point name (SSID)
+  WiFi.mode(WIFI_AP_STA);
   WiFi.softAP(uniqueName.c_str());
 
   // Start DNS respiner
