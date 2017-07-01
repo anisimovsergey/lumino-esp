@@ -2,7 +2,7 @@
 
 A remotely controlled lamp based on ESP8266.
 
-## Build
+## Building the application
 
 This project intended to be built using [PlatformIO](http://platformio.org/)
 1. Install [Atom editor](https://atom.io/)
@@ -12,6 +12,16 @@ This project intended to be built using [PlatformIO](http://platformio.org/)
 $ git clone https://github.com/anisimovsergey/lumino-esp
 ```
 4. Open the folder in Atom editor and build it using PlatformIO
+5. Upload the program to your device using PlatformIO
+
+## Uploading static content
+
+Lumino uses a captive portal for creating a connection with your home WiFi. The captive portal implementation consists of two parts, one is the WebSockets based API implemented in this project and another one is a static content stored in EEPROM and served by the web served running on the same device.
+For building and uploading this static content to EEPROM you need to do the following:
+1. Clone the [lumino-web](https://github.com/anisimovsergey/lumino-web) project.
+2. Build it executing `npm install & npm run build` in the project folder.
+3. Copy content of the `/dist` folder from `lumino-web` to `/data` of `lumino-esp`.
+4. Upload the static content `PlatformIO`->`Run other target...`
 
 ## Architecture
 
