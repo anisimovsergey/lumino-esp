@@ -16,12 +16,12 @@ $ git clone https://github.com/anisimovsergey/lumino-esp
 
 ## Uploading static content
 
-Lumino uses a captive portal for creating a connection with your home WiFi. The captive portal implementation consists of two parts, one is the WebSockets based API implemented in this project and another one is a static content stored in EEPROM and served by the web served running on the same device.
+Lumino uses a captive portal for creating a connection with your home WiFi. The captive portal implementation consists of two parts, one is the WebSockets based API implemented in this `lumino-esp` project and another one is static content stored in EEPROM and served by the web served running on the same device.
 For building and uploading this static content to EEPROM you need to do the following:
 1. Clone the [lumino-web](https://github.com/anisimovsergey/lumino-web) project.
-2. Build it executing `npm install & npm run build` in the project folder.
+2. Build it by executing `npm install & npm run build` in the project folder.
 3. Copy content of the `/dist` folder from `lumino-web` to `/data` of `lumino-esp`.
-4. Upload the static content `PlatformIO`->`Run other target...`
+4. Upload the static content `PlatformIO`->`Run other target...`->`PIO Upload SPIFFS image`
 
 ## Architecture
 
