@@ -11,6 +11,7 @@
 #include "Messaging/MessageQueue.hpp"
 #include "Services/DisplayController.hpp"
 #include "Services/SettingsController.hpp"
+#include "Services/UpdateController.hpp"
 #include "Services/WiFiManager.hpp"
 #include "Services/WiFiScanner.hpp"
 #include "Services/WebServerAsync.hpp"
@@ -25,6 +26,7 @@ class Application {
     std::unique_ptr<Messaging::MessageQueue>              messageQueue;
     std::unique_ptr<Services::DisplayController>          display;
     std::unique_ptr<Services::SettingsController>         settings;
+    std::unique_ptr<Services::UpdateController>           updater;
     std::unique_ptr<Services::WiFiManager>                wifiManager;
     std::unique_ptr<Services::WiFiScanner>                wifiScanner;
     std::unique_ptr<Services::WebServerAsync>             webServerAsync;

@@ -33,6 +33,8 @@ Application::createServices() {
   display = std::make_unique<DisplayController>(*messageQueue);
   logger->message("Creating settings...");
   settings = std::make_unique<SettingsController>(*messageQueue);
+  logger->message("Creating an update controller (OTA) ...");
+  updater = std::make_unique<UpdateController>(*messageQueue, *logger);
   logger->message("Creating a wifi manager...");
   wifiManager = std::make_unique<WiFiManager>(*messageQueue);
   logger->message("Creating a wifi scanner...");
@@ -63,4 +65,5 @@ void
 Application::loop() {
   messageQueue->idle();
   wifiManager->idle();
+  updater->idle();
 }
