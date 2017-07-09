@@ -1,11 +1,10 @@
 #include "DisplayController.hpp"
 
 #include "Core/Memory.hpp"
-#include "Models/Connection.hpp"
 
 #include <Adafruit_NeoPixel.h>
 
-#define PIXEL_PIN   5    // Digital IO pin connected to the NeoPixels.
+#define PIXEL_PIN   2    // Digital IO pin connected to the NeoPixels.
 #define PIXEL_COUNT 12    // The number of NeoPixels connected.
 #define PIXEL_TYPE  NEO_GRBW + NEO_KHZ800
 
