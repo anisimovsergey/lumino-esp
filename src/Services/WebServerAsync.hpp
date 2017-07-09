@@ -29,8 +29,6 @@ class WebServerAsync {
       Serialization::ISerializationService& serializer,
       Core::ILogger& logger);
 
-    void start();
-
   private:
     typedef std::list<std::unique_ptr<Messaging::QueueGenericClient>> QueueClients;
     typedef std::unique_ptr<Messaging::QueueResourceClient> AccessPointClient;
@@ -43,6 +41,7 @@ class WebServerAsync {
     QueueClients                          queueClients;
     AccessPointClient                     accessPointClient;
 
+    void start();
     void onAccessPointCreated(const Models::AccessPoint& accessPoint);
 
     std::string     getLocalDomain() const;

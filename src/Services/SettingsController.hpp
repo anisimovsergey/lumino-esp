@@ -21,12 +21,12 @@ class SettingsController {
       Messaging::IMessageQueue& messageQueue
     );
 
-    void            start();
-
   private:
     Messaging::IMessageQueue&   messageQueue;
     Ticker                      commitTimer;
 
+    void            start();
+    
     bool            getIsOn() const;
     bool            setIsOn(bool isOn);
 
