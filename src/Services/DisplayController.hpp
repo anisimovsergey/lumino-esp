@@ -7,6 +7,7 @@
 #ifndef SERVICES_DISPLAY_CONTROLLER_HPP
 #define SERVICES_DISPLAY_CONTROLLER_HPP
 
+#include "Core/ILogger.hpp"
 #include "Messaging/IMessageQueue.hpp"
 #include "Models/Settings.hpp"
 #include "Models/Color.hpp"
@@ -19,10 +20,14 @@ namespace Services {
 
 class DisplayController {
   public:
-    DisplayController(Messaging::IMessageQueue& messageQueue);
+    DisplayController(
+      Messaging::IMessageQueue& messageQueue,
+      Core::ILogger& logger
+    );
 
   private:
     Messaging::IMessageQueue& messageQueue;
+    Core::ILogger&            logger;
     std::unique_ptr<Adafruit_NeoPixel, void (*)(Adafruit_NeoPixel *)> pixels;
 
     std::unique_ptr<Messaging::QueueResourceClient> settingsClient;

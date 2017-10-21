@@ -7,6 +7,7 @@
 #ifndef SETTINGS_CONTROLLER_HPP
 #define SETTINGS_CONTROLLER_HPP
 
+#include "Core/ILogger.hpp"
 #include "Messaging/IMessageQueue.hpp"
 #include "Models/Settings.hpp"
 #include "Models/Color.hpp"
@@ -18,15 +19,17 @@ namespace Services {
 class SettingsController {
   public:
     SettingsController(
-      Messaging::IMessageQueue& messageQueue
+      Messaging::IMessageQueue& messageQueue,
+      Core::ILogger& logger
     );
 
   private:
     Messaging::IMessageQueue&   messageQueue;
+    Core::ILogger&              logger;
     Ticker                      commitTimer;
 
     void            start();
-    
+
     bool            getIsOn() const;
     bool            setIsOn(bool isOn);
 

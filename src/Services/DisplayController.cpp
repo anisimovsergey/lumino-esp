@@ -18,8 +18,8 @@ namespace {
 }
 
 DisplayController::DisplayController(
-  IMessageQueue& messageQueue) :
-  messageQueue(messageQueue),
+  IMessageQueue& messageQueue, Core::ILogger& logger) :
+  messageQueue(messageQueue), logger(logger),
   pixels(new Adafruit_NeoPixel(PIXEL_COUNT, PIXEL_PIN, PIXEL_TYPE),
   [](Adafruit_NeoPixel *impl) { delete impl; }) {
 
@@ -112,8 +112,10 @@ DisplayController::onColorCreated(const Color& color) {
 
 void
 DisplayController::onColorUpdated(const Color& color) {
+  logger.message("Updating display...");
   this->color = color;
   updateDisplay();
+  logger.message("Display updated.");
 }
 
 void

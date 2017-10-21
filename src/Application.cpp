@@ -30,9 +30,9 @@ Application::createServices() {
   logger->message("Creating a message queue...");
   messageQueue = std::make_unique<MessageQueue>();
   logger->message("Creating a display...");
-  display = std::make_unique<DisplayController>(*messageQueue);
+  display = std::make_unique<DisplayController>(*messageQueue, *logger);
   logger->message("Creating settings...");
-  settings = std::make_unique<SettingsController>(*messageQueue);
+  settings = std::make_unique<SettingsController>(*messageQueue, *logger);
   logger->message("Creating an update controller (OTA) ...");
   updater = std::make_unique<UpdateController>(*messageQueue, *logger);
   logger->message("Creating a wifi manager...");

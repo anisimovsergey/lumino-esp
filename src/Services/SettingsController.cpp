@@ -21,8 +21,8 @@ namespace {
 }
 
 SettingsController::SettingsController(
-  IMessageQueue& messageQueue) :
-  messageQueue(messageQueue) {
+  IMessageQueue& messageQueue, Core::ILogger& logger) :
+  messageQueue(messageQueue), logger(logger) {
 
   EEPROM.begin(128);
 
@@ -190,9 +190,12 @@ SettingsController::onGetColor() {
 
 std::unique_ptr<Core::IEntity>
 SettingsController::onUpdateColor(const Models::Color& color) {
+  logger.message("Setting color...");
   if (setColor(color)) {
+    logger.message("Sending event...");
     colorController->sendEvent(EventType::Updated, std::make_unique<Models::Color>(color));
   }
+  logger.message("Sending response...");
   return std::make_unique<Status>(Status::OK);
 }
 

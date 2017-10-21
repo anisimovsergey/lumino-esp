@@ -110,7 +110,9 @@ WebServerAsync::sendToClinet(AsyncWebSocketClient* client,
   const Core::IEntity& entity) {
   Status status;
   std::string json;
+  logger.message("Serializing response...");
   std::tie(status, json) = serializer.serialize(entity);
+  logger.message("Sending response...");
   if (status.isOk()) {
     client->text(json.c_str());
   } else {
@@ -121,6 +123,7 @@ WebServerAsync::sendToClinet(AsyncWebSocketClient* client,
       logger.error("Unable to seraile the response of type '" +
         status.getTypeId() + "'.");
   }
+  logger.message("Response sent");
 }
 
 void
@@ -155,13 +158,17 @@ WebServerAsync::onTextReceived(AsyncWebSocketClient* client, const std::string& 
   Status status;
   std::unique_ptr<IEntity> entity;
   std::unique_ptr<Request> request;
+  logger.message("Deserializing request...");
   std::tie(status, entity) = serializer.deserialize(text);
   if (status.isOk()) {
+    logger.message("Casting...");
     request = castToUnique<Request>(std::move(entity));
     if (request) {
+      logger.message("Finding a client...");
       auto queueClient = findQueueClient(client);
       if (queueClient) {
         request->setSender(queueClient->getClientId());
+        logger.message("Adding a request...");
         status = messageQueue.addRequest(std::move(request));
       } else {
         status = Status(StatusCode::InternalServerError,
@@ -173,6 +180,7 @@ WebServerAsync::onTextReceived(AsyncWebSocketClient* client, const std::string& 
     }
   }
   if (!status.isOk()) {
+    logger.error("Unable to handle the request");
     sendToClinet(client, status);
   }
 }
